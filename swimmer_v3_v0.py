@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     observation = env.reset()
     # print(observation)
-    for i in range(10000):
+    for i in range(1000):  # register: max_episode_steps=1000, thus after 1000 steps it will stop anyway
         env.render()  # show the current frame of visualization
         action = env.action_space.sample()  # sample a random action
         observation, reward, done, info = env.step(action)
