@@ -7,9 +7,9 @@ DEFAULT_CAMERA_CONFIG = {}
 
 
 class SwimmerEnv(mujoco_env.MujocoEnv, utils.EzPickle):
-    """
-    Exactly the same as Swimmer-v3, with personal xml_file path configuration.
-    swimmer.xml is unedited.
+    """  A Copy of Swimmer-v3 from OpenAI Gym
+    - SwimmerEnv is exactly the same as Swimmer-v3, with personal xml_file path configuration.
+    - swimmer.xml is unedited.
     """
     def __init__(self,
                  xml_file=os.path.join(os.path.dirname(__file__), 'assets', 'swimmer.xml'),
