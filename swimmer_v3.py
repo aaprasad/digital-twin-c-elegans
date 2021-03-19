@@ -1,3 +1,7 @@
+"""
+Swimmer-v3 from OpenAI Gym
+"""
+
 import gym
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3 import A2C, DDPG, HER, PPO, SAC, TD3

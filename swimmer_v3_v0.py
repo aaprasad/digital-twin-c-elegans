@@ -1,6 +1,7 @@
 """
-Swimmer-v3-v0 is exactly the same as Swimmer-v3, with personal xml_file path configuration.
-swimmer.xml is unedited.
+Swimmer-v3-v0 is the same as Swimmer-v3 from OpenAI Gym
+- xml_file is configured to load local .xml file.
+- swimmer.xml is unedited from Gym.
 """
 
 import gym
