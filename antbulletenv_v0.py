@@ -11,6 +11,7 @@ from gym.wrappers.monitoring.video_recorder import VideoRecorder
 if __name__ == '__main__':
     """ register and make env """
     env = gym.make('AntBulletEnv-v0')
+    # env.render(mode='human')  # needed for display
 
     """ record video
     - there's a relevant bug in gym==0.18.0, use 'pip install -e .' to install dev version instead
@@ -23,7 +24,7 @@ if __name__ == '__main__':
     # print(observation)
     rec.capture_frame()  # Capture the starting position
     for i in range(1000):
-        # env.render()  # show the current frame of visualization
+        # env.render(mode='human')  # show the current frame of visualization
         action = env.action_space.sample()  # sample a random action
         observation, reward, done, info = env.step(action)
         # print(observation)
