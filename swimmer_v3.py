@@ -16,13 +16,16 @@ def get_model_stable_baselines():
     # model = A2C('MlpPolicy', env, verbose=1)  # avg reward over 100 consecutive episodes: 31.1302, 31.1832, 31.0867
     model = DDPG(
         'MlpPolicy', env, verbose=1, device=torch.device('cuda:2')
-    )  # avg reward over 10 consecutive episodes: 11.0541
+    )  # train 1500000 steps, avg reward over 100 consecutive episodes: 13.6537
     # model = PPO('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 23.5533
     # model = SAC('MlpPolicy', env, verbose=1)  # avg reward over 100 consecutive episodes: 27.1014, 28.3048, 28.9001
     # model = TD3('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 18.0657
 
     """ train, save and load model """
-    model.learn(total_timesteps=1500000)
+    model.learn(
+        total_timesteps=1500000
+    )  # train DDPG for 1500000 steps according to OpenAI Spinning Up's PyTorch benchmarks
+    # model.learn(total_timesteps=10000)  # all models except for DDPG
     model.save('Swimmer_v3_DDPG')
     # model = DDPG.load('Swimmer_v3_DDPG')
 
