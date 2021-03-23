@@ -3,9 +3,30 @@ Swimmer-v3 from OpenAI Gym
 """
 
 import gym
+import torch
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3 import A2C, DDPG, HER, PPO, SAC, TD3
 from stable_baselines3.common.env_util import make_vec_env
+
+
+def get_model_stable_baselines():
+    """ build RL model:
+    A2C, DDPG, HER, PPO, SAC, TD3
+    """
+    # model = A2C('MlpPolicy', env, verbose=1)  # avg reward over 100 consecutive episodes: 31.1302, 31.1832, 31.0867
+    model = DDPG(
+        'MlpPolicy', env, verbose=1, device=torch.device('cuda:2')
+    )  # avg reward over 10 consecutive episodes: 11.0541
+    # model = PPO('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 23.5533
+    # model = SAC('MlpPolicy', env, verbose=1)  # avg reward over 100 consecutive episodes: 27.1014, 28.3048, 28.9001
+    # model = TD3('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 18.0657
+
+    """ train, save and load model """
+    model.learn(total_timesteps=1500000)
+    model.save('Swimmer_v3_DDPG')
+    # model = DDPG.load('Swimmer_v3_DDPG')
+
+    return model
 
 
 if __name__ == '__main__':
@@ -21,21 +42,8 @@ if __name__ == '__main__':
     # print(env.action_space, env.action_space.low, env.action_space.high)
     # print(env.observation_space, env.observation_space.low, env.observation_space.high)
 
-    """ build RL model:
-    A2C, DDPG, HER, PPO, SAC, TD3
-    """
-    model = A2C('MlpPolicy', env, verbose=1)  # avg reward over 100 consecutive episodes: 31.1302, 31.1832, 31.0867
-    # model = DDPG('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 11.0541
-    # model = PPO('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 23.5533
-    # model = SAC('MlpPolicy', env, verbose=1)  # avg reward over 100 consecutive episodes: 27.1014, 28.3048, 28.9001
-    # model = TD3('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 18.0657
-
-    """ train, save and load model """
-    model.learn(total_timesteps=10000)
-    # model.save('Swimmer_v3_A2C')
-    # model = A2C.load('Swimmer_v3_A2C')
-    # model.save('Swimmer_v3_SAC')
-    # model = SAC.load('Swimmer_v3_SAC')
+    """ define, train, save and load model """
+    model = get_model_stable_baselines()
 
     """ test RL model
     - avg reward over 100 consecutive episodes
