@@ -26,8 +26,8 @@ def get_model_stable_baselines():
         total_timesteps=1500000
     )  # train DDPG for 1500000 steps according to OpenAI Spinning Up's PyTorch benchmarks
     # model.learn(total_timesteps=10000)  # all models except for DDPG
-    model.save('Swimmer_v3_DDPG')
-    # model = DDPG.load('Swimmer_v3_DDPG')
+    model.save('swimmer_gym_v3_ddpg')
+    # model = DDPG.load('swimmer_gym_v3_ddpg')
 
     return model
 

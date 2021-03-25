@@ -17,7 +17,7 @@ if __name__ == '__main__':
     - there's a relevant bug in gym==0.18.0, use 'pip install -e .' to install dev version instead
     - video will be named: based_path + '.mp4'
     """
-    rec = VideoRecorder(env, base_path='antbulletenv_v0', enabled=True)  # Create the video recorder
+    rec = VideoRecorder(env, base_path='ant_bullet_v0', enabled=True)  # Create the video recorder
 
     """ run and record """
     observation = env.reset()
