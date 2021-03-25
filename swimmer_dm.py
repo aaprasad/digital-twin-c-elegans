@@ -1,5 +1,5 @@
 """
-Swimmer from dm_control
+Swimmer with n_links from dm_control
 """
 
 import os
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # Setup video writer - mp4 at 30 fps
     frame = grabFrame(env)
     height, width, layers = frame.shape
-    video = cv2.VideoWriter('swimmerdomain.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
+    video = cv2.VideoWriter('swimmer_dm.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
     video.write(frame)
 
     # Step through an episode and print out reward, discount and observation.

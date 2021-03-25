@@ -1,5 +1,5 @@
 """
-Swimmer-v3-v0 is the same as Swimmer-v3 from OpenAI Gym
+Swimmer-Gym-v3-v0 is the same as Swimmer-v3 from OpenAI Gym
 - xml_file is configured to load local .xml file.
 - swimmer.xml is unedited from Gym.
 """
@@ -13,18 +13,18 @@ from gym.wrappers.monitoring.video_recorder import VideoRecorder
 if __name__ == '__main__':
     """ register and make env """
     register(
-        id='Swimmer-v3-v0',
-        entry_point='src.envs.mujoco.swimmer_v3_v0:SwimmerEnv',
+        id='Swimmer-Gym-v3-v0',
+        entry_point='src.envs.mujoco.swimmer_gym_v3_v0:SwimmerEnv',
         max_episode_steps=1000,  # an episode will end after 1000 steps or when the agent reaches end states.
         reward_threshold=360.0,  # if avg reward over 100 consecutive episodes >= 360.0, then it's solved!
     )
-    env = gym.make('Swimmer-v3-v0')
+    env = gym.make('Swimmer-Gym-v3-v0')
 
     """ record video
     - there's a relevant bug in gym==0.18.0, use 'pip install -e .' to install dev version instead
     - video will be named: based_path + '.mp4'
     """
-    rec = VideoRecorder(env, base_path='swimmer_v3_v0', enabled=True)  # Create the video recorder
+    rec = VideoRecorder(env, base_path='swimmer_gym_v3_v0', enabled=True)  # Create the video recorder
 
     """ run and record """
     observation = env.reset()
