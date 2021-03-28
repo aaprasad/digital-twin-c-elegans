@@ -4,12 +4,18 @@ Swimmer-v3 from OpenAI Gym
 
 import gym
 import torch
-from stable_baselines3.common.env_checker import check_env
-from stable_baselines3 import A2C, DDPG, HER, PPO, SAC, TD3
-from stable_baselines3.common.env_util import make_vec_env
 
 
-def get_model_stable_baselines():
+def by_stable_baselines3():
+    from stable_baselines3.common.env_checker import check_env
+    from stable_baselines3 import A2C, DDPG, HER, PPO, SAC, TD3
+    from stable_baselines3.common.env_util import make_vec_env
+
+    """ make and check env """
+    env = gym.make('Swimmer-v3')  # Swimmer-v2, Swimmer-v3 (fixed 1000 steps each episode)
+    # env = make_vec_env('Swimmer-v3', n_envs=4)  # Parallel environments
+    # check_env(env)
+
     """ build RL model:
     A2C, DDPG, HER, PPO, SAC, TD3
     """
@@ -29,24 +35,23 @@ def get_model_stable_baselines():
     model.save('swimmer_gym_v3_ddpg')
     # model = DDPG.load('swimmer_gym_v3_ddpg')
 
-    return model
+    return env, model
+
+
+def by_garage():
+    pass
 
 
 if __name__ == '__main__':
     """ use register() to add a new environment, starts with -v0 """
     # print(gym.envs.registry.all())
 
-    """ make and check env """
-    env = gym.make('Swimmer-v3')  # Swimmer-v2, Swimmer-v3 (fixed 1000 steps each episode)
-    # env = make_vec_env('Swimmer-v3', n_envs=4)  # Parallel environments
-    # check_env(env)
+    """ define, train, save and load model """
+    env, model = by_stable_baselines3()
 
     """ action and observation space """
     # print(env.action_space, env.action_space.low, env.action_space.high)
     # print(env.observation_space, env.observation_space.low, env.observation_space.high)
-
-    """ define, train, save and load model """
-    model = get_model_stable_baselines()
 
     """ test RL model
     - avg reward over 100 consecutive episodes
