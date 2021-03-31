@@ -172,7 +172,6 @@ def train_garage_tf(train: bool):
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
     def train_wrapper(ctxt=None, seed=1, batch_size=4000):
         set_seed(seed)
-        sess = tf.compat.v1.Session()
         with TFTrainer(ctxt) as trainer:
             env = GymEnv('Swimmer-v3')
             policy = GaussianMLPPolicy(env_spec=env.spec, hidden_sizes=(32, 32))
@@ -185,15 +184,15 @@ def train_garage_tf(train: bool):
             )
             trainer.setup(algo, env)
             trainer.train(n_epochs=40, batch_size=batch_size)
-            return env, trainer._algo.policy, sess
+            return env, trainer._algo.policy
 
     def load_wrapper():
         snapshotter = Snapshotter()
-        sess = tf.compat.v1.Session()
-        data = snapshotter.load(log_dir, itr='last')
+        with tf.compat.v1.Session():
+            data = snapshotter.load(log_dir, itr='last')
         env = data['env']
         policy = data['algo'].policy
-        return env, policy, sess
+        return env, policy
 
     if train is True:
         return train_wrapper()
@@ -203,9 +202,9 @@ def train_garage_tf(train: bool):
 
 def test_garage(framework: str, train: bool):
     if framework == 'torch':
-        env, policy, sess = train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
+        env, policy = train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
     elif framework == 'tf':
-        env, policy, sess = train_garage_tf(train=train)
+        env, policy = train_garage_tf(train=train)
     else:
         raise AssertionError
 
@@ -225,7 +224,6 @@ def test_garage(framework: str, train: bool):
         print('Episode {} reward: {}'.format(e, total_reward))
         total_reward_list.append(total_reward)
     env.close()
-    sess.close()
     print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
 
 
