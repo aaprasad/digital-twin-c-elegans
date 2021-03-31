@@ -86,7 +86,7 @@ def test_stable_baselines3(train: bool):
     print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
 
 
-def train_garage(train: bool, ctxt=None, seed=1):
+def train_garage(train: bool):
     """ Train TRPO with Swimmer-v3 environment.
     Args:
         ctxt (garage.experiment.ExperimentContext): The experiment
@@ -118,7 +118,7 @@ def train_garage(train: bool, ctxt=None, seed=1):
     save_dir = 'swimmer_gym_v3_trpo'
 
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
-    def train_wrapper():
+    def train_wrapper(ctxt=None, seed=1):
         # make env
         env = GymEnv('Swimmer-v3')
         # build RL model
