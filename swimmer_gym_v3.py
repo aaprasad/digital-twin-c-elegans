@@ -17,7 +17,6 @@ def test_random():
     # print(env.observation_space, env.observation_space.low, env.observation_space.high)
 
     # record video
-    os.makedirs('video', exist_ok=True)
     rec = VideoRecorder(env, base_path='video/swimmer_gym_v3', enabled=True)
 
     # run and record
@@ -56,7 +55,6 @@ def train_stable_baselines3(train: bool):
 
     """ train, save and load model """
     if train is True:
-        os.makedirs('checkpoint', exist_ok=True)
         model.learn(total_timesteps=1500000)  # DDPG: 1500000 (OpenAI Spinning Up's PyTorch benchmarks), others: 10000
         model.save('checkpoint/swimmer_gym_v3_ddpg')
     else:
@@ -116,7 +114,6 @@ def train_garage(train: bool):
     date = time.strftime('%Y%m%d-%H%M%S', time.localtime(timestamp))
     log_dir = os.path.join('log', date)
     # set save_dir
-    os.makedirs('checkpoint', exist_ok=True)
     save_dir = 'checkpoint/swimmer_gym_v3_trpo'
 
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
@@ -182,6 +179,9 @@ def test_garage(train: bool):
 
 
 if __name__ == '__main__':
+    os.makedirs('checkpoint', exist_ok=True)
+    os.makedirs('video', exist_ok=True)
+
     """ use register() to add a new environment, starts with -v0 """
     # print(gym.envs.registry.all())
 
