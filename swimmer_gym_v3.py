@@ -117,7 +117,7 @@ def train_garage(train: bool):
     # set save_dir
     save_dir = 'checkpoint/swimmer_gym_v3_trpo'
 
-    @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
+    @wrap_experiment(log_dir=log_dir, snapshot_mode='all')  # snapshot_mode: 'all', 'last'
     def train_wrapper(ctxt=None, seed=1):
         # set seed
         set_seed(seed)
@@ -139,14 +139,12 @@ def train_garage(train: bool):
         trainer.setup(algo, env)
         trainer.train(n_epochs=40, batch_size=4096)
 
-        # save model
-        trainer.save(epoch=100)
         return env, trainer
 
     def load_wrapper():
         # Load the env and policy from snap-shot
         snapshotter = Snapshotter()
-        data = snapshotter.load(save_dir)
+        data = snapshotter.load(save_dir, itr='last')  # itr: iteration to load, an integer, 'last' or 'first'
         env = data['env']
         policy = data['algo'].policy
         return env, policy
