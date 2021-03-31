@@ -201,6 +201,8 @@ def train_garage_tf(train: bool):
 
 
 def test_garage(framework: str, train: bool):
+    import tensorflow as tf
+
     if framework == 'torch':
         env, policy = train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
     elif framework == 'tf':
