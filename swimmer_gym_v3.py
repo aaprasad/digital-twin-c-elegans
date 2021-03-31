@@ -220,6 +220,12 @@ def run_episodes(env, policy):
 
 
 def test_garage(framework: str, train: bool):
+    """ Benchmarking Deep Reinforcement Learning for Continuous Control
+    Benchmarks:
+        random: -1.7 +- 0.1
+        TNPG: 96.0 +- 0.2
+        TRPO: 96.0 +- 0.2
+    """
     if framework == 'torch':
         train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
     elif framework == 'tf':
