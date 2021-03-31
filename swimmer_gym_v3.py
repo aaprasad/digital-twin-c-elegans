@@ -189,9 +189,9 @@ def train_garage_tf(train: bool):
         snapshotter = Snapshotter()
         with tf.compat.v1.Session():
             data = snapshotter.load(log_dir, itr='last')
-        env = data['env']
-        policy = data['algo'].policy
-        run_episodes(env=env, policy=policy)
+            env = data['env']
+            policy = data['algo'].policy
+            run_episodes(env=env, policy=policy)
 
     if train is True:
         train_wrapper()
