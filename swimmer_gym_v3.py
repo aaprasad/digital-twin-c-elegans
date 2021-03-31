@@ -155,7 +155,7 @@ def test_garage(train: bool):
     total_reward_list = []
     for e in range(100):
         print(e)
-        observation = env.reset()
+        observation, _ = env.reset()
         total_reward = 0.
         for i in range(1000):  # register: max_episode_steps=1000
             # env.render()
@@ -186,5 +186,5 @@ if __name__ == '__main__':
     # test_stable_baselines3(train=False)
 
     # run RL algos from garage
-    test_garage(train=True)
-    # test_garage(train=False)
+    # test_garage(train=True)
+    test_garage(train=False)
