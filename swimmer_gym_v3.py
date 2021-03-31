@@ -108,8 +108,6 @@ def train_garage(train: bool):
     import os
     import time
 
-    # set seed
-    set_seed(seed)
     # set log_dir
     timestamp = time.time()
     date = time.strftime('%Y%m%d-%H%M%S', time.localtime(timestamp))
@@ -119,6 +117,8 @@ def train_garage(train: bool):
 
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
     def train_wrapper(ctxt=None, seed=1):
+        # set seed
+        set_seed(seed)
         # make env
         env = GymEnv('Swimmer-v3')
         # build RL model
@@ -182,12 +182,12 @@ if __name__ == '__main__':
     # print(gym.envs.registry.all())
 
     # take random actions and record video
-    test_random()
+    # test_random()
 
     # run RL algos from stable_baselines3
     # test_stable_baselines3(train=True)
     # test_stable_baselines3(train=False)
 
     # run RL algos from garage
-    # test_garage(train=True)
+    test_garage(train=True)
     # test_garage(train=False)
