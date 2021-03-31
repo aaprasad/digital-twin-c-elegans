@@ -3,6 +3,7 @@ AntBulletEnv-v0 from PyBullet
 """
 
 import gym
+import os
 # import pybullet
 import pybullet_envs
 from gym.wrappers.monitoring.video_recorder import VideoRecorder
@@ -17,7 +18,8 @@ if __name__ == '__main__':
     - there's a relevant bug in gym==0.18.0, use 'pip install -e .' to install dev version instead
     - video will be named: based_path + '.mp4'
     """
-    rec = VideoRecorder(env, base_path='ant_bullet_v0', enabled=True)  # Create the video recorder
+    os.makedirs('video', exist_ok=True)
+    rec = VideoRecorder(env, base_path='video/ant_bullet_v0', enabled=True)  # Create the video recorder
 
     """ run and record """
     observation = env.reset()
