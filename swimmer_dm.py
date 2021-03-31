@@ -65,10 +65,10 @@ if __name__ == '__main__':
     # take random action and record video
     # test_random()
 
-    # run RL algos from garage with torch
+    # run RL algos from garage with torch, 100 episodes mean reward: 180.71739610587625
     test_garage(framework='torch', train=True, log_dir='log/swimmer_dm_trpo_torch')
     # test_garage(framework='torch', train=False, log_dir='log/swimmer_dm_trpo_torch')
 
-    # run RL algos from garage with tf
+    # run RL algos from garage with tf, 100 episodes mean reward: 119.2544067832367
     # test_garage(framework='tf', train=True, log_dir='log/swimmer_dm_trpo_tf')
     # test_garage(framework='tf', train=False, log_dir='log/swimmer_dm_trpo_tf')
