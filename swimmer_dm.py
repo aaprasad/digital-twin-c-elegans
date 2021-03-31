@@ -33,7 +33,6 @@ def test_random():
     # Setup video writer - mp4 at 30 fps
     frame = grabFrame(env)
     height, width, layers = frame.shape
-    os.makedirs('video', exist_ok=True)
     video = cv2.VideoWriter('video/swimmer_dm.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
     video.write(frame)
 
@@ -64,6 +63,8 @@ def test_garage():
 
 
 if __name__ == '__main__':
+    os.makedirs('video', exist_ok=True)
+
     # check out the task set
     # benchmarking_task_set()
 
