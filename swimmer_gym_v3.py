@@ -159,7 +159,7 @@ def test_garage(train: bool):
         total_reward = 0.
         for i in range(1000):  # register: max_episode_steps=1000
             # env.render()
-            action = policy.get_action(observation)
+            action, _ = policy.get_action(observation)
             observation, reward, done, info = env.step(action)
             total_reward += reward
             if done:
