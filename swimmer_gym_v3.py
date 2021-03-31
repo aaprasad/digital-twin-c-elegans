@@ -161,9 +161,9 @@ def test_garage(train: bool):
         for i in range(1000):  # register: max_episode_steps=1000
             # env.render()
             action, _ = policy.get_action(observation)
-            observation, reward, done, info = env.step(action)
-            total_reward += reward
-            if done:
+            env_step = env.step(action)
+            total_reward += env_step.reward
+            if env_step.terminal is True:
                 print("Episode finished after {} steps".format(i + 1))
                 break
         print('Episode {} reward: {}'.format(e, total_reward))
