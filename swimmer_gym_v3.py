@@ -4,9 +4,36 @@ Swimmer-v3 from OpenAI Gym
 
 import gym
 import torch
+from gym.wrappers.monitoring.video_recorder import VideoRecorder
 
 
-def by_stable_baselines3():
+def test_random():
+    # make env
+    env = gym.make('Swimmer-v3')
+
+    # action and observation space
+    # print(env.action_space, env.action_space.low, env.action_space.high)
+    # print(env.observation_space, env.observation_space.low, env.observation_space.high)
+
+    # record video
+    rec = VideoRecorder(env, base_path='swimmer_gym_v3', enabled=True)
+
+    # run and record
+    observation = env.reset()
+    rec.capture_frame()
+    for i in range(1000):
+        # env.render()
+        action = env.action_space.sample()
+        observation, reward, done, info = env.step(action)
+        rec.capture_frame()
+        if done:
+            print("Episode finished after {} steps".format(i + 1))
+            break
+    rec.close()
+    env.close()
+
+
+def train_stable_baselines3(train: bool):
     from stable_baselines3.common.env_checker import check_env
     from stable_baselines3 import A2C, DDPG, HER, PPO, SAC, TD3
     from stable_baselines3.common.env_util import make_vec_env
@@ -26,45 +53,30 @@ def by_stable_baselines3():
     # model = TD3('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 18.0657
 
     """ train, save and load model """
-    model.learn(total_timesteps=1500000)  # DDPG: 1500000 (OpenAI Spinning Up's PyTorch benchmarks), others: 10000
-    model.save('swimmer_gym_v3_ddpg')
-    # model = DDPG.load('swimmer_gym_v3_ddpg')
+    if train is True:
+        model.learn(total_timesteps=1500000)  # DDPG: 1500000 (OpenAI Spinning Up's PyTorch benchmarks), others: 10000
+        model.save('swimmer_gym_v3_ddpg')
+    else:
+        model = DDPG.load('swimmer_gym_v3_ddpg')
 
     return env, model
 
 
-def by_garage():
-    pass
+def test_stable_baselines3(train: bool):
+    # define env, train, save and load model
+    env, model = train_stable_baselines3(train=train)
 
-
-if __name__ == '__main__':
-    """ use register() to add a new environment, starts with -v0 """
-    # print(gym.envs.registry.all())
-
-    """ define, train, save and load model """
-    env, model = by_stable_baselines3()
-
-    """ action and observation space """
-    # print(env.action_space, env.action_space.low, env.action_space.high)
-    # print(env.observation_space, env.observation_space.low, env.observation_space.high)
-
-    """ test RL model
-    - avg reward over 100 consecutive episodes
-    """
+    # test RL model: avg reward over 100 consecutive episodes
     total_reward_list = []
     for e in range(100):
         print(e)
         observation = env.reset()
-        # print(observation)
         total_reward = 0.
         for i in range(1000):  # register: max_episode_steps=1000
-            # env.render()  # show the current frame of visualization
-            # action = env.action_space.sample()  # sample a random action
+            # env.render()
             action, state = model.predict(observation=observation)
             observation, reward, done, info = env.step(action)
             total_reward += reward
-            # print(env.sim.data.qpos, observation)
-            # print(observation)
             if done:  # if done.any():
                 print("Episode finished after {} steps".format(i + 1))
                 break
@@ -72,3 +84,104 @@ if __name__ == '__main__':
         total_reward_list.append(total_reward)
     env.close()
     print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
+
+
+def train_garage(train: bool, ctxt=None, seed=1):
+    """ Train TNPG, TRPO with Swimmer-v3 environment.
+    Args:
+        ctxt (garage.experiment.ExperimentContext): The experiment
+            configuration used by Trainer to create the snapshotter.
+        seed (int): Used to seed the random number generator to produce
+            determinism.
+    Reference:
+        https://github.com/rlworkgroup/garage/blob/master/src/garage/examples/torch/trpo_pendulum.py
+    """
+    from garage import wrap_experiment
+    from garage.envs import GymEnv
+    from garage.experiment import Snapshotter
+    from garage.experiment.deterministic import set_seed
+    from garage.sampler import LocalSampler
+    from garage.torch.algos import TRPO
+    from garage.torch.policies import GaussianMLPPolicy
+    from garage.torch.value_functions import GaussianMLPValueFunction
+    from garage.trainer import Trainer
+    import os
+    import time
+
+    # set seed
+    set_seed(seed)
+    # set log_dir
+    timestamp = time.time()
+    date = time.strftime('%Y%m%d-%H%M%S', time.localtime(timestamp))
+    log_dir = os.path.join('log', date)
+    # set save_dir
+    save_dir = 'swimmer_gym_v3_trpo'
+
+    @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
+    def train_trpo_wrapper():
+        # make env
+        env = GymEnv('Swimmer-v3')
+        # build RL model
+        trainer = Trainer(ctxt)
+        policy = GaussianMLPPolicy(
+            env.spec, hidden_sizes=[32, 32], hidden_nonlinearity=torch.tanh, output_nonlinearity=None
+        )
+        value_function = GaussianMLPValueFunction(
+            env_spec=env.spec, hidden_sizes=(32, 32), hidden_nonlinearity=torch.tanh, output_nonlinearity=None
+        )
+        sampler = LocalSampler(agents=policy, envs=env, max_episode_length=env.spec.max_episode_length)
+        algo = TRPO(
+            env_spec=env.spec, policy=policy, value_function=value_function, sampler=sampler, discount=0.99,
+            center_adv=False
+        )
+        trainer.setup(algo, env)
+        trainer.train(n_epochs=100, batch_size=1024)
+
+        # save model
+        trainer.save(save_dir)
+        return env, trainer
+
+    def load_trpo_wrapper():
+        # Load the env and policy from snap-shot
+        snapshotter = Snapshotter()
+        data = snapshotter.load(save_dir)
+        env = data['env']
+        policy = data['algo'].policy
+        return env, policy
+
+    if train is True:
+        return train_trpo_wrapper()
+    else:
+        return load_trpo_wrapper()
+
+
+def test_garage(train: bool):
+    env, policy = train_garage(train=train)
+
+    total_reward_list = []
+    for e in range(100):
+        print(e)
+        observation = env.reset()
+        total_reward = 0.
+        for i in range(1000):  # register: max_episode_steps=1000
+            # env.render()
+            action = policy.get_action(observation)
+            observation, reward, done, info = env.step(action)
+            total_reward += reward
+            if done:
+                print("Episode finished after {} steps".format(i + 1))
+                break
+        print('Episode {} reward: {}'.format(e, total_reward))
+        total_reward_list.append(total_reward)
+    env.close()
+    print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
+
+
+if __name__ == '__main__':
+    """ use register() to add a new environment, starts with -v0 """
+    # print(gym.envs.registry.all())
+
+    # run RL algorithms
+    test_random()
+    # test_stable_baselines3(train=True)
+    # test_garage(train=True)
