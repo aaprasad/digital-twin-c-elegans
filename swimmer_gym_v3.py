@@ -164,6 +164,7 @@ def train_garage_tf(train: bool):
     from garage.tf.algos import TRPO
     from garage.tf.policies import GaussianMLPPolicy
     from garage.trainer import TFTrainer
+    import tensorflow as tf
 
     # set log_dir
     log_dir = 'log/swimmer_gym_v3_trpo_tf'
