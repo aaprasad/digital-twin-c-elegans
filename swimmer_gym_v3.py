@@ -87,16 +87,13 @@ def test_stable_baselines3(train: bool):
     print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
 
 
-def train_garage(train: bool):
+def train_garage_torch(train: bool):
     """ Train TRPO with Swimmer-v3 environment.
     Args:
-        ctxt (garage.experiment.ExperimentContext): The experiment
-            configuration used by Trainer to create the snapshotter.
-        seed (int): Used to seed the random number generator to produce
-            determinism.
+        ctxt (garage.experiment.ExperimentContext): The experiment configuration used by Trainer to create the snapshotter.
+        seed (int): Used to seed the random number generator to produce determinism.
     Reference:
         https://github.com/rlworkgroup/garage/blob/master/src/garage/examples/torch/trpo_pendulum.py
-        https://github.com/rlworkgroup/garage/blob/master/src/garage/examples/tf/trpo_swimmer.py
     """
     from garage import wrap_experiment
     from garage.envs import GymEnv
@@ -109,7 +106,7 @@ def train_garage(train: bool):
     from garage.trainer import Trainer
 
     # set log_dir
-    log_dir = 'log/swimmer_gym_v3_trpo'
+    log_dir = 'log/swimmer_gym_v3_trpo_torch'
 
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')  # snapshot_mode: 'all', 'last'
     def train_wrapper(ctxt=None, seed=1):
@@ -131,9 +128,9 @@ def train_garage(train: bool):
             center_adv=False
         )
         trainer.setup(algo, env)
-        trainer.train(n_epochs=40, batch_size=4096)
+        trainer.train(n_epochs=100, batch_size=1024)
 
-        return env, trainer
+        return env, trainer._algo.policy
 
     def load_wrapper():
         # Load the env and policy from snap-shot
@@ -149,8 +146,13 @@ def train_garage(train: bool):
         return load_wrapper()
 
 
-def test_garage(train: bool):
-    env, policy = train_garage(train=train)
+def test_garage(framework: str, train: bool):
+    if framework == 'torch':
+        env, policy = train_garage_torch(train=train)
+    elif framework == 'tf':
+        env, policy = train_garage_tf(train=train)
+    else:
+        raise AssertionError
 
     total_reward_list = []
     for e in range(100):
@@ -185,6 +187,10 @@ if __name__ == '__main__':
     # test_stable_baselines3(train=True)
     # test_stable_baselines3(train=False)
 
-    # run RL algos from garage
-    # test_garage(train=True)
-    test_garage(train=False)
+    # run RL algos from garage with torch
+    test_garage(framework='torch', train=True)
+    # test_garage(framework='torch', train=False)
+
+    # run RL algos from garage with tf
+    # test_garage(framework='tf', train=True)
+    # test_garage(framework='tf', train=False)
