@@ -96,6 +96,7 @@ def train_garage(train: bool):
             determinism.
     Reference:
         https://github.com/rlworkgroup/garage/blob/master/src/garage/examples/torch/trpo_pendulum.py
+        https://github.com/rlworkgroup/garage/blob/master/src/garage/examples/tf/trpo_swimmer.py
     """
     from garage import wrap_experiment
     from garage.envs import GymEnv
@@ -136,10 +137,10 @@ def train_garage(train: bool):
             center_adv=False
         )
         trainer.setup(algo, env)
-        trainer.train(n_epochs=100, batch_size=1024)
+        trainer.train(n_epochs=40, batch_size=4096)
 
         # save model
-        trainer.save(save_dir)
+        trainer.save(epoch=100)
         return env, trainer
 
     def load_wrapper():
