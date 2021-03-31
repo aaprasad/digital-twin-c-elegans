@@ -26,15 +26,15 @@ def benchmarking_task_set():
         env = suite.load(domain_name, task_name)
 
 
-if __name__ == '__main__':
-    # Load one task:
+def test_random():
     # env = suite.load(domain_name='swimmer', task_name='swimmer6', visualize_reward=True)  # task: swimmer6, swimmer15
-    env = suite.swimmer.swimmer(n_links=3)  # n_links=3, time_limit=_DEFAULT_TIME_LIMIT, random=None, environment_kwargs=None
+    env = suite.swimmer.swimmer(n_links=3, random=None, environment_kwargs=None)  # time_limit=_DEFAULT_TIME_LIMIT
 
     # Setup video writer - mp4 at 30 fps
     frame = grabFrame(env)
     height, width, layers = frame.shape
-    video = cv2.VideoWriter('swimmer_dm.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
+    os.makedirs('video', exist_ok=True)
+    video = cv2.VideoWriter('video/swimmer_dm.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
     video.write(frame)
 
     # Step through an episode and print out reward, discount and observation.
@@ -45,6 +45,30 @@ if __name__ == '__main__':
         time_step = env.step(action)
         # print(time_step.reward, time_step.discount, time_step.observation)
         video.write(grabFrame(env))
-        
+
     # End render to video file
     video.release()
+
+
+def train_garage():
+    from garage.envs.dm_control import DMControlEnv
+
+    """ make env """
+    env = DMControlEnv.from_suite(domain_name='swimmer', task_name='swimmer6')
+
+    return env, model
+
+
+def test_garage():
+    env, model = train_garage()
+
+
+if __name__ == '__main__':
+    # check out the task set
+    # benchmarking_task_set()
+
+    # take random action and record video
+    test_random()
+
+    # run RL algos from garage
+    # test_garage()
