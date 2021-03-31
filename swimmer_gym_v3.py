@@ -87,7 +87,7 @@ def test_stable_baselines3(train: bool):
 
 
 def train_garage(train: bool, ctxt=None, seed=1):
-    """ Train TNPG, TRPO with Swimmer-v3 environment.
+    """ Train TRPO with Swimmer-v3 environment.
     Args:
         ctxt (garage.experiment.ExperimentContext): The experiment
             configuration used by Trainer to create the snapshotter.
@@ -118,7 +118,7 @@ def train_garage(train: bool, ctxt=None, seed=1):
     save_dir = 'swimmer_gym_v3_trpo'
 
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
-    def train_trpo_wrapper():
+    def train_wrapper():
         # make env
         env = GymEnv('Swimmer-v3')
         # build RL model
@@ -141,7 +141,7 @@ def train_garage(train: bool, ctxt=None, seed=1):
         trainer.save(save_dir)
         return env, trainer
 
-    def load_trpo_wrapper():
+    def load_wrapper():
         # Load the env and policy from snap-shot
         snapshotter = Snapshotter()
         data = snapshotter.load(save_dir)
@@ -150,9 +150,9 @@ def train_garage(train: bool, ctxt=None, seed=1):
         return env, policy
 
     if train is True:
-        return train_trpo_wrapper()
+        return train_wrapper()
     else:
-        return load_trpo_wrapper()
+        return load_wrapper()
 
 
 def test_garage(train: bool):
@@ -181,7 +181,13 @@ if __name__ == '__main__':
     """ use register() to add a new environment, starts with -v0 """
     # print(gym.envs.registry.all())
 
-    # run RL algorithms
+    # take random actions and record video
     test_random()
+
+    # run RL algos from stable_baselines3
     # test_stable_baselines3(train=True)
+    # test_stable_baselines3(train=False)
+
+    # run RL algos from garage
     # test_garage(train=True)
+    # test_garage(train=False)
