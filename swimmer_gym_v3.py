@@ -207,23 +207,24 @@ def test_garage(framework: str, train: bool):
     else:
         raise AssertionError
 
-    total_reward_list = []
-    for e in range(100):
-        observation, _ = env.reset()
-        policy.reset()
-        total_reward = 0.
-        for i in range(1000):  # register: max_episode_steps=1000
-            # env.render()
-            action, _ = policy.get_action(observation)
-            env_step = env.step(action)
-            total_reward += env_step.reward
-            if env_step.terminal is True:
-                print("Episode finished after {} steps".format(i + 1))
-                break
-        print('Episode {} reward: {}'.format(e, total_reward))
-        total_reward_list.append(total_reward)
-    env.close()
-    print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
+    with tf.Session() as sess:
+        total_reward_list = []
+        for e in range(100):
+            observation, _ = env.reset()
+            policy.reset()
+            total_reward = 0.
+            for i in range(1000):  # register: max_episode_steps=1000
+                # env.render()
+                action, _ = policy.get_action(observation)
+                env_step = env.step(action)
+                total_reward += env_step.reward
+                if env_step.terminal is True:
+                    print("Episode finished after {} steps".format(i + 1))
+                    break
+            print('Episode {} reward: {}'.format(e, total_reward))
+            total_reward_list.append(total_reward)
+        env.close()
+        print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
 
 
 if __name__ == '__main__':
@@ -245,5 +246,5 @@ if __name__ == '__main__':
     # test_garage(framework='torch', train=False)
 
     # run RL algos from garage with tf
-    test_garage(framework='tf', train=True)
-    # test_garage(framework='tf', train=False)
+    # test_garage(framework='tf', train=True)
+    test_garage(framework='tf', train=False)
