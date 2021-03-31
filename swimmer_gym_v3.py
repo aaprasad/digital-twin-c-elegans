@@ -114,8 +114,6 @@ def train_garage(train: bool):
     timestamp = time.time()
     date = time.strftime('%Y%m%d-%H%M%S', time.localtime(timestamp))
     log_dir = os.path.join('log', date)
-    # set save_dir
-    save_dir = 'checkpoint/swimmer_gym_v3_trpo'
 
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')  # snapshot_mode: 'all', 'last'
     def train_wrapper(ctxt=None, seed=1):
@@ -144,7 +142,7 @@ def train_garage(train: bool):
     def load_wrapper():
         # Load the env and policy from snap-shot
         snapshotter = Snapshotter()
-        data = snapshotter.load(save_dir, itr='last')  # itr: iteration to load, an integer, 'last' or 'first'
+        data = snapshotter.load(log_dir, itr='last')  # itr: iteration to load, an integer, 'last' or 'first'
         env = data['env']
         policy = data['algo'].policy
         return env, policy
