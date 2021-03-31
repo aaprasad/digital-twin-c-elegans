@@ -156,6 +156,7 @@ def test_garage(train: bool):
     for e in range(100):
         print(e)
         observation, _ = env.reset()
+        policy.reset()
         total_reward = 0.
         for i in range(1000):  # register: max_episode_steps=1000
             # env.render()
