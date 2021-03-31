@@ -154,7 +154,6 @@ def test_garage(train: bool):
 
     total_reward_list = []
     for e in range(100):
-        print(e)
         observation, _ = env.reset()
         policy.reset()
         total_reward = 0.
