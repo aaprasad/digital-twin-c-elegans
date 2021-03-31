@@ -107,13 +107,9 @@ def train_garage(train: bool):
     from garage.torch.policies import GaussianMLPPolicy
     from garage.torch.value_functions import GaussianMLPValueFunction
     from garage.trainer import Trainer
-    import os
-    import time
 
     # set log_dir
-    timestamp = time.time()
-    date = time.strftime('%Y%m%d-%H%M%S', time.localtime(timestamp))
-    log_dir = os.path.join('log', date)
+    log_dir = 'log/swimmer_gym_v3_trpo'
 
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')  # snapshot_mode: 'all', 'last'
     def train_wrapper(ctxt=None, seed=1):
