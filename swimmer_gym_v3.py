@@ -210,7 +210,7 @@ def test_garage(framework: str, train: bool):
     else:
         raise AssertionError
 
-    with tf.Session() as sess:
+    with tf.compat.v1.Session():
         total_reward_list = []
         for e in range(100):
             observation, _ = env.reset()
