@@ -1,5 +1,8 @@
 .idea/
 __pycache__/
+# trainning logs
 log/
+# model checkpoints
 checkpoint/
+# video recordings
 video/
