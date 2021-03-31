@@ -172,6 +172,7 @@ def train_garage_tf(train: bool):
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
     def train_wrapper(ctxt=None, seed=1, batch_size=4000):
         set_seed(seed)
+        sess = tf.compat.v1.Session()
         with TFTrainer(ctxt) as trainer:
             env = GymEnv('Swimmer-v3')
             policy = GaussianMLPPolicy(env_spec=env.spec, hidden_sizes=(32, 32))
@@ -184,15 +185,15 @@ def train_garage_tf(train: bool):
             )
             trainer.setup(algo, env)
             trainer.train(n_epochs=40, batch_size=batch_size)
-            return env, trainer._algo.policy
+            return env, trainer._algo.policy, sess
 
     def load_wrapper():
         snapshotter = Snapshotter()
-        with tf.compat.v1.Session():
-            data = snapshotter.load(log_dir, itr='last')
+        sess = tf.compat.v1.Session()
+        data = snapshotter.load(log_dir, itr='last')
         env = data['env']
         policy = data['algo'].policy
-        return env, policy
+        return env, policy, sess
 
     if train is True:
         return train_wrapper()
@@ -201,33 +202,31 @@ def train_garage_tf(train: bool):
 
 
 def test_garage(framework: str, train: bool):
-    import tensorflow as tf
-
     if framework == 'torch':
-        env, policy = train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
+        env, policy, sess = train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
     elif framework == 'tf':
-        env, policy = train_garage_tf(train=train)
+        env, policy, sess = train_garage_tf(train=train)
     else:
         raise AssertionError
 
-    with tf.compat.v1.Session():
-        total_reward_list = []
-        for e in range(100):
-            observation, _ = env.reset()
-            policy.reset()
-            total_reward = 0.
-            for i in range(1000):  # register: max_episode_steps=1000
-                # env.render()
-                action, _ = policy.get_action(observation)
-                env_step = env.step(action)
-                total_reward += env_step.reward
-                if env_step.terminal is True:
-                    print("Episode finished after {} steps".format(i + 1))
-                    break
-            print('Episode {} reward: {}'.format(e, total_reward))
-            total_reward_list.append(total_reward)
-        env.close()
-        print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
+    total_reward_list = []
+    for e in range(100):
+        observation, _ = env.reset()
+        policy.reset()
+        total_reward = 0.
+        for i in range(1000):  # register: max_episode_steps=1000
+            # env.render()
+            action, _ = policy.get_action(observation)
+            env_step = env.step(action)
+            total_reward += env_step.reward
+            if env_step.terminal is True:
+                print("Episode finished after {} steps".format(i + 1))
+                break
+        print('Episode {} reward: {}'.format(e, total_reward))
+        total_reward_list.append(total_reward)
+    env.close()
+    sess.close()
+    print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
 
 
 if __name__ == '__main__':
