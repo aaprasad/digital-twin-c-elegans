@@ -146,9 +146,62 @@ def train_garage_torch(train: bool):
         return load_wrapper()
 
 
+def train_garage_tf(train: bool):
+    """ Train TRPO with Swimmer-v3 environment.
+    Args:
+        ctxt (garage.experiment.ExperimentContext): The experiment configuration used by Trainer to create the snapshotter.
+        seed (int): Used to seed the random number generator to produce determinism.
+        batch_size (int): Number of timesteps to use in each training step.
+    Reference:
+        https://github.com/rlworkgroup/garage/blob/master/src/garage/examples/tf/trpo_swimmer.py
+    """
+    from garage import wrap_experiment
+    from garage.envs import GymEnv
+    from garage.experiment import Snapshotter
+    from garage.experiment.deterministic import set_seed
+    from garage.np.baselines import LinearFeatureBaseline
+    from garage.sampler import RaySampler
+    from garage.tf.algos import TRPO
+    from garage.tf.policies import GaussianMLPPolicy
+    from garage.trainer import TFTrainer
+
+    # set log_dir
+    log_dir = 'log/swimmer_gym_v3_trpo_tf'
+
+    @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
+    def train_wrapper(ctxt=None, seed=1, batch_size=4000):
+        set_seed(seed)
+        with TFTrainer(ctxt) as trainer:
+            env = GymEnv('Swimmer-v3')
+            policy = GaussianMLPPolicy(env_spec=env.spec, hidden_sizes=(32, 32))
+            baseline = LinearFeatureBaseline(env_spec=env.spec)
+            sampler = RaySampler(
+                agents=policy, envs=env, max_episode_length=env.spec.max_episode_length, is_tf_worker=True
+            )
+            algo = TRPO(
+                env_spec=env.spec, policy=policy, baseline=baseline, sampler=sampler, discount=0.99, max_kl_step=0.01
+            )
+            trainer.setup(algo, env)
+            trainer.train(n_epochs=40, batch_size=batch_size)
+            return env, trainer._algo.policy
+
+    def load_wrapper():
+        snapshotter = Snapshotter()
+        with tf.compat.v1.Session():
+            data = snapshotter.load(log_dir, itr='last')
+        env = data['env']
+        policy = data['algo'].policy
+        return env, policy
+
+    if train is True:
+        return train_wrapper()
+    else:
+        return load_wrapper()
+
+
 def test_garage(framework: str, train: bool):
     if framework == 'torch':
-        env, policy = train_garage_torch(train=train)
+        env, policy = train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
     elif framework == 'tf':
         env, policy = train_garage_tf(train=train)
     else:
@@ -188,9 +241,9 @@ if __name__ == '__main__':
     # test_stable_baselines3(train=False)
 
     # run RL algos from garage with torch
-    test_garage(framework='torch', train=True)
+    # test_garage(framework='torch', train=True)
     # test_garage(framework='torch', train=False)
 
     # run RL algos from garage with tf
-    # test_garage(framework='tf', train=True)
+    test_garage(framework='tf', train=True)
     # test_garage(framework='tf', train=False)
