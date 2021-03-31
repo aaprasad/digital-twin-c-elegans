@@ -129,8 +129,7 @@ def train_garage_torch(train: bool):
         )
         trainer.setup(algo, env)
         trainer.train(n_epochs=100, batch_size=1024)
-
-        return env, trainer._algo.policy
+        run_episodes(env=env, policy=trainer._algo.policy)
 
     def load_wrapper():
         # Load the env and policy from snap-shot
@@ -138,12 +137,12 @@ def train_garage_torch(train: bool):
         data = snapshotter.load(log_dir, itr='last')  # itr: iteration to load, an integer, 'last' or 'first'
         env = data['env']
         policy = data['algo'].policy
-        return env, policy
+        run_episodes(env=env, policy=policy)
 
     if train is True:
-        return train_wrapper()
+        train_wrapper()
     else:
-        return load_wrapper()
+        load_wrapper()
 
 
 def train_garage_tf(train: bool):
@@ -184,7 +183,7 @@ def train_garage_tf(train: bool):
             )
             trainer.setup(algo, env)
             trainer.train(n_epochs=40, batch_size=batch_size)
-            return env, trainer._algo.policy
+            run_episodes(env=env, policy=trainer._algo.policy)
 
     def load_wrapper():
         snapshotter = Snapshotter()
@@ -192,22 +191,15 @@ def train_garage_tf(train: bool):
             data = snapshotter.load(log_dir, itr='last')
         env = data['env']
         policy = data['algo'].policy
-        return env, policy
+        run_episodes(env=env, policy=policy)
 
     if train is True:
-        return train_wrapper()
+        train_wrapper()
     else:
-        return load_wrapper()
+        load_wrapper()
 
 
-def test_garage(framework: str, train: bool):
-    if framework == 'torch':
-        env, policy = train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
-    elif framework == 'tf':
-        env, policy = train_garage_tf(train=train)
-    else:
-        raise AssertionError
-
+def run_episodes(env, policy):
     total_reward_list = []
     for e in range(100):
         observation, _ = env.reset()
@@ -225,6 +217,15 @@ def test_garage(framework: str, train: bool):
         total_reward_list.append(total_reward)
     env.close()
     print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
+
+
+def test_garage(framework: str, train: bool):
+    if framework == 'torch':
+        train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
+    elif framework == 'tf':
+        train_garage_tf(train=train)
+    else:
+        raise AssertionError
 
 
 if __name__ == '__main__':
