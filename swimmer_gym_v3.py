@@ -87,7 +87,7 @@ def test_stable_baselines3(train: bool):
     print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
 
 
-def train_garage_torch(train: bool):
+def train_garage_torch(train: bool, log_dir: str, init_env):
     """ Train TRPO with Swimmer-v3 environment.
     Args:
         ctxt (garage.experiment.ExperimentContext): The experiment configuration used by Trainer to create the snapshotter.
@@ -96,7 +96,6 @@ def train_garage_torch(train: bool):
         https://github.com/rlworkgroup/garage/blob/master/src/garage/examples/torch/trpo_pendulum.py
     """
     from garage import wrap_experiment
-    from garage.envs import GymEnv
     from garage.experiment import Snapshotter
     from garage.experiment.deterministic import set_seed
     from garage.sampler import LocalSampler
@@ -105,15 +104,12 @@ def train_garage_torch(train: bool):
     from garage.torch.value_functions import GaussianMLPValueFunction
     from garage.trainer import Trainer
 
-    # set log_dir
-    log_dir = 'log/swimmer_gym_v3_trpo_torch'
-
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')  # snapshot_mode: 'all', 'last'
     def train_wrapper(ctxt=None, seed=1):
         # set seed
         set_seed(seed)
         # make env
-        env = GymEnv('Swimmer-v3')
+        env = init_env
         # build RL model
         trainer = Trainer(ctxt)
         policy = GaussianMLPPolicy(
@@ -145,7 +141,7 @@ def train_garage_torch(train: bool):
         load_wrapper()
 
 
-def train_garage_tf(train: bool):
+def train_garage_tf(train: bool, log_dir: str, init_env):
     """ Train TRPO with Swimmer-v3 environment.
     Args:
         ctxt (garage.experiment.ExperimentContext): The experiment configuration used by Trainer to create the snapshotter.
@@ -155,7 +151,6 @@ def train_garage_tf(train: bool):
         https://github.com/rlworkgroup/garage/blob/master/src/garage/examples/tf/trpo_swimmer.py
     """
     from garage import wrap_experiment
-    from garage.envs import GymEnv
     from garage.experiment import Snapshotter
     from garage.experiment.deterministic import set_seed
     from garage.np.baselines import LinearFeatureBaseline
@@ -165,14 +160,11 @@ def train_garage_tf(train: bool):
     from garage.trainer import TFTrainer
     import tensorflow as tf
 
-    # set log_dir
-    log_dir = 'log/swimmer_gym_v3_trpo_tf'
-
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
     def train_wrapper(ctxt=None, seed=1, batch_size=4000):
         set_seed(seed)
         with TFTrainer(ctxt) as trainer:
-            env = GymEnv('Swimmer-v3')
+            env = init_env
             policy = GaussianMLPPolicy(env_spec=env.spec, hidden_sizes=(32, 32))
             baseline = LinearFeatureBaseline(env_spec=env.spec)
             sampler = RaySampler(
@@ -219,7 +211,12 @@ def run_episodes(env, policy):
     print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
 
 
-def test_garage(framework: str, train: bool):
+def init_gym_env():
+    from garage.envs import GymEnv
+    return GymEnv('Swimmer-v3')
+
+
+def test_garage(framework: str, train: bool, log_dir: str, init_env):
     """ Benchmarking Deep Reinforcement Learning for Continuous Control
     Benchmarks:
         random: -1.7 +- 0.1
@@ -227,9 +224,9 @@ def test_garage(framework: str, train: bool):
         TRPO: 96.0 +- 0.2
     """
     if framework == 'torch':
-        train_garage_torch(train=train)  # 100 episodes mean reward: 17.91597170434871
+        train_garage_torch(train=train, log_dir=log_dir, init_env=init_env)  # 100 episodes mean reward: 17.91597170434871
     elif framework == 'tf':
-        train_garage_tf(train=train)  # 100 episodes mean reward: -1.218518469326981
+        train_garage_tf(train=train, log_dir=log_dir, init_env=init_env)  # 100 episodes mean reward: -1.218518469326981
     else:
         raise AssertionError
 
@@ -249,9 +246,9 @@ if __name__ == '__main__':
     # test_stable_baselines3(train=False)
 
     # run RL algos from garage with torch
-    # test_garage(framework='torch', train=True)
-    # test_garage(framework='torch', train=False)
+    # test_garage(framework='torch', train=True, log_dir='log/swimmer_gym_v3_trpo_torch', init_env=init_gym_env())
+    # test_garage(framework='torch', train=False, log_dir='log/swimmer_gym_v3_trpo_torch', init_env=None)
 
     # run RL algos from garage with tf
-    # test_garage(framework='tf', train=True)
-    test_garage(framework='tf', train=False)
+    # test_garage(framework='tf', train=True, log_dir='log/swimmer_gym_v3_trpo_tf', init_env=init_gym_env())
+    test_garage(framework='tf', train=False, log_dir='log/swimmer_gym_v3_trpo_tf', init_env=None)

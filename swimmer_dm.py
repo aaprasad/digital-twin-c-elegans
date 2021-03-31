@@ -49,17 +49,11 @@ def test_random():
     video.release()
 
 
-def train_garage():
+def test_garage(framework: str, train: bool, log_dir: str):
+    from swimmer_gym_v3 import test_garage as test_garage_base
     from garage.envs.dm_control import DMControlEnv
-
-    """ make env """
     env = DMControlEnv.from_suite(domain_name='swimmer', task_name='swimmer6')
-
-    return env, model
-
-
-def test_garage():
-    env, model = train_garage()
+    test_garage_base(framework=framework, train=train, log_dir=log_dir, init_env=env)
 
 
 if __name__ == '__main__':
@@ -69,7 +63,12 @@ if __name__ == '__main__':
     # benchmarking_task_set()
 
     # take random action and record video
-    test_random()
+    # test_random()
 
-    # run RL algos from garage
-    # test_garage()
+    # run RL algos from garage with torch
+    test_garage(framework='torch', train=True, log_dir='log/swimmer_dm_trpo_torch')
+    # test_garage(framework='torch', train=False, log_dir='log/swimmer_dm_trpo_torch')
+
+    # run RL algos from garage with tf
+    # test_garage(framework='tf', train=True, log_dir='log/swimmer_dm_trpo_tf')
+    # test_garage(framework='tf', train=False, log_dir='log/swimmer_dm_trpo_tf')
