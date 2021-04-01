@@ -124,7 +124,7 @@ def train_garage_torch(train: bool, log_dir: str, init_env):
             center_adv=False
         )
         trainer.setup(algo, env)
-        trainer.train(n_epochs=100, batch_size=1024)
+        trainer.train(n_epochs=200, batch_size=1024)
         run_episodes(env=env, policy=trainer._algo.policy)
 
     def load_wrapper():
@@ -161,7 +161,7 @@ def train_garage_tf(train: bool, log_dir: str, init_env):
     import tensorflow as tf
 
     @wrap_experiment(log_dir=log_dir, snapshot_mode='all')
-    def train_wrapper(ctxt=None, seed=1, batch_size=4000):
+    def train_wrapper(ctxt=None, seed=1, batch_size=1024):
         set_seed(seed)
         with TFTrainer(ctxt) as trainer:
             env = init_env
@@ -174,7 +174,7 @@ def train_garage_tf(train: bool, log_dir: str, init_env):
                 env_spec=env.spec, policy=policy, baseline=baseline, sampler=sampler, discount=0.99, max_kl_step=0.01
             )
             trainer.setup(algo, env)
-            trainer.train(n_epochs=40, batch_size=batch_size)
+            trainer.train(n_epochs=200, batch_size=batch_size)
             run_episodes(env=env, policy=trainer._algo.policy)
 
     def load_wrapper():
@@ -227,9 +227,17 @@ def test_garage(framework: str, train: bool, log_dir: str, init_env):
     Gym metrics for solved:
         avg reward over 100 consecutive episodes >= 360.0
     """
-    if framework == 'torch':  # 100 episodes mean reward: 17.91597170434871
+    if framework == 'torch':
+        """ 100 episodes mean reward
+        epochs 100, batch size 1024: 69.149
+        epochs 200, batch size 1024:
+        """
         train_garage_torch(train=train, log_dir=log_dir, init_env=init_env)
-    elif framework == 'tf':  # 100 episodes mean reward: -1.218518469326981
+    elif framework == 'tf':
+        """ 100 episodes mean reward
+        epochs 40, batch size 4000: 32.620
+        epochs 200, batch size 1024:
+        """
         train_garage_tf(train=train, log_dir=log_dir, init_env=init_env)
     else:
         raise AssertionError
