@@ -242,6 +242,59 @@ def test_garage(framework: str, train: bool, log_dir: str, init_env):
         raise AssertionError
 
 
+def run_episode_gym(env, policy, video_path):
+    rec = VideoRecorder(env, base_path=video_path, enabled=True)
+
+    observation, _ = env.reset()
+    rec.capture_frame()
+    policy.reset()
+    total_reward = 0.
+    step = 0
+    while True:
+        # env.render()
+        action, _ = policy.get_action(observation)
+        env_step = env.step(action)
+        rec.capture_frame()
+        observation = env_step.observation
+        total_reward += env_step.reward
+        step += 1
+        if env_step.last is True:
+            break
+    print('Episode finished after {} steps, reward: {}'.format(step, total_reward))
+    rec.close()
+    env.close()
+
+
+def record_garage(framework: str, log_dir: str, video_path: str, run_episode):
+    from garage.experiment import Snapshotter
+
+    def record_garage_torch():
+        # Load the env and policy from snap-shot
+        snapshotter = Snapshotter()
+        data = snapshotter.load(log_dir, itr='last')  # itr: iteration to load, an integer, 'last' or 'first'
+        env = data['env']
+        policy = data['algo'].policy
+        run_episode(env=env, policy=policy, video_path=video_path)
+
+    def record_garage_tf():
+        import tensorflow as tf
+
+        # run episodes
+        snapshotter = Snapshotter()
+        with tf.compat.v1.Session():
+            data = snapshotter.load(log_dir, itr='last')
+            env = data['env']
+            policy = data['algo'].policy
+            run_episode(env=env, policy=policy, video_path=video_path)
+
+    if framework == 'torch':
+        record_garage_torch()
+    elif framework == 'tf':
+        record_garage_tf()
+    else:
+        raise AssertionError
+
+
 if __name__ == '__main__':
     os.makedirs('checkpoint', exist_ok=True)
     os.makedirs('video', exist_ok=True)
@@ -262,4 +315,8 @@ if __name__ == '__main__':
 
     # run RL algos from garage with tf
     # test_garage(framework='tf', train=True, log_dir='log/swimmer_gym_v3_trpo_tf', init_env=init_gym_env())
-    test_garage(framework='tf', train=False, log_dir='log/swimmer_gym_v3_trpo_tf', init_env=None)
+    # test_garage(framework='tf', train=False, log_dir='log/swimmer_gym_v3_trpo_tf', init_env=None)
+
+    # load garage torch/tf checkpoint, and record video
+    record_garage(framework='torch', log_dir='log/swimmer_gym_v3_trpo_torch', video_path='video/swimmer_gym_v3_trpo_torch', run_episode=run_episode_gym)
+    # record_garage(framework='tf', log_dir='log/swimmer_gym_v3_trpo_tf', video_path='video/swimmer_gym_v3_trpo_tf', run_episode=run_episode_gym)

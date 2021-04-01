@@ -79,7 +79,7 @@ def test_garage(framework: str, train: bool, log_dir: str):
     test_garage_base(framework=framework, train=train, log_dir=log_dir, init_env=env)
 
 
-def run_episode(env, policy, video_path):
+def run_episode_cv2(env, policy, video_path):
     # Setup video writer
     frame = grab_frame_garage(env)
     height, width, layers = frame.shape
@@ -101,37 +101,24 @@ def run_episode(env, policy, video_path):
         step += 1
         if env_step.last is True:
             break
-    print("Episode finished after {} steps, Reward: {}".format(step, total_reward))
+    print("Episode finished after {} steps, reward: {}".format(step, total_reward))
     env.close()
     video.release()
 
 
 def record_garage(framework: str):
-    from garage.experiment import Snapshotter
-
-    def record_garage_torch():
-        # Load the env and policy from snap-shot
-        snapshotter = Snapshotter()
-        data = snapshotter.load('log/swimmer_dm_trpo_torch', itr='last')  # itr: iteration to load, an integer, 'last' or 'first'
-        env = data['env']
-        policy = data['algo'].policy
-        run_episode(env=env, policy=policy, video_path='video/swimmer_dm_trpo_torch.mp4')
-
-    def record_garage_tf():
-        import tensorflow as tf
-
-        # run episodes
-        snapshotter = Snapshotter()
-        with tf.compat.v1.Session():
-            data = snapshotter.load('log/swimmer_dm_trpo_tf', itr='last')
-            env = data['env']
-            policy = data['algo'].policy
-            run_episode(env=env, policy=policy, video_path='video/swimmer_dm_trpo_tf.mp4')
+    from swimmer_gym_v3 import record_garage as record_garage_base
 
     if framework == 'torch':
-        record_garage_torch()
+        record_garage_base(
+            framework=framework, log_dir='log/swimmer_dm_trpo_torch', video_path='video/swimmer_dm_trpo_torch.mp4',
+            run_episode=run_episode_cv2
+        )
     elif framework == 'tf':
-        record_garage_tf()
+        record_garage_base(
+            framework=framework, log_dir='log/swimmer_dm_trpo_tf', video_path='video/swimmer_dm_trpo_tf.mp4',
+            run_episode=run_episode_cv2
+        )
     else:
         raise AssertionError
 
