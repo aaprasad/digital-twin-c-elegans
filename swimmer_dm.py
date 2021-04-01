@@ -81,7 +81,7 @@ def run_episode(env, policy, video_path):
         observation = env_step.observation
         total_reward += env_step.reward
         step += 1
-        if env_step.terminal is True:
+        if env_step.last is True:
             break
     print("Episode finished after {} steps, Reward: {}".format(step, total_reward))
     env.close()

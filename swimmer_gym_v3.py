@@ -198,14 +198,14 @@ def run_episodes(env, policy):
         policy.reset()
         total_reward = 0.
         step = 0
-        while True:
+        while True:  # gym swimmer: 1000 steps
             # env.render()
             action, _ = policy.get_action(observation)
             env_step = env.step(action)
             observation = env_step.observation
             total_reward += env_step.reward
             step += 1
-            if env_step.terminal is True:
+            if env_step.last is True:
                 break
         print('Episode {} finished after {} steps, reward: {}'.format(e, step, total_reward))
         total_reward_list.append(total_reward)
