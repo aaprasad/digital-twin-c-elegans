@@ -20,7 +20,7 @@ def grab_frame(env):
 
 
 def grab_frame_garage(env):
-    rgb_arr = env.render()
+    rgb_arr = env.render(mode='rgb_array')
     return cv2.cvtColor(rgb_arr, cv2.COLOR_BGR2RGB)
 
 
