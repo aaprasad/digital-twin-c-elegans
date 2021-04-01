@@ -20,7 +20,7 @@ def grab_frame(env):
 
 
 def grab_frame_garage(env):
-    rgb_arr = env.render(height=240, width=320, camera_id=0, overlays=(), depth=False, segmentation=False, scene_option=None, render_flag_overrides=None)
+    rgb_arr = env.render()
     return cv2.cvtColor(rgb_arr, cv2.COLOR_BGR2RGB)
 
 
