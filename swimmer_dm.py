@@ -56,6 +56,60 @@ def test_garage(framework: str, train: bool, log_dir: str):
     test_garage_base(framework=framework, train=train, log_dir=log_dir, init_env=env)
 
 
+def run_episode(env, policy, video_path):
+    # Setup video writer
+    frame = grabFrame(env)
+    height, width, layers = frame.shape
+    video = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
+    video.write(frame)
+
+    # run episodes
+    time_step = env.reset()
+    policy.reset()
+    total_reward = 0.
+    step = 0
+    while not time_step.last():
+        # env.render()
+        action, _ = policy.get_action(time_step.observation)
+        time_step = env.step(action)
+        video.write(grabFrame(env))
+        total_reward += time_step.reward
+        step += 1
+    print("Episode finished after {} steps, Reward: {}".format(step, total_reward))
+    env.close()
+    video.release()
+
+
+def record_garage(framework: str):
+    from garage.experiment import Snapshotter
+
+    def record_garage_torch():
+        # Load the env and policy from snap-shot
+        snapshotter = Snapshotter()
+        data = snapshotter.load(log_dir='log/swimmer_dm_trpo_torch', itr='last')  # itr: iteration to load, an integer, 'last' or 'first'
+        env = data['env']
+        policy = data['algo'].policy
+        run_episode(env=env, policy=policy, video_path='video/swimmer_dm_trpo_torch.mp4')
+
+    def record_garage_tf():
+        import tensorflow as tf
+
+        # run episodes
+        snapshotter = Snapshotter()
+        with tf.compat.v1.Session():
+            data = snapshotter.load(log_dir='log/swimmer_dm_trpo_tf', itr='last')
+            env = data['env']
+            policy = data['algo'].policy
+            run_episode(env=env, policy=policy, video_path='video/swimmer_dm_trpo_tf.mp4')
+
+    if framework == 'torch':
+        record_garage_torch()
+    elif framework == 'tf':
+        record_garage_tf()
+    else:
+        raise AssertionError
+
+
 if __name__ == '__main__':
     os.makedirs('video', exist_ok=True)
 
@@ -66,9 +120,13 @@ if __name__ == '__main__':
     # test_random()
 
     # run RL algos from garage with torch, 100 episodes mean reward: 180.71739610587625
-    test_garage(framework='torch', train=True, log_dir='log/swimmer_dm_trpo_torch')
+    # test_garage(framework='torch', train=True, log_dir='log/swimmer_dm_trpo_torch')
     # test_garage(framework='torch', train=False, log_dir='log/swimmer_dm_trpo_torch')
 
     # run RL algos from garage with tf, 100 episodes mean reward: 119.2544067832367
     # test_garage(framework='tf', train=True, log_dir='log/swimmer_dm_trpo_tf')
     # test_garage(framework='tf', train=False, log_dir='log/swimmer_dm_trpo_tf')
+
+    # load garage torch/tf checkpoint, and record video
+    record_garage(framework='torch')
+    # record_garage(framework='tf')
