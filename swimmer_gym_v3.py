@@ -219,25 +219,24 @@ def init_gym_env():
 
 
 def test_garage(framework: str, train: bool, log_dir: str, init_env):
-    """ Benchmarking Deep Reinforcement Learning for Continuous Control
-    Benchmarks:
+    """
+    Benchmarks (Benchmarking Deep Reinforcement Learning for Continuous Control):
         random: -1.7 +- 0.1
         TNPG: 96.0 +- 0.2
         TRPO: 96.0 +- 0.2
     Gym metrics for solved:
         avg reward over 100 consecutive episodes >= 360.0
+    100 episodes mean reward (TRPO):
+        torch:
+            - epochs 100, batch size 1024: 69.149
+            - epochs 200, batch size 1024:
+        tf:
+            - epochs 40, batch size 4000: 32.620
+            - epochs 200, batch size 1024:
     """
     if framework == 'torch':
-        """ 100 episodes mean reward
-        epochs 100, batch size 1024: 69.149
-        epochs 200, batch size 1024:
-        """
         train_garage_torch(train=train, log_dir=log_dir, init_env=init_env)
     elif framework == 'tf':
-        """ 100 episodes mean reward
-        epochs 40, batch size 4000: 32.620
-        epochs 200, batch size 1024:
-        """
         train_garage_tf(train=train, log_dir=log_dir, init_env=init_env)
     else:
         raise AssertionError

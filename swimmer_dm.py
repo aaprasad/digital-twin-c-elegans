@@ -55,13 +55,16 @@ def test_random():
 
 
 def test_garage(framework: str, train: bool, log_dir: str):
-    """ 100 episodes mean reward
-    torch:
-        epochs 100, batch size 1024: 180.71739610587625
-        epochs 200, batch size 1024:
-    tf:
-        epochs 40, batch size 4000: 119.2544067832367
-        epochs 200, batch size 1024:
+    """
+    Gym metrics for solved:
+        ?
+    100 episodes mean reward (TRPO):
+        torch:
+            - epochs 100, batch size 1024: 180.71739610587625
+            - epochs 200, batch size 1024:
+        tf:
+            - epochs 40, batch size 4000: 119.2544067832367
+            - epochs 200, batch size 1024:
     """
     from swimmer_gym_v3 import test_garage as test_garage_base
     from garage.envs.dm_control import DMControlEnv
