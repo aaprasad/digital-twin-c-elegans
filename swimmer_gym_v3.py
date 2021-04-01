@@ -124,7 +124,7 @@ def train_garage_torch(train: bool, log_dir: str, init_env):
             center_adv=False
         )
         trainer.setup(algo, env)
-        trainer.train(n_epochs=200, batch_size=1024)
+        trainer.train(n_epochs=100, batch_size=1024)
         run_episodes(env=env, policy=trainer._algo.policy)
 
     def load_wrapper():
@@ -220,19 +220,19 @@ def init_gym_env():
 
 def test_garage(framework: str, train: bool, log_dir: str, init_env):
     """
-    Benchmarks (Benchmarking Deep Reinforcement Learning for Continuous Control):
+    gym swimmer-v3 metrics for solved:
+        avg reward over 100 consecutive episodes >= 360.0, maximum 1000 steps for each episode
+    Benchmarking Deep Reinforcement Learning for Continuous Control (https://arxiv.org/abs/1604.06778) benchmarks:
         random: -1.7 +- 0.1
         TNPG: 96.0 +- 0.2
         TRPO: 96.0 +- 0.2
-    Gym metrics for solved:
-        avg reward over 100 consecutive episodes >= 360.0
-    100 episodes mean reward (TRPO):
+    100 episodes mean reward: TRPO
         torch:
             - epochs 100, batch size 1024: 69.149
-            - epochs 200, batch size 1024:
+            - epochs 200, batch size 1024: 41.055
         tf:
             - epochs 40, batch size 4000: 32.620
-            - epochs 200, batch size 1024:
+            - epochs 200, batch size 1024: 40.810
     """
     if framework == 'torch':
         train_garage_torch(train=train, log_dir=log_dir, init_env=init_env)

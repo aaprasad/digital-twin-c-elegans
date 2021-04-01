@@ -56,15 +56,22 @@ def test_random():
 
 def test_garage(framework: str, train: bool, log_dir: str):
     """
-    Gym metrics for solved:
-        ?
-    100 episodes mean reward (TRPO):
+    dm_control swimmer metrics:
+        avg reward over 100 consecutive episodes, maximum 1000 steps for each episode
+    DeepMind Control Suite (https://arxiv.org/abs/1801.00690) benchmarks: A3C, D4PG, D4PG(Pixels), DDPG
+        10^8 training steps:
+            - swimmer6: 177.8 +- 7.8, 664.7 +- 11.1, 194.7 +- 15.9, 394.0 +- 14.1
+            - swimmer15: 164.0 +- 7.3, 658.4 +- 10.0, 108.8 +- 11.9, 421.8 +- 13.5
+        24 hours of training:
+            - swimmer6: 526.4 +- 9.6, 651.0 +- 10.0, 168.9 +- 13.1, 461.0 +- 10.6
+            - swimmer15: 196.8 +- 8.4, 681.1 +- 9.3, 146.0 +- 12.0, 410.9 +- 10.5
+    100 episodes mean reward: TRPO
         torch:
-            - epochs 100, batch size 1024: 180.71739610587625
-            - epochs 200, batch size 1024:
+            - epochs 100, batch size 1024: 180.717
+            - epochs 200, batch size 1024: 131.609
         tf:
-            - epochs 40, batch size 4000: 119.2544067832367
-            - epochs 200, batch size 1024:
+            - epochs 40, batch size 4000: 119.254
+            - epochs 200, batch size 1024: 127.148
     """
     from swimmer_gym_v3 import test_garage as test_garage_base
     from garage.envs.dm_control import DMControlEnv
