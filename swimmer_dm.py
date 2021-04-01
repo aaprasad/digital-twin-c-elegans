@@ -73,13 +73,15 @@ def run_episode(env, policy, video_path):
     policy.reset()
     total_reward = 0.
     step = 0
-    while not env_step.terminal:
+    while True:
         # env.render()
         action, _ = policy.get_action(env_step.observation)
         env_step = env.step(action)
         video.write(grab_frame_garage(env))
         total_reward += env_step.reward
         step += 1
+        if env_step.terminal is True:
+            break
     print("Episode finished after {} steps, Reward: {}".format(step, total_reward))
     env.close()
     video.release()
