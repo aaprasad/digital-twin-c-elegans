@@ -55,6 +55,14 @@ def test_random():
 
 
 def test_garage(framework: str, train: bool, log_dir: str):
+    """ 100 episodes mean reward
+    torch:
+        epochs 100, batch size 1024: 180.71739610587625
+        epochs 200, batch size 1024:
+    tf:
+        epochs 40, batch size 4000: 119.2544067832367
+        epochs 200, batch size 1024:
+    """
     from swimmer_gym_v3 import test_garage as test_garage_base
     from garage.envs.dm_control import DMControlEnv
     env = DMControlEnv.from_suite(domain_name='swimmer', task_name='swimmer6')
@@ -127,11 +135,11 @@ if __name__ == '__main__':
     # take random action and record video
     # test_random()
 
-    # run RL algos from garage with torch, 100 episodes mean reward: 180.71739610587625
+    # run RL algos from garage with torch
     # test_garage(framework='torch', train=True, log_dir='log/swimmer_dm_trpo_torch')
     # test_garage(framework='torch', train=False, log_dir='log/swimmer_dm_trpo_torch')
 
-    # run RL algos from garage with tf, 100 episodes mean reward: 119.2544067832367
+    # run RL algos from garage with tf
     # test_garage(framework='tf', train=True, log_dir='log/swimmer_dm_trpo_tf')
     # test_garage(framework='tf', train=False, log_dir='log/swimmer_dm_trpo_tf')
 
