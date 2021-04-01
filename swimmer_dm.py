@@ -12,11 +12,16 @@ import numpy as np
 from dm_control import suite
 
 
-def grabFrame(env):
+def grab_frame(env):
     # Get RGB rendering of env
     rgbArr = env.physics.render(height=240, width=320, camera_id=0, overlays=(), depth=False, segmentation=False, scene_option=None, render_flag_overrides=None)  # camera_id=-1
     # Convert to BGR for use with OpenCV
     return cv2.cvtColor(rgbArr, cv2.COLOR_BGR2RGB)
+
+
+def grab_frame_garage(env):
+    rgb_arr = env.render(height=240, width=320, camera_id=0, overlays=(), depth=False, segmentation=False, scene_option=None, render_flag_overrides=None)
+    return cv2.cvtColor(rgb_arr, cv2.COLOR_BGR2RGB)
 
 
 def benchmarking_task_set():
@@ -31,7 +36,7 @@ def test_random():
     # env = suite.swimmer.swimmer(n_links=3, random=None, environment_kwargs=None)  # time_limit=_DEFAULT_TIME_LIMIT
 
     # Setup video writer - mp4 at 30 fps
-    frame = grabFrame(env)
+    frame = grab_frame(env)
     height, width, layers = frame.shape
     video = cv2.VideoWriter('video/swimmer_dm.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
     video.write(frame)
@@ -43,7 +48,7 @@ def test_random():
         action = np.random.uniform(action_spec.minimum, action_spec.maximum, size=action_spec.shape)
         time_step = env.step(action)
         # print(time_step.reward, time_step.discount, time_step.observation)
-        video.write(grabFrame(env))
+        video.write(grab_frame(env))
 
     # End render to video file
     video.release()
@@ -58,7 +63,7 @@ def test_garage(framework: str, train: bool, log_dir: str):
 
 def run_episode(env, policy, video_path):
     # Setup video writer
-    frame = grabFrame(env)
+    frame = grab_frame_garage(env)
     height, width, layers = frame.shape
     video = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
     video.write(frame)
@@ -72,7 +77,7 @@ def run_episode(env, policy, video_path):
         # env.render()
         action, _ = policy.get_action(time_step.observation)
         time_step = env.step(action)
-        video.write(grabFrame(env))
+        video.write(grab_frame_garage(env))
         total_reward += time_step.reward
         step += 1
     print("Episode finished after {} steps, Reward: {}".format(step, total_reward))
