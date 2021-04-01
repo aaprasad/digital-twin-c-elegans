@@ -86,7 +86,7 @@ def record_garage(framework: str):
     def record_garage_torch():
         # Load the env and policy from snap-shot
         snapshotter = Snapshotter()
-        data = snapshotter.load(log_dir='log/swimmer_dm_trpo_torch', itr='last')  # itr: iteration to load, an integer, 'last' or 'first'
+        data = snapshotter.load('log/swimmer_dm_trpo_torch', itr='last')  # itr: iteration to load, an integer, 'last' or 'first'
         env = data['env']
         policy = data['algo'].policy
         run_episode(env=env, policy=policy, video_path='video/swimmer_dm_trpo_torch.mp4')
@@ -97,7 +97,7 @@ def record_garage(framework: str):
         # run episodes
         snapshotter = Snapshotter()
         with tf.compat.v1.Session():
-            data = snapshotter.load(log_dir='log/swimmer_dm_trpo_tf', itr='last')
+            data = snapshotter.load('log/swimmer_dm_trpo_tf', itr='last')
             env = data['env']
             policy = data['algo'].policy
             run_episode(env=env, policy=policy, video_path='video/swimmer_dm_trpo_tf.mp4')
