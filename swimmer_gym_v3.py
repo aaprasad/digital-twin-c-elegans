@@ -223,10 +223,10 @@ def test_garage(framework: str, train: bool, log_dir: str, init_env):
         TNPG: 96.0 +- 0.2
         TRPO: 96.0 +- 0.2
     """
-    if framework == 'torch':
-        train_garage_torch(train=train, log_dir=log_dir, init_env=init_env)  # 100 episodes mean reward: 17.91597170434871
-    elif framework == 'tf':
-        train_garage_tf(train=train, log_dir=log_dir, init_env=init_env)  # 100 episodes mean reward: -1.218518469326981
+    if framework == 'torch':  # 100 episodes mean reward: 17.91597170434871
+        train_garage_torch(train=train, log_dir=log_dir, init_env=init_env)
+    elif framework == 'tf':  # 100 episodes mean reward: -1.218518469326981
+        train_garage_tf(train=train, log_dir=log_dir, init_env=init_env)
     else:
         raise AssertionError
 
