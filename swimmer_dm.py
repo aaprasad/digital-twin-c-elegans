@@ -65,7 +65,7 @@ def test_garage(framework: str, train: bool, log_dir: str):
         24 hours of training:
             - swimmer6: 526.4 +- 9.6, 651.0 +- 10.0, 168.9 +- 13.1, 461.0 +- 10.6
             - swimmer15: 196.8 +- 8.4, 681.1 +- 9.3, 146.0 +- 12.0, 410.9 +- 10.5
-    100 episodes mean reward: TRPO
+    100 episodes mean reward: swimmer6 with TRPO
         torch:
             - epochs 100, batch size 1024: 180.717
             - epochs 200, batch size 1024: 131.609
