@@ -69,16 +69,16 @@ def run_episode(env, policy, video_path):
     video.write(frame)
 
     # run episodes
-    time_step = env.reset()
+    env_step = env.reset()
     policy.reset()
     total_reward = 0.
     step = 0
-    while not time_step.last():
+    while not env_step.terminal:
         # env.render()
-        action, _ = policy.get_action(time_step.observation)
-        time_step = env.step(action)
+        action, _ = policy.get_action(env_step.observation)
+        env_step = env.step(action)
         video.write(grab_frame_garage(env))
-        total_reward += time_step.reward
+        total_reward += env_step.reward
         step += 1
     print("Episode finished after {} steps, Reward: {}".format(step, total_reward))
     env.close()
