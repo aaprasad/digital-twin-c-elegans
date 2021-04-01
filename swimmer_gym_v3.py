@@ -194,18 +194,17 @@ def train_garage_tf(train: bool, log_dir: str, init_env):
 def run_episodes(env, policy):
     total_reward_list = []
     for e in range(100):
-        observation, _ = env.reset()
+        env_step = env.reset()
         policy.reset()
         total_reward = 0.
-        for i in range(1000):  # register: max_episode_steps=1000
+        step = 0
+        while not env_step.terminal:
             # env.render()
-            action, _ = policy.get_action(observation)
+            action, _ = policy.get_action(env_step.observation)
             env_step = env.step(action)
             total_reward += env_step.reward
-            if env_step.terminal is True:
-                print("Episode finished after {} steps".format(i + 1))
-                break
-        print('Episode {} reward: {}'.format(e, total_reward))
+            step += 1
+        print('Episode {} finished after {} steps, reward: {}'.format(e, step, total_reward))
         total_reward_list.append(total_reward)
     env.close()
     print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
