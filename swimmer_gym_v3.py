@@ -222,6 +222,8 @@ def test_garage(framework: str, train: bool, log_dir: str, init_env):
         random: -1.7 +- 0.1
         TNPG: 96.0 +- 0.2
         TRPO: 96.0 +- 0.2
+    Gym metrics for solved:
+        avg reward over 100 consecutive episodes >= 360.0
     """
     if framework == 'torch':  # 100 episodes mean reward: 17.91597170434871
         train_garage_torch(train=train, log_dir=log_dir, init_env=init_env)
