@@ -2,6 +2,7 @@
 Swimmer-v3 from OpenAI Gym
 """
 
+import cv2
 import gym
 import os
 import torch
@@ -246,7 +247,10 @@ def test_garage(framework: str, train: bool, log_dir: str, init_env):
 
 
 def run_episode_gym(env, policy, video_path):
-    """ run 1 episode and record video with Gym VideoRecorder """
+    """ run 1 episode and record video with Gym VideoRecorder
+    - this works with gym, but doesn't work with garage
+    - video_path is a folder
+    """
     rec = VideoRecorder(env, base_path=video_path, enabled=True)
 
     observation, _ = env.reset()
@@ -267,6 +271,42 @@ def run_episode_gym(env, policy, video_path):
     print('Episode finished after {} steps, reward: {}'.format(step, total_reward))
     rec.close()
     env.close()
+
+
+def grab_frame_garage(env):
+    """ get a frame with cv2 from garage's version of dm_control env """
+    rgb_arr = env.render(mode='rgb_array')
+    return cv2.cvtColor(rgb_arr, cv2.COLOR_BGR2RGB)
+
+
+def run_episode_cv2(env, policy, video_path):
+    """ run 1 episode and record video with cv2
+    - video_path is a mp4 file that ends with '.mp4'
+    """
+    # Setup video writer
+    frame = grab_frame_garage(env)
+    height, width, layers = frame.shape
+    video = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
+    video.write(frame)
+
+    # run episodes
+    observation, _ = env.reset()
+    policy.reset()
+    total_reward = 0.
+    step = 0
+    while True:
+        # env.render()
+        action, _ = policy.get_action(observation)
+        env_step = env.step(action)
+        video.write(grab_frame_garage(env))
+        observation = env_step.observation
+        total_reward += env_step.reward
+        step += 1
+        if env_step.last is True:
+            break
+    print("Episode finished after {} steps, reward: {}".format(step, total_reward))
+    env.close()
+    video.release()
 
 
 def record_garage(framework: str, log_dir: str, video_path: str, run_episode):
@@ -323,5 +363,5 @@ if __name__ == '__main__':
     # test_garage(framework='tf', train=False, log_dir='log/swimmer_gym_v3_trpo_tf', init_env=None)
 
     # load garage torch/tf checkpoint, and record video
-    record_garage(framework='torch', log_dir='log/swimmer_gym_v3_trpo_torch', video_path='video/swimmer_gym_v3_trpo_torch', run_episode=run_episode_gym)
-    # record_garage(framework='tf', log_dir='log/swimmer_gym_v3_trpo_tf', video_path='video/swimmer_gym_v3_trpo_tf', run_episode=run_episode_gym)
+    record_garage(framework='torch', log_dir='log/swimmer_gym_v3_trpo_torch', video_path='video/swimmer_gym_v3_trpo_torch.mp4', run_episode=run_episode_cv2)
+    # record_garage(framework='tf', log_dir='log/swimmer_gym_v3_trpo_tf', video_path='video/swimmer_gym_v3_trpo_tf.mp4', run_episode=run_episode_cv2)

@@ -20,12 +20,6 @@ def grab_frame(env):
     return cv2.cvtColor(rgbArr, cv2.COLOR_BGR2RGB)
 
 
-def grab_frame_garage(env):
-    """ get a frame with cv2 from garage's version of dm_control env """
-    rgb_arr = env.render(mode='rgb_array')
-    return cv2.cvtColor(rgb_arr, cv2.COLOR_BGR2RGB)
-
-
 def benchmarking_task_set():
     """ Iterate over the whole task set: domain & task """
     for domain_name, task_name in suite.BENCHMARKING:
@@ -82,37 +76,10 @@ def test_garage(framework: str, train: bool, log_dir: str):
     test_garage_base(framework=framework, train=train, log_dir=log_dir, init_env=env)
 
 
-def run_episode_cv2(env, policy, video_path):
-    """ run 1 episode and record video with cv2 """
-    # Setup video writer
-    frame = grab_frame_garage(env)
-    height, width, layers = frame.shape
-    video = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
-    video.write(frame)
-
-    # run episodes
-    observation, _ = env.reset()
-    policy.reset()
-    total_reward = 0.
-    step = 0
-    while True:
-        # env.render()
-        action, _ = policy.get_action(observation)
-        env_step = env.step(action)
-        video.write(grab_frame_garage(env))
-        observation = env_step.observation
-        total_reward += env_step.reward
-        step += 1
-        if env_step.last is True:
-            break
-    print("Episode finished after {} steps, reward: {}".format(step, total_reward))
-    env.close()
-    video.release()
-
-
 def record_garage(framework: str):
     """ Load RL algos from garage, run 1 episode and record video """
     from swimmer_gym_v3 import record_garage as record_garage_base
+    from swimmer_gym_v3 import run_episode_cv2
 
     if framework == 'torch':
         record_garage_base(
