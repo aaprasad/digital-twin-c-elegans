@@ -9,6 +9,7 @@ from gym.wrappers.monitoring.video_recorder import VideoRecorder
 
 
 def test_random():
+    """ take random actions and record video """
     # make env
     env = gym.make('Swimmer-v3')
 
@@ -35,25 +36,24 @@ def test_random():
 
 
 def train_stable_baselines3(train: bool):
+    """ train RL algos from stable_baselines3 """
     from stable_baselines3.common.env_checker import check_env
     from stable_baselines3 import A2C, DDPG, HER, PPO, SAC, TD3
     from stable_baselines3.common.env_util import make_vec_env
 
-    """ make and check env """
+    # make and check env
     env = gym.make('Swimmer-v3')  # Swimmer-v2, Swimmer-v3 (fixed 1000 steps each episode)
     # env = make_vec_env('Swimmer-v3', n_envs=4)  # Parallel environments
     # check_env(env)
 
-    """ build RL model:
-    A2C, DDPG, HER, PPO, SAC, TD3
-    """
+    # build RL model: A2C, DDPG, HER, PPO, SAC, TD3
     model = DDPG('MlpPolicy', env, verbose=1, device=torch.device('cuda:2'))  # train 1500000 steps, avg reward over 100 consecutive episodes: 13.6537
     # model = A2C('MlpPolicy', env, verbose=1)  # avg reward over 100 consecutive episodes: 31.1302, 31.1832, 31.0867
     # model = PPO('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 23.5533
     # model = SAC('MlpPolicy', env, verbose=1)  # avg reward over 100 consecutive episodes: 27.1014, 28.3048, 28.9001
     # model = TD3('MlpPolicy', env, verbose=1)  # avg reward over 10 consecutive episodes: 18.0657
 
-    """ train, save and load model """
+    # train, save and load model
     if train is True:
         model.learn(total_timesteps=1500000)  # DDPG: 1500000 (OpenAI Spinning Up's PyTorch benchmarks), others: 10000
         model.save('checkpoint/swimmer_gym_v3_ddpg')
@@ -64,6 +64,7 @@ def train_stable_baselines3(train: bool):
 
 
 def test_stable_baselines3(train: bool):
+    """ train/load and test RL algos from stable_baselines3 """
     # define env, train, save and load model
     env, model = train_stable_baselines3(train=train)
 
@@ -192,6 +193,7 @@ def train_garage_tf(train: bool, log_dir: str, init_env):
 
 
 def run_episodes(env, policy):
+    """ run 100 consecutive episodes and get avg reward """
     total_reward_list = []
     for e in range(100):
         observation, _ = env.reset()
@@ -214,12 +216,13 @@ def run_episodes(env, policy):
 
 
 def init_gym_env():
+    """ init gym env """
     from garage.envs import GymEnv
     return GymEnv('Swimmer-v3')
 
 
 def test_garage(framework: str, train: bool, log_dir: str, init_env):
-    """
+    """ Train/load and test RL algos from garage
     gym swimmer-v3 metrics for solved:
         avg reward over 100 consecutive episodes >= 360.0, maximum 1000 steps for each episode
     Benchmarking Deep Reinforcement Learning for Continuous Control (https://arxiv.org/abs/1604.06778) benchmarks:
@@ -243,6 +246,7 @@ def test_garage(framework: str, train: bool, log_dir: str, init_env):
 
 
 def run_episode_gym(env, policy, video_path):
+    """ run 1 episode and record video with Gym VideoRecorder """
     rec = VideoRecorder(env, base_path=video_path, enabled=True)
 
     observation, _ = env.reset()
@@ -266,6 +270,7 @@ def run_episode_gym(env, policy, video_path):
 
 
 def record_garage(framework: str, log_dir: str, video_path: str, run_episode):
+    """ Load RL algos from garage, run 1 episode and record video """
     from garage.experiment import Snapshotter
 
     def record_garage_torch():

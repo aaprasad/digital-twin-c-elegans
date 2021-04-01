@@ -13,6 +13,7 @@ from dm_control import suite
 
 
 def grab_frame(env):
+    """ get a frame with cv2 for dm_control env """
     # Get RGB rendering of env
     rgbArr = env.physics.render(height=240, width=320, camera_id=0, overlays=(), depth=False, segmentation=False, scene_option=None, render_flag_overrides=None)  # camera_id=-1
     # Convert to BGR for use with OpenCV
@@ -20,18 +21,20 @@ def grab_frame(env):
 
 
 def grab_frame_garage(env):
+    """ get a frame with cv2 from garage's version of dm_control env """
     rgb_arr = env.render(mode='rgb_array')
     return cv2.cvtColor(rgb_arr, cv2.COLOR_BGR2RGB)
 
 
 def benchmarking_task_set():
-    # Iterate over the whole task set: domain & task
+    """ Iterate over the whole task set: domain & task """
     for domain_name, task_name in suite.BENCHMARKING:
         print(domain_name, task_name)
         env = suite.load(domain_name, task_name)
 
 
 def test_random():
+    """ take random actions and record video """
     env = suite.load(domain_name='swimmer', task_name='swimmer6', visualize_reward=True)  # task: swimmer6, swimmer15
     # env = suite.swimmer.swimmer(n_links=3, random=None, environment_kwargs=None)  # time_limit=_DEFAULT_TIME_LIMIT
 
@@ -55,7 +58,7 @@ def test_random():
 
 
 def test_garage(framework: str, train: bool, log_dir: str):
-    """
+    """ Train/load and test RL algos from garage
     dm_control swimmer metrics:
         avg reward over 100 consecutive episodes, maximum 1000 steps for each episode
     DeepMind Control Suite (https://arxiv.org/abs/1801.00690) benchmarks: A3C, D4PG, D4PG(Pixels), DDPG
@@ -80,6 +83,7 @@ def test_garage(framework: str, train: bool, log_dir: str):
 
 
 def run_episode_cv2(env, policy, video_path):
+    """ run 1 episode and record video with cv2 """
     # Setup video writer
     frame = grab_frame_garage(env)
     height, width, layers = frame.shape
@@ -107,6 +111,7 @@ def run_episode_cv2(env, policy, video_path):
 
 
 def record_garage(framework: str):
+    """ Load RL algos from garage, run 1 episode and record video """
     from swimmer_gym_v3 import record_garage as record_garage_base
 
     if framework == 'torch':
