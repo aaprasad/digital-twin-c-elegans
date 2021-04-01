@@ -232,7 +232,7 @@ def test_garage(framework: str, train: bool, log_dir: str, init_env):
         TRPO: 96.0 +- 0.2
     100 episodes mean reward: TRPO
         torch:
-            - epochs 100, batch size 1024: 69.149
+            - epochs 100, batch size 1024: 69.149 (video: moves slowly, but doesn't resemble swimming)
             - epochs 200, batch size 1024: 41.055
         tf:
             - epochs 40, batch size 4000: 32.620
