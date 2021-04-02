@@ -1,7 +1,6 @@
 """ work in progress """
 
-"""
-This is modeled after Swimmer-v3 from OpenAI Gym
+""" This is modeled after Swimmer-v3 from OpenAI Gym
 - with Bullet physics instead of MuJoCo
 - tries to be the same as Swimmer-v3
 """

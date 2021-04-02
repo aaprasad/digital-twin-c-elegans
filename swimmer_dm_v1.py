@@ -1,6 +1,4 @@
-"""
-dm_control swimmer with specific n_links to mimic C. elegans nematode
-"""
+""" dm_control swimmer with specific n_links to mimic C. elegans nematode """
 
 import os
 os.environ['DISABLE_MUJOCO_RENDERING'] = '1'

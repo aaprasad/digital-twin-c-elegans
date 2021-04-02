@@ -1,7 +1,6 @@
 """ work in progress """
 
-"""
-Swimmer-Gym-v3-Bullet-v0 is modeled after Swimmer-v3 from OpenAI Gym
+""" Swimmer-Gym-v3-Bullet-v0 is modeled after Swimmer-v3 from OpenAI Gym
 - with Bullet physics instead of MuJoCo
 - tries to be the same as Swimmer-v3
 """

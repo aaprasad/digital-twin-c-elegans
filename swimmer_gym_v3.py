@@ -1,6 +1,4 @@
-"""
-Swimmer-v3 from OpenAI Gym
-"""
+""" Swimmer-v3 from OpenAI Gym """
 
 import cv2
 import gym

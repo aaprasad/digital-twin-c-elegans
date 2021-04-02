@@ -1,6 +1,4 @@
-"""
-Swimmer with n_links from dm_control
-"""
+""" Swimmer with n_links from dm_control """
 
 import os
 os.environ['DISABLE_MUJOCO_RENDERING'] = '1'

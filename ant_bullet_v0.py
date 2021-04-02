@@ -1,6 +1,4 @@
-"""
-AntBulletEnv-v0 from PyBullet
-"""
+""" AntBulletEnv-v0 from PyBullet """
 
 import gym
 import os
