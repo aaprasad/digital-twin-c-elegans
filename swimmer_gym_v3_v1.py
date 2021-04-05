@@ -9,7 +9,7 @@ from src.envs.mujoco.swimmer_gym_v3_v1 import swimmer
 def test_random():
     """ take random actions and record video """
     # make env
-    xml_str, xml_file = swimmer(n_bodies=5, xml_folder='src/envs/mujoco/assets/', xml_file='swimmer.xml')
+    xml_str, xml_file = swimmer(n_bodies=5, xml_folder='src/envs/mujoco/assets/', xml_file='swimmer.xml', camera_pos='0 -6 6')
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
     # remove xml file
     if os.path.exists(xml_file):

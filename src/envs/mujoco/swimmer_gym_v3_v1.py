@@ -11,7 +11,7 @@ def _make_body(body_str, body_idx):
     return body
 
 
-def _make_model(n_bodies, xml_folder, xml_file):
+def _make_model(n_bodies, xml_folder, xml_file, camera_pos=None):
     """ Generates an xml string defining a swimmer with `n_bodies` bodies.
     Args:
         xml_file: template xml file name
@@ -46,6 +46,10 @@ def _make_model(n_bodies, xml_folder, xml_file):
             temp_motor = etree.fromstring(motor_str)
             temp_motor.attrib['joint'] = 'rot' + str(i)
             actuator.append(temp_motor)
+    # modify camera pos, default: "0 -3 3"
+    if camera_pos is not None:
+        camera = mjcf.find('worldbody/body/camera')
+        camera.attrib['pos'] = camera_pos
     # get mjcf xml string
     xml_str = etree.tostring(mjcf, pretty_print=True)
     # write to target xml file name
@@ -55,5 +59,5 @@ def _make_model(n_bodies, xml_folder, xml_file):
     return xml_str, xml_file
 
 
-def swimmer(n_bodies, xml_folder, xml_file):
-    return _make_model(n_bodies=n_bodies, xml_folder=xml_folder, xml_file=xml_file)
+def swimmer(n_bodies, xml_folder, xml_file, camera_pos=None):
+    return _make_model(n_bodies=n_bodies, xml_folder=xml_folder, xml_file=xml_file, camera_pos=camera_pos)
