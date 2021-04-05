@@ -14,9 +14,11 @@ def make_swimmer(n_bodies, camera_pos):
     # remove xml file
     if os.path.exists(xml_file):
         os.remove(xml_file)
-    # action: Box(-1.0, 1.0, (4,), float32)
+    # action: Box(-1.0, 1.0, (4,), float32), torque control of the joints, [5 bodies]
     print(env.action_space, env.action_space.low, env.action_space.high)
-    # observation: Box(-inf, inf, (12,), float64)
+    # observation: Box(-inf, inf, (12,), float64), qpos[2:7] + qvel[0:7], [5 bodies]
+    # qpos[0:7]: x pos + y pos + ? + joint1~4 angle, [5 bodies]
+    # qvel[0:7]: x vel + y vel + ? + joint1~4 vel, [5 bodies]
     print(env.observation_space, env.observation_space.low, env.observation_space.high)
     return env
 

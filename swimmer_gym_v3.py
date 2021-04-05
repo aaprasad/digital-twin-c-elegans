@@ -12,9 +12,11 @@ def test_random():
     # make env
     env = gym.make('Swimmer-v3')
 
-    # action: Box(-1.0, 1.0, (2,), float32)
+    # action: Box(-1.0, 1.0, (2,), float32), torque control of two joints
     print(env.action_space, env.action_space.low, env.action_space.high)
-    # observation: Box(-inf, inf, (8,), float64)
+    # observation: Box(-inf, inf, (8,), float64), qpos[2:5] + qvel[0:5]
+    # qpos[0:5]: x pos + y pos + ? + joint1 angle + joint2 angle
+    # qvel[0:5]: x vel + y vel + ? + joint1 vel + joint2 vel
     print(env.observation_space, env.observation_space.low, env.observation_space.high)
 
     # record video
