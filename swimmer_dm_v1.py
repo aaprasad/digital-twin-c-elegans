@@ -15,6 +15,7 @@ def test_random():
     """ take random actions and record video """
     # env = suite.load(domain_name='swimmer', task_name='swimmer6', visualize_reward=True)  # task: swimmer6, swimmer15
     env = suite.swimmer.swimmer(n_links=3, random=None, environment_kwargs=None)  # time_limit=_DEFAULT_TIME_LIMIT
+    # you can't record the full swimmer if it's too long, then you should modify camera pos in xml file
 
     frame = grab_frame(env)
     height, width, layers = frame.shape
