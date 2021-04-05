@@ -12,9 +12,10 @@ def test_random():
     # make env
     env = gym.make('Swimmer-v3')
 
-    # action and observation space
-    # print(env.action_space, env.action_space.low, env.action_space.high)
-    # print(env.observation_space, env.observation_space.low, env.observation_space.high)
+    # action: Box(-1.0, 1.0, (2,), float32)
+    print(env.action_space, env.action_space.low, env.action_space.high)
+    # observation: Box(-inf, inf, (8,), float64)
+    print(env.observation_space, env.observation_space.low, env.observation_space.high)
 
     # record video
     rec = VideoRecorder(env, base_path='video/swimmer_gym_v3', enabled=True)

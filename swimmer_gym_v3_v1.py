@@ -6,17 +6,25 @@ from gym.wrappers.monitoring.video_recorder import VideoRecorder
 from src.envs.mujoco.swimmer_gym_v3_v1 import swimmer
 
 
-def test_random():
-    """ take random actions and record video """
+def make_swimmer(n_bodies, camera_pos):
+    """ create swimmer env """
     # make env
-    xml_str, xml_file = swimmer(n_bodies=5, xml_folder='src/envs/mujoco/assets/', xml_file='swimmer.xml', camera_pos='0 -6 6')
+    xml_str, xml_file = swimmer(n_bodies=n_bodies, xml_folder='src/envs/mujoco/assets/', xml_file='swimmer.xml', camera_pos=camera_pos)
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
     # remove xml file
     if os.path.exists(xml_file):
         os.remove(xml_file)
-    # env specs
+    # action: Box(-1.0, 1.0, (4,), float32)
     print(env.action_space, env.action_space.low, env.action_space.high)
+    # observation: Box(-inf, inf, (12,), float64)
     print(env.observation_space, env.observation_space.low, env.observation_space.high)
+    return env
+
+
+def test_random():
+    """ take random actions and record video """
+    # make env
+    env = make_swimmer(n_bodies=5, camera_pos='0 -6 6')
     # record video
     os.makedirs('video', exist_ok=True)
     rec = VideoRecorder(env, base_path='video/swimmer_gym_v3_v1', enabled=True)  # Create the video recorder
