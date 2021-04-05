@@ -1,6 +1,7 @@
 """ A Copy of Swimmer-v3 from OpenAI Gym
 - SwimmerEnv is exactly the same as Swimmer-v3, with personal xml_file path configuration.
 - swimmer.xml is unedited.
+- Reference: https://github.com/openai/gym/blob/master/gym/envs/mujoco/swimmer_v3.py
 """
 
 import numpy as np
