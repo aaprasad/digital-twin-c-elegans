@@ -231,7 +231,7 @@ def test_garage(framework: str, train: bool, log_dir: str, init_env):
         random: -1.7 +- 0.1
         TNPG: 96.0 +- 0.2
         TRPO: 96.0 +- 0.2
-    TRPO: Trust Region Policy Optimization
+    TRPO: Trust Region Policy Optimization, policy gradient method
         output vars: mu, r both have the same dimension as a (action)
         output: [mu, r] = NeuralNet(s;{W_i, b_i}), neural net maps s (state) to mu (mean) and r (log std dev) with W_i and b_i (network params)
         sample action: a ~ N(mean=mu, stddev=exp(r)), normal distribution
