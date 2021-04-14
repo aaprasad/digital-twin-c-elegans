@@ -19,7 +19,7 @@ def test_random():
 
     frame = grab_frame(env)
     height, width, layers = frame.shape
-    video = cv2.VideoWriter('video/swimmer_dm_v1.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
+    video = cv2.VideoWriter('video/swimmer_dm_v0.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (width, height))
     video.write(frame)
 
     action_spec = env.action_spec()
