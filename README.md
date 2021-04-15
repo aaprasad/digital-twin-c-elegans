@@ -6,15 +6,15 @@
     * OpenAI Gym's `Swimmer-v3`: `swimmer_gym_v3`
     * dm_control's `swimmer`: `swimmer_dm`
 2. existing env with any specified `n_links`
-    * implemented based on OpenAI Gym's `Swimmer-v3`: `swimmer_gym_v3_v1`
+    * OpenAI Gym's `Swimmer-v3` -> `swimmer_gym_v3_v1`
     * dm_control's `swimmer`: `swimmer_dm_v0`
 3. existing env with any specified `n_links` and length of link (*)
-    * implemented based on `swimmer_gym_v3_v1`: `swimmer_gym_v3_v2`
+    * `swimmer_gym_v3_v1` -> `swimmer_gym_v3_v2`
 4. muscle env (*)
-    * implemented based on OpenAI Gym's `Swimmer-v3`: `muscle_swimmer_gym_v0`
+    * OpenAI Gym's `Swimmer-v3` -> `muscle_swimmer_gym_v0`
 5. muscle env with any specified `n_links` (*)
-    * implemented based on `muscle_swimmer_gym_v0`: `muscle_swimmer_gym_v1`
+    * `muscle_swimmer_gym_v0` -> `muscle_swimmer_gym_v1`
 6. muscle env with any specified `n_links` and length of link (*)
-    * implemented based on `muscle_swimmer_gym_v1`: `muscle_swimmer_gym_v2`
+    * `muscle_swimmer_gym_v1` -> `muscle_swimmer_gym_v2`
 7. muscle nematode env (*)
-    * implemented based on `muscle_swimmer_gym_v2`: `nematode_gym_v0`
+    * `muscle_swimmer_gym_v2` -> `nematode_gym_v0`
