@@ -8,8 +8,13 @@ from src.envs.mujoco.swimmer_gym_v3_v1 import swimmer
 
 def make_swimmer(n_bodies, camera_pos):
     """ create swimmer env """
-    # make env
-    xml_str, xml_file = swimmer(n_bodies=n_bodies, xml_folder='src/envs/mujoco/assets/', xml_file='swimmer.xml', camera_pos=camera_pos)
+    xml_folder = 'src/envs/mujoco/assets/'
+    # generate xml str
+    xml_str = swimmer(n_bodies=n_bodies, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos)
+    # write to target xml file name
+    xml_file = os.path.join(xml_folder, 'swimmer{}.xml'.format(n_bodies))
+    with open(xml_file, 'wb') as f:
+        f.write(xml_str)
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
     # remove xml file
     if os.path.exists(xml_file):

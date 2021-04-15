@@ -1,6 +1,5 @@
 """ OpenAI Gym Swimmer-v3 with specific `n_bodies` to mimic C. elegans nematode """
 
-import os
 from lxml import etree
 
 
@@ -11,10 +10,10 @@ def _make_body(body_str, body_idx):
     return body
 
 
-def _make_model(n_bodies, xml_folder, xml_file, camera_pos=None):
+def _make_model(n_bodies, xml_file, camera_pos=None):
     """ Generates an xml string defining a swimmer with `n_bodies` bodies.
     Args:
-        xml_file: template xml file name
+        xml_file: template xml file path
     Reference:
         https://github.com/deepmind/dm_control/blob/master/dm_control/suite/swimmer.py
     """
@@ -22,7 +21,7 @@ def _make_model(n_bodies, xml_folder, xml_file, camera_pos=None):
     if n_bodies < 3:
         raise ValueError('At least 3 bodies required. Received {}'.format(n_bodies))
     # read template xml
-    with open(os.path.join(xml_folder, xml_file), 'rb') as f:
+    with open(xml_file, 'rb') as f:
         xml_str = f.read()
     # create mjcf
     mjcf = etree.fromstring(xml_str)
@@ -51,13 +50,8 @@ def _make_model(n_bodies, xml_folder, xml_file, camera_pos=None):
         camera = mjcf.find('worldbody/body/camera')
         camera.attrib['pos'] = camera_pos
     # get mjcf xml string
-    xml_str = etree.tostring(mjcf, pretty_print=True)
-    # write to target xml file name
-    xml_file = os.path.join(xml_folder, 'swimmer{}.xml'.format(n_bodies))
-    with open(xml_file, 'wb') as f:
-        f.write(xml_str)
-    return xml_str, xml_file
+    return etree.tostring(mjcf, pretty_print=True)
 
 
-def swimmer(n_bodies, xml_folder, xml_file, camera_pos=None):
-    return _make_model(n_bodies=n_bodies, xml_folder=xml_folder, xml_file=xml_file, camera_pos=camera_pos)
+def swimmer(n_bodies, xml_file, camera_pos=None):
+    return _make_model(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
