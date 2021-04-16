@@ -13,6 +13,7 @@ def _make_body(body_str, body_idx):
 def _make_model(n_bodies, xml_file, camera_pos=None):
     """ Generates an xml string defining a swimmer with `n_bodies` bodies.
     Args:
+        n_bodies: number of bodies, >= 3
         xml_file: template xml file path
     Reference:
         https://github.com/deepmind/dm_control/blob/master/dm_control/suite/swimmer.py
