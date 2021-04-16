@@ -12,7 +12,7 @@ def make_swimmer(n_bodies, camera_pos):
     # generate xml str
     xml_str = swimmer(n_bodies=n_bodies, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos)
     # write to target xml file name
-    xml_file = os.path.join(xml_folder, 'swimmer{}.xml'.format(n_bodies))
+    xml_file = os.path.join(xml_folder, 'swimmer_temp.xml')
     with open(xml_file, 'wb') as f:
         f.write(xml_str)
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
