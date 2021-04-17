@@ -9,33 +9,32 @@ def parse_xml(xml_file):
     with open(xml_file, 'rb') as f:
         xml_str = f.read()
     # create mjcf
-    parser = etree.XMLParser(remove_blank_text=True)
-    mjcf = etree.fromstring(xml_str, parser=parser)
+    mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
     # use unified coordinates: geom fromto, body pos
     geom = mjcf.find('worldbody/body/geom')
-    geom.attrib['fromto'] = '0 0 0 -1 0 0'
+    geom.set('fromto', '0 0 0 -1 0 0')
     body = mjcf.find('worldbody/body/body')
-    body.attrib['pos'] = '-1 0 0'
+    body.set('pos', '-1 0 0')
     # rename body 1
     body = mjcf.find('worldbody/body')
-    body.attrib['name'] = 'torso1'
-    joint_list = body.findall('joint')
-    for joint in joint_list:
-        if joint.attrib['name'] == 'rot':
-            joint.attrib['name'] = 'rot1'
+    body.set('name', 'torso1')
+    for joint in body.findall('joint'):
+        if joint.get('name') == 'rot':
+            joint.set('name', 'rot1')
     # rename body 2
     body = body.find('body')
-    body.attrib['name'] = 'torso2'
+    body.set('name', 'torso2')
     # rename body 3
     body = body.find('body')
-    body.attrib['name'] = 'torso3'
+    body.set('name', 'torso3')
     return mjcf
 
 
 def _make_body(body_str, body_idx):
     body = etree.fromstring(body_str)  # add to the back part
-    body.attrib['name'] = 'torso' + str(body_idx)
-    body.find('joint').attrib['name'] = 'rot' + str(body_idx)
+    body.set('name', 'torso{}'.format(body_idx))
+    joint = body.find('joint')
+    joint.set('name', 'rot{}'.format(body_idx))
     return body
 
 
@@ -55,27 +54,27 @@ def _make_model(n_bodies, xml_file, camera_pos=None):
     # modify mjcf
     if n_bodies > 3:
         # add more bodies
-        back = mjcf.find('worldbody/body/body/body')
+        body_posterior = mjcf.find('worldbody/body/body/body')
         # a str copy of the back part
-        back_str = etree.tostring(back)
-        body = _make_body(body_str=back_str, body_idx=n_bodies)
+        body_str = etree.tostring(body_posterior)
+        bodies = _make_body(body_str=body_str, body_idx=n_bodies)
         for i in range(n_bodies - 1, 3, -1):
-            temp_body = _make_body(body_str=back_str, body_idx=i)
-            temp_body.append(body)
-            body = temp_body
-        back.append(body)
+            temp_body = _make_body(body_str=body_str, body_idx=i)
+            temp_body.append(bodies)
+            bodies = temp_body
+        body_posterior.append(bodies)
         # add more motor actuators
         actuator = mjcf.find('actuator')
         motor = actuator.find('motor')
         motor_str = etree.tostring(motor)
         for i in range(4, n_bodies + 1):
             temp_motor = etree.fromstring(motor_str)
-            temp_motor.attrib['joint'] = 'rot' + str(i)
+            temp_motor.set('joint', 'rot{}'.format(i))
             actuator.append(temp_motor)
     # modify camera pos, default: "0 -3 3"
     if camera_pos is not None:
         camera = mjcf.find('worldbody/body/camera')
-        camera.attrib['pos'] = camera_pos
+        camera.set('pos', camera_pos)
     # get mjcf xml string
     return etree.tostring(mjcf, pretty_print=True)
 

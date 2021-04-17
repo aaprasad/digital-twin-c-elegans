@@ -21,17 +21,17 @@ def _make_model(n_bodies, body_len, xml_file, camera_pos=None):
     # create swimmer with specific `n_bodies`
     xml_str = swimmer_base(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
     # create mjcf
-    mjcf = etree.fromstring(xml_str)
+    mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
     # the highest level of body
     body = mjcf.find('worldbody/body')
     fromto = _list_to_str([0, 0, 0, -body_len, 0, 0])
     pos = _list_to_str([-body_len, 0, 0])
     for i in range(n_bodies):
         geom = body.find('geom')
-        geom.attrib['fromto'] = fromto
+        geom.set('fromto', fromto)
         body = body.find('body')
         if body is not None:
-            body.attrib['pos'] = pos
+            body.set('pos', pos)
     # get mjcf xml string
     return etree.tostring(mjcf, pretty_print=True)
 
