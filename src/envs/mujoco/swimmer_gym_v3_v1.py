@@ -9,7 +9,8 @@ def parse_xml(xml_file):
     with open(xml_file, 'rb') as f:
         xml_str = f.read()
     # create mjcf
-    mjcf = etree.fromstring(xml_str)
+    parser = etree.XMLParser(remove_blank_text=True)
+    mjcf = etree.fromstring(xml_str, parser=parser)
     # use unified coordinates: geom fromto, body pos
     geom = mjcf.find('worldbody/body/geom')
     geom.attrib['fromto'] = '0 0 0 -1 0 0'
