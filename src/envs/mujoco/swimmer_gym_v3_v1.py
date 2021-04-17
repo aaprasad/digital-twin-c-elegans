@@ -3,8 +3,11 @@
 from lxml import etree
 
 
-def parse_xml(xml_str):
+def parse_xml(xml_file):
     """ parse xml and clean it up """
+    # read template xml
+    with open(xml_file, 'rb') as f:
+        xml_str = f.read()
     # create mjcf
     mjcf = etree.fromstring(xml_str)
     # use unified coordinates: geom fromto, body pos
@@ -46,11 +49,8 @@ def _make_model(n_bodies, xml_file, camera_pos=None):
     # minimum `n_bodies`
     if n_bodies < 3:
         raise ValueError('At least 3 bodies required. Received {}'.format(n_bodies))
-    # read template xml
-    with open(xml_file, 'rb') as f:
-        xml_str = f.read()
     # parse xml
-    mjcf = parse_xml(xml_str)
+    mjcf = parse_xml(xml_file)
     # modify mjcf
     if n_bodies > 3:
         # add more bodies
