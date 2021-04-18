@@ -10,7 +10,7 @@
     * dm_control's `swimmer`: `swimmer_dm_v0`
 3. existing env with any specified `n_links` and `body_len`
     * `swimmer_gym_v3_v1` -> `swimmer_gym_v3_v2`
-4. muscle env (*)
+4. muscle env
     * OpenAI Gym's `Swimmer-v3` -> `muscle_swimmer_gym_v0`
 5. muscle env with any specified `n_links` (*)
     * `muscle_swimmer_gym_v0` -> `muscle_swimmer_gym_v1`
