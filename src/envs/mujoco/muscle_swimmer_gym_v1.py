@@ -14,7 +14,7 @@ def _make_model(n_bodies, xml_file, camera_pos=None):
     # create swimmer with specific `n_bodies`
     mjcf = make_model_base(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
     # muscle model
-    mjcf = transform_into_muscle_model(mjcf=mjcf, n_bodies=n_bodies)
+    mjcf = transform_into_muscle_model(mjcf=mjcf, n_bodies=n_bodies, body_len=1)
     return mjcf
 
 

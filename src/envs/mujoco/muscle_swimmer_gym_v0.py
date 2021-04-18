@@ -16,7 +16,7 @@ def _make_spatial(anterior_torso_site, posterior_torso_site, sidesite, geom, ten
     tendon.append(spatial)
 
 
-def _make_muscle(index, body, tendon, actuator):
+def _make_muscle(index, body, tendon, actuator, body_len):
     """ create a pair of muscles at a joint connecting anterior and posterior torso
     Args:
         index: the index of the anterior torso
@@ -24,10 +24,10 @@ def _make_muscle(index, body, tendon, actuator):
     """
     # anterior torso sites
     anterior_torso_dorsal_site = etree.Element(
-        'site', attrib={'name': 'torso{}_posterior_dorsal'.format(index), 'pos': '-0.87 0.1 0'}
+        'site', attrib={'name': 'torso{}_posterior_dorsal'.format(index), 'pos': '{} 0.1 0'.format(-body_len + 0.1 + 0.03)}
     )
     anterior_torso_ventral_site = etree.Element(
-        'site', attrib={'name': 'torso{}_posterior_ventral'.format(index), 'pos': '-0.87 -0.1 0'}
+        'site', attrib={'name': 'torso{}_posterior_ventral'.format(index), 'pos': '{} -0.1 0'.format(-body_len + 0.1 + 0.03)}
     )
     body.insert(-1, anterior_torso_dorsal_site)
     body.insert(-1, anterior_torso_ventral_site)
@@ -44,10 +44,10 @@ def _make_muscle(index, body, tendon, actuator):
     body.insert(-1, geom)
     # posterior torso sites
     posterior_torso_dorsal_site = etree.Element(
-        'site', attrib={'name': 'torso{}_anterior_dorsal'.format(index + 1), 'pos': '-0.13 0.1 0'}
+        'site', attrib={'name': 'torso{}_anterior_dorsal'.format(index + 1), 'pos': '{} 0.1 0'.format(-0.1 - 0.03)}
     )
     posterior_torso_ventral_site = etree.Element(
-        'site', attrib={'name': 'torso{}_anterior_ventral'.format(index + 1), 'pos': '-0.13 -0.1 0'}
+        'site', attrib={'name': 'torso{}_anterior_ventral'.format(index + 1), 'pos': '{} -0.1 0'.format(-0.1 - 0.03)}
     )
     body.insert(-1, posterior_torso_dorsal_site)
     body.insert(-1, posterior_torso_ventral_site)
@@ -75,7 +75,7 @@ def _make_muscle(index, body, tendon, actuator):
     actuator.append(muscle_ventral)
 
 
-def transform_into_muscle_model(mjcf, n_bodies):
+def transform_into_muscle_model(mjcf, n_bodies, body_len):
     """ transform a joint based model into muscle based model """
     # default site attributions
     default = mjcf.find('default')
@@ -93,7 +93,7 @@ def transform_into_muscle_model(mjcf, n_bodies):
     # add muscle
     body = mjcf.find('worldbody/body')
     for i in range(1, n_bodies):
-        _make_muscle(index=i, body=body, tendon=tendon, actuator=actuator)
+        _make_muscle(index=i, body=body, tendon=tendon, actuator=actuator, body_len=body_len)
         body = body.find('body')
     return mjcf
 
@@ -109,7 +109,7 @@ def _make_model(xml_file):
     # parse template xml
     mjcf = parse_xml(xml_str=xml_str)
     # muscle model
-    mjcf = transform_into_muscle_model(mjcf=mjcf, n_bodies=3)
+    mjcf = transform_into_muscle_model(mjcf=mjcf, n_bodies=3, body_len=1)
     return mjcf
 
 
