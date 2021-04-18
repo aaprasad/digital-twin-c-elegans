@@ -1,6 +1,6 @@
 """ OpenAI Gym Swimmer-v3 with specific `n_bodies` and `body_len` to mimic C. elegans nematode """
 
-from swimmer_gym_v3_v1 import swimmer as swimmer_base
+from .swimmer_gym_v3_v1 import swimmer as swimmer_base
 from lxml import etree
 
 
