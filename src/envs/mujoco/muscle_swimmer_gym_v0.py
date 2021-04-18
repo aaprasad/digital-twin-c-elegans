@@ -80,8 +80,11 @@ def _make_model(xml_file):
     Args:
         xml_file: template xml file path
     """
+    # read template xml
+    with open(xml_file, 'rb') as f:
+        xml_str = f.read()
     # parse template xml
-    mjcf = parse_xml(xml_file)
+    mjcf = parse_xml(xml_str=xml_str)
     # default site attributions
     default = mjcf.find('default')
     default.append(etree.Element('site', attrib={'type': 'sphere', 'size': '0.01'}))
