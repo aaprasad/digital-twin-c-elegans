@@ -29,8 +29,8 @@ def _make_muscle(index, body, tendon, actuator):
     anterior_torso_ventral_site = etree.Element(
         'site', attrib={'name': 'torso{}_posterior_ventral'.format(index), 'pos': '-0.87 -0.1 0'}
     )
-    body.append(anterior_torso_dorsal_site)
-    body.append(anterior_torso_ventral_site)
+    body.insert(-1, anterior_torso_dorsal_site)
+    body.insert(-1, anterior_torso_ventral_site)
 
     # posterior torso
     body = body.find('body')
@@ -41,7 +41,7 @@ def _make_muscle(index, body, tendon, actuator):
             'rgba': '0.8 0.2 0.1 1'
         }
     )
-    body.append(geom)
+    body.insert(-1, geom)
     # posterior torso sites
     posterior_torso_dorsal_site = etree.Element(
         'site', attrib={'name': 'torso{}_anterior_dorsal'.format(index + 1), 'pos': '-0.13 0.1 0'}
@@ -49,8 +49,8 @@ def _make_muscle(index, body, tendon, actuator):
     posterior_torso_ventral_site = etree.Element(
         'site', attrib={'name': 'torso{}_anterior_ventral'.format(index + 1), 'pos': '-0.13 -0.1 0'}
     )
-    body.append(posterior_torso_dorsal_site)
-    body.append(posterior_torso_ventral_site)
+    body.insert(-1, posterior_torso_dorsal_site)
+    body.insert(-1, posterior_torso_ventral_site)
 
     # sidesite
     sidesite_dorsal = etree.Element(
@@ -59,8 +59,8 @@ def _make_muscle(index, body, tendon, actuator):
     sidesite_ventral = etree.Element(
         'site', attrib={'name': 'sidesite{}_ventral'.format(index + 1), 'pos': '0 -0.11 0', 'rgba': '0.8 0.2 0.1 0'}
     )
-    body.append(sidesite_dorsal)
-    body.append(sidesite_ventral)
+    body.insert(-1, sidesite_dorsal)
+    body.insert(-1, sidesite_ventral)
 
     # spatial
     spatial_dorsal_name = 'tendon{}_dorsal'.format(index + 1)
