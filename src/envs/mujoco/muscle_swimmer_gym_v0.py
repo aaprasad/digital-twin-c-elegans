@@ -95,9 +95,7 @@ def transform_into_muscle_model(mjcf, n_bodies):
     for i in range(1, n_bodies):
         _make_muscle(index=i, body=body, tendon=tendon, actuator=actuator)
         body = body.find('body')
-
-    # get mjcf xml string
-    return etree.tostring(mjcf, pretty_print=True)
+    return mjcf
 
 
 def _make_model(xml_file):
@@ -111,8 +109,10 @@ def _make_model(xml_file):
     # parse template xml
     mjcf = parse_xml(xml_str=xml_str)
     # muscle model
-    return transform_into_muscle_model(mjcf=mjcf, n_bodies=3)
+    mjcf = transform_into_muscle_model(mjcf=mjcf, n_bodies=3)
+    return mjcf
 
 
 def swimmer(xml_file):
-    return _make_model(xml_file=xml_file)
+    mjcf = _make_model(xml_file=xml_file)
+    return etree.tostring(mjcf, pretty_print=True)

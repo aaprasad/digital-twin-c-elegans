@@ -75,9 +75,9 @@ def _make_model(n_bodies, xml_file, camera_pos=None):
     if camera_pos is not None:
         camera = mjcf.find('worldbody/body/camera')
         camera.set('pos', camera_pos)
-    # get mjcf xml string
-    return etree.tostring(mjcf, pretty_print=True)
+    return mjcf
 
 
 def swimmer(n_bodies, xml_file, camera_pos=None):
-    return _make_model(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
+    mjcf = _make_model(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
+    return etree.tostring(mjcf, pretty_print=True)

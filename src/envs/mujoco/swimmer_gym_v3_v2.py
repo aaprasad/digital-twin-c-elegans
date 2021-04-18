@@ -32,9 +32,9 @@ def _make_model(n_bodies, body_len, xml_file, camera_pos=None):
         body = body.find('body')
         if body is not None:
             body.set('pos', pos)
-    # get mjcf xml string
-    return etree.tostring(mjcf, pretty_print=True)
+    return mjcf
 
 
 def swimmer(n_bodies, body_len, xml_file, camera_pos=None):
-    return _make_model(n_bodies=n_bodies, body_len=body_len, xml_file=xml_file, camera_pos=camera_pos)
+    mjcf = _make_model(n_bodies=n_bodies, body_len=body_len, xml_file=xml_file, camera_pos=camera_pos)
+    return etree.tostring(mjcf, pretty_print=True)
