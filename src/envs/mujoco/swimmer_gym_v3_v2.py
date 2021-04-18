@@ -1,6 +1,6 @@
 """ OpenAI Gym Swimmer-v3 with specific `n_bodies` and `body_len` to mimic C. elegans nematode """
 
-from swimmer_gym_v3_v1 import swimmer as swimmer_base
+from .swimmer_gym_v3_v1 import make_model as make_model_base
 from lxml import etree
 
 
@@ -19,9 +19,7 @@ def _make_model(n_bodies, body_len, xml_file, camera_pos=None):
     if body_len < 0.2:
         raise ValueError('`body_len` must be at least two times the size of joint. Received {}'.format(body_len))
     # create swimmer with specific `n_bodies`
-    xml_str = swimmer_base(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
-    # create mjcf
-    mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
+    mjcf = make_model_base(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
     # the highest level of body
     body = mjcf.find('worldbody/body')
     fromto = _list_to_str([0, 0, 0, -body_len, 0, 0])

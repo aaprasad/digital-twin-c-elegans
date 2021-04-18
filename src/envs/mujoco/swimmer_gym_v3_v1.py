@@ -35,7 +35,7 @@ def _make_body(body_str, body_idx):
     return body
 
 
-def _make_model(n_bodies, xml_file, camera_pos=None):
+def make_model(n_bodies, xml_file, camera_pos=None):
     """ Generates an xml string defining a swimmer with `n_bodies` bodies.
     Args:
         n_bodies: number of bodies, >= 3
@@ -79,5 +79,5 @@ def _make_model(n_bodies, xml_file, camera_pos=None):
 
 
 def swimmer(n_bodies, xml_file, camera_pos=None):
-    mjcf = _make_model(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
+    mjcf = make_model(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
     return etree.tostring(mjcf, pretty_print=True)
