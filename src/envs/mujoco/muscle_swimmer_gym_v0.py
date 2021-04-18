@@ -75,16 +75,8 @@ def _make_muscle(index, body, tendon, actuator):
     actuator.append(muscle_ventral)
 
 
-def _make_model(xml_file):
-    """ Generates an xml string defining a muscle swimmer.
-    Args:
-        xml_file: template xml file path
-    """
-    # read template xml
-    with open(xml_file, 'rb') as f:
-        xml_str = f.read()
-    # parse template xml
-    mjcf = parse_xml(xml_str=xml_str)
+def transform_into_muscle_model(mjcf, n_bodies):
+    """ transform a joint based model into muscle based model """
     # default site attributions
     default = mjcf.find('default')
     default.append(etree.Element('site', attrib={'type': 'sphere', 'size': '0.01'}))
@@ -100,12 +92,26 @@ def _make_model(xml_file):
     mjcf.append(actuator)
     # add muscle
     body = mjcf.find('worldbody/body')
-    for i in range(1, 3):
+    for i in range(1, n_bodies):
         _make_muscle(index=i, body=body, tendon=tendon, actuator=actuator)
         body = body.find('body')
 
     # get mjcf xml string
     return etree.tostring(mjcf, pretty_print=True)
+
+
+def _make_model(xml_file):
+    """ Generates an xml string defining a muscle swimmer.
+    Args:
+        xml_file: template xml file path
+    """
+    # read template xml
+    with open(xml_file, 'rb') as f:
+        xml_str = f.read()
+    # parse template xml
+    mjcf = parse_xml(xml_str=xml_str)
+    # muscle model
+    return transform_into_muscle_model(mjcf=mjcf, n_bodies=3)
 
 
 def swimmer(xml_file):
