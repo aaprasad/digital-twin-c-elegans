@@ -37,6 +37,7 @@ ARRANGEMENT = {
 
 def _calculate_site_pos(quadrant, row):
     """ calculate site pos (y, z) for each row in muscle quadrants  """
+    # site size is 0.01, thus elevation is 0.02 and 0.04 so that sites don't overlap
     if row == 'medial':
         z = 0.02
     else:  # 'lateral'
