@@ -6,7 +6,7 @@ from .swimmer_gym_v3_v1 import parse_xml
 from lxml import etree
 
 
-def make_spatial(anterior_torso_site, posterior_torso_site, sidesite, geom, tendon, name):
+def _make_spatial(anterior_torso_site, posterior_torso_site, sidesite, geom, tendon, name):
     """ create spatial tendon between anterior torso and posterior torso """
     spatial = etree.Element('spatial', attrib={'name': name, 'width': '0.002', 'rgba': '0.95 0.3 0.3 1'})
     spatial.append(etree.Element('pulley', attrib={'divisor': '2'}))
@@ -67,7 +67,7 @@ def _make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len
     sidesite = etree.Element('site', attrib={'name': name['sidesite'], 'pos': sidesite_pos, 'rgba': '0.8 0.2 0.1 0'})
     posterior_body.insert(-1, sidesite)
     # spatial
-    make_spatial(anterior_site, posterior_site, sidesite, geom, tendon, name['spatial'])
+    _make_spatial(anterior_site, posterior_site, sidesite, geom, tendon, name['spatial'])
     # actuator
     muscle = etree.Element('muscle', attrib={'name': name['muscle'], 'tendon': name['spatial']})
     actuator.append(muscle)
