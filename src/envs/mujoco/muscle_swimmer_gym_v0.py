@@ -76,7 +76,7 @@ def _make_muscle(index, body, tendon, actuator, body_len):
 
 
 def prepare_muscle_model(mjcf):
-    """ muscle model preparation settings
+    """ muscle model preliminary set up
     return: mjcf, tendon, actuator
     """
     # default site attributions
