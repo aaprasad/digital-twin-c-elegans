@@ -16,5 +16,5 @@
     * `muscle_swimmer_gym_v0` -> `muscle_swimmer_gym_v1`
 6. muscle env with any specified `n_links` and `body_len`
     * `muscle_swimmer_gym_v1` -> `muscle_swimmer_gym_v2`
-7. muscle nematode env (*)
+7. muscle nematode env with any specified `body_len` and muscle arrangement
     * `muscle_swimmer_gym_v2` -> `nematode_gym_v0`
