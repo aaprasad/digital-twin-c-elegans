@@ -45,7 +45,23 @@ def make_geom(body, name):
     return geom
 
 
-def make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len, y, z, name):
+def make_sidesite(body, side: str, name):
+    """ sidesite
+    Args:
+        side: 'dorsal' or 'ventral'
+    """
+    if side == 'dorsal':
+        sidesite_pos = '0 0.15 0'
+    elif side == 'ventral':
+        sidesite_pos = '0 -0.15 0'
+    else:
+        raise ValueError('side is dorsal or ventral. Received {}'.format(side))
+    sidesite = etree.Element('site', attrib={'name': name, 'pos': sidesite_pos, 'rgba': '0.8 0.2 0.1 0'})
+    body.insert(-1, sidesite)
+    return sidesite
+
+
+def make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len, y, z, sidesite, name):
     """ wrap tendon around geom through sidesite and add muscle actuator
     Args:
         geom: geom for tendon wrapping
@@ -59,13 +75,6 @@ def make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len,
     # posterior torso sites
     posterior_site = etree.Element('site', attrib={'name': name['posterior_site'], 'pos': '{} {} {}'.format(-0.1 - 0.03, y, z)})
     posterior_body.insert(-1, posterior_site)
-    # sidesite
-    if y >= 0:
-        sidesite_pos = '0 0.15 0'
-    else:
-        sidesite_pos = '0 -0.15 0'
-    sidesite = etree.Element('site', attrib={'name': name['sidesite'], 'pos': sidesite_pos, 'rgba': '0.8 0.2 0.1 0'})
-    posterior_body.insert(-1, sidesite)
     # spatial
     _make_spatial(anterior_site, posterior_site, sidesite, geom, tendon, name['spatial'])
     # actuator
@@ -87,20 +96,20 @@ def arrange_muscle(mjcf, n_bodies, body_len):
         geom = make_geom(body=posterior_body, name='geom{}'.format(i + 1))
         make_muscle(
             anterior_body, posterior_body, geom, tendon, actuator, body_len, y=y_abs, z=z,
+            sidesite=make_sidesite(body=posterior_body, side='dorsal', name='sidesite{}_dorsal'.format(i + 1)),
             name={
                 'anterior_site': 'torso{}_posterior_dorsal'.format(i),
                 'posterior_site': 'torso{}_anterior_dorsal'.format(i + 1),
-                'sidesite': 'sidesite{}_dorsal'.format(i + 1),
                 'spatial': 'tendon{}_dorsal'.format(i + 1),
                 'muscle': 'muscle{}_dorsal'.format(i + 1)
             }
         )
         make_muscle(
             anterior_body, posterior_body, geom, tendon, actuator, body_len, y=-y_abs, z=z,
+            sidesite=make_sidesite(body=posterior_body, side='ventral', name='sidesite{}_ventral'.format(i + 1)),
             name={
                 'anterior_site': 'torso{}_posterior_ventral'.format(i),
                 'posterior_site': 'torso{}_anterior_ventral'.format(i + 1),
-                'sidesite': 'sidesite{}_ventral'.format(i + 1),
                 'spatial': 'tendon{}_ventral'.format(i + 1),
                 'muscle': 'muscle{}_ventral'.format(i + 1)
             }

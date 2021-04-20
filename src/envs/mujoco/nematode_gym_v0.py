@@ -1,7 +1,7 @@
 """ nematode with accurate muscle arrangement """
 
 from .swimmer_gym_v3_v2 import make_model as make_model_base
-from .muscle_swimmer_gym_v0 import prepare_muscle_model, make_geom, make_muscle
+from .muscle_swimmer_gym_v0 import prepare_muscle_model, make_geom, make_muscle, make_sidesite
 from lxml import etree
 import math
 
@@ -43,11 +43,25 @@ def _calculate_site_pos(quadrant, row):
     else:  # 'lateral'
         z = 0.04
     y = math.sqrt(0.1 ** 2 - z ** 2)
-    if quadrant == 'dorsal_left' or quadrant == 'ventral_left':
+    if quadrant.endswith('left'):  # 'dorsal_left', 'ventral_left'
         z *= -1
-    if quadrant == 'ventral_left' or quadrant == 'ventral_right':
+    if quadrant.startswith('ventral'):  # 'ventral_left', 'ventral_right'
         y *= -1
     return y, z
+
+
+def _need_sidesite(side: str, arrangement, index):
+    """ check if a sidesite is needed
+    Args:
+        side: 'dorsal' or 'ventral'
+    """
+    tag = False
+    for quadrant in arrangement:
+        if quadrant.startswith(side):
+            for row in arrangement[quadrant]:
+                if arrangement[quadrant][row][index - 1] is not None:
+                    tag = True
+    return tag
 
 
 def _arrange_muscle(mjcf, n_bodies, body_len, arrangement):
@@ -58,19 +72,34 @@ def _arrange_muscle(mjcf, n_bodies, body_len, arrangement):
     anterior_body = mjcf.find('worldbody/body')
     for i in range(1, n_bodies):
         posterior_body = anterior_body.find('body')
-        # add muscles
+        # make geom for tendon wrapping
         geom = make_geom(body=posterior_body, name='geom{}'.format(i + 1))
+        # make dorsal/ventral sidesite if it's needed
+        if _need_sidesite(side='dorsal', arrangement=arrangement, index=i) is True:
+            sidesite_dorsal = make_sidesite(body=posterior_body, side='dorsal', name='sidesite{}_dorsal'.format(i + 1))
+        else:
+            sidesite_dorsal = None
+        if _need_sidesite(side='ventral', arrangement=arrangement, index=i) is True:
+            sidesite_ventral = make_sidesite(body=posterior_body, side='ventral', name='sidesite{}_ventral'.format(i + 1))
+        else:
+            sidesite_ventral = None
+        # add muscles
         for quadrant in arrangement:
+            # assign sidesite for this quadrant
+            if quadrant.startswith('dorsal'):
+                sidesite = sidesite_dorsal
+            else:  # startswith 'ventral'
+                sidesite = sidesite_ventral
             for row in arrangement[quadrant]:
                 muscle_name = arrangement[quadrant][row][i - 1]
                 if muscle_name is not None:
                     y, z = _calculate_site_pos(quadrant, row)
                     make_muscle(
                         anterior_body, posterior_body, geom, tendon, actuator, body_len, y=y, z=z,
+                        sidesite=sidesite,
                         name={
                             'anterior_site': 'site_anterior_{}'.format(muscle_name),
                             'posterior_site': 'site_posterior_{}'.format(muscle_name),
-                            'sidesite': 'sidesite_{}'.format(muscle_name),
                             'spatial': 'tendon_{}'.format(muscle_name),
                             'muscle': 'muscle_{}'.format(muscle_name)
                         }
