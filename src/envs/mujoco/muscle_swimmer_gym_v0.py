@@ -75,8 +75,10 @@ def _make_muscle(index, body, tendon, actuator, body_len):
     actuator.append(muscle_ventral)
 
 
-def transform_into_muscle_model(mjcf, n_bodies, body_len):
-    """ transform a joint based model into muscle based model """
+def prepare_muscle_model(mjcf):
+    """ muscle model preparation settings
+    return: mjcf, tendon, actuator
+    """
     # default site attributions
     default = mjcf.find('default')
     default.append(etree.Element('site', attrib={'type': 'sphere', 'size': '0.01'}))
@@ -90,6 +92,13 @@ def transform_into_muscle_model(mjcf, n_bodies, body_len):
     # add actuator element
     actuator = etree.Element('actuator', attrib={})
     mjcf.append(actuator)
+    return mjcf, tendon, actuator
+
+
+def transform_into_muscle_model(mjcf, n_bodies, body_len):
+    """ transform a joint based model into muscle based model """
+    # prepare muscle model
+    mjcf, tendon, actuator = prepare_muscle_model(mjcf=mjcf)
     # add muscle
     body = mjcf.find('worldbody/body')
     for i in range(1, n_bodies):
