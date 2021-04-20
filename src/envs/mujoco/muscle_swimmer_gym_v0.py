@@ -6,7 +6,7 @@ from .swimmer_gym_v3_v1 import parse_xml
 from lxml import etree
 
 
-def _make_spatial(anterior_torso_site, posterior_torso_site, sidesite, geom, tendon, name):
+def make_spatial(anterior_torso_site, posterior_torso_site, sidesite, geom, tendon, name):
     """ create spatial tendon between anterior torso and posterior torso """
     spatial = etree.Element('spatial', attrib={'name': name, 'width': '0.002', 'rgba': '0.95 0.3 0.3 1'})
     spatial.append(etree.Element('pulley', attrib={'divisor': '2'}))
@@ -64,9 +64,9 @@ def _make_muscle(index, body, tendon, actuator, body_len):
 
     # spatial
     spatial_dorsal_name = 'tendon{}_dorsal'.format(index + 1)
-    _make_spatial(anterior_torso_dorsal_site, posterior_torso_dorsal_site, sidesite_dorsal, geom, tendon, spatial_dorsal_name)
+    make_spatial(anterior_torso_dorsal_site, posterior_torso_dorsal_site, sidesite_dorsal, geom, tendon, spatial_dorsal_name)
     spatial_ventral_name = 'tendon{}_ventral'.format(index + 1)
-    _make_spatial(anterior_torso_ventral_site, posterior_torso_ventral_site, sidesite_ventral, geom, tendon, spatial_ventral_name)
+    make_spatial(anterior_torso_ventral_site, posterior_torso_ventral_site, sidesite_ventral, geom, tendon, spatial_ventral_name)
 
     # actuator
     muscle_dorsal = etree.Element('muscle', attrib={'name': 'muscle{}_dorsal'.format(index + 1), 'tendon': spatial_dorsal_name})
