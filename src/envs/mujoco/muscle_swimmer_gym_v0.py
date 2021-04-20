@@ -61,9 +61,9 @@ def make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len,
     posterior_body.insert(-1, posterior_site)
     # sidesite
     if y >= 0:
-        sidesite_pos = '0 0.11 0'
+        sidesite_pos = '0 0.15 0'
     else:
-        sidesite_pos = '0 -0.11 0'
+        sidesite_pos = '0 -0.15 0'
     sidesite = etree.Element('site', attrib={'name': name['sidesite'], 'pos': sidesite_pos, 'rgba': '0.8 0.2 0.1 0'})
     posterior_body.insert(-1, sidesite)
     # spatial
