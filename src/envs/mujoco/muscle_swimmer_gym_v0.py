@@ -16,65 +16,6 @@ def make_spatial(anterior_torso_site, posterior_torso_site, sidesite, geom, tend
     tendon.append(spatial)
 
 
-def _make_muscle(index, body, tendon, actuator, body_len):
-    """ create a pair of muscles at a joint connecting anterior and posterior torso
-    Args:
-        index: the index of the anterior torso
-        body: the anterior torso
-    """
-    # anterior torso sites
-    anterior_torso_dorsal_site = etree.Element(
-        'site', attrib={'name': 'torso{}_posterior_dorsal'.format(index), 'pos': '{} 0.1 0'.format(-body_len + 0.1 + 0.03)}
-    )
-    anterior_torso_ventral_site = etree.Element(
-        'site', attrib={'name': 'torso{}_posterior_ventral'.format(index), 'pos': '{} -0.1 0'.format(-body_len + 0.1 + 0.03)}
-    )
-    body.insert(-1, anterior_torso_dorsal_site)
-    body.insert(-1, anterior_torso_ventral_site)
-
-    # posterior torso
-    body = body.find('body')
-    # joint geom without mass (the mass of joint is included in torso)
-    geom = etree.Element(
-        'geom', attrib={
-            'name': 'geom{}'.format(index + 1), 'pos': '0 0 0', 'size': '0.1', 'type': 'sphere', 'density': '0',
-            'rgba': '0.8 0.2 0.1 1'
-        }
-    )
-    body.insert(-1, geom)
-    # posterior torso sites
-    posterior_torso_dorsal_site = etree.Element(
-        'site', attrib={'name': 'torso{}_anterior_dorsal'.format(index + 1), 'pos': '{} 0.1 0'.format(-0.1 - 0.03)}
-    )
-    posterior_torso_ventral_site = etree.Element(
-        'site', attrib={'name': 'torso{}_anterior_ventral'.format(index + 1), 'pos': '{} -0.1 0'.format(-0.1 - 0.03)}
-    )
-    body.insert(-1, posterior_torso_dorsal_site)
-    body.insert(-1, posterior_torso_ventral_site)
-
-    # sidesite
-    sidesite_dorsal = etree.Element(
-        'site', attrib={'name': 'sidesite{}_dorsal'.format(index + 1), 'pos': '0 0.11 0', 'rgba': '0.8 0.2 0.1 0'}
-    )
-    sidesite_ventral = etree.Element(
-        'site', attrib={'name': 'sidesite{}_ventral'.format(index + 1), 'pos': '0 -0.11 0', 'rgba': '0.8 0.2 0.1 0'}
-    )
-    body.insert(-1, sidesite_dorsal)
-    body.insert(-1, sidesite_ventral)
-
-    # spatial
-    spatial_dorsal_name = 'tendon{}_dorsal'.format(index + 1)
-    make_spatial(anterior_torso_dorsal_site, posterior_torso_dorsal_site, sidesite_dorsal, geom, tendon, spatial_dorsal_name)
-    spatial_ventral_name = 'tendon{}_ventral'.format(index + 1)
-    make_spatial(anterior_torso_ventral_site, posterior_torso_ventral_site, sidesite_ventral, geom, tendon, spatial_ventral_name)
-
-    # actuator
-    muscle_dorsal = etree.Element('muscle', attrib={'name': 'muscle{}_dorsal'.format(index + 1), 'tendon': spatial_dorsal_name})
-    muscle_ventral = etree.Element('muscle', attrib={'name': 'muscle{}_ventral'.format(index + 1), 'tendon': spatial_ventral_name})
-    actuator.append(muscle_dorsal)
-    actuator.append(muscle_ventral)
-
-
 def prepare_muscle_model(mjcf):
     """ muscle model preliminary set up
     - set up muscle model default settings
@@ -97,15 +38,75 @@ def prepare_muscle_model(mjcf):
     return mjcf, tendon, actuator
 
 
+def _make_geom(body, name):
+    """ joint geom without mass (the mass of joint is included in torso) """
+    geom = etree.Element('geom', attrib={'name': name, 'pos': '0 0 0', 'size': '0.1', 'type': 'sphere', 'density': '0', 'rgba': '0.8 0.2 0.1 1'})
+    body.insert(-1, geom)
+    return geom
+
+
+def _make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len, y, z, name):
+    """ wrap tendon around geom through sidesite and add muscle actuator
+    Args:
+        geom: geom for tendon wrapping
+        y: y ** 2 + z ** 2 == 0.1 ** 2, -0.1 <= y <= 0.1
+        z: the elevation of sites, -0.1 <= z <= 0.1
+        name: names of the components
+    """
+    # anterior torso sites
+    anterior_site = etree.Element('site', attrib={'name': name['anterior_site'], 'pos': '{} {} {}'.format(-body_len + 0.1 + 0.03, y, z)})
+    anterior_body.insert(-1, anterior_site)
+    # posterior torso sites
+    posterior_site = etree.Element('site', attrib={'name': name['posterior_site'], 'pos': '{} {} {}'.format(-0.1 - 0.03, y, z)})
+    posterior_body.insert(-1, posterior_site)
+    # sidesite
+    if y >= 0:
+        sidesite_pos = '0 0.11 0'
+    else:
+        sidesite_pos = '0 -0.11 0'
+    sidesite = etree.Element('site', attrib={'name': name['sidesite'], 'pos': sidesite_pos, 'rgba': '0.8 0.2 0.1 0'})
+    posterior_body.insert(-1, sidesite)
+    # spatial
+    make_spatial(anterior_site, posterior_site, sidesite, geom, tendon, name['spatial'])
+    # actuator
+    muscle = etree.Element('muscle', attrib={'name': name['muscle'], 'tendon': name['spatial']})
+    actuator.append(muscle)
+
+
 def arrange_muscle(mjcf, n_bodies, body_len):
     """ transform a joint based model into muscle based model """
     # prepare muscle model
     mjcf, tendon, actuator = prepare_muscle_model(mjcf=mjcf)
-    # add muscle
-    body = mjcf.find('worldbody/body')
+    # arrange muscle
+    z = 0
+    y_abs = 0.1  # y = sqrt(0.1 ** 2 - z ** 2)
+    anterior_body = mjcf.find('worldbody/body')
     for i in range(1, n_bodies):
-        _make_muscle(index=i, body=body, tendon=tendon, actuator=actuator, body_len=body_len)
-        body = body.find('body')
+        posterior_body = anterior_body.find('body')
+        # create a pair of muscles at a joint connecting anterior and posterior torso
+        geom = _make_geom(body=posterior_body, name='geom{}'.format(i + 1))
+        _make_muscle(
+            anterior_body, posterior_body, geom, tendon, actuator, body_len, y=y_abs, z=z,
+            name={
+                'anterior_site': 'torso{}_posterior_dorsal'.format(i),
+                'posterior_site': 'torso{}_anterior_dorsal'.format(i + 1),
+                'sidesite': 'sidesite{}_dorsal'.format(i + 1),
+                'spatial': 'tendon{}_dorsal'.format(i + 1),
+                'muscle': 'muscle{}_dorsal'.format(i + 1)
+            }
+        )
+        _make_muscle(
+            anterior_body, posterior_body, geom, tendon, actuator, body_len, y=-y_abs, z=z,
+            name={
+                'anterior_site': 'torso{}_posterior_ventral'.format(i),
+                'posterior_site': 'torso{}_anterior_ventral'.format(i + 1),
+                'sidesite': 'sidesite{}_ventral'.format(i + 1),
+                'spatial': 'tendon{}_ventral'.format(i + 1),
+                'muscle': 'muscle{}_ventral'.format(i + 1)
+            }
+        )
+        # update pointer
+        anterior_body = posterior_body
     return mjcf
 
 
