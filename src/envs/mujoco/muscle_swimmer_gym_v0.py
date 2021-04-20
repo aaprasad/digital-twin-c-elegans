@@ -38,14 +38,14 @@ def prepare_muscle_model(mjcf):
     return mjcf, tendon, actuator
 
 
-def _make_geom(body, name):
+def make_geom(body, name):
     """ joint geom without mass (the mass of joint is included in torso) """
     geom = etree.Element('geom', attrib={'name': name, 'pos': '0 0 0', 'size': '0.1', 'type': 'sphere', 'density': '0', 'rgba': '0.8 0.2 0.1 1'})
     body.insert(-1, geom)
     return geom
 
 
-def _make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len, y, z, name):
+def make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len, y, z, name):
     """ wrap tendon around geom through sidesite and add muscle actuator
     Args:
         geom: geom for tendon wrapping
@@ -84,8 +84,8 @@ def arrange_muscle(mjcf, n_bodies, body_len):
     for i in range(1, n_bodies):
         posterior_body = anterior_body.find('body')
         # create a pair of muscles at a joint connecting anterior and posterior torso
-        geom = _make_geom(body=posterior_body, name='geom{}'.format(i + 1))
-        _make_muscle(
+        geom = make_geom(body=posterior_body, name='geom{}'.format(i + 1))
+        make_muscle(
             anterior_body, posterior_body, geom, tendon, actuator, body_len, y=y_abs, z=z,
             name={
                 'anterior_site': 'torso{}_posterior_dorsal'.format(i),
@@ -95,7 +95,7 @@ def arrange_muscle(mjcf, n_bodies, body_len):
                 'muscle': 'muscle{}_dorsal'.format(i + 1)
             }
         )
-        _make_muscle(
+        make_muscle(
             anterior_body, posterior_body, geom, tendon, actuator, body_len, y=-y_abs, z=z,
             name={
                 'anterior_site': 'torso{}_posterior_ventral'.format(i),
