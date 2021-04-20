@@ -77,7 +77,9 @@ def _make_muscle(index, body, tendon, actuator, body_len):
 
 def prepare_muscle_model(mjcf):
     """ muscle model preliminary set up
-    return: mjcf, tendon, actuator
+    - set up muscle model default settings
+    - remove joint motor actuators
+    - add empty tendon, actuator elements
     """
     # default site attributions
     default = mjcf.find('default')
@@ -95,7 +97,7 @@ def prepare_muscle_model(mjcf):
     return mjcf, tendon, actuator
 
 
-def transform_into_muscle_model(mjcf, n_bodies, body_len):
+def arrange_muscle(mjcf, n_bodies, body_len):
     """ transform a joint based model into muscle based model """
     # prepare muscle model
     mjcf, tendon, actuator = prepare_muscle_model(mjcf=mjcf)
@@ -118,7 +120,7 @@ def _make_model(xml_file):
     # parse template xml
     mjcf = parse_xml(xml_str=xml_str)
     # muscle model
-    mjcf = transform_into_muscle_model(mjcf=mjcf, n_bodies=3, body_len=1)
+    mjcf = arrange_muscle(mjcf=mjcf, n_bodies=3, body_len=1)
     return mjcf
 
 

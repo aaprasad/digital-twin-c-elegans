@@ -1,7 +1,7 @@
 """ muscle swimmer implemented based on OpenAI Gym Swimmer-v3 with specific `n_bodies` """
 
 from .swimmer_gym_v3_v1 import make_model as make_model_base
-from .muscle_swimmer_gym_v0 import transform_into_muscle_model
+from .muscle_swimmer_gym_v0 import arrange_muscle
 from lxml import etree
 
 
@@ -14,7 +14,7 @@ def _make_model(n_bodies, xml_file, camera_pos=None):
     # create swimmer with specific `n_bodies`
     mjcf = make_model_base(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
     # muscle model
-    mjcf = transform_into_muscle_model(mjcf=mjcf, n_bodies=n_bodies, body_len=1)
+    mjcf = arrange_muscle(mjcf=mjcf, n_bodies=n_bodies, body_len=1)
     return mjcf
 
 
