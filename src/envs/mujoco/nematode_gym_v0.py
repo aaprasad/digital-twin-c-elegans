@@ -1,4 +1,4 @@
-""" nematode with accurate muscle arrangement """
+""" nematode with specific `joint_range`, `body_len` and `arrangement`  """
 
 from .swimmer_gym_v3_v2 import make_model as make_model_base
 from .muscle_swimmer_gym_v0 import prepare_muscle_model, make_geom, make_muscle, make_sidesite
@@ -109,7 +109,7 @@ def _arrange_muscle(mjcf, n_bodies, body_len, arrangement):
     return mjcf
 
 
-def _make_model(body_len, xml_file, arrangement=None, camera_pos=None):
+def _make_model(joint_range, body_len, xml_file, arrangement=None, camera_pos=None):
     """ Generates an xml string defining a nematode with specific `n_bodies`, `body_len` and muscle arrangement
     Args:
         n_bodies: number of bodies, >= 3
@@ -133,13 +133,13 @@ def _make_model(body_len, xml_file, arrangement=None, camera_pos=None):
         for row in arrangement[quadrant]:
             if len(arrangement[quadrant][row]) + 1 != n_bodies:
                 raise ValueError('The length of muscle arrangement is not consistent. Row {} {} is {}.'.format(quadrant, row, len(arrangement[quadrant][row])))
-    # create swimmer with specific `n_bodies` and `body_len`
-    mjcf = make_model_base(n_bodies=n_bodies, body_len=body_len, xml_file=xml_file, camera_pos=camera_pos)
+    # create swimmer
+    mjcf = make_model_base(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=xml_file, camera_pos=camera_pos)
     # muscle model
     mjcf = _arrange_muscle(mjcf=mjcf, n_bodies=n_bodies, body_len=body_len, arrangement=arrangement)
     return mjcf
 
 
-def nematode(body_len, xml_file, arrangement=None, camera_pos=None):
-    mjcf = _make_model(body_len=body_len, xml_file=xml_file, arrangement=arrangement, camera_pos=camera_pos)
+def nematode(joint_range, body_len, xml_file, arrangement=None, camera_pos=None):
+    mjcf = _make_model(joint_range=joint_range, body_len=body_len, xml_file=xml_file, arrangement=arrangement, camera_pos=camera_pos)
     return etree.tostring(mjcf, pretty_print=True)

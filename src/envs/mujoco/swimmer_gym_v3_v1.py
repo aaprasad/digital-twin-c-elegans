@@ -1,4 +1,4 @@
-""" OpenAI Gym Swimmer-v3 with specific `n_bodies` to mimic C. elegans nematode """
+""" OpenAI Gym Swimmer-v3 with specific `n_bodies` and `joint_range` """
 
 from lxml import etree
 
@@ -35,10 +35,21 @@ def _make_body(body_str, body_idx):
     return body
 
 
-def make_model(n_bodies, xml_file, camera_pos=None):
+def _set_joint_range(mjcf, n_bodies, joint_range: str):
+    """ set joint range """
+    body = mjcf.find('worldbody/body/body')
+    for i in range(1, n_bodies):
+        joint = body.find('joint')
+        joint.set('range', joint_range)
+        body = body.find('body')
+    return mjcf
+
+
+def make_model(n_bodies, joint_range, xml_file, camera_pos=None):
     """ Generates an xml string defining a swimmer with `n_bodies` bodies.
     Args:
         n_bodies: number of bodies, >= 3
+        joint_range: range of joint, original setting '-100 100'
         xml_file: template xml file path
     Reference:
         https://github.com/deepmind/dm_control/blob/master/dm_control/suite/swimmer.py
@@ -71,6 +82,8 @@ def make_model(n_bodies, xml_file, camera_pos=None):
             temp_motor = etree.fromstring(motor_str)
             temp_motor.set('joint', 'rot{}'.format(i))
             actuator.append(temp_motor)
+    # set joint range
+    mjcf = _set_joint_range(mjcf=mjcf, n_bodies=n_bodies, joint_range=joint_range)
     # modify camera pos, default: "0 -3 3"
     if camera_pos is not None:
         camera = mjcf.find('worldbody/body/camera')
@@ -78,6 +91,6 @@ def make_model(n_bodies, xml_file, camera_pos=None):
     return mjcf
 
 
-def swimmer(n_bodies, xml_file, camera_pos=None):
-    mjcf = make_model(n_bodies=n_bodies, xml_file=xml_file, camera_pos=camera_pos)
+def swimmer(n_bodies, joint_range, xml_file, camera_pos=None):
+    mjcf = make_model(n_bodies=n_bodies, joint_range=joint_range, xml_file=xml_file, camera_pos=camera_pos)
     return etree.tostring(mjcf, pretty_print=True)

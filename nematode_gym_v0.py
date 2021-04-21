@@ -1,4 +1,4 @@
-""" nematode with accurate muscle arrangement """
+""" nematode with specific `joint_range`, `body_len` and `arrangement`  """
 
 from src.envs.mujoco.nematode_gym_v0 import nematode
 import gym
@@ -6,11 +6,11 @@ from gym.wrappers.monitoring.video_recorder import VideoRecorder
 import os
 
 
-def make_nematode(body_len, arrangement=None, camera_pos=None):
+def make_nematode(joint_range, body_len, arrangement=None, camera_pos=None):
     """ create nematode env """
     # generate xml str
     xml_folder = 'src/envs/mujoco/assets/'
-    xml_str = nematode(body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), arrangement=arrangement, camera_pos=camera_pos)
+    xml_str = nematode(joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), arrangement=arrangement, camera_pos=camera_pos)
     # write temp xml file, make env and delete temp file
     xml_file = os.path.join(xml_folder, 'nematode_temp.xml')
     with open(xml_file, 'wb') as f:
@@ -28,7 +28,7 @@ def make_nematode(body_len, arrangement=None, camera_pos=None):
 def test_random():
     """ take random actions """
     # body_len >= 0.2
-    env = make_nematode(body_len=0.26, arrangement=None, camera_pos='0 -5 5')
+    env = make_nematode(joint_range='-100 100', body_len=0.26, arrangement=None, camera_pos='0 -5 5')
     # record video
     os.makedirs('video', exist_ok=True)
     rec = VideoRecorder(env, base_path='video/nematode_gym_v0', enabled=True)
