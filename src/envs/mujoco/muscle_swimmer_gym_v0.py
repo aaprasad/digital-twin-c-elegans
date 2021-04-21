@@ -39,8 +39,10 @@ def prepare_muscle_model(mjcf):
 
 
 def make_geom(body, name):
-    """ joint geom without mass (the mass of joint is included in torso) """
-    geom = etree.Element('geom', attrib={'name': name, 'pos': '0 0 0', 'size': '0.1', 'type': 'sphere', 'density': '0', 'rgba': '0.8 0.2 0.1 1'})
+    """ joint geom without mass (the mass of joint is included in torso)
+    - red color, but transparent
+    """
+    geom = etree.Element('geom', attrib={'name': name, 'pos': '0 0 0', 'size': '0.1', 'type': 'sphere', 'density': '0', 'rgba': '0.8 0.2 0.1 0'})
     body.insert(-1, geom)
     return geom
 
