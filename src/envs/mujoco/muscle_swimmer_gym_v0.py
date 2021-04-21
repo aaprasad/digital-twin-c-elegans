@@ -61,19 +61,21 @@ def make_sidesite(body, side: str, name):
     return sidesite
 
 
-def make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len, y, z, sidesite, name):
+def make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len, muscle_len, y, z, sidesite, name):
     """ wrap tendon around geom through sidesite and add muscle actuator
     Args:
         geom: geom for tendon wrapping
+        muscle_len: the len of muscle is equally split between anterior and posterior bodies,
+            muscle_len >= 0.26 when joint_range = '-100 100'
         y: y ** 2 + z ** 2 == 0.1 ** 2, -0.1 <= y <= 0.1
         z: the elevation of sites, -0.1 <= z <= 0.1
         name: names of the components
     """
     # anterior torso sites
-    anterior_site = etree.Element('site', attrib={'name': name['anterior_site'], 'pos': '{} {} {}'.format(-body_len + 0.1 + 0.03, y, z)})
+    anterior_site = etree.Element('site', attrib={'name': name['anterior_site'], 'pos': '{} {} {}'.format(-body_len + muscle_len / 2., y, z)})
     anterior_body.insert(-1, anterior_site)
     # posterior torso sites
-    posterior_site = etree.Element('site', attrib={'name': name['posterior_site'], 'pos': '{} {} {}'.format(-0.1 - 0.03, y, z)})
+    posterior_site = etree.Element('site', attrib={'name': name['posterior_site'], 'pos': '{} {} {}'.format(-muscle_len / 2., y, z)})
     posterior_body.insert(-1, posterior_site)
     # spatial
     _make_spatial(anterior_site, posterior_site, sidesite, geom, tendon, name['spatial'])
@@ -82,7 +84,7 @@ def make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len,
     actuator.append(muscle)
 
 
-def arrange_muscle(mjcf, n_bodies, body_len):
+def arrange_muscle(mjcf, n_bodies, body_len, muscle_len):
     """ transform a joint based model into muscle based model """
     # prepare muscle model
     mjcf, tendon, actuator = prepare_muscle_model(mjcf=mjcf)
@@ -95,7 +97,7 @@ def arrange_muscle(mjcf, n_bodies, body_len):
         # create a pair of muscles at a joint connecting anterior and posterior torso
         geom = make_geom(body=posterior_body, name='geom{}'.format(i + 1))
         make_muscle(
-            anterior_body, posterior_body, geom, tendon, actuator, body_len, y=y_abs, z=z,
+            anterior_body, posterior_body, geom, tendon, actuator, body_len, muscle_len, y=y_abs, z=z,
             sidesite=make_sidesite(body=posterior_body, side='dorsal', name='sidesite{}_dorsal'.format(i + 1)),
             name={
                 'anterior_site': 'torso{}_posterior_dorsal'.format(i),
@@ -105,7 +107,7 @@ def arrange_muscle(mjcf, n_bodies, body_len):
             }
         )
         make_muscle(
-            anterior_body, posterior_body, geom, tendon, actuator, body_len, y=-y_abs, z=z,
+            anterior_body, posterior_body, geom, tendon, actuator, body_len, muscle_len, y=-y_abs, z=z,
             sidesite=make_sidesite(body=posterior_body, side='ventral', name='sidesite{}_ventral'.format(i + 1)),
             name={
                 'anterior_site': 'torso{}_posterior_ventral'.format(i),
@@ -130,7 +132,7 @@ def _make_model(xml_file):
     # parse template xml
     mjcf = parse_xml(xml_str=xml_str)
     # muscle model
-    mjcf = arrange_muscle(mjcf=mjcf, n_bodies=3, body_len=1)
+    mjcf = arrange_muscle(mjcf=mjcf, n_bodies=3, body_len=1, muscle_len=0.26)
     return mjcf
 
 

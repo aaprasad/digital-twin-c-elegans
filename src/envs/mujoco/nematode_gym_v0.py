@@ -1,4 +1,4 @@
-""" nematode with specific `joint_range`, `body_len` and `arrangement`  """
+""" nematode with specific `joint_range`, `body_len`, `muscle_len` and `arrangement`  """
 
 from .swimmer_gym_v3_v2 import make_model as make_model_base
 from .muscle_swimmer_gym_v0 import prepare_muscle_model, make_geom, make_muscle, make_sidesite
@@ -64,7 +64,7 @@ def _need_sidesite(side: str, arrangement, index):
     return tag
 
 
-def _arrange_muscle(mjcf, n_bodies, body_len, arrangement):
+def _arrange_muscle(mjcf, n_bodies, body_len, muscle_len, arrangement):
     """ arrange muscle """
     # prepare muscle model
     mjcf, tendon, actuator = prepare_muscle_model(mjcf=mjcf)
@@ -95,7 +95,7 @@ def _arrange_muscle(mjcf, n_bodies, body_len, arrangement):
                 if muscle_name is not None:
                     y, z = _calculate_site_pos(quadrant, row)
                     make_muscle(
-                        anterior_body, posterior_body, geom, tendon, actuator, body_len, y=y, z=z,
+                        anterior_body, posterior_body, geom, tendon, actuator, body_len, muscle_len, y=y, z=z,
                         sidesite=sidesite,
                         name={
                             'anterior_site': 'site_anterior_{}'.format(muscle_name),
@@ -109,7 +109,7 @@ def _arrange_muscle(mjcf, n_bodies, body_len, arrangement):
     return mjcf
 
 
-def _make_model(joint_range, body_len, xml_file, arrangement=None, camera_pos=None):
+def _make_model(joint_range, body_len, muscle_len, xml_file, arrangement=None, camera_pos=None):
     """ Generates an xml string defining a nematode with specific `n_bodies`, `body_len` and muscle arrangement
     Args:
         n_bodies: number of bodies, >= 3
@@ -136,10 +136,10 @@ def _make_model(joint_range, body_len, xml_file, arrangement=None, camera_pos=No
     # create swimmer
     mjcf = make_model_base(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=xml_file, camera_pos=camera_pos)
     # muscle model
-    mjcf = _arrange_muscle(mjcf=mjcf, n_bodies=n_bodies, body_len=body_len, arrangement=arrangement)
+    mjcf = _arrange_muscle(mjcf=mjcf, n_bodies=n_bodies, body_len=body_len, muscle_len=muscle_len, arrangement=arrangement)
     return mjcf
 
 
-def nematode(joint_range, body_len, xml_file, arrangement=None, camera_pos=None):
-    mjcf = _make_model(joint_range=joint_range, body_len=body_len, xml_file=xml_file, arrangement=arrangement, camera_pos=camera_pos)
+def nematode(joint_range, body_len, muscle_len, xml_file, arrangement=None, camera_pos=None):
+    mjcf = _make_model(joint_range=joint_range, body_len=body_len, muscle_len=muscle_len, xml_file=xml_file, arrangement=arrangement, camera_pos=camera_pos)
     return etree.tostring(mjcf, pretty_print=True)

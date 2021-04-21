@@ -14,7 +14,7 @@
     * OpenAI Gym's `Swimmer-v3` -> `muscle_swimmer_gym_v0`
 5. muscle swimmer with specific `n_links` and `joint_range`
     * `muscle_swimmer_gym_v0` -> `muscle_swimmer_gym_v1`
-6. muscle swimmer with specific `n_links`, `joint_range` and `body_len`
+6. muscle swimmer with specific `n_links`, `joint_range`, `body_len` and `muscle_len`
     * `muscle_swimmer_gym_v1` -> `muscle_swimmer_gym_v2`
-7. nematode with specific `joint_range`, `body_len` and `arrangement`
+7. nematode with specific `joint_range`, `body_len`, `muscle_len` and `arrangement`
     * `muscle_swimmer_gym_v2` -> `nematode_gym_v0`
