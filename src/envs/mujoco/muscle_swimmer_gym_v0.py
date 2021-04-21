@@ -65,8 +65,9 @@ def make_muscle(anterior_body, posterior_body, geom, tendon, actuator, body_len,
     """ wrap tendon around geom through sidesite and add muscle actuator
     Args:
         geom: geom for tendon wrapping
-        muscle_len: the len of muscle is equally split between anterior and posterior bodies,
-            muscle_len >= 0.26 when joint_range = '-100 100'
+        muscle_len: the len of muscle is equally split between anterior and posterior bodies
+            - muscle_len >= 0.26 when joint_range = '-100 100'
+            - muscle_len >= 0.2 (2 * joint size) when joint_range = '-90 90'
         y: y ** 2 + z ** 2 == 0.1 ** 2, -0.1 <= y <= 0.1
         z: the elevation of sites, -0.1 <= z <= 0.1
         name: names of the components
