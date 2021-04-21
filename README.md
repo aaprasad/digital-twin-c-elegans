@@ -3,18 +3,18 @@
 ## env for C. elegans
 
 1. swimmer
-    * OpenAI Gym's `Swimmer-v3`: `swimmer_gym_v3`
-    * dm_control's `swimmer`: `swimmer_dm`
-2. swimmer with specific `n_links` and `joint_range`
-    * OpenAI Gym's `Swimmer-v3` -> `swimmer_gym_v3_v1`
-    * dm_control's `swimmer`: `swimmer_dm_v0`
-3. swimmer with specific `n_links`, `joint_range` and `body_len`
-    * `swimmer_gym_v3_v1` -> `swimmer_gym_v3_v2`
+    * `swimmer_gym_v3`: OpenAI Gym's Swimmer-v3
+    * `swimmer_dm`: dm_control's swimmer
+2. swimmer: n_links and joint_range
+    * `swimmer_gym_v3_v1`: based on OpenAI Gym's Swimmer-v3
+    * `swimmer_dm_v0`: dm_control's swimmer
+3. swimmer: n_links, joint_range and body_len
+    * `swimmer_gym_v3_v2`
 4. muscle swimmer
-    * OpenAI Gym's `Swimmer-v3` -> `muscle_swimmer_gym_v0`
-5. muscle swimmer with specific `n_links` and `joint_range`
-    * `muscle_swimmer_gym_v0` -> `muscle_swimmer_gym_v1`
-6. muscle swimmer with specific `n_links`, `joint_range`, `body_len` and `muscle_len`
-    * `muscle_swimmer_gym_v1` -> `muscle_swimmer_gym_v2`
-7. nematode with specific `joint_range`, `body_len`, `muscle_len` and `arrangement`
-    * `muscle_swimmer_gym_v2` -> `nematode_gym_v0`
+    * `muscle_swimmer_gym_v0`: based on OpenAI Gym's Swimmer-v3
+5. muscle swimmer: n_links and joint_range
+    * `muscle_swimmer_gym_v1`
+6. muscle swimmer: n_links, joint_range, body_len and muscle_len
+    * `muscle_swimmer_gym_v2`
+7. nematode: joint_range, body_len, muscle_len and arrangement
+    * `nematode_gym_v0`
