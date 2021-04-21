@@ -35,14 +35,20 @@ def test_random():
     # run and record video
     observation = env.reset()
     rec.capture_frame()
+    reward_list = []
     for i in range(1000):
         # env.render()
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
+        reward_list.append(reward)
         rec.capture_frame()
         if done:
             print("Episode finished after {} steps".format(i + 1))
             break
+    # n_bodies=5, joint_range='-10 10': ~ -180
+    # n_bodies=5, joint_range='-5 5': ~ -510
+    # n_bodies=5, joint_range='-3 3': ~ -633
+    print('Total reward {}, min {}, max {}'.format(sum(reward_list), min(reward_list), max(reward_list)))
     rec.close()
     env.close()
 
