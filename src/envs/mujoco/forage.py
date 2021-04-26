@@ -13,7 +13,7 @@ def _make_geom(mjcf, name, x, y, size, rgba):
         size: radius
         rgba: color and transparency, e.g. '0 1 0 1' for green, '1 0 0 1' for red
     """
-    body = etree.Element('body', attrib={'name': name, 'pos': '{} {} {}'.format(x, y, size)})
+    body = etree.Element('body', attrib={'name': name, 'pos': '{} {} {}'.format(x, y, size - 0.1)})
     geom = etree.Element('geom', attrib={'density': '0', 'size': '{}'.format(size), 'type': 'sphere', 'material': '', 'rgba': rgba})
     body.append(geom)
     worldbody = mjcf.find('worldbody')
@@ -28,7 +28,7 @@ def make_perimeter(mjcf, name, width, box_width, box_height):
         box_width: half-size of the wall's width
         box_height: half-size of the wall's height
     """
-    body = etree.Element('body', attrib={'name': name, 'pos': '0 0 0'})
+    body = etree.Element('body', attrib={'name': name, 'pos': '0 0 -0.1'})
     # 2 parallel sides
     geom = etree.Element(
         'geom',
