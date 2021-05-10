@@ -14,7 +14,7 @@ def _make_geom(mjcf, name, x, y, size, rgba):
         rgba: color and transparency, e.g. '0 1 0 1' for green, '1 0 0 1' for red
     """
     body = etree.Element('body', attrib={'name': name, 'pos': '{} {} {}'.format(x, y, size - 0.1)})
-    geom = etree.Element('geom', attrib={'density': '0', 'size': '{}'.format(size), 'type': 'sphere', 'material': '', 'rgba': rgba})
+    geom = etree.Element('geom', attrib={'density': '1000', 'size': '{}'.format(size), 'type': 'sphere', 'material': '', 'rgba': rgba})
     body.append(geom)
     worldbody = mjcf.find('worldbody')
     worldbody.append(body)

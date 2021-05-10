@@ -12,7 +12,7 @@ def _make_box(mjcf, name, x, y, x_size, y_size, z_size):
         x_size, y_size, z_size: half-sizes of the box along the X, Y and Z axes
     """
     body = etree.Element('body', attrib={'name': name, 'pos': '{} {} {}'.format(x, y, z_size - 0.1)})
-    geom = etree.Element('geom', attrib={'density': '0', 'size': '{} {} {}'.format(x_size, y_size, z_size), 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1'})
+    geom = etree.Element('geom', attrib={'density': '1000', 'size': '{} {} {}'.format(x_size, y_size, z_size), 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1'})
     body.append(geom)
     worldbody = mjcf.find('worldbody')
     worldbody.append(body)
