@@ -7,7 +7,7 @@ from lxml import etree
 
 
 def _make_box(mjcf, name, x, y, x_size, y_size, z_size):
-    """ make a box
+    """ make a body of box and append it to worldbody
     Args:
         x_size, y_size, z_size: half-sizes of the box along the X, Y and Z axes
     """
