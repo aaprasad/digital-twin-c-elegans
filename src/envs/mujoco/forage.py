@@ -6,21 +6,32 @@ from lxml import etree
 import random
 
 
-def _make_geom(mjcf, name, x, y, size, rgba):
+def _make_geom(worldbody, name, x, y, size, rgba):
     """ make a sphere
     Args:
         x, y: position
         size: radius
         rgba: color and transparency, e.g. '0 1 0 1' for green, '1 0 0 1' for red
     """
-    body = etree.Element('body', attrib={'name': name, 'pos': '{} {} {}'.format(x, y, size - 0.1)})
-    geom = etree.Element('geom', attrib={'density': '1000', 'size': '{}'.format(size), 'type': 'sphere', 'material': '', 'rgba': rgba})
+    body = etree.Element('body', attrib={'name': name, 'pos': '0 0 -0.1'})
+    geom = etree.Element('geom', attrib={'density': '1000', 'pos': '{} {} {}'.format(x, y, size), 'size': '{}'.format(size), 'type': 'sphere', 'material': '', 'rgba': rgba})
     body.append(geom)
-    worldbody = mjcf.find('worldbody')
     worldbody.append(body)
 
 
-def make_perimeter(mjcf, name, width, box_width, box_height):
+def make_box(worldbody, name, x_pos, y_pos, z_pos, x_size, y_size, z_size):
+    """ make a body including a box geom and append it to worldbody
+    Args:
+        x_pos, y_pos, y_pos: position of the box geom
+        x_size, y_size, z_size: half-sizes of the box along the X, Y and Z axes
+    """
+    body = etree.Element('body', attrib={'name': name, 'pos': '0 0 -0.1'})
+    geom = etree.Element('geom', attrib={'density': '1000', 'pos': '{} {} {}'.format(x_pos, y_pos, z_pos), 'size': '{} {} {}'.format(x_size, y_size, z_size), 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1'})
+    body.append(geom)
+    worldbody.append(body)
+
+
+def make_perimeter(worldbody, width, box_width, box_height):
     """ make a square perimeter wall
     - the wall has mass, otherwise there is a bug because it can't compute center of mass
     Args:
@@ -28,48 +39,12 @@ def make_perimeter(mjcf, name, width, box_width, box_height):
         box_width: half-size of the wall's width
         box_height: half-size of the wall's height
     """
-    body = etree.Element('body', attrib={'name': name, 'pos': '0 0 -0.1'})
     # 2 parallel sides
-    geom = etree.Element(
-        'geom',
-        attrib={
-            'density': '1000', 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1',
-            'pos': '{} {} {}'.format(box_width, width, box_height),
-            'size': '{} {} {}'.format(width, box_width, box_height)
-        }
-    )
-    body.append(geom)
-    geom = etree.Element(
-        'geom',
-        attrib={
-            'density': '1000', 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1',
-            'pos': '{} {} {}'.format(-box_width, -width, box_height),
-            'size': '{} {} {}'.format(width, box_width, box_height)
-        }
-    )
-    body.append(geom)
+    make_box(worldbody, 'perimeter1', x_pos=box_width, y_pos=width, z_pos=box_height, x_size=width, y_size=box_width, z_size=box_height)
+    make_box(worldbody, 'perimeter2', x_pos=-box_width, y_pos=-width, z_pos=box_height, x_size=width, y_size=box_width, z_size=box_height)
     # the other 2 paralell sides
-    geom = etree.Element(
-        'geom',
-        attrib={
-            'density': '1000', 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1',
-            'pos': '{} {} {}'.format(width, -box_width, box_height),
-            'size': '{} {} {}'.format(box_width, width, box_height)
-        }
-    )
-    body.append(geom)
-    geom = etree.Element(
-        'geom',
-        attrib={
-            'density': '1000', 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1',
-            'pos': '{} {} {}'.format(-width, box_width, box_height),
-            'size': '{} {} {}'.format(box_width, width, box_height)
-        }
-    )
-    body.append(geom)
-    # add to worldbody
-    worldbody = mjcf.find('worldbody')
-    worldbody.append(body)
+    make_box(worldbody, 'perimeter3', x_pos=width, y_pos=-box_width, z_pos=box_height, x_size=box_width, y_size=width, z_size=box_height)
+    make_box(worldbody, 'perimeter4', x_pos=-width, y_pos=box_width, z_pos=box_height, x_size=box_width, y_size=width, z_size=box_height)
 
 
 def _make_model(xml_str, perimeter_width):
@@ -79,14 +54,15 @@ def _make_model(xml_str, perimeter_width):
     """
     # create mjcf
     mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
+    worldbody = mjcf.find('worldbody')
     # add green sphere as food, red sphere as trap
     for i in range(5):
         for rgba, name in zip(['0 1 0 1', '1 0 0 1'], ['food{}'.format(i + 1), 'trap{}'.format(i + 1)]):
             x = random.randint(-perimeter_width, perimeter_width)
             y = random.randint(-perimeter_width, perimeter_width)
-            _make_geom(mjcf=mjcf, name=name, x=x, y=y, size=0.5, rgba=rgba)
+            _make_geom(worldbody, name, x=x, y=y, size=0.5, rgba=rgba)
     # make perimeter wall
-    make_perimeter(mjcf=mjcf, name='perimeter', width=perimeter_width, box_width=0.5, box_height=0.5)
+    make_perimeter(worldbody, width=perimeter_width, box_width=0.5, box_height=0.5)
     return mjcf
 
 

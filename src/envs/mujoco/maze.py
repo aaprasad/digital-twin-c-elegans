@@ -2,20 +2,8 @@
 - wrap env with maze task
 """
 
-from .forage import make_perimeter
+from .forage import make_perimeter, make_box
 from lxml import etree
-
-
-def _make_box(mjcf, name, x, y, x_size, y_size, z_size):
-    """ make a body of box and append it to worldbody
-    Args:
-        x_size, y_size, z_size: half-sizes of the box along the X, Y and Z axes
-    """
-    body = etree.Element('body', attrib={'name': name, 'pos': '{} {} {}'.format(x, y, z_size - 0.1)})
-    geom = etree.Element('geom', attrib={'density': '1000', 'size': '{} {} {}'.format(x_size, y_size, z_size), 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1'})
-    body.append(geom)
-    worldbody = mjcf.find('worldbody')
-    worldbody.append(body)
 
 
 def _make_model(xml_str, perimeter_width, box_width):
@@ -26,11 +14,12 @@ def _make_model(xml_str, perimeter_width, box_width):
     """
     # create mjcf
     mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
+    worldbody = mjcf.find('worldbody')
     # make perimeter wall
-    make_perimeter(mjcf=mjcf, name='perimeter', width=perimeter_width, box_width=box_width, box_height=0.5)
+    make_perimeter(worldbody, width=perimeter_width, box_width=box_width, box_height=0.5)
     # make wall
-    _make_box(mjcf=mjcf, name='wall1', x=-1.5, y=2, x_size=4, y_size=box_width, z_size=0.5)
-    _make_box(mjcf=mjcf, name='wall2', x=1.5, y=-2, x_size=4, y_size=box_width, z_size=0.5)
+    make_box(worldbody, 'wall1', x_pos=-1.5, y_pos=2, z_pos=0.5, x_size=4, y_size=box_width, z_size=0.5)
+    make_box(worldbody, 'wall2', x_pos=1.5, y_pos=-2, z_pos=0.5, x_size=4, y_size=box_width, z_size=0.5)
     return mjcf
 
 
