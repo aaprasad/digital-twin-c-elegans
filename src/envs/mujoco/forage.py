@@ -19,10 +19,11 @@ def _make_geom(worldbody, name, x, y, size, rgba):
     worldbody.append(body)
 
 
-def make_box(worldbody, name, x_pos, y_pos, z_pos, x_size, y_size, z_size):
+def make_box(worldbody, name, x_pos, y_pos, x_size, y_size, z_size):
     """ make a body including a box geom and append it to worldbody
     Args:
-        x_pos, y_pos, y_pos: position of the box geom
+        x_pos, y_pos: position of the box geom
+            - z_pos is the same as z_size so that the geom is placed on the plane
         x_size, y_size, z_size: half-sizes of the box along the X, Y and Z axes
     """
     body = etree.Element('body', attrib={'name': name, 'pos': '0 0 -0.1'})
@@ -30,7 +31,7 @@ def make_box(worldbody, name, x_pos, y_pos, z_pos, x_size, y_size, z_size):
         'geom',
         attrib={
             'density': '1000', 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1',
-            'pos': '{} {} {}'.format(x_pos, y_pos, z_pos),
+            'pos': '{} {} {}'.format(x_pos, y_pos, z_size),
             'size': '{} {} {}'.format(x_size, y_size, z_size)
         }
     )
@@ -47,11 +48,11 @@ def make_perimeter(worldbody, width, box_width, box_height):
         box_height: half-size of the wall's height
     """
     # 2 parallel sides
-    make_box(worldbody, 'perimeter1', x_pos=box_width, y_pos=width, z_pos=box_height, x_size=width, y_size=box_width, z_size=box_height)
-    make_box(worldbody, 'perimeter2', x_pos=-box_width, y_pos=-width, z_pos=box_height, x_size=width, y_size=box_width, z_size=box_height)
+    make_box(worldbody, 'perimeter1', x_pos=box_width, y_pos=width, x_size=width, y_size=box_width, z_size=box_height)
+    make_box(worldbody, 'perimeter2', x_pos=-box_width, y_pos=-width, x_size=width, y_size=box_width, z_size=box_height)
     # the other 2 paralell sides
-    make_box(worldbody, 'perimeter3', x_pos=width, y_pos=-box_width, z_pos=box_height, x_size=box_width, y_size=width, z_size=box_height)
-    make_box(worldbody, 'perimeter4', x_pos=-width, y_pos=box_width, z_pos=box_height, x_size=box_width, y_size=width, z_size=box_height)
+    make_box(worldbody, 'perimeter3', x_pos=width, y_pos=-box_width, x_size=box_width, y_size=width, z_size=box_height)
+    make_box(worldbody, 'perimeter4', x_pos=-width, y_pos=box_width, x_size=box_width, y_size=width, z_size=box_height)
 
 
 def _make_model(xml_str, perimeter_width):

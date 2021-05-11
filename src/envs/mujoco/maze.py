@@ -18,8 +18,8 @@ def _make_model(xml_str, perimeter_width, box_width):
     # make perimeter wall
     make_perimeter(worldbody, width=perimeter_width, box_width=box_width, box_height=0.5)
     # make wall
-    make_box(worldbody, 'wall1', x_pos=-1.5, y_pos=2, z_pos=0.5, x_size=4, y_size=box_width, z_size=0.5)
-    make_box(worldbody, 'wall2', x_pos=1.5, y_pos=-2, z_pos=0.5, x_size=4, y_size=box_width, z_size=0.5)
+    make_box(worldbody, 'wall1', x_pos=-1.5, y_pos=2, x_size=4, y_size=box_width, z_size=0.5)
+    make_box(worldbody, 'wall2', x_pos=1.5, y_pos=-2, x_size=4, y_size=box_width, z_size=0.5)
     return mjcf
 
 
