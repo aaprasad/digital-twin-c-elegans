@@ -26,7 +26,14 @@ def make_box(worldbody, name, x_pos, y_pos, z_pos, x_size, y_size, z_size):
         x_size, y_size, z_size: half-sizes of the box along the X, Y and Z axes
     """
     body = etree.Element('body', attrib={'name': name, 'pos': '0 0 -0.1'})
-    geom = etree.Element('geom', attrib={'density': '1000', 'pos': '{} {} {}'.format(x_pos, y_pos, z_pos), 'size': '{} {} {}'.format(x_size, y_size, z_size), 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1'})
+    geom = etree.Element(
+        'geom',
+        attrib={
+            'density': '1000', 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1',
+            'pos': '{} {} {}'.format(x_pos, y_pos, z_pos),
+            'size': '{} {} {}'.format(x_size, y_size, z_size)
+        }
+    )
     body.append(geom)
     worldbody.append(body)
 
