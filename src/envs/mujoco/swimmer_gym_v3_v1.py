@@ -28,6 +28,7 @@ def parse_xml(xml_str):
 
 
 def _make_body(body_str, body_idx):
+    """ copy and paste the body segment """
     body = etree.fromstring(body_str)  # add to the back part
     body.set('name', 'torso{}'.format(body_idx))
     joint = body.find('joint')
