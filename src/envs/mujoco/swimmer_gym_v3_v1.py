@@ -76,12 +76,9 @@ def make_model(n_bodies, joint_range, xml_file, camera_pos=None):
         body_posterior.append(bodies)
         # add more motor actuators
         actuator = mjcf.find('actuator')
-        motor = actuator.find('motor')
-        motor_str = etree.tostring(motor)
         for i in range(4, n_bodies + 1):
-            temp_motor = etree.fromstring(motor_str)
-            temp_motor.set('joint', 'rot{}'.format(i))
-            actuator.append(temp_motor)
+            motor = etree.Element('motor', attrib={'ctrllimited': 'true', 'ctrlrange': '-1 1', 'gear': '150.0', 'joint': 'rot{}'.format(i)})
+            actuator.append(motor)
     # set joint range
     mjcf = _set_joint_range(mjcf=mjcf, n_bodies=n_bodies, joint_range=joint_range)
     # modify camera pos, default: "0 -3 3"
