@@ -4,8 +4,8 @@ from src.envs.mujoco.muscle_swimmer_gym_v0 import swimmer
 import gym
 from gym.wrappers.monitoring.video_recorder import VideoRecorder
 import mujoco_py
+import numpy as np
 import os
-import random
 
 
 def test_random():
@@ -21,7 +21,7 @@ def test_random():
         sim.set_state(sim_state)
         for i in range(1000):
             for j in range(len(sim.data.ctrl)):
-                sim.data.ctrl[j] = random.random()
+                sim.data.ctrl[j] = np.random.random()
             sim.step()
             viewer.render()
         if os.getenv('TESTING') is not None:
