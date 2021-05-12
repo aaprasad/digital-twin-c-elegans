@@ -1,22 +1,10 @@
 """ swimmer: forage
-- wrap env with forage task
+- wrap env with forage task (with multiple attractive/repulsive sources)
 """
 
+from .chemotaxis import make_geom
 from lxml import etree
-import random
-
-
-def _make_geom(worldbody, name, x, y, size, rgba):
-    """ make a sphere
-    Args:
-        x, y: position
-        size: radius
-        rgba: color and transparency, e.g. '0 1 0 1' for green, '1 0 0 1' for red
-    """
-    body = etree.Element('body', attrib={'name': name, 'pos': '0 0 -0.1'})
-    geom = etree.Element('geom', attrib={'density': '1000', 'pos': '{} {} {}'.format(x, y, size), 'size': '{}'.format(size), 'type': 'sphere', 'material': '', 'rgba': rgba})
-    body.append(geom)
-    worldbody.append(body)
+import numpy as np
 
 
 def make_box(worldbody, name, x_pos, y_pos, x_size, y_size, z_size):
@@ -63,12 +51,12 @@ def _make_model(xml_str, perimeter_width):
     # create mjcf
     mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
     worldbody = mjcf.find('worldbody')
-    # add green sphere as food, red sphere as trap
+    # make sphere: green for food, red for trap
     for i in range(5):
         for rgba, name in zip(['0 1 0 1', '1 0 0 1'], ['food{}'.format(i + 1), 'trap{}'.format(i + 1)]):
-            x = random.randint(-perimeter_width, perimeter_width)
-            y = random.randint(-perimeter_width, perimeter_width)
-            _make_geom(worldbody, name, x=x, y=y, size=0.5, rgba=rgba)
+            x = np.random.randint(-perimeter_width, perimeter_width)
+            y = np.random.randint(-perimeter_width, perimeter_width)
+            make_geom(worldbody, name, x=x, y=y, size=0.5, rgba=rgba)
     # make perimeter wall
     make_perimeter(worldbody, width=perimeter_width, box_width=0.5, box_height=0.5)
     return mjcf

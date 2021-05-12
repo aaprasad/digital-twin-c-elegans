@@ -1,6 +1,25 @@
 """ swimmer: chemotaxis """
 
-from swimmer_gym_v3_v2 import make_swimmer
+import gym
+import os
+from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
+from src.envs.mujoco.chemtoaxis import chemotaxis
+
+
+def make_swimmer(n_bodies, joint_range, body_len, camera_pos):
+    """ create swimmer env """
+    # generate xml str
+    xml_folder = 'src/envs/mujoco/assets/'
+    xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos)
+    xml_str = chemotaxis(xml_str=xml_str)
+    # write temp xml file, make env and delete temp file
+    xml_file = os.path.join(xml_folder, 'swimmer_temp.xml')
+    with open(xml_file, 'wb') as f:
+        f.write(xml_str)
+    env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
+    if os.path.exists(xml_file):
+        os.remove(xml_file)
+    return env
 
 
 def test_random():
