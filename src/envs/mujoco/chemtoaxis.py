@@ -5,7 +5,7 @@
 from lxml import etree
 
 
-def make_geom(worldbody, name, x, y, size, rgba):
+def make_source_geom(worldbody, name, x, y, size, rgba):
     """ make a sphere
     Args:
         x, y: position
@@ -24,7 +24,7 @@ def _make_model(xml_str, x, y):
     mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
     worldbody = mjcf.find('worldbody')
     # make sphere
-    make_geom(worldbody, 'food', x=x, y=y, size=0.5, rgba='0 1 0 1')
+    make_source_geom(worldbody, 'food', x=x, y=y, size=0.5, rgba='0 1 0 1')
     return mjcf
 
 
