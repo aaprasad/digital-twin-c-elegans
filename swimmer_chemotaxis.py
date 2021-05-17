@@ -1,17 +1,18 @@
 """ swimmer: chemotaxis """
 
 import gym
+import numpy as np
 import os
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
 from src.envs.mujoco.chemtoaxis import chemotaxis
 
 
-def make_swimmer(n_bodies, joint_range, body_len, camera_pos, max_episode_steps):
+def make_swimmer(n_bodies, joint_range, body_len, camera_pos, max_episode_steps, x, y):
     """ create swimmer env """
     # generate xml str
     xml_folder = 'src/envs/mujoco/assets/'
     xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos)
-    xml_str = chemotaxis(xml_str=xml_str)
+    xml_str = chemotaxis(xml_str=xml_str, x=x, y=y)
     # write temp xml file, make env and delete temp file
     xml_file = os.path.join(xml_folder, 'swimmer_temp.xml')
     with open(xml_file, 'wb') as f:
@@ -30,7 +31,9 @@ def test_random():
         - joint_size=0.1 (radius) -> body_len=0.25
         - citation: A computational model of internal representations of chemical gradients in environments for chemotaxis of Caenorhabditis elegans
     """
-    env = make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, camera_pos='0 -6 6', max_episode_steps=1500)
+    x = np.random.randint(-20, 20)
+    y = np.sqrt(20 ** 2 - x ** 2)
+    env = make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, camera_pos='0 -6 6', max_episode_steps=1500, x=x, y=y)
     observation = env.reset()
     for i in range(10 ** 6):
         env.render()

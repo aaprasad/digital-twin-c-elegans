@@ -3,7 +3,6 @@
 """
 
 from lxml import etree
-import numpy as np
 
 
 def make_geom(worldbody, name, x, y, size, rgba):
@@ -19,18 +18,16 @@ def make_geom(worldbody, name, x, y, size, rgba):
     worldbody.append(body)
 
 
-def _make_model(xml_str):
+def _make_model(xml_str, x, y):
     """ make a sphere representing 1 source """
     # create mjcf
     mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
     worldbody = mjcf.find('worldbody')
     # make sphere
-    x = np.random.randint(-20, 20)
-    y = np.sqrt(20 ** 2 - x ** 2)
     make_geom(worldbody, 'food', x=x, y=y, size=0.5, rgba='0 1 0 1')
     return mjcf
 
 
-def chemotaxis(xml_str):
-    mjcf = _make_model(xml_str=xml_str)
+def chemotaxis(xml_str, x, y):
+    mjcf = _make_model(xml_str=xml_str, x=x, y=y)
     return etree.tostring(mjcf, pretty_print=True)
