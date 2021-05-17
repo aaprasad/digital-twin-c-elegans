@@ -1,7 +1,7 @@
 """ nematode with specific `joint_range`, `body_len`, `muscle_len` and `arrangement`  """
 
 from .swimmer_gym_v3_v2 import make_model as make_model_base
-from .muscle_swimmer_gym_v0 import prepare_muscle_model, make_geom, make_muscle, make_sidesite
+from .muscle_swimmer_gym_v0 import prepare_muscle_model, make_joint_geom, make_muscle, make_sidesite
 from lxml import etree
 import math
 
@@ -73,7 +73,7 @@ def _arrange_muscle(mjcf, n_bodies, body_len, muscle_len, arrangement):
     for i in range(1, n_bodies):
         posterior_body = anterior_body.find('body')
         # make geom for tendon wrapping
-        geom = make_geom(body=posterior_body, name='geom{}'.format(i + 1))
+        geom = make_joint_geom(body=posterior_body, name='geom{}'.format(i + 1))
         # make dorsal/ventral sidesite if it's needed
         if _need_sidesite(side='dorsal', arrangement=arrangement, index=i) is True:
             sidesite_dorsal = make_sidesite(body=posterior_body, side='dorsal', name='sidesite{}_dorsal'.format(i + 1))
