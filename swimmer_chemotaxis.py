@@ -5,6 +5,22 @@ import numpy as np
 import os
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
 from src.envs.mujoco.chemtoaxis import chemotaxis
+from src.wrappers.distribution import Distribution
+
+
+def fick(target, source):
+    """ calculate target position's value in a source distribution
+    - Fick's laws of diffusion: Fick's second law
+    - Its fundamental solution: C = N_0 * exp^{-r ^ 2 / 400Dt}/4\pi dDt
+    - Its fundamental solution is the same as gaussian kernel
+    - Ignore the fact that concentration changes through time because of diffusion: concentration doesn't change through time
+    Reference:
+        - Parallel Use of Two Behavioral Mechanisms for Chemotaxis in Caenorhabditis elegans
+        - A computational model of internal representations of chemical gradients in environments for chemotaxis of Caenorhabditis elegans
+    """
+    r = np.linalg.norm(target - source)  # Euclidean distance
+    c = np.exp(-r ** 2)  # gaussian kernel
+    return c
 
 
 def make_swimmer(n_bodies, joint_range, body_len, camera_pos, max_episode_steps, x, y):
@@ -19,6 +35,7 @@ def make_swimmer(n_bodies, joint_range, body_len, camera_pos, max_episode_steps,
         f.write(xml_str)
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
     env = gym.wrappers.TimeLimit(env, max_episode_steps=max_episode_steps)
+    env = Distribution(env, f=fick, source=np.array([x, y]))
     if os.path.exists(xml_file):
         os.remove(xml_file)
     return env
