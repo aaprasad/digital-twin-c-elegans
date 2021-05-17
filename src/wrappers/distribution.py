@@ -21,6 +21,6 @@ class Distribution(gym.Wrapper):
         concentration = self.f(position, source=self.source)
         # rewrite: reward, info
         reward = concentration
-        info['reward_concentration'] = reward
         info['concentration'] = concentration
+        info['reward_concentration'] = concentration
         return reward, info
