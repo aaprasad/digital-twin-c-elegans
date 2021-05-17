@@ -56,7 +56,7 @@ def _make_model(xml_str, perimeter_width):
         for rgba, name in zip(['0 1 0 1', '1 0 0 1'], ['food{}'.format(i + 1), 'trap{}'.format(i + 1)]):
             x = np.random.randint(-perimeter_width, perimeter_width)
             y = np.random.randint(-perimeter_width, perimeter_width)
-            make_source_geom(worldbody, name, x=x, y=y, size=0.5, rgba=rgba)
+            make_source_geom(worldbody, name, x=x, y=y, rgba=rgba, radius=0.5)
     # make perimeter wall
     make_perimeter(worldbody, width=perimeter_width, box_width=0.5, box_height=0.5)
     return mjcf
