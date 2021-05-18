@@ -48,7 +48,7 @@ def test_random():
         - joint_size=0.1 (radius) -> body_len=0.25
         - citation: A computational model of internal representations of chemical gradients in environments for chemotaxis of Caenorhabditis elegans
     """
-    x = np.random.randint(-20, 20)
+    x = np.random.uniform(-20, 20)
     y = np.sqrt(20 ** 2 - x ** 2)
     env = make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, camera_pos='0 -6 6', max_episode_steps=1500, x=x, y=y)
     observation = env.reset()
