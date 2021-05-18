@@ -4,7 +4,7 @@ import gym
 import numpy as np
 import os
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
-from src.envs.mujoco.chemtoaxis import chemotaxis
+from src.envs.mujoco.chemotaxis import chemotaxis
 from src.wrappers.distribution import Distribution
 
 
