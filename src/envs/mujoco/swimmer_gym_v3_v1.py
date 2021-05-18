@@ -18,6 +18,9 @@ def parse_xml(xml_str):
     for joint in body.findall('joint'):
         if joint.get('name') == 'rot':
             joint.set('name', 'rot1')
+    # set body 1's color
+    geom = body.find('geom')
+    geom.set('rgba', '1 0 0 1')
     # rename body 2
     body = body.find('body')
     body.set('name', 'torso2')
