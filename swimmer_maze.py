@@ -28,7 +28,7 @@ def make_swimmer(n_bodies, joint_range, body_len, perimeter_width, box_width, ca
 def test_random():
     """ take random actions """
     # swimmer multibody model: set up n_bodies, joint_range and body_len
-    env = make_swimmer(n_bodies=12, joint_range='-30 30', body_len=0.26, perimeter_width=6, box_width=0.5, camera_pos='0 -6 6', max_episode_steps=1000)
+    env = make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, perimeter_width=6, box_width=0.5, camera_pos='0 -6 6', max_episode_steps=1000)
     observation = env.reset()
     for i in range(10 ** 6):
         env.render()
