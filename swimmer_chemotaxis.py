@@ -34,7 +34,7 @@ def make_swimmer(n_bodies, joint_range, body_len, camera_pos, max_episode_steps,
     with open(xml_file, 'wb') as f:
         f.write(xml_str)
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
-    env = gym.wrappers.TimeLimit(env, max_episode_steps=max_episode_steps)
+    env._max_episode_steps = max_episode_steps
     env = Distribution(env, f=fick, source=np.array([x, y]))
     if os.path.exists(xml_file):
         os.remove(xml_file)
