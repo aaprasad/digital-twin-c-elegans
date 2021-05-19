@@ -2,7 +2,7 @@
 - wrap env with maze task
 """
 
-from .forage import make_perimeter, make_box
+from .forage import make_perimeter, make_box, make_contact
 from lxml import etree
 
 
@@ -17,9 +17,11 @@ def _make_model(xml_str, perimeter_width, box_width):
     worldbody = mjcf.find('worldbody')
     # make perimeter wall
     make_perimeter(worldbody, width=perimeter_width, box_width=box_width, box_height=0.5)
+    make_contact(mjcf, prefix1='perimeter', prefix2='torso')
     # make wall
     make_box(worldbody, 'wall1', x_pos=-1.5, y_pos=2, x_size=4, y_size=box_width, z_size=0.5)
     make_box(worldbody, 'wall2', x_pos=1.5, y_pos=-2, x_size=4, y_size=box_width, z_size=0.5)
+    make_contact(mjcf, prefix1='wall', prefix2='torso')
     return mjcf
 
 

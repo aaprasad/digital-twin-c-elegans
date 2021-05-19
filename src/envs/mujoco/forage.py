@@ -9,7 +9,9 @@ import numpy as np
 
 def make_contact(mjcf, prefix1, prefix2):
     """ make contact pair between geoms with prefix1 and prefix2 for collision detection """
-    contact = etree.Element('contact')
+    contact = mjcf.find('contact')
+    if contact is None:
+        contact = etree.Element('contact')
     worldbody = mjcf.find('worldbody')
     geom1_list, geom2_list = [], []
     for geom in worldbody.findall('.//geom'):
