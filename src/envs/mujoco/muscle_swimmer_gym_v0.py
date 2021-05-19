@@ -98,7 +98,7 @@ def arrange_muscle(mjcf, n_bodies, body_len, muscle_len):
     for i in range(1, n_bodies):
         posterior_body = anterior_body.find('body')
         # create a pair of muscles at a joint connecting anterior and posterior torso
-        geom = make_joint_geom(body=posterior_body, name='geom{}'.format(i + 1))
+        geom = make_joint_geom(body=posterior_body, name='rot{}_geom'.format(i + 1))
         make_muscle(
             anterior_body, posterior_body, geom, tendon, actuator, body_len, muscle_len, y=y_abs, z=z,
             sidesite=make_sidesite(body=posterior_body, side='dorsal', name='sidesite{}_dorsal'.format(i + 1)),
