@@ -22,5 +22,4 @@ class Distribution(gym.Wrapper):
         # rewrite: reward, info
         reward = concentration
         info['concentration'] = concentration
-        info['reward_concentration'] = concentration
         return reward, info
