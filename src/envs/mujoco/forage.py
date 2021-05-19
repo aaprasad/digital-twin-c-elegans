@@ -7,6 +7,25 @@ from lxml import etree
 import numpy as np
 
 
+def make_contact(mjcf, prefix1, prefix2):
+    """ make contact pair between geoms with prefix1 and prefix2 for collision detection """
+    contact = etree.Element('contact')
+    worldbody = mjcf.find('worldbody')
+    geom1_list, geom2_list = [], []
+    for geom in worldbody.findall('.//geom'):
+        name = geom.get('name')
+        if name is not None:
+            if name.startswith(prefix1):
+                geom1_list.append(geom)
+            elif name.startswith(prefix2):
+                geom2_list.append(geom)
+    for geom1 in geom1_list:
+        for geom2 in geom2_list:
+            pair = etree.Element('pair', attrib={'geom1': geom1.get('name'), 'geom2': geom2.get('name')})
+            contact.append(pair)
+    mjcf.append(contact)
+
+
 def make_box(worldbody, name, x_pos, y_pos, x_size, y_size, z_size):
     """ make a body including a box geom and append it to worldbody
     Args:
@@ -59,6 +78,8 @@ def _make_model(xml_str, perimeter_width):
             make_source_geom(worldbody, name, x=x, y=y, rgba=rgba, radius=0.5)
     # make perimeter wall
     make_perimeter(worldbody, width=perimeter_width, box_width=0.5, box_height=0.5)
+    # make contact
+    make_contact(mjcf, prefix1='perimeter', prefix2='torso')
     return mjcf
 
 
