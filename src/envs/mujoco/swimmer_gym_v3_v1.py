@@ -7,26 +7,24 @@ def parse_xml(xml_str):
     """ parse xml and clean it up """
     # create mjcf
     mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
-    # use unified coordinates: geom fromto, body pos
-    geom = mjcf.find('worldbody/body/geom')
-    geom.set('fromto', '0 0 0 -1 0 0')
-    body = mjcf.find('worldbody/body/body')
-    body.set('pos', '-1 0 0')
-    # rename body 1
+    # torso 1: use unified coordinates in geom's fromto, body's pos
     body = mjcf.find('worldbody/body')
-    body.set('name', 'torso1')
+    geom = body.find('geom')
+    geom.set('fromto', '0 0 0 -1 0 0')
+    body.find('body').set('pos', '-1 0 0')
+    # torso 1: change geom color
+    geom.set('rgba', '1 0 0 1')
+    # torso 1: rename joint
     for joint in body.findall('joint'):
         if joint.get('name') == 'rot':
             joint.set('name', 'rot1')
-    # set body 1's color
-    geom = body.find('geom')
-    geom.set('rgba', '1 0 0 1')
-    # rename body 2
-    body = body.find('body')
-    body.set('name', 'torso2')
-    # rename body 3
-    body = body.find('body')
-    body.set('name', 'torso3')
+    # torso 1~3: rename body and geom
+    body = mjcf.find('worldbody')
+    for i in range(1, 4):
+        body = body.find('body')
+        body.set('name', 'torso{}'.format(i))
+        geom = body.find('geom')
+        geom.set('name', 'torso{}_geom'.format(i))
     return mjcf
 
 
@@ -34,6 +32,8 @@ def _make_body(body_str, body_idx):
     """ copy and paste the body segment """
     body = etree.fromstring(body_str)  # add to the back part
     body.set('name', 'torso{}'.format(body_idx))
+    geom = body.find('geom')
+    geom.set('name', 'torso{}_geom'.format(body_idx))
     joint = body.find('joint')
     joint.set('name', 'rot{}'.format(body_idx))
     return body
