@@ -18,7 +18,7 @@ def make_box(worldbody, name, x_pos, y_pos, x_size, y_size, z_size):
     geom = etree.Element(
         'geom',
         attrib={
-            'density': '1000', 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1',
+            'name': '{}_geom'.format(name), 'density': '1000', 'type': 'box', 'material': '', 'rgba': '0.5 0.5 0.5 1',
             'pos': '{} {} {}'.format(x_pos, y_pos, z_size),
             'size': '{} {} {}'.format(x_size, y_size, z_size)
         }
