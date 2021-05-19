@@ -74,7 +74,7 @@ def _make_model(xml_str, perimeter_width):
     worldbody = mjcf.find('worldbody')
     # make sphere: green for food, red for trap
     for i in range(5):
-        for rgba, name in zip(['0 1 0 1', '1 0 0 1'], ['food{}'.format(i + 1), 'trap{}'.format(i + 1)]):
+        for rgba, name in zip(['0 1 0 0.5', '1 0 0 0.5'], ['food{}'.format(i + 1), 'trap{}'.format(i + 1)]):
             x = np.random.randint(-perimeter_width, perimeter_width)
             y = np.random.randint(-perimeter_width, perimeter_width)
             make_source_geom(worldbody, name, x=x, y=y, rgba=rgba, radius=0.5)

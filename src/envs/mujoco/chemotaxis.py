@@ -9,7 +9,7 @@ def make_source_geom(worldbody, name, x, y, rgba, radius, half_length=0.1):
     """ make a cylinder
     Args:
         x, y: position
-        rgba: color and transparency, e.g. '0 1 0 1' for green, '1 0 0 1' for red
+        rgba: color and transparency, e.g. '0 1 0 0.5' for green, '1 0 0 0.5' for red
         radius, half_length: cylinder params
     """
     body = etree.Element('body', attrib={'name': name, 'pos': '0 0 -0.1'})
@@ -30,7 +30,7 @@ def _make_model(xml_str, x, y):
     mjcf = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
     worldbody = mjcf.find('worldbody')
     # make sphere
-    make_source_geom(worldbody, 'food', x=x, y=y, rgba='0 1 0 1', radius=0.5)
+    make_source_geom(worldbody, 'food', x=x, y=y, rgba='0 1 0 0.5', radius=0.5)
     return mjcf
 
 
