@@ -13,7 +13,7 @@ def parse_xml(xml_str):
     geom.set('fromto', '0 0 0 -1 0 0')
     body.find('body').set('pos', '-1 0 0')
     # torso 1: change geom color
-    geom.set('rgba', '1 0 0 1')
+    geom.set('rgba', '0.8 0.2 0.1 1')
     # torso 1: rename joint
     for joint in body.findall('joint'):
         if joint.get('name') == 'rot':
