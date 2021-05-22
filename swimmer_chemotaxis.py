@@ -24,7 +24,11 @@ def fick(target, source):
 
 
 def make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, camera_pos='0 -6 6', max_episode_steps=1000, x=0, y=0):
-    """ create swimmer env """
+    """ create swimmer env: multibody model
+    - radius=0.04mm, body_len=0.1mm, n_bodies=12, q_max=0.69rad (~39.53409 degrees)
+    - joint_size=0.1 (radius) -> body_len=0.25
+    - citation: A computational model of internal representations of chemical gradients in environments for chemotaxis of Caenorhabditis elegans
+    """
     # generate xml str
     xml_folder = 'src/envs/mujoco/assets/'
     xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos)
@@ -42,12 +46,7 @@ def make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, camera_pos='0
 
 
 def test_random():
-    """ take random actions
-    multibody model:
-        - radius=0.04mm, body_len=0.1mm, n_bodies=12, q_max=0.69rad (~39.53409 degrees)
-        - joint_size=0.1 (radius) -> body_len=0.25
-        - citation: A computational model of internal representations of chemical gradients in environments for chemotaxis of Caenorhabditis elegans
-    """
+    """ take random actions """
     d = 15  # distance from source
     x = np.random.uniform(-d, d)
     y = np.sqrt(d ** 2 - x ** 2)
