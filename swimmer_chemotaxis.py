@@ -23,7 +23,7 @@ def fick(target, source):
     return c
 
 
-def make_swimmer(n_bodies, joint_range, body_len, camera_pos, max_episode_steps, x, y):
+def make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, camera_pos='0 -6 6', max_episode_steps=1000, x=0, y=0):
     """ create swimmer env """
     # generate xml str
     xml_folder = 'src/envs/mujoco/assets/'
@@ -51,7 +51,7 @@ def test_random():
     d = 15  # distance from source
     x = np.random.uniform(-d, d)
     y = np.sqrt(d ** 2 - x ** 2)
-    env = make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, camera_pos='0 -6 6', max_episode_steps=1000, x=x, y=y)
+    env = make_swimmer(x=x, y=y)
     observation = env.reset()
     for i in range(10 ** 6):
         env.render()
