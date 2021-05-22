@@ -6,6 +6,7 @@ import os
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
 from src.envs.mujoco.chemotaxis import chemotaxis
 from src.wrappers.distribution import Distribution
+from src.models.computational_model import SinusoidalMotion
 
 
 def fick(target, source):
@@ -62,5 +63,21 @@ def test_random():
     env.close()
 
 
+def test_sinusoidal_motion():
+    """ control by sinusoidal motion """
+    env = make_swimmer(max_episode_steps=1000, x=9, y=12)  # distance from source: 15
+    observation = env.reset()
+    model = SinusoidalMotion()
+    for i in range(10 ** 6):
+        env.render()
+        action = model.step(step=i, q=observation[1:12])
+        observation, reward, done, info = env.step(action)
+        if done:
+            print("Episode finished after {} steps".format(i + 1))
+            break
+    env.close()
+
+
 if __name__ == '__main__':
-    test_random()
+    # test_random()
+    test_sinusoidal_motion()
