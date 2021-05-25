@@ -15,18 +15,15 @@ class SinusoidalMotion(object):
         self.a_max = 2.  # action: [-a_max, a_max]
         self.psi = 0.2  # body wavelength (rad)
         self.omega = 2 * np.pi * 14  # angular velocity of bending (rad/s): 2 * pi * freq
-        """ state """
+        """ state
+        base phase: phi = -2 * pi * psi * (i - 1), where `i` is the body index (1~12)
+        """
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1)
 
-    def _joint_angle(self, step, step_0=None):
-        """ calculate joint angles
+    def _backward(self, step_0):
+        """ phase for backward movement
         Args:
             step_0: if not None, move in the other direction
-        phase
-            phi = -2 * pi * psi * (i - 1), where `i` is the body index (1~12)
-        movement direction
-            backward: q = q_max * sin(omega * t - phi)
-            forward: q = q_max * sin(omega * t - (pi - phi))
         move in the other direction
             phi = pi + 2 * omega * t_0 - phi, where t_0 is initiation time
         """
@@ -34,6 +31,15 @@ class SinusoidalMotion(object):
             phi = np.pi + 2 * self.omega * step_0 * self.dt - self.phi
         else:
             phi = self.phi
+        return phi
+
+    def _joint_angle(self, step, step_0=None):
+        """ calculate joint angles
+        movement direction
+            backward: q = q_max * sin(omega * t - phi)
+            forward: q = q_max * sin(omega * t - (pi - phi))
+        """
+        phi = self._backward(step_0=step_0)
         q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - phi))
         return q
 
