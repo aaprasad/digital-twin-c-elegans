@@ -10,9 +10,10 @@ class SinusoidalMotion(object):
     def __init__(self):
         self.dt = 0.01
         self.q_max = 40 * np.pi / 180  # max joint angle (rad)
-        self.psi = 1.54  # body wavelength (rad)
+        self.psi = 0.06  # body wavelength (rad)
         self.n = 12  # number of bodies
-        self.omega = 2 * np.pi * 0.8  # angular velocity of bending (rad/s): 2 * pi * freq
+        self.omega = 2 * np.pi * 1.8  # angular velocity of bending (rad/s): 2 * pi * freq
+        self.a_max = 2.  # action: [-a_max, a_max]
 
     def _joint_angle(self, step):
         """ calculate joint angles """
@@ -20,11 +21,15 @@ class SinusoidalMotion(object):
         q = self.q_max * np.sin(self.omega * step * self.dt - phi)
         return q
 
-    def _action(self, delta_q):
-        """ delta_q: [-2 * q_max, 2 * q_max] -> action: [-1, 1] """
-        return (delta_q + 2 * self.q_max) / (4 * self.q_max) * 2 - 1
+    def _action(self, q, q_next, q_vel):
+        """ delta_q: [-4 * q_max, 4 * q_max] -> action: [-a_max, a_max]
+        - consider (q_vel_next - q_vel) for action
+        """
+        delta_q = q_next - q - q_vel * self.dt
+        action = delta_q / (4 * self.q_max) * self.a_max
+        return action
 
-    def step(self, step, q):
-        q_next = self._joint_angle(step)
-        action = self._action(delta_q=q_next - q)
+    def step(self, step, q, q_vel):
+        q_next = self._joint_angle(step=step)
+        action = self._action(q=q, q_next=q_next, q_vel=q_vel)
         return action
