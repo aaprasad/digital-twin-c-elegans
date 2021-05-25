@@ -19,27 +19,30 @@ class SinusoidalMotion(object):
         base phase: phi = -2 * pi * psi * (i - 1), where `i` is the body index (1~12)
         """
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1)
+        self.step_b0 = None  # start of backward movement
+        """ duration """
+        self.step_b = 100  # backward movement
 
-    def _backward(self, step_0):
+    def _backward(self, step):
         """ phase for backward movement
         Args:
             step_0: if not None, move in the other direction
         move in the other direction
             phi = pi + 2 * omega * t_0 - phi, where t_0 is initiation time
         """
-        if step_0 is not None:
-            phi = np.pi + 2 * self.omega * step_0 * self.dt - self.phi
+        if self.step_b0 is not None and self.step_b0 <= step < self.step_b0 + self.step_b:
+            phi = np.pi + 2 * self.omega * self.step_b0 * self.dt - self.phi
         else:
             phi = self.phi
         return phi
 
-    def _joint_angle(self, step, step_0=None):
+    def _joint_angle(self, step):
         """ calculate joint angles
         movement direction
             backward: q = q_max * sin(omega * t - phi)
             forward: q = q_max * sin(omega * t - (pi - phi))
         """
-        phi = self._backward(step_0=step_0)
+        phi = self._backward(step=step)
         q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - phi))
         return q
 
@@ -52,6 +55,7 @@ class SinusoidalMotion(object):
         return action
 
     def step(self, step, q, q_vel):
+        self.step_b0 = 500
         q_next = self._joint_angle(step=step)
         action = self._action(q=q, q_next=q_next, q_vel=q_vel)
         return action
