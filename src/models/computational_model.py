@@ -9,11 +9,12 @@ class SinusoidalMotion(object):
     """ oscillator for generating sinusoidal movement """
     def __init__(self):
         self.dt = 0.01
-        self.q_max = 40 * np.pi / 180  # max joint angle (rad)
-        self.psi = 0.06  # body wavelength (rad)
         self.n = 12  # number of bodies
-        self.omega = 2 * np.pi * 1.8  # angular velocity of bending (rad/s): 2 * pi * freq
+        self.q_max = 40 * np.pi / 180  # max joint angle (rad)
+        """ affect sinusoidal posture and speed """
         self.a_max = 2.  # action: [-a_max, a_max]
+        self.psi = 0.2  # body wavelength (rad)
+        self.omega = 2 * np.pi * 14  # angular velocity of bending (rad/s): 2 * pi * freq
 
     def _joint_angle(self, step):
         """ calculate joint angles """
