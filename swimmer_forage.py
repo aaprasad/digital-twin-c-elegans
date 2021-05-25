@@ -20,6 +20,7 @@ def make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, perimeter_wid
         f.write(xml_str)
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
     env._max_episode_steps = max_episode_steps
+    env = gym.wrappers.ClipAction(env)
     if os.path.exists(xml_file):
         os.remove(xml_file)
     return env
