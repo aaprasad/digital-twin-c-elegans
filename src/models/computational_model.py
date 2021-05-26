@@ -28,6 +28,7 @@ class SinusoidalMotion(object):
         self.step_omega2 = 100  # sharp turn phase 2
         self.step_omega3 = self.step_omega1  # sharp turn phase 3
         self.c_omega = 50  # phase delay for changing posture from S-shaped to omega-shaped and back
+        self.kappa_omega = -0.35  # bias angle
 
     def _backward(self, step):
         """ update phase for backward movement
@@ -44,6 +45,7 @@ class SinusoidalMotion(object):
         phase 1: phi(t) = phi(t - dt) + c_omega / t_omega1 * dt, where t_omega1 is duration
         phase 2: phi(t) = phi(t), where t_omega2 is duration
         phase 3: phi(t) = phi(t - dt) - c_omega / t_omega3 * dt, where t_omega3 is duration
+        return bias angle to perform sharp turn
         """
         if self.step_omega0 is not None:
             phase0 = self.step_omega0
@@ -54,6 +56,9 @@ class SinusoidalMotion(object):
                 self.phi += self.c_omega / self.step_omega1
             elif phase2 <= step < phase3:
                 self.phi -= self.c_omega / self.step_omega3
+            if phase0 <= step < phase3:
+                return self.kappa_omega
+        return 0.
 
     def _pirouette(self, step):
         """ set up pirouette start time
@@ -76,8 +81,8 @@ class SinusoidalMotion(object):
             forward: q = q_max * sin(omega * t - (pi - phi))
         """
         self._backward(step=step)
-        self._sharp_turn(step=step)
-        q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - self.phi))
+        kappa_omega = self._sharp_turn(step=step)
+        q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - self.phi)) + kappa_omega
         return q
 
     def _action(self, q, q_next, q_vel):
