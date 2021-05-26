@@ -45,7 +45,7 @@ class SinusoidalMotion(object):
         phase 1: phi(t) = phi(t - dt) + c_omega / t_omega1 * dt, where t_omega1 is duration
         phase 2: phi(t) = phi(t), where t_omega2 is duration
         phase 3: phi(t) = phi(t - dt) - c_omega / t_omega3 * dt, where t_omega3 is duration
-        return bias angle to perform sharp turn
+        return bias angle for performing sharp turn
         """
         if self.step_omega0 is not None:
             phase0 = self.step_omega0
