@@ -55,6 +55,20 @@ class SinusoidalMotion(object):
             elif phase2 <= step < phase3:
                 self.phi -= self.c_omega / self.step_omega3
 
+    def _pirouette(self, step):
+        """ set up pirouette start time
+        phase 1: backward movement
+        phase 2: sharp turn
+        return True if it's performing pirouette, False if it's not
+        """
+        if self.step_b0 is None:  # not performing pirouette
+            if step == 300:  # initiate pirouette
+                self.step_b0 = step
+                self.step_omega0 = step + self.step_b
+        elif step >= self.step_b0 + self.step_b + self.step_omega1 + self.step_omega2 + self.step_omega3:  # pirouette has finished
+            self.step_b0 = None
+            self.step_omega0 = None
+
     def _joint_angle(self, step):
         """ calculate joint angles
         movement direction
@@ -75,8 +89,7 @@ class SinusoidalMotion(object):
         return action
 
     def step(self, step, q, q_vel):
-        self.step_b0 = 200
-        self.step_omega0 = 500
+        self._pirouette(step=step)
         q_next = self._joint_angle(step=step)
         action = self._action(q=q, q_next=q_next, q_vel=q_vel)
         return action
