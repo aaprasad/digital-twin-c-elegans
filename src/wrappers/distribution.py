@@ -54,14 +54,14 @@ class Distribution(gym.Wrapper):
         position = self.env.sim.data.qpos[0:2].copy()  # position of anterior tip
         com = self.env.sim.data.subtree_com[1][0:2].copy()  # center of mass
         concentration = self.f(position, source=self.source)  # position's concentration
-        tangential_gradient = self._tangential_gradient(com=com)
-        normal_gradient = self._normal_gradient(com=com)
+        g_p = self._tangential_gradient(com=com)
+        g_w = self._normal_gradient(com=com)
         # reward
         reward = concentration
         # info
         info['position'] = position.tolist()
         info['com'] = com.tolist()
         info['concentration'] = concentration
-        info['tangential_gradient'] = tangential_gradient
-        info['normal_gradient'] = normal_gradient
+        info['g_p'] = g_p
+        info['g_w'] = g_w
         return reward, info
