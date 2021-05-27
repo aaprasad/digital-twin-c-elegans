@@ -18,8 +18,12 @@ class Distribution(gym.Wrapper):
 
     def reward(self, reward, info):
         position = self.env.sim.data.qpos[0:2].copy()
+        com = self.env.sim.data.subtree_com[1].copy()
         concentration = self.f(position, source=self.source)
-        # rewrite: reward, info
+        # reward
         reward = concentration
+        # info
+        info['position'] = position.tolist()
+        info['com'] = com.tolist()
         info['concentration'] = concentration
         return reward, info
