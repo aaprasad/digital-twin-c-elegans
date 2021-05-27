@@ -29,6 +29,9 @@ class SinusoidalMotion(object):
         self.step_omega3 = self.step_omega1  # sharp turn phase 3
         self.c_omega = 50  # phase delay for changing posture from S-shaped to omega-shaped and back
         self.kappa_omega = -0.35  # bias angle
+        """ weathervane """
+        self.c_w = 1000  # weathervane curvature coefficient
+        self.kappa_w_max = 0.3  # max weathervane bias angle
 
     def _backward(self, step):
         """ update phase for backward movement
@@ -74,7 +77,18 @@ class SinusoidalMotion(object):
             self.step_b0 = None
             self.step_omega0 = None
 
-    def _joint_angle(self, step):
+    def _weathervane(self, g_w):
+        """ use normal gradient to get weathervane bias angle
+        original function
+            kappa_w = -c_w * g_w
+            In gaussian distribution, it only works in close proximity because distant gradient is way too small
+        tanh: prevent sharp turn
+        """
+        kappa_w = -self.c_w * g_w
+        kappa_w = np.tanh(kappa_w) * self.kappa_w_max
+        return kappa_w
+
+    def _joint_angle(self, step, g_w):
         """ calculate joint angles
         movement direction
             backward: q = q_max * sin(omega * t - phi)
@@ -82,7 +96,8 @@ class SinusoidalMotion(object):
         """
         self._backward(step=step)
         kappa_omega = self._sharp_turn(step=step)
-        q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - self.phi)) + kappa_omega
+        kappa_w = self._weathervane(g_w=g_w)
+        q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - self.phi)) + kappa_omega + kappa_w
         return q
 
     def _action(self, q, q_next, q_vel):
@@ -93,8 +108,8 @@ class SinusoidalMotion(object):
         action = delta_q / (4 * self.q_max) * self.a_max
         return action
 
-    def step(self, step, q, q_vel):
+    def step(self, step, q, q_vel, g_w):
         self._pirouette(step=step)
-        q_next = self._joint_angle(step=step)
+        q_next = self._joint_angle(step=step, g_w=g_w)
         action = self._action(q=q, q_next=q_next, q_vel=q_vel)
         return action
