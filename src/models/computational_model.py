@@ -15,9 +15,7 @@ class SinusoidalMotion(object):
         self.a_max = 2.  # action: [-a_max, a_max]
         self.psi = 0.2  # body wavelength (rad)
         self.omega = 2 * np.pi * 14  # angular velocity of bending (rad/s): 2 * pi * freq
-        """ state
-        base phase: phi = -2 * pi * psi * (i - 1), where `i` is the body index (1~12)
-        """
+        """ state """
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1)
         self.step_b0 = None  # start of backward movement
         self.step_omega0 = None  # start of sharp turn
@@ -29,17 +27,11 @@ class SinusoidalMotion(object):
         self.step_omega3 = self.step_omega1  # sharp turn phase 3
         self.c_omega = 50  # phase delay for changing posture from S-shaped to omega-shaped and back
         self.kappa_omega = -0.35  # bias angle
-        """ weathervane
-        c_w: weathervane curvature coefficient
-            needs to be large enough to expand gradient range to tanh's discriminative range ~[-3, 3]
-            related to gaussian distribution's sigma, which in effect defines the range where gradient exists
-            larger: weathervane can work in longer distance, but not as precise in close range
-            smaller: weathervane only works in smaller distance, but more precise
-        kappa_w_max: max weathervane bias angle
-            define range of tanh() to limit bias angle which prevents sharp turn
-        """
+        """ weathervane """
         self.c_w = 100
         self.kappa_w_max = 0.3
+        """ pirouette """
+        self.c_p = 150
 
     def _backward(self, step):
         """ update phase for backward movement
@@ -71,14 +63,30 @@ class SinusoidalMotion(object):
                 return self.kappa_omega
         return 0.
 
-    def _pirouette(self, step):
+    def _pirouette_freq(self, g_p):
+        """ pirouette initiate frequency
+        f_p = 0.023 / (0.4 + exp(c_p * g_p)) + 0.0033  (events/sec)
+            range: (0.0033, 0.0608)
+        c_p: gradient coefficient
+            needs to be large enough to expand gradient range to sigmoid's discriminative range
+            larger: pirouette can work in longer distance, but not as precise in close range
+            related to the range of pirouette gradient
+                gradient range is related to gaussian distribution's sigma
+        """
+        freq = 0.023 / (0.4 + np.exp(self.c_p * g_p)) + 0.0033
+        freq *= self.dt
+        return freq
+
+    def _pirouette(self, step, g_p):
         """ set up pirouette start time
-        phase 1: backward movement
-        phase 2: sharp turn
+        g_p: use tangential gradient to randomly decide whether to initiate pirouette or not
+        stages
+            phase 1: backward movement
+            phase 2: sharp turn
         return True if it's performing pirouette, False if it's not
         """
         if self.step_b0 is None:  # not performing pirouette
-            if step == 300:  # initiate pirouette
+            if np.random.rand() < self._pirouette_freq(g_p=g_p):  # initiate pirouette
                 self.step_b0 = step
                 self.step_omega0 = step + self.step_b
         elif step >= self.step_b0 + self.step_b + self.step_omega1 + self.step_omega2 + self.step_omega3:  # pirouette has finished
@@ -90,6 +98,14 @@ class SinusoidalMotion(object):
         original function
             kappa_w = -c_w * g_w
             In gaussian distribution, it only works in close proximity because distant gradient is way too small
+        c_w: weathervane curvature coefficient
+            needs to be large enough to expand gradient range to tanh's discriminative range ~[-3, 3]
+            related to the range of weathervane gradient
+                gradient range is related to gaussian distribution's sigma
+            larger: weathervane can work in longer distance, but not as precise in close range
+            smaller: weathervane only works in smaller distance, but more precise
+        kappa_w_max: max weathervane bias angle
+            define range of tanh() to limit bias angle which prevents sharp turn
         tanh: prevent sharp turn
         """
         kappa_w = -self.c_w * g_w
@@ -98,6 +114,8 @@ class SinusoidalMotion(object):
 
     def _joint_angle(self, step, g_w):
         """ calculate joint angles
+        base phase
+            phi = -2 * pi * psi * (i - 1), where `i` is the body index (1~12)
         movement direction
             backward: q = q_max * sin(omega * t - phi)
             forward: q = q_max * sin(omega * t - (pi - phi))
@@ -116,8 +134,8 @@ class SinusoidalMotion(object):
         action = delta_q / (4 * self.q_max) * self.a_max
         return action
 
-    def step(self, step, q, q_vel, g_w):
-        self._pirouette(step=step)
+    def step(self, step, q, q_vel, g_p, g_w):
+        self._pirouette(step=step, g_p=g_p)
         q_next = self._joint_angle(step=step, g_w=g_w)
         action = self._action(q=q, q_next=q_next, q_vel=q_vel)
         return action

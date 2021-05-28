@@ -70,11 +70,11 @@ def test_sinusoidal_motion():
     """ control by sinusoidal motion """
     env = make_swimmer(max_episode_steps=1000, x=9, y=12)  # distance from source: 15
     observation = env.reset()
-    info = {'g_w': 0.}
+    info = {'g_p': 0., 'g_w': 0.}
     model = SinusoidalMotion()
     for i in range(10 ** 6):
         env.render()
-        action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_w=info['g_w'])
+        action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])
         observation, reward, done, info = env.step(action)
         if done:
             print("Episode finished after {} steps".format(i + 1))
