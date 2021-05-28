@@ -29,9 +29,17 @@ class SinusoidalMotion(object):
         self.step_omega3 = self.step_omega1  # sharp turn phase 3
         self.c_omega = 50  # phase delay for changing posture from S-shaped to omega-shaped and back
         self.kappa_omega = -0.35  # bias angle
-        """ weathervane """
-        self.c_w = 1000  # weathervane curvature coefficient
-        self.kappa_w_max = 0.3  # max weathervane bias angle
+        """ weathervane
+        c_w: weathervane curvature coefficient
+            needs to be large enough to expand gradient range to tanh's discriminative range ~[-3, 3]
+            related to gaussian distribution's sigma, which in effect defines the range where gradient exists
+            larger: weathervane can work in longer distance, but not as precise in close range
+            smaller: weathervane only works in smaller distance, but more precise
+        kappa_w_max: max weathervane bias angle
+            define range of tanh() to limit bias angle which prevents sharp turn
+        """
+        self.c_w = 100
+        self.kappa_w_max = 0.3
 
     def _backward(self, step):
         """ update phase for backward movement

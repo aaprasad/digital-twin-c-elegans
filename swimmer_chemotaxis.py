@@ -9,18 +9,19 @@ from src.wrappers.distribution import Distribution
 from src.models.computational_model import SinusoidalMotion
 
 
-def fick(target, source):
+def fick(target, source, sigma=5):
     """ calculate target position's value in a source distribution
     - Fick's laws of diffusion: Fick's second law
     - Its fundamental solution: C = N_0 * exp^{-r ^ 2 / 400Dt}/4\pi dDt
     - Its fundamental solution is the same as gaussian kernel
     - Ignore the fact that concentration changes through time because of diffusion: concentration doesn't change through time
+    - sigma: defines the range where gradient exists so that gradient-based navigation works
     Reference:
         - Parallel Use of Two Behavioral Mechanisms for Chemotaxis in Caenorhabditis elegans
         - A computational model of internal representations of chemical gradients in environments for chemotaxis of Caenorhabditis elegans
     """
     r = np.linalg.norm(target - source)  # Euclidean distance
-    c = np.exp(-r ** 2)  # gaussian kernel
+    c = np.exp(-r ** 2 / (2 * sigma ** 2))  # gaussian kernel
     return c
 
 
