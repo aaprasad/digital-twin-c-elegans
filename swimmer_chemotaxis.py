@@ -6,7 +6,7 @@ import os
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
 from src.envs.mujoco.chemotaxis import chemotaxis
 from src.wrappers.distribution import Distribution
-from src.models.computational_model import SinusoidalMotion
+from src.models.computational_model import ChemotaxisMotion
 
 
 def fick(target, source, sigma=5):
@@ -71,7 +71,7 @@ def test_sinusoidal_motion():
     env = make_swimmer(max_episode_steps=1000, x=9, y=12)  # distance from source: 15
     observation = env.reset()
     info = {'g_p': 0., 'g_w': 0.}
-    model = SinusoidalMotion()
+    model = ChemotaxisMotion()
     for i in range(10 ** 6):
         env.render()
         action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])

@@ -5,8 +5,15 @@
 import numpy as np
 
 
-class SinusoidalMotion(object):
-    """ oscillator for generating sinusoidal movement """
+class ChemotaxisMotion(object):
+    """ generate action to perform chemotaxis movement
+    forward: oscillator for generating sinusoidal movement
+    pirouette: randomly initiated according to tangential gradient
+        backward: switch phase in the oscillator
+        sharp turn: 3 stages of phase change
+    weathervane: bias angle obtained from normal gradient
+    random walk: bias angle linearly changes in every cycle
+    """
     def __init__(self):
         self.dt = 0.01
         self.n = 12  # number of bodies
