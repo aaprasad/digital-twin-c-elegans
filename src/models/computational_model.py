@@ -19,6 +19,9 @@ class SinusoidalMotion(object):
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1)
         self.step_b0 = None  # start of backward movement
         self.step_omega0 = None  # start of sharp turn
+        self.kappa_r = 0.  # random walk bias angle
+        self.kappa_t = 0.  # random walk bias angle of current cycle
+        self.kappa_t_next = 0.  # random walk bias angle of next cycle
         """ backward """
         self.step_b = 100  # backward movement
         """ sharp turn """
@@ -32,6 +35,9 @@ class SinusoidalMotion(object):
         self.kappa_w_max = 0.3
         """ pirouette """
         self.c_p = 150
+        """ random walk """
+        self.step_r = 100
+        self.c_r = 0.1
 
     def _backward(self, step):
         """ update phase for backward movement
@@ -112,6 +118,19 @@ class SinusoidalMotion(object):
         kappa_w = np.tanh(kappa_w) * self.kappa_w_max
         return kappa_w
 
+    def _random_walk(self, step):
+        """ update random walk bias angle linearly in every cycle
+        kappa_r: bias angle
+            should be smaller than bias angle of sharp turn to prevent sharp turn
+        step_r: steps in a cycle
+        c_r: sigma of gaussian distribution for sampling bias angle
+            three-sigma rule: 99.73% of bias angles <= 3 * c_r
+        """
+        if step % self.step_r == 0:
+            self.kappa_t = self.kappa_t_next
+            self.kappa_t_next = np.random.normal(loc=0, scale=self.c_r)
+        self.kappa_r += (self.kappa_t_next - self.kappa_t) / self.step_r
+
     def _joint_angle(self, step, g_w):
         """ calculate joint angles
         base phase
@@ -123,7 +142,8 @@ class SinusoidalMotion(object):
         self._backward(step=step)
         kappa_omega = self._sharp_turn(step=step)
         kappa_w = self._weathervane(g_w=g_w)
-        q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - self.phi)) + kappa_omega + kappa_w
+        self._random_walk(step=step)
+        q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - self.phi)) + kappa_omega + kappa_w + self.kappa_r
         return q
 
     def _action(self, q, q_next, q_vel):
