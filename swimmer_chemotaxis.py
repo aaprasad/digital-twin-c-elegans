@@ -43,7 +43,7 @@ def make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, camera_pos='0
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
     env._max_episode_steps = max_episode_steps
     env = gym.wrappers.ClipAction(env)
-    env = Distribution(env, f=fick, source=np.array([x, y]))
+    env = Distribution(env, dt=env.dt, f=fick, source=np.array([x, y]))
     if os.path.exists(xml_file):
         os.remove(xml_file)
     return env
@@ -71,7 +71,7 @@ def test_sinusoidal_motion():
     env = make_swimmer(max_episode_steps=1000, x=9, y=12)  # distance from source: 15
     observation = env.reset()
     info = {'g_p': 0., 'g_w': 0.}
-    model = ChemotaxisMotion()
+    model = ChemotaxisMotion(dt=env.dt)
     for i in range(10 ** 6):
         env.render()
         action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])

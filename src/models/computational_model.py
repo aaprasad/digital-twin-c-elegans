@@ -14,14 +14,14 @@ class ChemotaxisMotion(object):
     weathervane: bias angle obtained from normal gradient
     random walk: bias angle linearly changes in every cycle
     """
-    def __init__(self):
-        self.dt = 0.01
+    def __init__(self, dt):
+        self.dt = dt
         self.n = 12  # number of bodies
         self.q_max = 40 * np.pi / 180  # max joint angle (rad)
         """ affect sinusoidal posture and speed """
         self.a_max = 2.  # action: [-a_max, a_max]
         self.psi = 0.2  # body wavelength (rad)
-        self.omega = 2 * np.pi * 14  # angular velocity of bending (rad/s): 2 * pi * freq
+        self.omega = 2 * np.pi * 3  # angular velocity of bending (rad/s): 2 * pi * freq
         """ state """
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1)
         self.step_b0 = None  # start of backward movement
@@ -36,15 +36,15 @@ class ChemotaxisMotion(object):
         self.step_omega2 = 100  # sharp turn phase 2
         self.step_omega3 = self.step_omega1  # sharp turn phase 3
         self.c_omega = 50  # phase delay for changing posture from S-shaped to omega-shaped and back
-        self.kappa_omega = -0.35  # bias angle
+        self.kappa_omega = -0.23  # bias angle
         """ weathervane """
         self.c_w = 100
-        self.kappa_w_max = 0.3
+        self.kappa_w_max = 0.23
         """ pirouette """
-        self.c_p = 150
+        self.c_p = 600
         """ random walk """
         self.step_r = 100
-        self.c_r = 0.1
+        self.c_r = 0.08
 
     def _backward(self, step):
         """ update phase for backward movement

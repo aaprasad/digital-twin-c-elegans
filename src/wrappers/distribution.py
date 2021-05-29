@@ -4,9 +4,9 @@ import numpy as np
 
 class Distribution(gym.Wrapper):
     """ environmental substance distribution wrapper """
-    def __init__(self, env, f, source):
+    def __init__(self, env, dt, f, source):
         super(Distribution, self).__init__(env)
-        self.dt = 0.01  # time step
+        self.dt = dt  # time step
         self.delta = 0.1  # small displacement
         self.f = f  # concentration function
         self.source = source  # source position
