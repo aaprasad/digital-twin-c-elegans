@@ -7,12 +7,15 @@ import numpy as np
 
 class ChemotaxisMotion(object):
     """ generate action to perform chemotaxis movement
-    forward: oscillator for generating sinusoidal movement
-    pirouette: randomly initiated according to tangential gradient
-        backward: switch phase in the oscillator
-        sharp turn: 3 stages of phase change
-    weathervane: bias angle obtained from normal gradient
-    random walk: bias angle linearly changes in every cycle
+    behavior
+        forward: oscillator for generating sinusoidal movement
+        pirouette: randomly initiated according to tangential gradient
+            backward: switch phase in the oscillator
+            sharp turn: 3 stages of phase change
+        weathervane: bias angle obtained from normal gradient
+        random walk: bias angle linearly changes in every cycle
+    joint range
+        >= q_max (sinusoidal) + kappa_omega (sharp turn) + kappa_w_max (weathervane) + 3 * c_r (random walk)
     """
     def __init__(self, dt):
         self.dt = dt
