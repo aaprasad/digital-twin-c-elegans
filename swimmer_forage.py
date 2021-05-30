@@ -8,7 +8,7 @@ import gym
 import os
 
 
-def make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, perimeter_width=6, camera_pos='0 -6 6', max_episode_steps=1000):
+def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, perimeter_width=6, camera_pos='0 -6 6', max_episode_steps=1000):
     """ create swimmer env """
     # generate xml str
     xml_folder = 'src/envs/mujoco/assets/'

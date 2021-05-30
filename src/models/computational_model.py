@@ -36,15 +36,15 @@ class ChemotaxisMotion(object):
         self.step_omega2 = 100  # sharp turn phase 2
         self.step_omega3 = self.step_omega1  # sharp turn phase 3
         self.c_omega = 50  # phase delay for changing posture from S-shaped to omega-shaped and back
-        self.kappa_omega = -0.23  # bias angle
+        self.kappa_omega = -0.2  # bias angle
         """ weathervane """
         self.c_w = 100
-        self.kappa_w_max = 0.23
+        self.kappa_w_max = 0.2
         """ pirouette """
         self.c_p = 600
         """ random walk """
         self.step_r = 100
-        self.c_r = 0.08
+        self.c_r = 0.07
 
     def _backward(self, step):
         """ update phase for backward movement

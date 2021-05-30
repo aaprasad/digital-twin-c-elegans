@@ -25,7 +25,7 @@ def fick(target, source, sigma=5):
     return c
 
 
-def make_swimmer(n_bodies=12, joint_range='-40 40', body_len=0.25, camera_pos='0 -6 6', max_episode_steps=1000, x=0, y=0):
+def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', max_episode_steps=1000, x=0, y=0):
     """ create swimmer env: multibody model
     - radius=0.04mm, body_len=0.1mm, n_bodies=12, q_max=0.69rad (~39.53409 degrees)
     - joint_size=0.1 (radius) -> body_len=0.25
