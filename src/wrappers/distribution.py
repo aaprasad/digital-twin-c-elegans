@@ -4,23 +4,32 @@ import numpy as np
 
 class Distribution(gym.Wrapper):
     """ environmental substance distribution wrapper """
-    def __init__(self, env, dt, f, source):
+    def __init__(self, env, dt, f, source, camera_name=None):
         super(Distribution, self).__init__(env)
         self.dt = dt  # time step
         self.delta = 0.1  # small displacement
         self.f = f  # concentration function
         self.source = source  # source position
+        self.camera_name = camera_name  # camera name for recording
         """ state """
         self._com_c_past = None  # last step's concentration at the center of mass
         self._com_past = None  # last step's center of mass
 
     def reset(self, **kwargs):
+        """ override gym.Wrapper """
         return self.env.reset(**kwargs)
 
     def step(self, action):
+        """ override gym.Wrapper """
         observation, reward, done, info = self.env.step(action)
         reward, info = self.reward(reward, info)
         return observation, reward, done, info
+
+    def render(self, mode='human', camera_name=None, **kwargs):
+        """ override gym.Wrapper """
+        if camera_name is None:
+            camera_name = self.camera_name
+        return self.env.render(mode, camera_name=camera_name, **kwargs)
 
     def _tangential_gradient(self, com):
         """ gradient parallel to the traveling direction of the center of mass """
@@ -51,6 +60,7 @@ class Distribution(gym.Wrapper):
         return gradient
 
     def reward(self, reward, info):
+        """ refer to gym.RewardWrapper """
         position = self.env.sim.data.qpos[0:2].copy()  # position of anterior tip
         com = self.env.sim.data.subtree_com[1][0:2].copy()  # center of mass
         concentration = self.f(position, source=self.source)  # position's concentration
