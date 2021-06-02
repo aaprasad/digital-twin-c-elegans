@@ -74,7 +74,7 @@ def test_random():
 
 def test_sinusoidal_motion():
     """ control by sinusoidal motion """
-    env = make_swimmer(max_episode_steps=1000, x=9, y=12, camera_z=None, camera_name=None)  # distance from source: 15
+    env = make_swimmer(max_episode_steps=1000, x=9, y=12, camera_z=40, camera_name=None)  # distance from source: 15
     observation = env.reset()
     info = {'g_p': 0., 'g_w': 0.}
     model = ChemotaxisMotion(dt=env.dt)
