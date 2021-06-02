@@ -25,7 +25,7 @@ def fick(target, source, sigma=5):
     return c
 
 
-def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', max_episode_steps=1000, x=0, y=0):
+def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', camera_z=None, max_episode_steps=1000, x=0, y=0):
     """ create swimmer env: multibody model
     - radius=0.04mm, body_len=0.1mm, n_bodies=12, q_max=0.69rad (~39.53409 degrees)
     - joint_size=0.1 (radius) -> body_len=0.25
@@ -34,7 +34,7 @@ def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos=
     """
     # generate xml str
     xml_folder = 'src/envs/mujoco/assets/'
-    xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos)
+    xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos, camera_z=camera_z)
     xml_str = chemotaxis(xml_str=xml_str, x=x, y=y)
     # write temp xml file, make env and delete temp file
     xml_file = os.path.join(xml_folder, 'swimmer_temp.xml')
@@ -68,7 +68,7 @@ def test_random():
 
 def test_sinusoidal_motion():
     """ control by sinusoidal motion """
-    env = make_swimmer(max_episode_steps=1000, x=9, y=12)  # distance from source: 15
+    env = make_swimmer(max_episode_steps=1000, x=9, y=12, camera_z=None)  # distance from source: 15
     observation = env.reset()
     info = {'g_p': 0., 'g_w': 0.}
     model = ChemotaxisMotion(dt=env.dt)

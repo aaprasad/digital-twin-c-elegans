@@ -8,7 +8,7 @@ def _list_to_str(a):
     return ' '.join([str(f) for f in a])
 
 
-def make_model(n_bodies, joint_range, body_len, xml_file, camera_pos=None):
+def make_model(n_bodies, joint_range, body_len, xml_file, camera_pos=None, camera_z=None):
     """ Generates an xml string defining a swimmer with `n_bodies` bodies and certain `body_len`
     Args:
         n_bodies: number of bodies, >= 3
@@ -19,7 +19,7 @@ def make_model(n_bodies, joint_range, body_len, xml_file, camera_pos=None):
     if body_len < 0.2:
         raise ValueError('`body_len` must be at least two times the size of joint. Received {}'.format(body_len))
     # create swimmer
-    mjcf = make_model_base(n_bodies=n_bodies, joint_range=joint_range, xml_file=xml_file, camera_pos=camera_pos)
+    mjcf = make_model_base(n_bodies=n_bodies, joint_range=joint_range, xml_file=xml_file, camera_pos=camera_pos, camera_z=camera_z)
     # the highest level of body
     body = mjcf.find('worldbody/body')
     fromto = _list_to_str([0, 0, 0, -body_len, 0, 0])
@@ -33,6 +33,6 @@ def make_model(n_bodies, joint_range, body_len, xml_file, camera_pos=None):
     return mjcf
 
 
-def swimmer(n_bodies, joint_range, body_len, xml_file, camera_pos=None):
-    mjcf = make_model(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=xml_file, camera_pos=camera_pos)
+def swimmer(n_bodies, joint_range, body_len, xml_file, camera_pos=None, camera_z=None):
+    mjcf = make_model(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=xml_file, camera_pos=camera_pos, camera_z=camera_z)
     return etree.tostring(mjcf, pretty_print=True)

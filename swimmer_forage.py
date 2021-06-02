@@ -8,11 +8,11 @@ import gym
 import os
 
 
-def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, perimeter_width=6, camera_pos='0 -6 6', max_episode_steps=1000):
+def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, perimeter_width=6, camera_pos='0 -6 6', camera_z=None, max_episode_steps=1000):
     """ create swimmer env """
     # generate xml str
     xml_folder = 'src/envs/mujoco/assets/'
-    xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos)
+    xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos, camera_z=camera_z)
     xml_str = forage(xml_str=xml_str, perimeter_width=perimeter_width)
     # write temp xml file, make env and delete temp file
     xml_file = os.path.join(xml_folder, 'swimmer_temp.xml')

@@ -49,7 +49,22 @@ def _set_joint_range(mjcf, n_bodies, joint_range: str):
     return mjcf
 
 
-def make_model(n_bodies, joint_range, xml_file, camera_pos=None):
+def _set_camera(mjcf, camera_pos=None, camera_z=None):
+    """ set up cameras
+    track cam: default camera_pos is '0 -3 3'
+    fixed cam: created only if camera_z isn't None
+    """
+    if camera_pos is not None:
+        trackcam = mjcf.find('worldbody/body/camera')
+        trackcam.set('pos', camera_pos)
+    if camera_z is not None:
+        fixedcam = etree.Element('camera', attrib={'name': 'fixedcam', 'mode': 'fixed', 'pos': '0 0 {}'.format(camera_z), 'xyaxes': '1 0 0 0 1 0'})
+        worldbody = mjcf.find('worldbody')
+        worldbody.insert(1, fixedcam)
+    return mjcf
+
+
+def make_model(n_bodies, joint_range, xml_file, camera_pos=None, camera_z=None):
     """ Generates an xml string defining a swimmer with `n_bodies` bodies.
     Args:
         n_bodies: number of bodies, >= 3
@@ -85,13 +100,11 @@ def make_model(n_bodies, joint_range, xml_file, camera_pos=None):
             actuator.append(motor)
     # set joint range
     mjcf = _set_joint_range(mjcf=mjcf, n_bodies=n_bodies, joint_range=joint_range)
-    # modify camera pos, default: "0 -3 3"
-    if camera_pos is not None:
-        camera = mjcf.find('worldbody/body/camera')
-        camera.set('pos', camera_pos)
+    # set up cameras
+    mjcf = _set_camera(mjcf=mjcf, camera_pos=camera_pos, camera_z=camera_z)
     return mjcf
 
 
-def swimmer(n_bodies, joint_range, xml_file, camera_pos=None):
-    mjcf = make_model(n_bodies=n_bodies, joint_range=joint_range, xml_file=xml_file, camera_pos=camera_pos)
+def swimmer(n_bodies, joint_range, xml_file, camera_pos=None, camera_z=None):
+    mjcf = make_model(n_bodies=n_bodies, joint_range=joint_range, xml_file=xml_file, camera_pos=camera_pos, camera_z=camera_z)
     return etree.tostring(mjcf, pretty_print=True)
