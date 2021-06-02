@@ -10,7 +10,7 @@ class Distribution(gym.Wrapper):
         self.delta = 0.1  # small displacement
         self.f = f  # concentration function
         self.source = source  # source position
-        self.camera_name = camera_name  # camera name for recording
+        self.camera_name = camera_name  # the name of recording camera: [None, 'track', 'fixedcam']
         """ state """
         self._com_c_past = None  # last step's concentration at the center of mass
         self._com_past = None  # last step's center of mass
