@@ -60,11 +60,15 @@ class ChemotaxisMotion(object):
 
     def _sharp_turn(self, step):
         """ update phase for sharp turn
-        it changes posture but still needs bias angle param to perform a sharp turn
-        phase 1: phi(t) = phi(t - dt) + c_omega / t_omega1 * dt, where t_omega1 is duration
-        phase 2: phi(t) = phi(t), where t_omega2 is duration
-        phase 3: phi(t) = phi(t - dt) - c_omega / t_omega3 * dt, where t_omega3 is duration
-        return bias angle for performing sharp turn
+        phases: changes posture
+            phase 1: phi(t) = phi(t - dt) + c_omega / t_omega1 * dt, where t_omega1 is duration
+            phase 2: phi(t) = phi(t), where t_omega2 is duration
+            phase 3: phi(t) = phi(t - dt) - c_omega / t_omega3 * dt, where t_omega3 is duration
+        bias angle: contributes to sharp turn
+            Large bends, or omega turns, are strongly biased to the ventral side in normal worms (bias angle < 0)
+                https://doi.org/10.1038/nature24056
+                https://doi.org/10.1073/pnas.0409009101
+                https://doi.org/10.1016/j.jneumeth.2006.06.007
         """
         if self.step_omega0 is not None:
             phase0 = self.step_omega0
