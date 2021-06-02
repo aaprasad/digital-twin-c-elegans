@@ -25,7 +25,7 @@ def fick(target, source, sigma=5):
     return c
 
 
-def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', camera_z=None, max_episode_steps=1000, x=0, y=0):
+def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', camera_z=None, record=False, max_episode_steps=1000, x=0, y=0):
     """ create swimmer env: multibody model
     - radius=0.04mm, body_len=0.1mm, n_bodies=12, q_max=0.69rad (~39.53409 degrees)
     - joint_size=0.1 (radius) -> body_len=0.25
@@ -36,14 +36,20 @@ def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos=
     xml_folder = 'src/envs/mujoco/assets/'
     xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos, camera_z=camera_z)
     xml_str = chemotaxis(xml_str=xml_str, x=x, y=y)
-    # write temp xml file, make env and delete temp file
+    # write temp xml file
     xml_file = os.path.join(xml_folder, 'swimmer_temp.xml')
     with open(xml_file, 'wb') as f:
         f.write(xml_str)
+    # make and wrap env
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
     env._max_episode_steps = max_episode_steps
     env = gym.wrappers.ClipAction(env)
     env = Distribution(env, dt=env.dt, f=fick, source=np.array([x, y]))
+    # record video
+    if record is True:
+        # if force is True, clear previous monitor files
+        env = gym.wrappers.Monitor(env, directory='video/swimmer_chemotaxis', force=True)
+    # delete temp xml file
     if os.path.exists(xml_file):
         os.remove(xml_file)
     return env
@@ -68,7 +74,7 @@ def test_random():
 
 def test_sinusoidal_motion():
     """ control by sinusoidal motion """
-    env = make_swimmer(max_episode_steps=1000, x=9, y=12, camera_z=None)  # distance from source: 15
+    env = make_swimmer(max_episode_steps=1000, x=9, y=12, camera_z=None, record=False)  # distance from source: 15
     observation = env.reset()
     info = {'g_p': 0., 'g_w': 0.}
     model = ChemotaxisMotion(dt=env.dt)
