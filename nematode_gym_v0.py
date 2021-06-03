@@ -30,7 +30,6 @@ def test_random():
     # body_len >= 0.2
     env = make_nematode(joint_range='-100 100', body_len=0.26, muscle_len=0.26, arrangement=None, camera_pos='0 -5 5', camera_z=None)
     # record video
-    os.makedirs('video', exist_ok=True)
     rec = VideoRecorder(env, base_path='video/nematode_gym_v0', enabled=True)
     # run
     observation = env.reset()

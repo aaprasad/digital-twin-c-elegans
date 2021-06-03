@@ -54,7 +54,6 @@ def test_random_gym():
     # make env
     env = make_swimmer()
     # record video
-    os.makedirs('video', exist_ok=True)
     rec = VideoRecorder(env, base_path='video/muscle_swimmer_gym_v0', enabled=True)  # Create the video recorder
     # run and record video
     observation = env.reset()

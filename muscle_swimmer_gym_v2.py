@@ -28,7 +28,6 @@ def test_random():
     # bode_len >= 0.2
     env = make_swimmer(n_bodies=5, joint_range='-100 100', body_len=0.5, muscle_len=0.26, camera_pos='0 -5 5', camera_z=None)
     # record video
-    os.makedirs('video', exist_ok=True)
     rec = VideoRecorder(env, base_path='video/muscle_swimmer_gym_v2', enabled=True)  # Create the video recorder
     # run and record video
     observation = env.reset()

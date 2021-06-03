@@ -30,7 +30,6 @@ def test_random():
     # make env
     env = make_swimmer(n_bodies=5, joint_range='-100 100', camera_pos='0 -6 6', camera_z=None)
     # record video
-    os.makedirs('video', exist_ok=True)
     rec = VideoRecorder(env, base_path='video/muscle_swimmer_gym_v1', enabled=True)  # Create the video recorder
     # run and record video
     observation = env.reset()

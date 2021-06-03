@@ -94,8 +94,6 @@ def record_garage(framework: str):
 
 
 if __name__ == '__main__':
-    os.makedirs('video', exist_ok=True)
-
     # check out the task set
     # benchmarking_task_set()
 

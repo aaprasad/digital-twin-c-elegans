@@ -6,7 +6,6 @@
 """
 
 import gym
-import os
 # import pybullet
 import pybullet_envs
 from gym.envs.registration import register
@@ -22,7 +21,6 @@ if __name__ == '__main__':
     )
     env = gym.make('Swimmer-Gym-v3-Bullet-v0')
     env.render(mode='human')
-    os.makedirs('video', exist_ok=True)
     # rec = VideoRecorder(env, base_path='video/swimmer_gym_v3_bullet_v0', enabled=True)
 
     observation = env.reset()

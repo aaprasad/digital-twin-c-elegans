@@ -347,7 +347,6 @@ def record_garage(framework: str, log_dir: str, video_path: str, run_episode):
 
 if __name__ == '__main__':
     os.makedirs('checkpoint', exist_ok=True)
-    os.makedirs('video', exist_ok=True)
 
     """ use register() to add a new environment, starts with -v0 """
     # print(gym.envs.registry.all())

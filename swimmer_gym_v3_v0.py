@@ -4,8 +4,6 @@
 """
 
 import gym
-import os
-import time
 from gym.envs.registration import register
 from gym.wrappers.monitoring.video_recorder import VideoRecorder
 
@@ -24,7 +22,6 @@ if __name__ == '__main__':
     - there's a relevant bug in gym==0.18.0, use 'pip install -e .' to install dev version instead
     - video will be named: based_path + '.mp4'
     """
-    os.makedirs('video', exist_ok=True)
     rec = VideoRecorder(env, base_path='video/swimmer_gym_v3_v0', enabled=True)  # Create the video recorder
 
     """ run and record """
