@@ -18,7 +18,7 @@ class ChemotaxisMotion(object):
         >= q_max (sinusoidal) + kappa_omega (sharp turn) + kappa_w_max (weathervane) + 3 * c_r (random walk)
     """
     def __init__(self, dt):
-        self.dt = dt
+        self.dt = dt  # real time per step
         self.n = 12  # number of bodies
         self.q_max = 40 * np.pi / 180  # max joint angle (rad)
         """ affect sinusoidal posture and speed """
