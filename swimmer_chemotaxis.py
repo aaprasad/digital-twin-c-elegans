@@ -6,6 +6,7 @@ import os
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
 from src.envs.mujoco.chemotaxis import chemotaxis
 from src.wrappers.distribution import Distribution
+from src.wrappers.recorder import Recorder
 from src.models.computational_model import ChemotaxisMotion
 
 
@@ -44,7 +45,8 @@ def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos=
     env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
     env._max_episode_steps = max_episode_steps
     env = gym.wrappers.ClipAction(env)
-    env = Distribution(env, dt=env.dt, f=fick, source=np.array([x, y]), camera_name=camera_name)
+    env = Distribution(env, dt=env.dt, f=fick, source=np.array([x, y]))
+    env = Recorder(env, stats_name=['concentration'], camera_name=camera_name)
     # record video
     if camera_name is not None:
         # if force is True, clear previous monitor files
@@ -85,6 +87,7 @@ def test_sinusoidal_motion():
         if done:
             print("Episode finished after {} steps".format(i + 1))
             break
+    print('Chemotaxis index {:.4f}'.format(sum(env.stats['concentration']) / len(env.stats['concentration'])))
     env.close()
 
 
