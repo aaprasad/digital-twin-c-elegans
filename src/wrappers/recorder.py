@@ -5,10 +5,9 @@ class Recorder(gym.Wrapper):
     """ record statistics and override rendering method """
     def __init__(self, env, stats_name: list, camera_name=None):
         super(Recorder, self).__init__(env)
-        self.stats_name = stats_name
         self.camera_name = camera_name  # None, 'track', 'fixedcam'
         """ state """
-        self.stats = {name: [] for name in self.stats_name}
+        self.stats = {name: [] for name in stats_name}
 
     def reset(self, **kwargs):
         """ override gym.Wrapper """
