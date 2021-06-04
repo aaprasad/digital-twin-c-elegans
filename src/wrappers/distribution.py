@@ -17,6 +17,8 @@ class Distribution(gym.Wrapper):
 
     def reset(self, **kwargs):
         """ override gym.Wrapper """
+        self._com_c_past = None
+        self._com_past = None
         return self.env.reset(**kwargs)
 
     def step(self, action):
