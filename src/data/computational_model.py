@@ -30,13 +30,13 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         """ sample a seed number """
         return np.random.randint(np.iinfo(np.uint32).max)
 
-    def generate_sample(self, x_pos, y_pos):
+    def generate_sample(self, env, model):
         """ run an env simulation """
-        env = self.make_env(x=x_pos, y=y_pos, **self.env_kwargs)
-        env.seed(seed=self.sample_seed())
+        seed = self.sample_seed()
+        env.seed(seed)
         observation = env.reset()
         info = {'g': 0., 'g_p': 0., 'g_w': 0.}
-        model = self.make_model(dt=env.dt, seed=self.sample_seed())
+        model.seed(seed)
         x, y = [], []
         for i in range(10 ** 6):
             # env.render()
@@ -57,9 +57,11 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         x, y = [], []
         data_size = data_size // len(source_pos) * len(source_pos)
         with tqdm(total=data_size) as pbar:
-            for _ in range(data_size // len(source_pos)):
-                for x_pos, y_pos in source_pos:
-                    g, action = self.generate_sample(x_pos=x_pos, y_pos=y_pos)
+            for x_pos, y_pos in source_pos:
+                env = self.make_env(x=x_pos, y=y_pos, **self.env_kwargs)
+                model = self.make_model(dt=env.dt)
+                for _ in range(data_size // len(source_pos)):
+                    g, action = self.generate_sample(env=env, model=model)
                     x.append(g)
                     y.append(action)
                     pbar.update(1)
