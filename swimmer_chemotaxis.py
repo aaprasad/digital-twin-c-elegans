@@ -105,6 +105,7 @@ def generate_chemotaxis_dataset(make_env=make_swimmer, distance=15, data_size=72
         seed=seed,
         env_kwargs=env_kwargs
     )
+    print('data_size', len(dataset))
     torch.save(dataset, 'data/chemotaxis_dataset.pt')
 
 

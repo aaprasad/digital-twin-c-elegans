@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from tqdm import tqdm
 
 
 class ChemotaxisDataset(torch.utils.data.Dataset):
@@ -54,9 +55,12 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         y: actions performed each step
         """
         x, y = [], []
-        for i in range(data_size // len(source_pos)):
-            for x_pos, y_pos in source_pos:
-                g, action = self.generate_sample(x_pos=x_pos, y_pos=y_pos)
-                x.append(g)
-                y.append(action)
+        data_size = data_size // len(source_pos) * len(source_pos)
+        with tqdm(total=data_size) as pbar:
+            for _ in range(data_size // len(source_pos)):
+                for x_pos, y_pos in source_pos:
+                    g, action = self.generate_sample(x_pos=x_pos, y_pos=y_pos)
+                    x.append(g)
+                    y.append(action)
+                    pbar.update(1)
         return x, y
