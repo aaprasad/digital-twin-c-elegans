@@ -49,7 +49,7 @@ class ChemotaxisMotion(object):
         self.step_r = 100
         self.c_r = 0.07
         """ seeding """
-        self.seed(seed=seed)
+        self.seed(seed)
 
     @staticmethod
     def seed(seed=None):
