@@ -42,7 +42,7 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
             # env.render()
             x.append(info['g'])
             action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])
-            y.append(action)
+            y.append(action.tolist())
             observation, reward, done, info = env.step(action)
             if done:
                 break
