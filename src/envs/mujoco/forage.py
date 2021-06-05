@@ -85,6 +85,8 @@ def _make_model(xml_str, perimeter_width):
     return mjcf
 
 
-def forage(xml_str, perimeter_width):
+def forage(xml_str, perimeter_width, seed=None):
+    if seed is not None:
+        np.random.seed(seed)
     mjcf = _make_model(xml_str=xml_str, perimeter_width=perimeter_width)
     return etree.tostring(mjcf, pretty_print=True)
