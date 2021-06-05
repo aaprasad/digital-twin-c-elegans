@@ -66,6 +66,7 @@ def make_perimeter(worldbody, width, box_width, box_height):
 
 def _make_model(xml_str, perimeter_width):
     """ make sphere and perimeter wall
+    (introduce randomness)
     Args:
         perimeter_width: half-size of square perimeter wall's width
     """
