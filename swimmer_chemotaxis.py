@@ -8,6 +8,9 @@ from src.envs.mujoco.chemotaxis import chemotaxis
 from src.wrappers.distribution import Distribution
 from src.wrappers.recorder import Recorder
 from src.models.computational_model import ChemotaxisMotion
+from src.data.computational_model import ChemotaxisDataset
+from src.utils import clock_position
+import torch
 
 
 def fick(target, source, sigma=5):
@@ -92,6 +95,20 @@ def test_sinusoidal_motion(seed=None):
     env.close()
 
 
+def generate_chemotaxis_dataset(make_env=make_swimmer, distance=15, data_size=72000, seed=42, max_episode_steps=2500):
+    env_kwargs = {'max_episode_steps': max_episode_steps}
+    dataset = ChemotaxisDataset(
+        make_env=make_env,
+        make_model=ChemotaxisMotion,
+        data_size=data_size,
+        source_pos=clock_position(distance=distance),
+        seed=seed,
+        env_kwargs=env_kwargs
+    )
+    torch.save(dataset, 'data/chemotaxis_dataset.pt')
+
+
 if __name__ == '__main__':
     # test_random()
-    test_sinusoidal_motion()
+    # test_sinusoidal_motion()
+    generate_chemotaxis_dataset()
