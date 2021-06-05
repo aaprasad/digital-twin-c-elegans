@@ -74,12 +74,13 @@ def test_random():
     env.close()
 
 
-def test_sinusoidal_motion():
+def test_sinusoidal_motion(seed=None):
     """ control by sinusoidal motion """
     env = make_swimmer(max_episode_steps=2500, x=9, y=12, camera_z=50, camera_name=None)  # distance from source: 15
+    env.seed(seed)
     observation = env.reset()
     info = {'g_p': 0., 'g_w': 0.}
-    model = ChemotaxisMotion(dt=env.dt)
+    model = ChemotaxisMotion(dt=env.dt, seed=seed)
     for i in range(10 ** 6):
         env.render()
         action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])

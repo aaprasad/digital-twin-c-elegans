@@ -17,7 +17,7 @@ class ChemotaxisMotion(object):
     joint range
         >= q_max (sinusoidal) + kappa_omega (sharp turn) + kappa_w_max (weathervane) + 3 * c_r (random walk)
     """
-    def __init__(self, dt):
+    def __init__(self, dt, seed=None):
         self.dt = dt  # real time per step
         self.n = 12  # number of bodies
         self.q_max = 40 * np.pi / 180  # max joint angle (rad)
@@ -48,6 +48,13 @@ class ChemotaxisMotion(object):
         """ random walk """
         self.step_r = 100
         self.c_r = 0.07
+        """ seeding """
+        self.seed(seed=seed)
+
+    @staticmethod
+    def seed(seed=None):
+        if seed is not None:
+            np.random.seed(seed)
 
     def _backward(self, step):
         """ update phase for backward movement
@@ -99,6 +106,7 @@ class ChemotaxisMotion(object):
 
     def _pirouette(self, step, g_p):
         """ set up pirouette start time
+        (introduce randomness)
         g_p: use tangential gradient to randomly decide whether to initiate pirouette or not
         stages
             phase 1: backward movement
@@ -134,6 +142,7 @@ class ChemotaxisMotion(object):
 
     def _random_walk(self, step):
         """ update random walk bias angle linearly in every cycle
+        (introduce randomness)
         kappa_r: bias angle
             should be smaller than bias angle of sharp turn to prevent sharp turn
         step_r: steps in a cycle
