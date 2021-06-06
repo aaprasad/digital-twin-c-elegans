@@ -88,6 +88,7 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         data_sample = ChemotaxisDataSample(envs, models, data_size=data_size, seed=seed)
         dataloader = torch.utils.data.DataLoader(data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count())
         for sample_x, sample_y in tqdm(dataloader):
+            # deepcopy batch data to avoid keeping file handles, which prevents error of 'Too many open files.'
             sample_x = copy.deepcopy(sample_x)
             sample_y = copy.deepcopy(sample_y)
             x.append(sample_x.squeeze(dim=0))
