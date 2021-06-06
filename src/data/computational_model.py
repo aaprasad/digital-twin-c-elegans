@@ -1,4 +1,3 @@
-import copy
 import multiprocessing
 import numpy as np
 import torch
@@ -18,9 +17,7 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
 
     def __getitem__(self, index):
         index = index % self.env_amount
-        env = copy.deepcopy(self.envs[index])
-        model = copy.deepcopy(self.models[index])
-        return self.generate_sample(env=env, model=model)
+        return self.generate_sample(env=self.envs[index], model=self.models[index])
 
     def __len__(self):
         return self.data_size
