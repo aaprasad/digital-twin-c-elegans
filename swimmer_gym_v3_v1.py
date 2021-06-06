@@ -2,7 +2,6 @@
 
 import gym
 import os
-from gym.wrappers.monitoring.video_recorder import VideoRecorder
 from src.envs.mujoco.swimmer_gym_v3_v1 import swimmer
 
 
@@ -33,19 +32,16 @@ def test_random():
     # make env
     env = make_swimmer(n_bodies=5, joint_range='-100 100', camera_pos='0 -6 6', camera_z=None)
     # record video
-    rec = VideoRecorder(env, base_path='video/swimmer_gym_v3_v1', enabled=True)  # Create the video recorder
+    env = gym.wrappers.Monitor(env, directory='video/swimmer_gym_v3_v1', force=True)
     # run and record video
     observation = env.reset()
-    rec.capture_frame()
     for i in range(1000):
         # env.render()
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
-        rec.capture_frame()
         if done:
             print("Episode finished after {} steps".format(i + 1))
             break
-    rec.close()
     env.close()
 
 
