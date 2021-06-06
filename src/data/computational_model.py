@@ -1,3 +1,4 @@
+import copy
 import multiprocessing
 import numpy as np
 import torch
@@ -87,6 +88,8 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         data_sample = ChemotaxisDataSample(envs, models, data_size=data_size, seed=seed)
         dataloader = torch.utils.data.DataLoader(data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count())
         for sample_x, sample_y in tqdm(dataloader):
+            sample_x = copy.deepcopy(sample_x)
+            sample_y = copy.deepcopy(sample_y)
             x.append(sample_x.squeeze(dim=0))
             y.append(sample_y.squeeze(dim=0))
         x = torch.stack(x)
