@@ -1,5 +1,6 @@
 """ muscle swimmer implemented based on OpenAI Gym Swimmer-v3 """
 
+from src.envs.mujoco.swimmer_gym_v3_v0 import SwimmerEnv
 from src.envs.mujoco.muscle_swimmer_gym_v0 import swimmer
 import gym
 import mujoco_py
@@ -9,7 +10,6 @@ import os
 
 def test_random():
     """ take random actions """
-    # generate xml str
     xml_str = swimmer(xml_file='src/envs/mujoco/assets/swimmer.xml')
     # build model
     model = mujoco_py.load_model_from_xml(xml_str.decode("utf-8"))
@@ -29,17 +29,8 @@ def test_random():
 
 def make_swimmer():
     """ create swimmer env """
-    # generate xml str
-    xml_folder = 'src/envs/mujoco/assets/'
-    xml_str = swimmer(xml_file=os.path.join(xml_folder, 'swimmer.xml'))
-    # write temp xml file, make env and delete temp file
-    xml_file = os.path.join(xml_folder, 'swimmer_temp.xml')
-    with open(xml_file, 'wb') as f:
-        f.write(xml_str)
-    env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
-    if os.path.exists(xml_file):
-        os.remove(xml_file)
-
+    xml_str = swimmer(xml_file='src/envs/mujoco/assets/swimmer.xml')
+    env = SwimmerEnv(xml_str=xml_str.decode('utf-8'))
     # action: Box(0.0, 1.0, (4,), float32), muscles' actions
     print(env.action_space, env.action_space.low, env.action_space.high)
     # observation: Box(-inf, inf, (8,), float64), the same as Swimmer-v3

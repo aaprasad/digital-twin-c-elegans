@@ -1,22 +1,14 @@
 """ muscle swimmer with specific `n_bodies` and `joint_range` """
 
+from src.envs.mujoco.swimmer_gym_v3_v0 import SwimmerEnv
 from src.envs.mujoco.muscle_swimmer_gym_v1 import swimmer
 import gym
-import os
 
 
 def make_swimmer(n_bodies, joint_range, camera_pos, camera_z):
     """ create swimmer env """
-    # generate xml str
-    xml_folder = 'src/envs/mujoco/assets/'
-    xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos, camera_z=camera_z)
-    # write temp xml file, make env and delete temp file
-    xml_file = os.path.join(xml_folder, 'swimmer_temp.xml')
-    with open(xml_file, 'wb') as f:
-        f.write(xml_str)
-    env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
-    if os.path.exists(xml_file):
-        os.remove(xml_file)
+    xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, xml_file='src/envs/mujoco/assets/swimmer.xml', camera_pos=camera_pos, camera_z=camera_z)
+    env = SwimmerEnv(xml_str=xml_str.decode('utf-8'))
     # action: Box(0.0, 1.0, (8,), float32)
     print(env.action_space, env.action_space.low, env.action_space.high)
     # observation: Box(-inf, inf, (12,), float64)
