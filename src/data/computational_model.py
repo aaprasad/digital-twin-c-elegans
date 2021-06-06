@@ -6,6 +6,7 @@ from tqdm import tqdm
 class ChemotaxisDataset(torch.utils.data.Dataset):
     """ generate chemotaxis dataset """
     def __init__(self, make_env, make_model, data_size, source_pos, seed, env_kwargs):
+        super(ChemotaxisDataset, self).__init__()
         self.make_env = make_env  # function
         self.make_model = make_model  # class
         self.env_kwargs = env_kwargs  # env kwargs
