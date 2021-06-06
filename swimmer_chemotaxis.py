@@ -40,7 +40,7 @@ def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos=
     xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file='src/envs/mujoco/assets/swimmer.xml', camera_pos=camera_pos, camera_z=camera_z)
     xml_str = chemotaxis(xml_str=xml_str, x=x, y=y)
     # make and wrap env
-    env = SwimmerEnv(xml_str=xml_str.decode("utf-8"))
+    env = SwimmerEnv(xml_str=xml_str.decode('utf-8'))
     env = gym.wrappers.TimeLimit(env, max_episode_steps=max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = Distribution(env, dt=env.dt, f=fick, source=np.array([x, y]))
