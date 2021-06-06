@@ -1,25 +1,29 @@
+import copy
+import multiprocessing
 import numpy as np
 import torch
 from tqdm import tqdm
 
 
-class ChemotaxisDataset(torch.utils.data.Dataset):
-    """ generate chemotaxis dataset """
-    def __init__(self, make_env, make_model, data_size, source_pos, seed, env_kwargs):
-        super(ChemotaxisDataset, self).__init__()
-        self.make_env = make_env  # function
-        self.make_model = make_model  # class
-        self.env_kwargs = env_kwargs  # env kwargs
+class ChemotaxisDataSample(torch.utils.data.Dataset):
+    def __init__(self, envs, models, data_size, seed):
+        super(ChemotaxisDataSample, self).__init__()
+        assert len(envs) == len(models), 'The lengths of envs and models must be the same.'
+        self.envs = envs
+        self.models = models
+        self.data_size = data_size
+        self.env_amount = len(envs)
         """ seeding """
         self.seed(seed)
-        """ dataset """
-        self.x, self.y = self.generate_dataset(data_size, source_pos)
 
     def __getitem__(self, index):
-        return self.x[index], self.y[index]
+        index = index % self.env_amount
+        env = copy.deepcopy(self.envs[index])
+        model = copy.deepcopy(self.models[index])
+        return self.generate_sample(env=env, model=model)
 
     def __len__(self):
-        return len(self.y)
+        return self.data_size
 
     @staticmethod
     def seed(seed):
@@ -32,7 +36,10 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         return np.random.randint(np.iinfo(np.uint32).max)
 
     def generate_sample(self, env, model):
-        """ run an env simulation """
+        """ an env simulation data sample
+        x: torch.Tensor, (max_episode_steps, )
+        y: torch.Tensor, (max_episode_steps, action_size)
+        """
         seed = self.sample_seed()
         env.seed(seed)
         observation = env.reset()
@@ -48,22 +55,43 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
             if done:
                 break
         env.close()
+        x = torch.tensor(x, dtype=torch.float64)
+        y = torch.tensor(y, dtype=torch.float64)
         return x, y
 
-    def generate_dataset(self, data_size, source_pos):
+
+class ChemotaxisDataset(torch.utils.data.Dataset):
+    """ generate chemotaxis dataset
+    x: concentrations sensed at nose tip
+    y: actions performed each step
+    """
+    def __init__(self, make_env, make_model, data_size, sources, seed, env_kwargs):
+        super(ChemotaxisDataset, self).__init__()
+        self.make_env = make_env  # function
+        self.make_model = make_model  # class
+        self.env_kwargs = env_kwargs  # env kwargs
+        """ dataset """
+        self.x, self.y = self.generate_dataset(data_size, sources, seed)
+
+    def __getitem__(self, index):
+        return self.x[index], self.y[index]
+
+    def __len__(self):
+        return len(self.x)
+
+    def generate_dataset(self, data_size, sources, seed):
         """ generate a sample dataset
-        x: concentrations sensed at nose tip
-        y: actions performed each step
+        x: torch.Tensor, (data_size, max_episode_steps)
+        y: torch.Tensor, (data_size, max_episode_steps, action_size)
         """
         x, y = [], []
-        data_size = data_size // len(source_pos) * len(source_pos)
-        with tqdm(total=data_size) as pbar:
-            for x_pos, y_pos in source_pos:
-                env = self.make_env(x=x_pos, y=y_pos, **self.env_kwargs)
-                model = self.make_model(dt=env.dt)
-                for _ in range(data_size // len(source_pos)):
-                    g, action = self.generate_sample(env=env, model=model)
-                    x.append(g)
-                    y.append(action)
-                    pbar.update(1)
+        envs = [self.make_env(x=pos_x, y=pos_y, **self.env_kwargs) for pos_x, pos_y in sources]
+        models = [self.make_model(dt=env.dt) for env in envs]
+        data_sample = ChemotaxisDataSample(envs, models, data_size=data_size, seed=seed)
+        dataloader = torch.utils.data.DataLoader(data_sample, batch_size=1, num_workers=multiprocessing.cpu_count())
+        for sample_x, sample_y in tqdm(dataloader):
+            x.append(sample_x.squeeze(dim=0))
+            y.append(sample_y.squeeze(dim=0))
+        x = torch.stack(x)
+        y = torch.stack(y)
         return x, y

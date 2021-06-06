@@ -2,7 +2,7 @@
 
 import gym
 import numpy as np
-import os
+from src.envs.mujoco.swimmer_gym_v3_v0 import SwimmerEnv
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
 from src.envs.mujoco.chemotaxis import chemotaxis
 from src.wrappers.distribution import Distribution
@@ -37,26 +37,17 @@ def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos=
     - citation: A computational model of internal representations of chemical gradients in environments for chemotaxis of Caenorhabditis elegans
     """
     # generate xml str
-    xml_folder = 'src/envs/mujoco/assets/'
-    xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file=os.path.join(xml_folder, 'swimmer.xml'), camera_pos=camera_pos, camera_z=camera_z)
+    xml_str = swimmer(n_bodies=n_bodies, joint_range=joint_range, body_len=body_len, xml_file='src/envs/mujoco/assets/swimmer.xml', camera_pos=camera_pos, camera_z=camera_z)
     xml_str = chemotaxis(xml_str=xml_str, x=x, y=y)
-    # write temp xml file
-    xml_file = os.path.join(xml_folder, 'swimmer_temp.xml')
-    with open(xml_file, 'wb') as f:
-        f.write(xml_str)
     # make and wrap env
-    env = gym.make('Swimmer-v3', xml_file=os.path.join(os.getcwd(), xml_file))
-    env._max_episode_steps = max_episode_steps
+    env = SwimmerEnv(xml_str=xml_str.decode("utf-8"))
+    env = gym.wrappers.TimeLimit(env, max_episode_steps=max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = Distribution(env, dt=env.dt, f=fick, source=np.array([x, y]))
     env = Recorder(env, stats_name=['concentration'], camera_name=camera_name)
-    # record video
+    # record video: if force is True, clear previous monitor files
     if camera_name is not None:
-        # if force is True, clear previous monitor files
         env = gym.wrappers.Monitor(env, directory='video/swimmer_chemotaxis', force=True)
-    # delete temp xml file
-    if os.path.exists(xml_file):
-        os.remove(xml_file)
     return env
 
 
@@ -101,11 +92,11 @@ def generate_chemotaxis_dataset(make_env=make_swimmer, distance=15, data_size=72
         make_env=make_env,
         make_model=ChemotaxisMotion,
         data_size=data_size,
-        source_pos=clock_position(distance=distance),
+        sources=clock_position(distance=distance),
         seed=seed,
         env_kwargs=env_kwargs
     )
-    print('data_size', len(dataset))
+    print('data_size', len(dataset), dataset.x.size(), dataset.y.size())
     torch.save(dataset, 'data/chemotaxis_dataset.pt')
 
 
