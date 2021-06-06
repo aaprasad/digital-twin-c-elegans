@@ -3,7 +3,6 @@
 import cv2
 import gym
 import torch
-from gym.wrappers.monitoring.video_recorder import VideoRecorder
 
 
 def test_random():
@@ -19,20 +18,17 @@ def test_random():
     print(env.observation_space, env.observation_space.low, env.observation_space.high)
 
     # record video
-    rec = VideoRecorder(env, base_path='video/swimmer_gym_v3', enabled=True)
+    env = gym.wrappers.Monitor(env, directory='video/swimmer_gym_v3', force=True)
 
     # run and record
     observation = env.reset()
-    rec.capture_frame()
     for i in range(1000):
         # env.render()
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
-        rec.capture_frame()
         if done:
             print("Episode finished after {} steps".format(i + 1))
             break
-    rec.close()
     env.close()
 
 
@@ -255,10 +251,9 @@ def run_episode_gym(env, policy, video_path):
     - this works with gym, but doesn't work with garage
     - video_path is a folder
     """
-    rec = VideoRecorder(env, base_path=video_path, enabled=True)
+    env = gym.wrappers.Monitor(env, directory=video_path, force=True)
 
     observation, _ = env.reset()
-    rec.capture_frame()
     policy.reset()
     total_reward = 0.
     step = 0
@@ -266,14 +261,12 @@ def run_episode_gym(env, policy, video_path):
         # env.render()
         action, _ = policy.get_action(observation)
         env_step = env.step(action)
-        rec.capture_frame()
         observation = env_step.observation
         total_reward += env_step.reward
         step += 1
         if env_step.last is True:
             break
     print('Episode finished after {} steps, reward: {}'.format(step, total_reward))
-    rec.close()
     env.close()
 
 

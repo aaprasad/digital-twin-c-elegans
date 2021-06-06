@@ -9,7 +9,6 @@ import gym
 # import pybullet
 import pybullet_envs
 from gym.envs.registration import register
-from gym.wrappers.monitoring.video_recorder import VideoRecorder
 
 """
 if __name__ == '__main__':
@@ -21,18 +20,15 @@ if __name__ == '__main__':
     )
     env = gym.make('Swimmer-Gym-v3-Bullet-v0')
     env.render(mode='human')
-    # rec = VideoRecorder(env, base_path='video/swimmer_gym_v3_bullet_v0', enabled=True)
+    # env = gym.wrappers.Monitor(env, directory='video/swimmer_gym_v3_bullet_v0', force=True)
 
     observation = env.reset()
-    # rec.capture_frame()
     for i in range(1000):
         env.render(mode='human')
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
-        # rec.capture_frame()
         if done:
             print("Episode finished after {} steps".format(i + 1))
             break
-    # rec.close()
     env.close()
 """
