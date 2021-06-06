@@ -85,7 +85,7 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         envs = [self.make_env(x=pos_x, y=pos_y, **self.env_kwargs) for pos_x, pos_y in sources]
         models = [self.make_model(dt=env.dt) for env in envs]
         data_sample = ChemotaxisDataSample(envs, models, data_size=data_size, seed=seed)
-        dataloader = torch.utils.data.DataLoader(data_sample, batch_size=1, num_workers=multiprocessing.cpu_count())
+        dataloader = torch.utils.data.DataLoader(data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count())
         for sample_x, sample_y in tqdm(dataloader):
             x.append(sample_x.squeeze(dim=0))
             y.append(sample_y.squeeze(dim=0))
