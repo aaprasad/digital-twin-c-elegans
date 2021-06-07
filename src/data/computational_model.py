@@ -59,13 +59,11 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
     """
     def __init__(self, envs, models, data_size, max_episode_steps, seed):
         super(ChemotaxisDataset, self).__init__()
-        self.envs = envs
-        self.models = models
         self.data_size = data_size
         self.max_episode_steps = max_episode_steps
         self.action_size = envs[0].action_space.shape[0]
         """ dataset """
-        self.x, self.y = self.generate_dataset()
+        self.x, self.y = self.generate_dataset(envs, models)
         """ seeding """
         self.seed(seed)
 
@@ -86,13 +84,13 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         seed = keys[0]
         np.random.seed(np.uint32(seed + worker_id))
 
-    def generate_dataset(self):
+    def generate_dataset(self, envs, models):
         """ generate a sample dataset
         seed: seed + worker_id to generate different seeds for different workers
         x: torch.Tensor, (data_size, max_episode_steps)
         y: torch.Tensor, (data_size, max_episode_steps, action_size)
         """
-        data_sample = ChemotaxisDataSample(self.envs, self.models, data_size=self.data_size)
+        data_sample = ChemotaxisDataSample(envs, models, data_size=self.data_size)
         dataloader = torch.utils.data.DataLoader(
             data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count(),
             worker_init_fn=self.worker_init_fn
