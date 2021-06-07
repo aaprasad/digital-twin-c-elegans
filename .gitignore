@@ -2,8 +2,9 @@
 __pycache__/
 # trainning logs
 log/
-# model checkpoints
+# checkpoints
 checkpoint/
+*.pt
 # video recordings
 video/
 # test code
