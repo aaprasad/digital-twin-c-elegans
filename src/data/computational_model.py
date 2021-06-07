@@ -40,9 +40,9 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
         """
         seed = self.sample_seed()
         env.seed(seed)
+        model.seed(seed)
         observation = env.reset()
         info = {'g': 0., 'g_p': 0., 'g_w': 0.}
-        model.seed(seed)
         x, y = [], []
         for i in range(10 ** 6):
             # env.render()
@@ -63,15 +63,14 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
     x: concentrations sensed at nose tip
     y: actions performed each step
     """
-    def __init__(self, make_env, make_model, data_size, sources, seed, env_kwargs):
+    def __init__(self, envs, models, data_size, max_episode_steps, seed):
         super(ChemotaxisDataset, self).__init__()
-        self.make_env = make_env  # function
-        self.make_model = make_model  # class
+        self.envs = envs
+        self.models = models
         self.data_size = data_size
-        self.env_kwargs = env_kwargs  # env kwargs
-        self.max_episode_steps = env_kwargs.get('max_episode_steps')
+        self.max_episode_steps = max_episode_steps
         """ dataset """
-        self.x, self.y = self.generate_dataset(sources, seed)
+        self.x, self.y = self.generate_dataset(seed)
 
     def __getitem__(self, index):
         return self.x[index], self.y[index]
@@ -79,14 +78,12 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.x)
 
-    def generate_dataset(self, sources, seed):
+    def generate_dataset(self, seed):
         """ generate a sample dataset
         x: torch.Tensor, (data_size, max_episode_steps)
         y: torch.Tensor, (data_size, max_episode_steps, action_size)
         """
-        envs = [self.make_env(x=pos_x, y=pos_y, **self.env_kwargs) for pos_x, pos_y in sources]
-        models = [self.make_model(dt=env.dt) for env in envs]
-        data_sample = ChemotaxisDataSample(envs, models, data_size=self.data_size, seed=seed)
+        data_sample = ChemotaxisDataSample(self.envs, self.models, data_size=self.data_size, seed=seed)
         dataloader = torch.utils.data.DataLoader(data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count())
         x = torch.zeros(self.data_size, self.max_episode_steps, dtype=torch.float32)
         y = torch.zeros(self.data_size, self.max_episode_steps, data_sample.action_shape[0], dtype=torch.float32)
