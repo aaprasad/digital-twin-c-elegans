@@ -1,4 +1,3 @@
-import copy
 import multiprocessing
 import numpy as np
 import torch
@@ -13,6 +12,7 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
         self.models = models
         self.data_size = data_size
         self.env_amount = len(envs)
+        self.action_shape = envs[0].action_space.shape
         """ seeding """
         self.seed(seed)
 
@@ -53,8 +53,8 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
             if done:
                 break
         env.close()
-        x = torch.tensor(x, dtype=torch.float64)
-        y = torch.tensor(y, dtype=torch.float64)
+        x = torch.tensor(x, dtype=torch.float32)
+        y = torch.tensor(y, dtype=torch.float32)
         return x, y
 
 
@@ -67,9 +67,11 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         super(ChemotaxisDataset, self).__init__()
         self.make_env = make_env  # function
         self.make_model = make_model  # class
+        self.data_size = data_size
         self.env_kwargs = env_kwargs  # env kwargs
+        self.max_episode_steps = env_kwargs.get('max_episode_steps')
         """ dataset """
-        self.x, self.y = self.generate_dataset(data_size, sources, seed)
+        self.x, self.y = self.generate_dataset(sources, seed)
 
     def __getitem__(self, index):
         return self.x[index], self.y[index]
@@ -77,22 +79,18 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.x)
 
-    def generate_dataset(self, data_size, sources, seed):
+    def generate_dataset(self, sources, seed):
         """ generate a sample dataset
         x: torch.Tensor, (data_size, max_episode_steps)
         y: torch.Tensor, (data_size, max_episode_steps, action_size)
         """
-        x, y = [], []
         envs = [self.make_env(x=pos_x, y=pos_y, **self.env_kwargs) for pos_x, pos_y in sources]
         models = [self.make_model(dt=env.dt) for env in envs]
-        data_sample = ChemotaxisDataSample(envs, models, data_size=data_size, seed=seed)
+        data_sample = ChemotaxisDataSample(envs, models, data_size=self.data_size, seed=seed)
         dataloader = torch.utils.data.DataLoader(data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count())
-        for sample_x, sample_y in tqdm(dataloader):
-            # deepcopy batch data to avoid keeping file handles, which prevents error of 'Too many open files.'
-            sample_x = copy.deepcopy(sample_x)
-            sample_y = copy.deepcopy(sample_y)
-            x.append(sample_x.squeeze(dim=0))
-            y.append(sample_y.squeeze(dim=0))
-        x = torch.stack(x)
-        y = torch.stack(y)
+        x = torch.zeros(self.data_size, self.max_episode_steps, dtype=torch.float32)
+        y = torch.zeros(self.data_size, self.max_episode_steps, data_sample.action_shape[0], dtype=torch.float32)
+        for i, (sample_x, sample_y) in enumerate(tqdm(dataloader)):
+            x[i] = sample_x.squeeze(dim=0)
+            y[i] = sample_y.squeeze(dim=0)
         return x, y
