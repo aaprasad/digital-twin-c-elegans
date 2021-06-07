@@ -5,15 +5,13 @@ from tqdm import tqdm
 
 
 class ChemotaxisDataSample(torch.utils.data.Dataset):
-    def __init__(self, envs, models, data_size, seed):
+    def __init__(self, envs, models, data_size):
         super(ChemotaxisDataSample, self).__init__()
         assert len(envs) == len(models), 'The lengths of envs and models must be the same.'
         self.envs = envs
         self.models = models
         self.data_size = data_size
         self.env_amount = len(envs)
-        """ seeding """
-        self.seed(seed)
 
     def __getitem__(self, index):
         index = index % self.env_amount
@@ -23,13 +21,10 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
         return self.data_size
 
     @staticmethod
-    def seed(seed):
-        if seed is not None:
-            np.random.seed(seed)
-
-    @staticmethod
     def sample_seed():
-        """ sample a seed number """
+        """ sample a seed number
+        sample a seed number to seed env and model first, and then generate a new sample
+        """
         return np.random.randint(np.iinfo(np.uint32).max)
 
     def generate_sample(self, env, model):
@@ -70,7 +65,9 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         self.max_episode_steps = max_episode_steps
         self.action_size = envs[0].action_space.shape[0]
         """ dataset """
-        self.x, self.y = self.generate_dataset(seed)
+        self.x, self.y = self.generate_dataset()
+        """ seeding """
+        self.seed(seed)
 
     def __getitem__(self, index):
         return self.x[index], self.y[index]
@@ -78,13 +75,28 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.x)
 
-    def generate_dataset(self, seed):
+    @staticmethod
+    def seed(seed):
+        if seed is not None:
+            np.random.seed(seed)
+
+    @staticmethod
+    def worker_init_fn(worker_id):
+        _, keys, _, _, _ = np.random.get_state()
+        seed = keys[0]
+        np.random.seed(np.uint32(seed + worker_id))
+
+    def generate_dataset(self):
         """ generate a sample dataset
+        seed: seed + worker_id to generate different seeds for different workers
         x: torch.Tensor, (data_size, max_episode_steps)
         y: torch.Tensor, (data_size, max_episode_steps, action_size)
         """
-        data_sample = ChemotaxisDataSample(self.envs, self.models, data_size=self.data_size, seed=seed)
-        dataloader = torch.utils.data.DataLoader(data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count())
+        data_sample = ChemotaxisDataSample(self.envs, self.models, data_size=self.data_size)
+        dataloader = torch.utils.data.DataLoader(
+            data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count(),
+            worker_init_fn=self.worker_init_fn
+        )
         x = torch.zeros(self.data_size, self.max_episode_steps, dtype=torch.float32)
         y = torch.zeros(self.data_size, self.max_episode_steps, self.action_size, dtype=torch.float32)
         for i, (sample_x, sample_y) in enumerate(tqdm(dataloader)):
