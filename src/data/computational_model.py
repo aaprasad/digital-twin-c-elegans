@@ -12,7 +12,6 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
         self.models = models
         self.data_size = data_size
         self.env_amount = len(envs)
-        self.action_shape = envs[0].action_space.shape
         """ seeding """
         self.seed(seed)
 
@@ -69,6 +68,7 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         self.models = models
         self.data_size = data_size
         self.max_episode_steps = max_episode_steps
+        self.action_size = envs[0].action_space.shape[0]
         """ dataset """
         self.x, self.y = self.generate_dataset(seed)
 
@@ -86,7 +86,7 @@ class ChemotaxisDataset(torch.utils.data.Dataset):
         data_sample = ChemotaxisDataSample(self.envs, self.models, data_size=self.data_size, seed=seed)
         dataloader = torch.utils.data.DataLoader(data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count())
         x = torch.zeros(self.data_size, self.max_episode_steps, dtype=torch.float32)
-        y = torch.zeros(self.data_size, self.max_episode_steps, data_sample.action_shape[0], dtype=torch.float32)
+        y = torch.zeros(self.data_size, self.max_episode_steps, self.action_size, dtype=torch.float32)
         for i, (sample_x, sample_y) in enumerate(tqdm(dataloader)):
             x[i] = sample_x.squeeze(dim=0)
             y[i] = sample_y.squeeze(dim=0)
