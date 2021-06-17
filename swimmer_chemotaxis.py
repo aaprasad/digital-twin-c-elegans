@@ -7,7 +7,7 @@ from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
 from src.envs.mujoco.chemotaxis import chemotaxis
 from src.wrappers.distribution import Distribution
 from src.wrappers.recorder import Recorder
-from src.models.computational_model import ChemotaxisMotion
+from src.models.chemotaxis_motion import ChemotaxisMotion
 
 
 def fick(target, source, sigma=5):

@@ -1,5 +1,5 @@
 from src.data.chemotaxis import ChemotaxisDataset
-from src.models.computational_model import ChemotaxisMotion
+from src.models.chemotaxis_motion import ChemotaxisMotion
 from src.utils import clock_position
 from swimmer_chemotaxis import make_swimmer
 import torch
