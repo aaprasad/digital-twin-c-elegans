@@ -65,16 +65,17 @@ class Distribution(gym.Wrapper):
         self._com_past = com
         return gradient
 
-    def reward(self, reward, info):
-        """ refer to gym.RewardWrapper """
+    def get_info(self, info):
+        """ get all info
+        info: basic info returned from env.step(*)
+        return: basic info and more
+        """
         position = self.env.sim.data.qpos[0:2].copy()  # position of anterior tip
         com = self.env.sim.data.subtree_com[1][0:2].copy()  # center of mass
         concentration = self.f(position, source=self.source)  # position's concentration
         g = self._gradient(c=concentration)
         g_p = self._tangential_gradient(com=com)
         g_w = self._normal_gradient(com=com)
-        # reward
-        reward = concentration
         # info
         info['position'] = position.tolist()
         info['com'] = com.tolist()
@@ -82,4 +83,11 @@ class Distribution(gym.Wrapper):
         info['g'] = g
         info['g_p'] = g_p
         info['g_w'] = g_w
+        return info
+
+    def reward(self, reward, info):
+        """ refer to gym.RewardWrapper """
+        info = self.get_info(info)
+        # reward
+        reward = info['concentration']
         return reward, info
