@@ -16,7 +16,7 @@ def generate_chemotaxis_dataset(distance=15, data_size=72000, seed=42, max_episo
         seed=seed
     )
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
-    torch.save(dataset, 'data/chemotaxis_dataset.pt')
+    torch.save(dataset, 'data/chemotaxis.pt')
 
 
 if __name__ == '__main__':
