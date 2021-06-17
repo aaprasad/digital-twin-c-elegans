@@ -52,26 +52,20 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
         return x, y
 
 
-class ChemotaxisDataset(torch.utils.data.Dataset):
+class ChemotaxisDataset(torch.utils.data.TensorDataset):
     """ generate chemotaxis dataset
     x: concentrations sensed at nose tip
     y: actions performed each step
     """
     def __init__(self, envs, models, data_size, max_episode_steps, seed):
-        super(ChemotaxisDataset, self).__init__()
         self.data_size = data_size
         self.max_episode_steps = max_episode_steps
         self.action_size = envs[0].action_space.shape[0]
-        """ dataset """
-        self.x, self.y = self.generate_dataset(envs, models)
         """ seeding """
         self.seed(seed)
-
-    def __getitem__(self, index):
-        return self.x[index], self.y[index]
-
-    def __len__(self):
-        return len(self.x)
+        """ dataset """
+        x, y = self.generate_dataset(envs, models)
+        super(ChemotaxisDataset, self).__init__(x, y)
 
     @staticmethod
     def seed(seed):
