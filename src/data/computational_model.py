@@ -36,11 +36,11 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
         env.seed(seed)
         model.seed(seed)
         observation = env.reset()
-        info = {'g': 0., 'g_p': 0., 'g_w': 0.}
+        info = env.get_info(info={})
         x, y = [], []
         for i in range(10 ** 6):
             # env.render()
-            x.append(info['g'])
+            x.append(info['concentration'])
             action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])
             y.append(action.tolist())
             observation, reward, done, info = env.step(action)
