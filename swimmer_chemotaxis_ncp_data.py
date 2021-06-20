@@ -9,6 +9,9 @@ from tqdm import tqdm
 
 
 def preprocess_dataset(data_size=12000):
+    """ preprocess chemotaxis dataset with different chemical source positions
+    data_size: the total dataset size, should be divided for each env (with different source position)
+    """
     concat_dataset = torch.load('data/concat_chemotaxis.pt')
     data_size = data_size // len(concat_dataset.datasets)
     datasets = []
