@@ -50,7 +50,7 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
 
 
 class ChemotaxisDataset(torch.utils.data.TensorDataset):
-    """ generate chemotaxis dataset
+    """ generate a chemotaxis TensorDataset with an env and a model
     x: concentrations sensed at nose tip
     y: actions performed each step
     """

@@ -4,7 +4,7 @@ import torch
 
 class NCPDataset(torch.utils.data.TensorDataset):
     def __init__(self, dataset):
-        """ preprocess dataset for NCP network training
+        """ preprocess a TensorDataset for NCP network training
         dataset: use indexing to pass (part of) the dataset
         """
         x, y = dataset.tensors
