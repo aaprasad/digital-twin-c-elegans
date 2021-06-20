@@ -1,19 +1,25 @@
 """ swimmer: chemotaxis
-preprocess chemotaxis dataset for NCP network training
+preprocess concatenated chemotaxis dataset for NCP network training
 """
 
 from src.data.ncp import NCPDataset
 from src.data.subset import SubsetDataset
 import torch
+from tqdm import tqdm
 
 
-def preprocess_dataset(data_size=60000, seed=42):
-    dataset = torch.load('data/chemotaxis.pt')
-    dataset = SubsetDataset(dataset, data_size=data_size, seed=seed)
-    dataset = NCPDataset(dataset)
-    print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
-    torch.save(dataset, 'data/ncp.pt')
+def preprocess_dataset(data_size=72000, seed=42):
+    concat_dataset = torch.load('data/concat_chemotaxis.pt')
+    data_size = data_size // len(concat_dataset.datasets)
+    datasets = []
+    for dataset in tqdm(concat_dataset.datasets):
+        dataset = SubsetDataset(dataset, data_size=data_size, seed=seed)
+        dataset = NCPDataset(dataset)
+        datasets.append(dataset)
+    concat_dataset = torch.utils.data.ConcatDataset(datasets)
+    print('dataset', len(concat_dataset), concat_dataset[0][0].size(), concat_dataset[0][1].size())
+    torch.save(concat_dataset, 'data/concat_ncp.pt')
 
 
 if __name__ == '__main__':
-    preprocess_dataset(data_size=60000)
+    preprocess_dataset(data_size=72000)
