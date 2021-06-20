@@ -58,6 +58,7 @@ class ChemotaxisDataset(torch.utils.data.TensorDataset):
         self.data_size = data_size
         self.max_episode_steps = max_episode_steps
         self.action_size = env.action_space.shape[0]
+        self.source = env.source.tolist()  # help identify the position of chemical source
         """ seeding """
         self.seed(seed)
         """ dataset """
