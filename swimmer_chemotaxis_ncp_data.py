@@ -8,7 +8,7 @@ import torch
 from tqdm import tqdm
 
 
-def preprocess_dataset(data_size=72000, seed=42):
+def preprocess_dataset(data_size=12000, seed=42):
     concat_dataset = torch.load('data/concat_chemotaxis.pt')
     data_size = data_size // len(concat_dataset.datasets)
     datasets = []
@@ -22,4 +22,4 @@ def preprocess_dataset(data_size=72000, seed=42):
 
 
 if __name__ == '__main__':
-    preprocess_dataset(data_size=72000)
+    preprocess_dataset(data_size=12000)

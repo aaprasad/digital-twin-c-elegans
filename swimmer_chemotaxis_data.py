@@ -9,7 +9,7 @@ from swimmer_chemotaxis import make_swimmer
 import torch
 
 
-def generate_dataset(distance=15, data_size=72000, seed=42, max_episode_steps=2500):
+def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500):
     envs = [make_swimmer(max_episode_steps=max_episode_steps, x=pos_x, y=pos_y) for pos_x, pos_y in clock_position(distance=distance)]
     models = [ChemotaxisMotion(dt=env.dt) for env in envs]
     data_size = data_size // len(envs)
@@ -24,4 +24,4 @@ def generate_dataset(distance=15, data_size=72000, seed=42, max_episode_steps=25
 
 
 if __name__ == '__main__':
-    generate_dataset(data_size=72000, max_episode_steps=2500)
+    generate_dataset(data_size=12000, max_episode_steps=2500)
