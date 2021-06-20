@@ -5,17 +5,14 @@ from tqdm import tqdm
 
 
 class ChemotaxisDataSample(torch.utils.data.Dataset):
-    def __init__(self, envs, models, data_size):
+    def __init__(self, env, model, data_size):
         super(ChemotaxisDataSample, self).__init__()
-        assert len(envs) == len(models), 'The lengths of envs and models must be the same.'
-        self.envs = envs
-        self.models = models
+        self.env = env
+        self.model = model
         self.data_size = data_size
-        self.env_amount = len(envs)
 
     def __getitem__(self, index):
-        index = index % self.env_amount
-        return self.generate_sample(env=self.envs[index], model=self.models[index])
+        return self.generate_sample(env=self.env, model=self.model)
 
     def __len__(self):
         return self.data_size
@@ -57,14 +54,14 @@ class ChemotaxisDataset(torch.utils.data.TensorDataset):
     x: concentrations sensed at nose tip
     y: actions performed each step
     """
-    def __init__(self, envs, models, data_size, max_episode_steps, seed):
+    def __init__(self, env, model, data_size, max_episode_steps, seed):
         self.data_size = data_size
         self.max_episode_steps = max_episode_steps
-        self.action_size = envs[0].action_space.shape[0]
+        self.action_size = env.action_space.shape[0]
         """ seeding """
         self.seed(seed)
         """ dataset """
-        x, y = self.generate_dataset(envs, models)
+        x, y = self.generate_dataset(env, model)
         super(ChemotaxisDataset, self).__init__(x, y)
 
     @staticmethod
@@ -78,13 +75,13 @@ class ChemotaxisDataset(torch.utils.data.TensorDataset):
         seed = keys[0]
         np.random.seed(np.uint32(seed + worker_id))
 
-    def generate_dataset(self, envs, models):
+    def generate_dataset(self, env, model):
         """ generate a sample dataset
         seed: seed + worker_id to generate different seeds for different workers
         x: torch.Tensor, (data_size, max_episode_steps)
         y: torch.Tensor, (data_size, max_episode_steps, action_size)
         """
-        data_sample = ChemotaxisDataSample(envs, models, data_size=self.data_size)
+        data_sample = ChemotaxisDataSample(env, model, data_size=self.data_size)
         dataloader = torch.utils.data.DataLoader(
             data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count(),
             worker_init_fn=self.worker_init_fn
