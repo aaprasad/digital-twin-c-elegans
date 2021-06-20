@@ -1,3 +1,7 @@
+""" swimmer: chemotaxis
+generate concatenated chemotaxis dataset
+"""
+
 from src.data.chemotaxis import ChemotaxisDataset
 from src.models.chemotaxis_motion import ChemotaxisMotion
 from src.utils import clock_position
