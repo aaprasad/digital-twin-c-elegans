@@ -3,17 +3,17 @@ preprocess concatenated chemotaxis dataset for NCP network training
 """
 
 from src.data.ncp import NCPDataset
-from src.data.subset import RandomSubset
+from src.data.subset import FilterSubset
 import torch
 from tqdm import tqdm
 
 
-def preprocess_dataset(data_size=12000, seed=42):
+def preprocess_dataset(data_size=12000):
     concat_dataset = torch.load('data/concat_chemotaxis.pt')
     data_size = data_size // len(concat_dataset.datasets)
     datasets = []
     for dataset in tqdm(concat_dataset.datasets):
-        dataset = RandomSubset(dataset, data_size=data_size, seed=seed)
+        dataset = FilterSubset(dataset, data_size=data_size)
         dataset = NCPDataset(dataset)
         datasets.append(dataset)
     concat_dataset = torch.utils.data.ConcatDataset(datasets)
