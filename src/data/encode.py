@@ -2,11 +2,9 @@ import numpy as np
 import torch
 
 
-class NCPDataset(torch.utils.data.TensorDataset):
+class EncodeDataset(torch.utils.data.TensorDataset):
     def __init__(self, dataset):
-        """ preprocess a TensorDataset for NCP network training
-        dataset: use indexing to pass (part of) the dataset
-        """
+        """ preprocess a TensorDataset for NCP network training """
         x, y = dataset.tensors
         x = x[:, 1:] - x[:, 0:-1]
         y = y[:, 1:, :]
@@ -14,7 +12,7 @@ class NCPDataset(torch.utils.data.TensorDataset):
         self.y_abs_max = y.abs().max()
         x = self.encode_input_func(g=x)
         y = self.encode_output_func(y=y)
-        super(NCPDataset, self).__init__(x, y)
+        super(EncodeDataset, self).__init__(x, y)
 
     def encode_input_func(self, g):
         """ encode input: gradient -> ASEL/R input
