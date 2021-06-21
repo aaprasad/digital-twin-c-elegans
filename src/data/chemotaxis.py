@@ -5,6 +5,10 @@ from tqdm import tqdm
 
 
 class ChemotaxisDataSample(torch.utils.data.Dataset):
+    """ generate a single chemotaxis sample with an env and a model
+    x: concentrations sensed at nose tip
+    y: actions performed each step
+    """
     def __init__(self, env, model, data_size):
         super(ChemotaxisDataSample, self).__init__()
         self.env = env

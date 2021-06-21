@@ -3,6 +3,10 @@ import torch
 
 
 class EncodeDataset(torch.utils.data.TensorDataset):
+    """ encode the sensory inputs and motor outputs of a chemotaxis TensorDataset
+    x: encoded and normalized sensory inputs to ASEL/R
+    y: normalized motor outputs
+    """
     def __init__(self, dataset):
         """ preprocess a TensorDataset for NCP network training """
         x, y = dataset.tensors
