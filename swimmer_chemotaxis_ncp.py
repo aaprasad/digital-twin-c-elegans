@@ -89,7 +89,7 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
 
 
 def main(
-    eval_ratio=0.15, test_ratio=0.15, batch_size=512, seed=42, cuda=0, units=19, output_dim=11, in_features=2, lr=0.01,
+    eval_ratio=0.15, test_ratio=0.15, batch_size=4096, seed=42, cuda=0, units=19, output_dim=11, in_features=2, lr=0.01,
     epochs=200, early_stop=50
 ):
     """
