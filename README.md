@@ -18,3 +18,9 @@
     * `muscle_swimmer_gym_v2`
 7. nematode: joint_range, body_len, muscle_len and arrangement
     * `nematode_gym_v0`
+
+## log
+
+```
+tensorboard --logdir=runs
+```

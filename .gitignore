@@ -2,6 +2,7 @@
 __pycache__/
 # trainning logs
 log/
+runs/
 # checkpoints
 checkpoint/
 *.pt
