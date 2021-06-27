@@ -12,7 +12,7 @@ from src.networks.ncp.wirings import FullyConnected
 
 def prepare_data(eval_ratio, test_ratio, batch_size, seed):
     """ load data and prepare data loaders """
-    dataset = torch.load('data/concat_ncp.pt')
+    dataset = torch.load('data/ncp.pt')
     eval_size = int(len(dataset) * eval_ratio)
     test_size = int(len(dataset) * test_ratio)
     train_size = len(dataset) - eval_size - test_size
@@ -66,8 +66,8 @@ def test(model, device, loader, criterion):
     return mse
 
 
-def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, save_dir):
-    save_path = os.path.join(save_dir, 'model.pt')
+def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_dir):
+    model_path = os.path.join(model_dir, 'model.pt')
     mse_best, e_best = 100., 0
     for e in tqdm(range(epochs)):
         # train
@@ -78,14 +78,14 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
         writer.add_scalar('MSE/eval', mse, e)
         # eval best
         if mse < mse_best:
-            torch.save(model.state_dict(), save_path)
+            torch.save(model.state_dict(), model_path)
             mse_best, e_best = mse, e
             writer.add_scalar('MSE/best', mse_best, e_best)
         # early stop
         if e - e_best >= early_stop:
             print('early stop')
             break
-    return save_path
+    return model_path
 
 
 def main(
@@ -108,9 +108,9 @@ def main(
     model = prepare_model(device, units, output_dim, in_features)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = torch.nn.MSELoss(reduction='mean')
-    save_path = train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, save_dir=writer.log_dir)
+    model_path = train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_dir=writer.log_dir)
     # test
-    model = prepare_model(device, units, output_dim, in_features, model_path=save_path)
+    model = prepare_model(device, units, output_dim, in_features, model_path)
     mse = test(model, device, test_loader, criterion)
     # hparams and results
     writer.add_hparams(
