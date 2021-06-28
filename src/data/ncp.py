@@ -3,19 +3,24 @@ import torch
 
 
 class NCPDataset(torch.utils.data.TensorDataset):
-    """ encode the sensory inputs and motor outputs of a chemotaxis TensorDataset
+    """ prepare dataset for NCP training
+    encode the sensory inputs and motor outputs of a chemotaxis TensorDataset
+    split each sequence into subsequences
     x: encoded and normalized sensory inputs to ASEL/R
     y: normalized motor outputs
     """
-    def __init__(self, dataset):
+    def __init__(self, dataset, seq_len):
         """ preprocess a TensorDataset for NCP network training """
         x, y = dataset.tensors
         x = x[:, 1:] - x[:, 0:-1]
         y = y[:, 1:, :]
+        self.seq_len = seq_len
         self.x_abs_max = x.abs().max()
         self.y_abs_max = y.abs().max()
         x = self.encode_input_func(g=x)
         y = self.encode_output_func(y=y)
+        x = self.subsequence(x)
+        y = self.subsequence(y)
         super(NCPDataset, self).__init__(x, y)
 
     def encode_input_func(self, g):
@@ -64,3 +69,11 @@ class NCPDataset(torch.utils.data.TensorDataset):
         """ decode output: normalized action -> action """
         y *= self.y_abs_max
         return y
+
+    def subsequence(self, tensor):
+        """ split each sequence into subsequences """
+        tensor = tensor.split(self.seq_len, dim=1)
+        if tensor[-1].size(1) != self.seq_len:
+            tensor = tensor[:-1]
+        tensor = torch.cat(tensor, dim=0)
+        return tensor
