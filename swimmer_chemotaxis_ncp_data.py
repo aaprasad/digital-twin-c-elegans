@@ -16,12 +16,13 @@ def preprocess_dataset(data_size=600, seq_len=16):
     """
     # load, filter and concat dataset
     concat_dataset = torch.load('data/concat_chemotaxis.pt')
+    print('loaded dataset', len(concat_dataset), concat_dataset[0][0].size(), concat_dataset[0][1].size())
     data_size = data_size // len(concat_dataset.datasets)
     datasets = [FilterSubset(dataset, data_size) for dataset in concat_dataset.datasets]
     dataset = ConcatDataset(datasets)
     # preprocess dataset
     dataset = NCPDataset(dataset, seq_len=seq_len)
-    print('dataset', len(concat_dataset), len(dataset), dataset[0][0].size(), dataset[0][1].size())
+    print('processed dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     torch.save(dataset, 'data/ncp.pt')
 
 
