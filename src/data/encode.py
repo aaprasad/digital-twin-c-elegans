@@ -12,7 +12,7 @@ class EncodeDataset(torch.utils.data.TensorDataset):
         x, y = dataset.tensors
         x = x[:, 1:] - x[:, 0:-1]
         y = y[:, 1:, :]
-        self.g_abs_max = x.abs().max()
+        self.x_abs_max = x.abs().max()
         self.y_abs_max = y.abs().max()
         x = self.encode_input_func(g=x)
         y = self.encode_output_func(y=y)
@@ -28,7 +28,7 @@ class EncodeDataset(torch.utils.data.TensorDataset):
             https://doi.org/10.1038/s41598-018-35157-1
         """
         # normalized gradient: [-1, 1]
-        g /= self.g_abs_max
+        g /= self.x_abs_max
         g_abs_max = 1.
 
         # g > 0: ASEL excited
