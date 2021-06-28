@@ -3,7 +3,7 @@ preprocess concatenated chemotaxis dataset for NCP network training
 """
 
 from src.data.concat import ConcatDataset
-from src.data.encode import EncodeDataset
+from src.data.ncp import NCPDataset
 from src.data.subsequence import SubsequenceDataset
 from src.data.subset import FilterSubset
 import torch
@@ -21,7 +21,7 @@ def preprocess_dataset(data_size=600, seq_len=16):
     datasets = [FilterSubset(dataset, data_size) for dataset in concat_dataset.datasets]
     dataset = ConcatDataset(datasets)
     # preprocess dataset
-    dataset = EncodeDataset(dataset)
+    dataset = NCPDataset(dataset)
     dataset = SubsequenceDataset(dataset, seq_len=seq_len)
     print('dataset', len(concat_dataset), len(dataset), dataset[0][0].size(), dataset[0][1].size())
     torch.save(dataset, 'data/ncp.pt')

@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 
-class EncodeDataset(torch.utils.data.TensorDataset):
+class NCPDataset(torch.utils.data.TensorDataset):
     """ encode the sensory inputs and motor outputs of a chemotaxis TensorDataset
     x: encoded and normalized sensory inputs to ASEL/R
     y: normalized motor outputs
@@ -16,7 +16,7 @@ class EncodeDataset(torch.utils.data.TensorDataset):
         self.y_abs_max = y.abs().max()
         x = self.encode_input_func(g=x)
         y = self.encode_output_func(y=y)
-        super(EncodeDataset, self).__init__(x, y)
+        super(NCPDataset, self).__init__(x, y)
 
     def encode_input_func(self, g):
         """ encode input: gradient -> ASEL/R input
