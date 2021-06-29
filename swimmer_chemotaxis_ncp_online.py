@@ -7,9 +7,11 @@ from swimmer_chemotaxis import make_swimmer
 from swimmer_chemotaxis_ncp import prepare_model
 
 
-def test_chemotaxis_ncp(env, model, dataset, seed):
+def online_test_single_simulation(env, model, dataset):
     """ run a chemotaxis simulation controlled by a network model """
+    seed = sample_seed()
     env.seed(seed)
+    torch.manual_seed(seed)
     env.reset()
     model.eval()
     info = env.get_info(info={})
@@ -40,7 +42,7 @@ def online_test(seed=42, max_episode_steps=2500, distance=15, units=19, output_d
     envs = [make_swimmer(max_episode_steps=max_episode_steps, x=x, y=y) for x, y in clock_position(distance)]
     model = prepare_model(units, output_dim, in_features, model_path=model_path)
     dataset = torch.load('data/ncp.pt')
-    x, _ = test_chemotaxis_ncp(envs[0], model, dataset, seed=sample_seed())
+    x, _ = online_test_single_simulation(envs[0], model, dataset)
     print('chemotaxis index', torch.mean(x).item())
 
 
