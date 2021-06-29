@@ -81,7 +81,7 @@ def test_sinusoidal_motion(seed=None):
         if done:
             print("Episode finished after {} steps".format(i + 1))
             break
-    print('Chemotaxis index {:.4f}'.format(sum(env.stats['concentration']) / len(env.stats['concentration'])))
+    print('Chemotaxis index {:.4f}'.format(np.mean(env.stats['concentration'])))
     env.close()
 
 
