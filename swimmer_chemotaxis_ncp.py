@@ -28,6 +28,9 @@ def prepare_data(eval_ratio, test_ratio, batch_size, seed):
 
 
 def prepare_model(units, output_dim, in_features, device=None, model_path=None):
+    """ init model
+    seed torch rng first
+    """
     wiring = FullyConnected(units=units, output_dim=output_dim)
     ltc_cell = LTCCell(wiring, in_features=in_features)
     model = RNNSequence(ltc_cell)
