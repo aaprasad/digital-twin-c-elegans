@@ -12,6 +12,7 @@ import torch
 def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500):
     """ generate chemotaxis dataset with different chemical source positions
     data_size: the total dataset size, should be divided for each env (with different source position)
+    seed: the randomly generated dataset stays the same with seeding
     """
     envs = [make_swimmer(max_episode_steps=max_episode_steps, x=x, y=y) for x, y in clock_position(distance=distance)]
     models = [ChemotaxisMotion(dt=env.dt) for env in envs]
