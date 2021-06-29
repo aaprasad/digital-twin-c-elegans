@@ -66,7 +66,9 @@ def test_random():
 
 
 def test_sinusoidal_motion(seed=None):
-    """ control by sinusoidal motion """
+    """ control by sinusoidal motion
+    seed: env simulation stays the same with seeding
+    """
     env = make_swimmer(max_episode_steps=2500, x=9, y=12, camera_z=50, camera_name=None)  # distance from source: 15
     env.seed(seed)
     observation = env.reset()
