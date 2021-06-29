@@ -19,17 +19,16 @@ def generate_sample(env, model):
     model.seed(seed)
     observation = env.reset()
     info = env.get_info(info={})
-    x, y = [], []
+    y = []
     for i in range(10 ** 6):
         # env.render()
-        x.append(info['concentration'])
         action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])
         y.append(action.tolist())
         observation, reward, done, info = env.step(action)
         if done:
             break
     env.close()
-    x = torch.tensor(x, dtype=torch.float32)
+    x = torch.tensor(env.stats['concentration'], dtype=torch.float32)
     y = torch.tensor(y, dtype=torch.float32)
     return x, y
 
