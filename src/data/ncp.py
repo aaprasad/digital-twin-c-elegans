@@ -12,7 +12,6 @@ class NCPDataset(torch.utils.data.TensorDataset):
     def __init__(self, dataset, seq_len):
         """ preprocess a TensorDataset for NCP network training """
         x, y = dataset.tensors
-        print('chemotaxis index mean', torch.mean(x).item())
         x = x[:, 1:] - x[:, 0:-1]
         y = y[:, 1:, :]
         self.seq_len = seq_len
