@@ -3,6 +3,7 @@
 import cv2
 import gym
 import torch
+import numpy as np
 
 
 def test_random():
@@ -82,7 +83,7 @@ def test_stable_baselines3(train: bool):
         print('Episode {} reward: {}'.format(e, total_reward))
         total_reward_list.append(total_reward)
     env.close()
-    print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
+    print('{} episodes mean reward: {}'.format(len(total_reward_list), np.mean(total_reward_list)))
 
 
 def train_garage_torch(train: bool, log_dir: str, init_env):
@@ -209,7 +210,7 @@ def run_episodes(env, policy):
         print('Episode {} finished after {} steps, reward: {}'.format(e, step, total_reward))
         total_reward_list.append(total_reward)
     env.close()
-    print('{} episodes mean reward: {}'.format(len(total_reward_list), sum(total_reward_list) / len(total_reward_list)))
+    print('{} episodes mean reward: {}'.format(len(total_reward_list), np.mean(total_reward_list)))
 
 
 def init_gym_env():
