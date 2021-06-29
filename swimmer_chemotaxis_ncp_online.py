@@ -2,6 +2,8 @@
 
 import numpy as np
 import torch
+from src.data.chemotaxis import ChemotaxisDataset
+from src.data.concat import ConcatDataset
 from src.utils import clock_position, sample_seed
 from swimmer_chemotaxis import make_swimmer
 from swimmer_chemotaxis_ncp import prepare_model
@@ -36,15 +38,25 @@ def online_test_single_simulation(env, model, dataset):
     return x, y
 
 
-def online_test(seed=42, max_episode_steps=2500, distance=15, units=19, output_dim=11, in_features=2, model_path=None):
+def online_test(
+    seed=42, max_episode_steps=2500, distance=15, units=19, output_dim=11, in_features=2, model_path=None,
+    data_size=1200
+):
     np.random.seed(seed)
     torch.manual_seed(seed)
     envs = [make_swimmer(max_episode_steps=max_episode_steps, x=x, y=y) for x, y in clock_position(distance)]
     model = prepare_model(units, output_dim, in_features, model_path=model_path)
     dataset = torch.load('data/ncp.pt')
-    x, _ = online_test_single_simulation(envs[0], model, dataset)
-    print('chemotaxis index', torch.mean(x).item())
+    data_size = data_size // len(envs)
+    results = []
+    kwargs = {'dataset': dataset}
+    for env in envs:
+        result = ChemotaxisDataset(env, model, online_test_single_simulation, data_size, max_episode_steps, seed=seed, **kwargs)
+        results.append(result)
+    results = ConcatDataset(results)
+    print('results', len(results), results[0][0].size(), results[0][1].size())
+    print('chemotaxis index mean', torch.mean(results.tensors[0]).item())
 
 
 if __name__ == '__main__':
-    online_test(model_path=None)
+    online_test(data_size=1200, model_path=None)
