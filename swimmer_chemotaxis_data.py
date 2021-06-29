@@ -4,9 +4,34 @@ generate concatenated chemotaxis dataset
 
 from src.data.chemotaxis import ChemotaxisDataset
 from src.models.chemotaxis_motion import ChemotaxisMotion
-from src.utils import clock_position
+from src.utils import clock_position, sample_seed
 from swimmer_chemotaxis import make_swimmer
 import torch
+
+
+def generate_sample(env, model):
+    """ run a chemotaxis simulation controlled by strategies
+    x: torch.Tensor, (max_episode_steps, )
+    y: torch.Tensor, (max_episode_steps, action_size)
+    """
+    seed = sample_seed()
+    env.seed(seed)
+    model.seed(seed)
+    observation = env.reset()
+    info = env.get_info(info={})
+    x, y = [], []
+    for i in range(10 ** 6):
+        # env.render()
+        x.append(info['concentration'])
+        action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])
+        y.append(action.tolist())
+        observation, reward, done, info = env.step(action)
+        if done:
+            break
+    env.close()
+    x = torch.tensor(x, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.float32)
+    return x, y
 
 
 def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500):
@@ -19,7 +44,7 @@ def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=25
     data_size = data_size // len(envs)
     datasets = []
     for env, model in zip(envs, models):
-        dataset = ChemotaxisDataset(env, model, data_size=data_size, max_episode_steps=max_episode_steps, seed=seed)
+        dataset = ChemotaxisDataset(env, model, generate_sample, data_size, max_episode_steps, seed=seed)
         print(dataset.source, len(dataset), dataset[0][0].size(), dataset[0][1].size())
         datasets.append(dataset)
     concat_dataset = torch.utils.data.ConcatDataset(datasets)
