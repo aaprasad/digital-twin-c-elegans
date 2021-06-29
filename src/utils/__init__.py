@@ -14,3 +14,10 @@ def clock_position(distance):
         pos.append((-x, -y))
         pos.append((-y, x))
     return pos
+
+
+def sample_seed():
+    """ randomly sample a seed
+    seed numpy rng first
+    """
+    return np.random.randint(np.iinfo(np.uint32).max)
