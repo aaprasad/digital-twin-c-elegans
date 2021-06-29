@@ -12,7 +12,7 @@ def test_chemotaxis_ncp(env, model, dataset, seed):
     env.seed(seed)
     env.reset()
     model.eval()
-    info = {'g': 0.}
+    info = env.get_info(info={})
     hidden_state = None
     with torch.no_grad():
         for i in range(10 ** 6):
