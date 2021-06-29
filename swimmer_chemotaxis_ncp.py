@@ -27,10 +27,12 @@ def prepare_data(eval_ratio, test_ratio, batch_size, seed):
     return train_loader, eval_loader, test_loader
 
 
-def prepare_model(device, units, output_dim, in_features, model_path=None):
+def prepare_model(units, output_dim, in_features, device=None, model_path=None):
     wiring = FullyConnected(units=units, output_dim=output_dim)
     ltc_cell = LTCCell(wiring, in_features=in_features)
     model = RNNSequence(ltc_cell)
+    if device is None:
+        device = torch.device('cpu')
     if model_path is not None:
         model.load_state_dict(torch.load(model_path))
     model = model.to(device)
@@ -105,12 +107,12 @@ def offline_train_and_test(
     train_loader, eval_loader, test_loader = prepare_data(eval_ratio, test_ratio, batch_size, seed)
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
-    model = prepare_model(device, units, output_dim, in_features)
+    model = prepare_model(units, output_dim, in_features, device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = torch.nn.MSELoss(reduction='mean')
     model_path = train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_dir=writer.log_dir)
     # test
-    model = prepare_model(device, units, output_dim, in_features, model_path)
+    model = prepare_model(units, output_dim, in_features, device, model_path)
     mse = test(model, device, test_loader, criterion)
     # hparams and results
     writer.add_hparams(
