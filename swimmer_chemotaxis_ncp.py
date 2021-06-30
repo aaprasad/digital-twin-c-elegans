@@ -71,8 +71,7 @@ def test(model, device, loader, criterion):
     return mse
 
 
-def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_dir):
-    model_path = os.path.join(model_dir, 'model.pt')
+def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path):
     mse_best, e_best = 100., 0
     for e in tqdm(range(epochs)):
         # train
@@ -90,7 +89,6 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
         if e - e_best >= early_stop:
             print('early stop')
             break
-    return model_path
 
 
 def offline_train_and_test(
@@ -113,7 +111,8 @@ def offline_train_and_test(
     model = prepare_model(units, output_dim, in_features, device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = torch.nn.MSELoss(reduction='mean')
-    model_path = train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_dir=writer.log_dir)
+    model_path = os.path.join(writer.log_dir, 'model.pt')
+    train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
     # test
     model = prepare_model(units, output_dim, in_features, device, model_path)
     mse = test(model, device, test_loader, criterion)
