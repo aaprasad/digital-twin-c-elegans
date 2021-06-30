@@ -1,6 +1,7 @@
 """ test NCP swimmer of chemotaxis behavior with online/active testing """
 
 import numpy as np
+import os
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from src.data.chemotaxis import ChemotaxisDataset
@@ -40,14 +41,14 @@ def online_test_single_simulation(env, model, dataset):
 
 
 def online_test(
-    seed=42, max_episode_steps=2500, distance=15, units=19, output_dim=11, in_features=2, model_path=None,
+    seed=42, max_episode_steps=2500, distance=15, units=19, output_dim=11, in_features=2, model_dir=None,
     data_size=1200
 ):
     np.random.seed(seed)
     torch.manual_seed(seed)
-    writer = SummaryWriter(comment='swimmer_chemotaxis_ncp_online')
+    writer = SummaryWriter(log_dir=model_dir)
     envs = [make_swimmer(max_episode_steps=max_episode_steps, x=x, y=y) for x, y in clock_position(distance)]
-    model = prepare_model(units, output_dim, in_features, model_path=model_path)
+    model = prepare_model(units, output_dim, in_features, model_path=os.path.join(model_dir, 'model.pt'))
     dataset = torch.load('data/ncp.pt')
     data_size = data_size // len(envs)
     results = []
@@ -61,13 +62,12 @@ def online_test(
         results.append(result)
     results = ConcatDataset(results)
     print('results', len(results), results[0][0].size(), results[0][1].size())
-    print(model_path)
     chemotaxis_index = torch.mean(results.tensors[0]).item()
     print('chemotaxis index mean', chemotaxis_index)
     writer.add_hparams(
         {
             'seed': seed, 'max_episode_steps': max_episode_steps, 'distance': distance, 'units': units,
-            'output_dim': output_dim, 'in_features': in_features, 'model_path': model_path, 'data_size': data_size
+            'output_dim': output_dim, 'in_features': in_features, 'model_dir': model_dir, 'data_size': data_size
         },
         {'hparam/ChemotaxisIndexMean/online': chemotaxis_index}
     )
@@ -75,4 +75,4 @@ def online_test(
 
 
 if __name__ == '__main__':
-    online_test(data_size=1200, model_path=None)
+    online_test(data_size=1200, model_dir=None)
