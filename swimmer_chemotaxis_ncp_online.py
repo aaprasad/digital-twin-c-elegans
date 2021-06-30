@@ -2,6 +2,7 @@
 
 import numpy as np
 import torch
+from torch.utils.tensorboard import SummaryWriter
 from src.data.chemotaxis import ChemotaxisDataset
 from src.data.concat import ConcatDataset
 from src.utils import clock_position, sample_seed
@@ -44,6 +45,7 @@ def online_test(
 ):
     np.random.seed(seed)
     torch.manual_seed(seed)
+    writer = SummaryWriter(comment='swimmer_chemotaxis_ncp_online')
     envs = [make_swimmer(max_episode_steps=max_episode_steps, x=x, y=y) for x, y in clock_position(distance)]
     model = prepare_model(units, output_dim, in_features, model_path=model_path)
     dataset = torch.load('data/ncp.pt')
@@ -59,7 +61,16 @@ def online_test(
         results.append(result)
     results = ConcatDataset(results)
     print('results', len(results), results[0][0].size(), results[0][1].size())
-    print('chemotaxis index mean', torch.mean(results.tensors[0]).item())
+    chemotaxis_index = torch.mean(results.tensors[0]).item()
+    print('chemotaxis index mean', chemotaxis_index)
+    writer.add_hparams(
+        {
+            'seed': seed, 'max_episode_steps': max_episode_steps, 'distance': distance, 'units': units,
+            'output_dim': output_dim, 'in_features': in_features, 'model_path': model_path, 'data_size': data_size
+        },
+        {'hparam/ChemotaxisIndexMean/online': chemotaxis_index}
+    )
+    writer.close()
 
 
 if __name__ == '__main__':
