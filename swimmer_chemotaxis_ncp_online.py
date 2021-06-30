@@ -44,6 +44,9 @@ def online_test(
     seed=42, max_episode_steps=2500, distance=15, units=19, output_dim=11, in_features=2, model_dir=None,
     data_size=1200
 ):
+    """
+    data_size: should be at least 100 trials for each env
+    """
     np.random.seed(seed)
     torch.manual_seed(seed)
     writer = SummaryWriter(log_dir=model_dir)
@@ -75,4 +78,4 @@ def online_test(
 
 
 if __name__ == '__main__':
-    online_test(data_size=1200, model_dir=None)
+    online_test(data_size=120, model_dir=None)
