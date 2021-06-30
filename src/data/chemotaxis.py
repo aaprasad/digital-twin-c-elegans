@@ -33,15 +33,11 @@ class ChemotaxisDataset(torch.utils.data.TensorDataset):
         self.action_size = action_size
         self.source = source  # help identify the position of chemical source
         """ seeding """
-        self.seed(seed)
+        if seed is not None:
+            np.random.seed(seed)
         """ dataset """
         x, y = self.get_tensors(get_item, **kwargs)
         super(ChemotaxisDataset, self).__init__(x, y)
-
-    @staticmethod
-    def seed(seed):
-        if seed is not None:
-            np.random.seed(seed)
 
     @staticmethod
     def worker_init_fn(worker_id):
