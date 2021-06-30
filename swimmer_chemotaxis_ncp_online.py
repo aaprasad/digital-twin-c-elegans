@@ -61,6 +61,7 @@ def online_test(
         results.append(result)
     results = ConcatDataset(results)
     print('results', len(results), results[0][0].size(), results[0][1].size())
+    print(model_path)
     chemotaxis_index = torch.mean(results.tensors[0]).item()
     print('chemotaxis index mean', chemotaxis_index)
     writer.add_hparams(
