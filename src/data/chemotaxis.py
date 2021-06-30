@@ -9,16 +9,14 @@ class ChemotaxisDataSample(torch.utils.data.Dataset):
     x: concentrations sensed at nose tip
     y: actions performed each step
     """
-    def __init__(self, env, model, generate_sample, data_size, **kwargs):
+    def __init__(self, data_size, get_item, **kwargs):
         super(ChemotaxisDataSample, self).__init__()
-        self.env = env
-        self.model = model
-        self.generate_sample = generate_sample  # function of chemotaxis simulation
         self.data_size = data_size
-        self.kwargs = kwargs
+        self.get_item = get_item  # function of chemotaxis simulation
+        self.kwargs = kwargs  # all kwargs needed for chemotaxis simulation
 
     def __getitem__(self, index):
-        return self.generate_sample(env=self.env, model=self.model, **self.kwargs)
+        return self.get_item(**self.kwargs)
 
     def __len__(self):
         return self.data_size
@@ -29,15 +27,15 @@ class ChemotaxisDataset(torch.utils.data.TensorDataset):
     x: concentrations sensed at nose tip
     y: actions performed each step
     """
-    def __init__(self, env, model, generate_sample, data_size, max_episode_steps, seed, **kwargs):
+    def __init__(self, data_size, max_episode_steps, action_size, source, seed, get_item, **kwargs):
         self.data_size = data_size
         self.max_episode_steps = max_episode_steps
-        self.action_size = env.action_space.shape[0]
-        self.source = env.source.tolist()  # help identify the position of chemical source
+        self.action_size = action_size
+        self.source = source  # help identify the position of chemical source
         """ seeding """
         self.seed(seed)
         """ dataset """
-        x, y = self.generate_dataset(env, model, generate_sample, **kwargs)
+        x, y = self.get_tensors(get_item, **kwargs)
         super(ChemotaxisDataset, self).__init__(x, y)
 
     @staticmethod
@@ -51,13 +49,13 @@ class ChemotaxisDataset(torch.utils.data.TensorDataset):
         seed = keys[0]
         np.random.seed(np.uint32(seed + worker_id))
 
-    def generate_dataset(self, env, model, generate_sample, **kwargs):
+    def get_tensors(self, get_item, **kwargs):
         """ generate a sample dataset
         seed: seed + worker_id to generate different seeds for different workers
         x: torch.Tensor, (data_size, max_episode_steps)
         y: torch.Tensor, (data_size, max_episode_steps, action_size)
         """
-        data_sample = ChemotaxisDataSample(env, model, generate_sample, data_size=self.data_size, **kwargs)
+        data_sample = ChemotaxisDataSample(self.data_size, get_item, **kwargs)
         dataloader = torch.utils.data.DataLoader(
             data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count(),
             worker_init_fn=self.worker_init_fn

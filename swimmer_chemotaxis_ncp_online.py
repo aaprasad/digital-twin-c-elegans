@@ -12,8 +12,8 @@ from swimmer_chemotaxis_ncp import prepare_model
 def online_test_single_simulation(env, model, dataset):
     """ run a chemotaxis simulation controlled by a network model """
     seed = sample_seed()
-    env.seed(seed)
-    torch.manual_seed(seed)
+    env.seed(seed)  # seed env
+    torch.manual_seed(seed)  # seed model
     env.reset()
     model.eval()
     info = env.get_info(info={})
@@ -49,9 +49,13 @@ def online_test(
     dataset = torch.load('data/ncp.pt')
     data_size = data_size // len(envs)
     results = []
-    kwargs = {'dataset': dataset}
     for env in envs:
-        result = ChemotaxisDataset(env, model, online_test_single_simulation, data_size, max_episode_steps, seed=seed, **kwargs)
+        action_size = env.action_space.shape[0]
+        source = env.source.tolist()
+        result = ChemotaxisDataset(
+            data_size, max_episode_steps, action_size, source, seed, online_test_single_simulation,
+            env=env, model=model, dataset=dataset
+        )
         results.append(result)
     results = ConcatDataset(results)
     print('results', len(results), results[0][0].size(), results[0][1].size())

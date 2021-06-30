@@ -15,8 +15,8 @@ def generate_sample(env, model):
     y: torch.Tensor, (max_episode_steps, action_size)
     """
     seed = sample_seed()
-    env.seed(seed)
-    model.seed(seed)
+    env.seed(seed)  # seed env
+    model.seed(seed)  # seed model
     observation = env.reset()
     info = env.get_info(info={})
     y = []
@@ -43,7 +43,11 @@ def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=25
     data_size = data_size // len(envs)
     datasets = []
     for env, model in zip(envs, models):
-        dataset = ChemotaxisDataset(env, model, generate_sample, data_size, max_episode_steps, seed=seed)
+        action_size = env.action_space.shape[0]
+        source = env.source.tolist()
+        dataset = ChemotaxisDataset(
+            data_size, max_episode_steps, action_size, source, seed, generate_sample, env=env, model=model
+        )
         print(dataset.source, len(dataset), dataset[0][0].size(), dataset[0][1].size())
         datasets.append(dataset)
     concat_dataset = torch.utils.data.ConcatDataset(datasets)
