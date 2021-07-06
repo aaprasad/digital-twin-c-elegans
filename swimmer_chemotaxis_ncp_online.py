@@ -42,7 +42,7 @@ def online_test_single_simulation(env, model, dataset):
 
 def online_test(
     seed=42, max_episode_steps=2500, distance=15, units=19, output_dim=11, in_features=2, model_dir=None,
-    data_size=1200
+    data_name='ncp.pt', data_size=1200
 ):
     """
     data_size: should be at least 100 trials for each env
@@ -52,7 +52,7 @@ def online_test(
     writer = SummaryWriter(log_dir=model_dir)
     envs = [make_swimmer(max_episode_steps=max_episode_steps, x=x, y=y) for x, y in clock_position(distance)]
     model = prepare_model(units, output_dim, in_features, model_path=os.path.join(model_dir, 'model.pt'))
-    dataset = torch.load('data/ncp.pt')
+    dataset = torch.load(os.path.join('data', data_name))
     data_size = data_size // len(envs)
     results = []
     for env in envs:
@@ -78,4 +78,4 @@ def online_test(
 
 
 if __name__ == '__main__':
-    online_test(data_size=120, model_dir=None)
+    online_test(data_size=120, model_dir=None, data_name='ncp.pt')

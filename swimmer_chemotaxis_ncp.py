@@ -10,9 +10,9 @@ from src.networks.ncp.rnn_sequence import RNNSequence
 from src.networks.ncp.wirings import FullyConnected
 
 
-def prepare_data(eval_ratio, test_ratio, batch_size, seed):
+def prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed):
     """ load data and prepare data loaders """
-    dataset = torch.load('data/ncp.pt')
+    dataset = torch.load(data_path)
     eval_size = int(len(dataset) * eval_ratio)
     test_size = int(len(dataset) * test_ratio)
     train_size = len(dataset) - eval_size - test_size
@@ -92,8 +92,8 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
 
 
 def offline_train_and_test(
-    eval_ratio=0.15, test_ratio=0.15, batch_size=4096, seed=42, cuda=0, units=19, output_dim=11, in_features=2, lr=0.01,
-    epochs=200, early_stop=50
+    data_name='ncp.pt', eval_ratio=0.15, test_ratio=0.15, batch_size=4096, seed=42, cuda=0, units=19, output_dim=11,
+    in_features=2, lr=0.01, epochs=200, early_stop=50
 ):
     """
     eval_ratio: ratio of eval dataset to the whole dataset
@@ -105,7 +105,8 @@ def offline_train_and_test(
     """
     torch.manual_seed(seed)
     writer = SummaryWriter(comment='swimmer_chemotaxis_ncp')
-    train_loader, eval_loader, test_loader = prepare_data(eval_ratio, test_ratio, batch_size, seed)
+    data_path = os.path.join('data', data_name)
+    train_loader, eval_loader, test_loader = prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed)
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
     model = prepare_model(units, output_dim, in_features, device)
@@ -128,4 +129,4 @@ def offline_train_and_test(
 
 
 if __name__ == '__main__':
-    offline_train_and_test(cuda=0, epochs=200)
+    offline_train_and_test(cuda=0, epochs=200, data_name='ncp.pt')
