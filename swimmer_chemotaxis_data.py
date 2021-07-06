@@ -2,6 +2,7 @@
 generate concatenated chemotaxis dataset
 """
 
+import os
 from src.data.chemotaxis import ChemotaxisDataset
 from src.models.computational_model import ComputationalModelChemotaxis
 from src.utils import clock_position, sample_seed
@@ -33,7 +34,7 @@ def generate_sample(env, model):
     return x, y
 
 
-def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500):
+def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500, save_name='concat_chemotaxis.pt'):
     """ generate chemotaxis dataset with different chemical source positions
     data_size: the total dataset size, should be divided for each env (with different source position)
     seed: the randomly generated dataset stays the same with seeding
@@ -52,8 +53,8 @@ def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=25
         datasets.append(dataset)
     concat_dataset = torch.utils.data.ConcatDataset(datasets)
     print('dataset', len(concat_dataset), concat_dataset[0][0].size(), concat_dataset[0][1].size())
-    torch.save(concat_dataset, 'data/concat_chemotaxis.pt')
+    torch.save(concat_dataset, os.path.join('data', save_name))
 
 
 if __name__ == '__main__':
-    generate_dataset(data_size=12000, max_episode_steps=2500)
+    generate_dataset(data_size=12000, max_episode_steps=2500, save_name='concat_chemotaxis.pt')
