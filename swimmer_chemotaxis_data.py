@@ -3,7 +3,7 @@ generate concatenated chemotaxis dataset
 """
 
 from src.data.chemotaxis import ChemotaxisDataset
-from src.models.chemotaxis_motion import ChemotaxisMotion
+from src.models.computational_model import ComputationalModelChemotaxis
 from src.utils import clock_position, sample_seed
 from swimmer_chemotaxis import make_swimmer
 import torch
@@ -39,7 +39,7 @@ def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=25
     seed: the randomly generated dataset stays the same with seeding
     """
     envs = [make_swimmer(max_episode_steps=max_episode_steps, x=x, y=y) for x, y in clock_position(distance=distance)]
-    models = [ChemotaxisMotion(dt=env.dt) for env in envs]
+    models = [ComputationalModelChemotaxis(dt=env.dt) for env in envs]
     data_size = data_size // len(envs)
     datasets = []
     for env, model in zip(envs, models):

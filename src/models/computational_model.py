@@ -5,7 +5,7 @@
 import numpy as np
 
 
-class ChemotaxisMotion(object):
+class ComputationalModelChemotaxis(object):
     """ generate action to perform chemotaxis movement
     behavior
         forward: oscillator for generating sinusoidal movement
