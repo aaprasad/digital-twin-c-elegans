@@ -42,7 +42,7 @@ def online_test_single_simulation(env, model, dataset):
 
 def online_test(
     seed=42, max_episode_steps=2500, distance=15, units=19, output_dim=11, in_features=2, model_dir=None,
-    model_name='fully_connected_model', data_name='ncp.pt', data_size=1200
+    model_name='fully_connected', data_name='ncp.pt', data_size=1200
 ):
     """
     data_size: should be at least 100 trials for each env
@@ -82,4 +82,4 @@ def online_test(
 
 
 if __name__ == '__main__':
-    online_test(data_size=120, model_dir=None, data_name='computational_model_ncp.pt', model_name='fully_connected_model')
+    online_test(data_size=120, model_dir=None, data_name='computational_model_ncp.pt', model_name='fully_connected')
