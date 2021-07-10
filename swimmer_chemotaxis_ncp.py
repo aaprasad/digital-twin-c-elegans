@@ -102,7 +102,7 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
 
 def offline_train_and_test(
     data_name='ncp.pt', model_name='fully_connected_model', eval_ratio=0.15, test_ratio=0.15, batch_size=4096, seed=42,
-    cuda=0, units=19, output_dim=11, in_features=2, lr=0.01, epochs=200, early_stop=50
+    cuda=0, units=19, output_dim=11, in_features=2, lr=0.01, epochs=200, early_stop=30
 ):
     """
     eval_ratio: ratio of eval dataset to the whole dataset
@@ -138,4 +138,4 @@ def offline_train_and_test(
 
 
 if __name__ == '__main__':
-    offline_train_and_test(cuda=0, epochs=200, data_name='ncp.pt', model_name='fully_connected_model')
+    offline_train_and_test(cuda=0, epochs=100, data_name='ncp.pt', model_name='fully_connected_model')
