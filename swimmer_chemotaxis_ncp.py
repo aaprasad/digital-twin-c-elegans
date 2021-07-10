@@ -27,18 +27,27 @@ def prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed):
     return train_loader, eval_loader, test_loader
 
 
-def prepare_model(units, output_dim, in_features, device=None, model_path=None):
+def prepare_model(model_name, device=None, model_path=None, **kwargs):
     """ init model
-    seed torch rng first
+    seed torch rng before initializing model
+    **kwargs: kwargs for initializing model
     """
-    wiring = FullyConnected(units=units, output_dim=output_dim)
-    ltc_cell = LTCCell(wiring, in_features=in_features)
-    model = RNNSequence(ltc_cell)
+    if model_name == 'fully_connected_model':
+        model = fully_connected_model(**kwargs)
+    else:
+        raise AssertionError('{} not exist'.format(model_name))
     if device is None:
         device = torch.device('cpu')
     if model_path is not None:
         model.load_state_dict(torch.load(model_path))
     model = model.to(device)
+    return model
+
+
+def fully_connected_model(units, output_dim, in_features):
+    wiring = FullyConnected(units=units, output_dim=output_dim)
+    ltc_cell = LTCCell(wiring, in_features=in_features)
+    model = RNNSequence(ltc_cell)
     return model
 
 
@@ -92,8 +101,8 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
 
 
 def offline_train_and_test(
-    data_name='ncp.pt', eval_ratio=0.15, test_ratio=0.15, batch_size=4096, seed=42, cuda=0, units=19, output_dim=11,
-    in_features=2, lr=0.01, epochs=200, early_stop=50
+    data_name='ncp.pt', model_name='fully_connected_model', eval_ratio=0.15, test_ratio=0.15, batch_size=4096, seed=42,
+    cuda=0, units=19, output_dim=11, in_features=2, lr=0.01, epochs=200, early_stop=50
 ):
     """
     eval_ratio: ratio of eval dataset to the whole dataset
@@ -109,19 +118,19 @@ def offline_train_and_test(
     train_loader, eval_loader, test_loader = prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed)
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
-    model = prepare_model(units, output_dim, in_features, device)
+    model = prepare_model(model_name, device, **{'units': units, 'output_dim': output_dim, 'in_features': in_features})
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = torch.nn.MSELoss(reduction='mean')
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
     # test
-    model = prepare_model(units, output_dim, in_features, device, model_path)
+    model = prepare_model(model_name, device, model_path, **{'units': units, 'output_dim': output_dim, 'in_features': in_features})
     mse = test(model, device, test_loader, criterion)
     # hparams and results
     writer.add_hparams(
         {
             'eval_ratio': eval_ratio, 'test_ratio': test_ratio, 'batch_size': batch_size, 'seed': seed, 'cuda': cuda,
-            'units': units, 'output_dim': output_dim, 'in_features': in_features, 'lr': lr
+            'model_name': model_name, 'units': units, 'output_dim': output_dim, 'in_features': in_features, 'lr': lr
         },
         {'hparam/MSE/test': mse}
     )
@@ -129,4 +138,4 @@ def offline_train_and_test(
 
 
 if __name__ == '__main__':
-    offline_train_and_test(cuda=0, epochs=200, data_name='ncp.pt')
+    offline_train_and_test(cuda=0, epochs=200, data_name='ncp.pt', model_name='fully_connected_model')
