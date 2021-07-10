@@ -57,4 +57,4 @@ def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=25
 
 
 if __name__ == '__main__':
-    generate_dataset(data_size=12000, max_episode_steps=2500, save_name='concat_chemotaxis.pt')
+    generate_dataset(data_size=12000, max_episode_steps=2500, save_name='computational_model_chemotaxis.pt')
