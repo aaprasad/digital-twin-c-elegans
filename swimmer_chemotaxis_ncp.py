@@ -34,6 +34,8 @@ def prepare_model(model_name, device=None, model_path=None, **kwargs):
     """
     if model_name == 'fully_connected':
         model = fully_connected(**kwargs)
+    elif model_name == 'ncp':
+        model = ncp(**kwargs)
     else:
         raise AssertionError('{} not exist'.format(model_name))
     if device is None:
@@ -45,7 +47,9 @@ def prepare_model(model_name, device=None, model_path=None, **kwargs):
 
 
 def fully_connected(units=60, output_dim=11, in_features=2):
-    """ network model """
+    """ network model
+    batch_size: 2048, takes up 9621MiB
+    """
     wiring = FullyConnected(units=units, output_dim=output_dim)
     ltc_cell = LTCCell(wiring, in_features=in_features)
     model = RNNSequence(ltc_cell)
@@ -56,7 +60,9 @@ def ncp(
     in_features=2, inter_neurons=24, command_neurons=48, motor_neurons=11, sensory_fanout=12, inter_fanout=5,
     recurrent_command_synapses=6, motor_fanin=4
 ):
-    """ network model """
+    """ network model
+    batch_size: 1024
+    """
     wiring = NCP(
         inter_neurons=inter_neurons,
         command_neurons=command_neurons,
@@ -121,7 +127,7 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
 
 
 def offline_train_and_test(
-    data_name='ncp.pt', model_name='fully_connected', eval_ratio=0.15, test_ratio=0.15, batch_size=4096, seed=42,
+    data_name='ncp.pt', model_name='fully_connected', eval_ratio=0.15, test_ratio=0.15, batch_size=2048, seed=42,
     cuda=0, lr=0.01, epochs=200, early_stop=30
 ):
     """
@@ -158,4 +164,4 @@ def offline_train_and_test(
 
 
 if __name__ == '__main__':
-    offline_train_and_test(cuda=0, epochs=100, data_name='computational_model_ncp.pt', model_name='fully_connected')
+    offline_train_and_test(cuda=1, batch_size=1024, epochs=100, data_name='computational_model_ncp.pt', model_name='ncp')
