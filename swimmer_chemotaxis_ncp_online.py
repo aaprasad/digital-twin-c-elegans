@@ -79,4 +79,4 @@ def online_test(
 
 
 if __name__ == '__main__':
-    online_test(data_size=120, model_dir=None, data_name='computational_model_ncp.pt', model_name='fully_connected')
+    online_test(data_size=1200, model_dir=None, data_name='computational_model_ncp.pt', model_name='fully_connected')
