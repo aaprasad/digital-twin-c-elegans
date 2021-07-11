@@ -44,7 +44,7 @@ def prepare_model(model_name, device=None, model_path=None, **kwargs):
     return model
 
 
-def fully_connected(units=19, output_dim=11, in_features=2):
+def fully_connected(units=60, output_dim=11, in_features=2):
     """ network model """
     wiring = FullyConnected(units=units, output_dim=output_dim)
     ltc_cell = LTCCell(wiring, in_features=in_features)
@@ -53,7 +53,7 @@ def fully_connected(units=19, output_dim=11, in_features=2):
 
 
 def ncp(
-    in_features=2, inter_neurons=12, command_neurons=36, motor_neurons=11, sensory_fanout=9, inter_fanout=5,
+    in_features=2, inter_neurons=24, command_neurons=48, motor_neurons=11, sensory_fanout=12, inter_fanout=5,
     recurrent_command_synapses=6, motor_fanin=4
 ):
     """ network model """
