@@ -61,7 +61,7 @@ def ncp(
     recurrent_command_synapses=6, motor_fanin=4
 ):
     """ network model
-    batch_size: 1024
+    batch_size: 1024, takes up 8929MiB
     """
     wiring = NCP(
         inter_neurons=inter_neurons,
