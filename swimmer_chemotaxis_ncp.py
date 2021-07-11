@@ -7,7 +7,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from src.networks.ncp.ltc_cell import LTCCell
 from src.networks.ncp.rnn_sequence import RNNSequence
-from src.networks.ncp.wirings import FullyConnected
+from src.networks.ncp.wirings import FullyConnected, NCP
 
 
 def prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed):
@@ -44,9 +44,28 @@ def prepare_model(model_name, device=None, model_path=None, **kwargs):
     return model
 
 
-def fully_connected(units, output_dim, in_features):
+def fully_connected(units=19, output_dim=11, in_features=2):
     """ network model """
     wiring = FullyConnected(units=units, output_dim=output_dim)
+    ltc_cell = LTCCell(wiring, in_features=in_features)
+    model = RNNSequence(ltc_cell)
+    return model
+
+
+def ncp(
+    in_features=2, inter_neurons=12, command_neurons=36, motor_neurons=11, sensory_fanout=9, inter_fanout=5,
+    recurrent_command_synapses=6, motor_fanin=4
+):
+    """ network model """
+    wiring = NCP(
+        inter_neurons=inter_neurons,
+        command_neurons=command_neurons,
+        motor_neurons=motor_neurons,
+        sensory_fanout=sensory_fanout,
+        inter_fanout=inter_fanout,
+        recurrent_command_synapses=recurrent_command_synapses,
+        motor_fanin=motor_fanin,
+    )
     ltc_cell = LTCCell(wiring, in_features=in_features)
     model = RNNSequence(ltc_cell)
     return model
@@ -103,7 +122,7 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
 
 def offline_train_and_test(
     data_name='ncp.pt', model_name='fully_connected', eval_ratio=0.15, test_ratio=0.15, batch_size=4096, seed=42,
-    cuda=0, units=19, output_dim=11, in_features=2, lr=0.01, epochs=200, early_stop=30
+    cuda=0, lr=0.01, epochs=200, early_stop=30
 ):
     """
     eval_ratio: ratio of eval dataset to the whole dataset
@@ -119,19 +138,19 @@ def offline_train_and_test(
     train_loader, eval_loader, test_loader = prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed)
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
-    model = prepare_model(model_name, device, **{'units': units, 'output_dim': output_dim, 'in_features': in_features})
+    model = prepare_model(model_name, device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = torch.nn.MSELoss(reduction='mean')
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
     # test
-    model = prepare_model(model_name, device, model_path, **{'units': units, 'output_dim': output_dim, 'in_features': in_features})
+    model = prepare_model(model_name, device, model_path)
     mse = test(model, device, test_loader, criterion)
     # hparams and results
     writer.add_hparams(
         {
             'eval_ratio': eval_ratio, 'test_ratio': test_ratio, 'batch_size': batch_size, 'seed': seed, 'cuda': cuda,
-            'model_name': model_name, 'units': units, 'output_dim': output_dim, 'in_features': in_features, 'lr': lr
+            'model_name': model_name, 'lr': lr
         },
         {'hparam/MSE/test': mse}
     )
