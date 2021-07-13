@@ -78,5 +78,21 @@ def online_test(
     writer.close()
 
 
+def online_test_video(seed=42, max_episode_steps=2500, distance=15, model_dir=None, model_name='fully_connected', data_name='ncp.pt'):
+    """ online test and record video """
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    env = make_swimmer(
+        max_episode_steps=max_episode_steps, x=distance, y=0,
+        camera_name='track', video_name='swimmer_chemotaxis_ncp_online'
+    )
+    assert model_dir is not None, 'model_dir can not be {}'.format(model_dir)
+    model = prepare_model(model_name, model_path=os.path.join(model_dir, 'model.pt'))
+    dataset = torch.load(os.path.join('data', data_name))
+    x, _ = online_test_single_simulation(env, model, dataset)
+    print('chemotaxis index mean', torch.mean(x).item())
+
+
 if __name__ == '__main__':
-    online_test(data_size=1200, model_dir=None, data_name='computational_model_ncp.pt', model_name='fully_connected')
+    online_test(data_size=1200, model_dir=None, model_name='fully_connected', data_name='computational_model_ncp.pt')
+    # online_test_video(model_dir=None, model_name='fully_connected', data_name='computational_model_ncp.pt')
