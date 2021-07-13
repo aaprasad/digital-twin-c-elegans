@@ -90,7 +90,7 @@ def online_test_video(seed=42, max_episode_steps=2500, distance=15, model_dir=No
     model = prepare_model(model_name, model_path=os.path.join(model_dir, 'model.pt'))
     dataset = torch.load(os.path.join('data', data_name))
     x, _ = online_test_single_simulation(env, model, dataset)
-    print('chemotaxis index mean', torch.mean(x).item())
+    print('chemotaxis index', torch.mean(x).item())
 
 
 if __name__ == '__main__':
