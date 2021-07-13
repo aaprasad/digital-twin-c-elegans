@@ -2,6 +2,7 @@
 
 import gym
 import numpy as np
+import os
 from src.envs.mujoco.swimmer_gym_v3_v0 import SwimmerEnv
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
 from src.envs.mujoco.chemotaxis import chemotaxis
@@ -26,7 +27,10 @@ def fick(target, source, sigma=5):
     return c
 
 
-def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', camera_z=None, camera_name=None, max_episode_steps=1000, x=0, y=0):
+def make_swimmer(
+    n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', camera_z=None, camera_name=None,
+    max_episode_steps=1000, x=0, y=0, video_name='swimmer_chemotaxis'
+):
     """ create swimmer env: multibody model
     - radius=0.04mm, body_len=0.1mm, n_bodies=12, q_max=0.69rad (~39.53409 degrees)
     - joint_size=0.1 (radius) -> body_len=0.25
@@ -44,7 +48,7 @@ def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos=
     env = Recorder(env, stats_name=['concentration'], camera_name=camera_name)
     # record video: if force is True, clear previous monitor files
     if camera_name is not None:
-        env = gym.wrappers.Monitor(env, directory='video/swimmer_chemotaxis', force=True)
+        env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
     return env
 
 
