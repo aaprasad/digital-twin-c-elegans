@@ -40,8 +40,9 @@ class NCPDataset(torch.utils.data.TensorDataset):
         a_l_plus = 1. / np.log(b_l_plus * g_abs_max + 1.)
         x_asel_plus = a_l_plus * torch.log(b_l_plus * g + 1.)
         # g > 0: ASER inhibited, but weaker than excitation response
+        # weaker response is not implemented, the response level of inhibition is the same as that of excitation
         b_r_plus = 100.
-        a_r_plus = -1. / np.log(b_r_plus * g_abs_max + 1.) / 2.
+        a_r_plus = -1. / np.log(b_r_plus * g_abs_max + 1.)
         x_aser_plus = a_r_plus * torch.log(b_r_plus * g + 1.)
 
         # g <= 0: ASEL not affected
