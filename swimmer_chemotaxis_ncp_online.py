@@ -27,8 +27,7 @@ def online_test_single_simulation(env, model, dataset):
             data = dataset.encode_input_func(g=info['g'])  # encode gradient
             data = data.unsqueeze(dim=0)  # add batch dimension
             output, hidden_state = model.step(data, hidden_state)
-            output = output.squeeze(dim=0)  # squeeze batch dimension
-            action = dataset.decode_output_func(output)  # decode output
+            action = output.squeeze(dim=0)  # squeeze batch dimension
             action = action.numpy()
             y.append(action.tolist())
             observation, reward, done, info = env.step(action)

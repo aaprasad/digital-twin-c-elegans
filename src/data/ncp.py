@@ -18,7 +18,6 @@ class NCPDataset(torch.utils.data.TensorDataset):
         self.x_abs_max = x.abs().max()
         self.y_abs_max = y.abs().max()
         x = self.encode_input_func(g=x)
-        y = self.encode_output_func(y=y)
         x = self.subsequence(x)
         y = self.subsequence(y)
         super(NCPDataset, self).__init__(x, y)
@@ -59,16 +58,6 @@ class NCPDataset(torch.utils.data.TensorDataset):
         # because of coef a, x is normalized in [-1, 1]
         x = torch.stack([x_asel, x_aser], dim=-1)
         return x
-
-    def encode_output_func(self, y):
-        """ encode output: action -> normalized action """
-        y /= self.y_abs_max
-        return y
-
-    def decode_output_func(self, y):
-        """ decode output: normalized action -> action """
-        y *= self.y_abs_max
-        return y
 
     def subsequence(self, tensor):
         """ split each sequence into subsequences """
