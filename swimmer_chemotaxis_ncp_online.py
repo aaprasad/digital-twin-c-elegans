@@ -93,5 +93,8 @@ def online_test_video(seed=42, max_episode_steps=2500, distance=15, model_dir=No
 
 
 if __name__ == '__main__':
-    online_test(data_size=1200, model_dir=None, model_name='fully_connected', data_name='computational_model_ncp.pt')
-    # online_test_video(model_dir=None, model_name='fully_connected', data_name='computational_model_ncp.pt')
+    model_dir = None
+    model_name = 'fully_connected'
+    data_name = 'computational_model_ncp.pt'
+    online_test(data_size=1200, model_dir=model_dir, model_name=model_name, data_name=data_name)
+    online_test_video(model_dir=model_dir, model_name=model_name, data_name=data_name)
