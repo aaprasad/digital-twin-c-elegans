@@ -81,10 +81,7 @@ def online_test_video(seed=42, max_episode_steps=2500, distance=15, model_dir=No
     """ online test and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
-    env = make_swimmer(
-        max_episode_steps=max_episode_steps, x=distance, y=0,
-        camera_name='track', video_name='swimmer_chemotaxis_ncp_online'
-    )
+    env = make_swimmer(max_episode_steps=max_episode_steps, x=distance, y=0, camera_name='track', video_name=model_name)
     assert model_dir is not None, 'model_dir can not be {}'.format(model_dir)
     model = prepare_model(model_name, model_path=os.path.join(model_dir, 'model.pt'))
     dataset = torch.load(os.path.join('data', data_name))
