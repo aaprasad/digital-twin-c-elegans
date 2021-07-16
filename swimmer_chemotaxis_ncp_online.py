@@ -40,7 +40,7 @@ def online_test_single_simulation(env, model, dataset):
 
 
 def online_test(
-    seed=42, max_episode_steps=2500, distance=15, model_dir=None, model_name='fully_connected', data_name='ncp.pt',
+    seed=42, max_episode_steps=2500, distance=15, model_folder=None, model_name='fully_connected', data_name='ncp.pt',
     data_size=1200
 ):
     """
@@ -48,9 +48,10 @@ def online_test(
     """
     np.random.seed(seed)
     torch.manual_seed(seed)
+    assert model_folder is not None, 'model_folder can not be {}'.format(model_folder)
+    model_dir = os.path.join('runs', model_folder)
     writer = SummaryWriter(log_dir=model_dir)
     envs = [make_swimmer(max_episode_steps=max_episode_steps, x=x, y=y) for x, y in clock_position(distance)]
-    assert model_dir is not None, 'model_dir can not be {}'.format(model_dir)
     model = prepare_model(model_name, model_path=os.path.join(model_dir, 'model.pt'))
     dataset = torch.load(os.path.join('data', data_name))
     data_size = data_size // len(envs)
@@ -77,21 +78,21 @@ def online_test(
     writer.close()
 
 
-def online_test_video(seed=42, max_episode_steps=2500, distance=15, model_dir=None, model_name='fully_connected', data_name='ncp.pt'):
+def online_test_video(seed=42, max_episode_steps=2500, distance=15, model_folder=None, model_name='fully_connected', data_name='ncp.pt'):
     """ online test and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
-    env = make_swimmer(max_episode_steps=max_episode_steps, x=distance, y=0, camera_name='track', video_name=model_name)
-    assert model_dir is not None, 'model_dir can not be {}'.format(model_dir)
-    model = prepare_model(model_name, model_path=os.path.join(model_dir, 'model.pt'))
+    assert model_folder is not None, 'model_folder can not be {}'.format(model_folder)
+    env = make_swimmer(max_episode_steps=max_episode_steps, x=distance, y=0, camera_name='track', video_name=model_folder)
+    model = prepare_model(model_name, model_path=os.path.join('runs', model_folder, 'model.pt'))
     dataset = torch.load(os.path.join('data', data_name))
     x, _ = online_test_single_simulation(env, model, dataset)
     print('chemotaxis index', torch.mean(x).item())
 
 
 if __name__ == '__main__':
-    model_dir = None
+    model_folder = None
     model_name = 'fully_connected'
     data_name = 'computational_model_ncp.pt'
-    online_test(data_size=1200, model_dir=model_dir, model_name=model_name, data_name=data_name)
-    online_test_video(model_dir=model_dir, model_name=model_name, data_name=data_name)
+    online_test(data_size=1200, model_folder=model_folder, model_name=model_name, data_name=data_name)
+    online_test_video(model_folder=model_folder, model_name=model_name, data_name=data_name)
