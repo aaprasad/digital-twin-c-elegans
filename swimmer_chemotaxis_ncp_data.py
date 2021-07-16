@@ -10,7 +10,7 @@ from src.data.subset import FilterSubset
 import torch
 
 
-def preprocess_dataset(data_size=600, seq_len=16, load_name='concat_chemotaxis.pt', save_name='ncp.pt'):
+def preprocess_dataset(data_size=600, seq_len=16, load_name='source.pt', save_name='target.pt'):
     """ preprocess chemotaxis dataset with different chemical source positions
     data_size: total amount of original chemotaxis sequences (divided equally between different envs)
     seq_len: split each chemotaxis sequence into subsequences with seq_len

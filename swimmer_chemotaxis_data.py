@@ -34,7 +34,7 @@ def generate_sample(env, model):
     return x, y
 
 
-def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500, save_name='concat_chemotaxis.pt'):
+def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500, save_name='dataset.pt'):
     """ generate chemotaxis dataset with different chemical source positions
     data_size: the total dataset size, should be divided for each env (with different source position)
     seed: the randomly generated dataset stays the same with seeding
