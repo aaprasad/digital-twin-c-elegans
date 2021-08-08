@@ -19,8 +19,25 @@
 7. nematode: joint_range, body_len, muscle_len and arrangement
     * `nematode_gym_v0`
 
-## log
+## usage
 
-```
-tensorboard --logdir=runs
-```
+* generate chemotaxis dataset
+    ```
+    python swimmer_chemotaxis_data.py
+    ```
+* preprocess chemotaxis dataset for offline training
+    ```
+    python swimmer_chemotaxis_ncp_data.py
+    ```
+* offline training and testing
+    ```
+    pyhton swimmer_chemotaxis_ncp.py
+    ```
+* check TensorBoard log
+    ```
+    tensorboard --logdir=runs
+    ```
+* online testing
+    ```
+    python swimmer_chemotaxis_ncp_online.py
+    ```
