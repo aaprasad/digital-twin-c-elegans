@@ -1,5 +1,7 @@
 # virtual-nematode
 
+Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environments
+
 ## env for C. elegans
 
 1. swimmer
