@@ -21,8 +21,21 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 7. nematode: joint_range, body_len, muscle_len and arrangement
     * `nematode_gym_v0`
 
+## env wrapper for specific tasks
+
+1. chemotaxis: a cylinder as chemical source, no boundaries
+    * `chemotaxis`
+2. forage: cylinders as food, box geoms as square boundary
+    * `forage`
+3. maze: box geoms as walls and square boundary
+    * `maze`
+
 ## usage
 
+* chemotaxis simulation
+    ```
+    python swimmer_chemotaxis.py
+    ```
 * generate chemotaxis dataset
     ```
     python swimmer_chemotaxis_data.py
