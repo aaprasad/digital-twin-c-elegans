@@ -33,7 +33,10 @@ def generate_sample(env, model):
 
 
 def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, save_name='dataset.pt'):
-    """ generate forward movement dataset """
+    """ generate forward movement dataset
+    x: action sequence of the first joint in trials
+    y: action sequences in trials
+    """
     env = make_swimmer(max_episode_steps=max_episode_steps)
     model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]

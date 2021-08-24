@@ -36,6 +36,8 @@ def generate_sample(env, model):
 
 def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500, save_name='dataset.pt'):
     """ generate chemotaxis dataset with different chemical source positions
+    x: concentrations sensed at nose tip
+    y: actions performed each step
     data_size: the total dataset size, should be divided for each env (with different source position)
     seed: the randomly generated dataset stays the same with seeding
     """
