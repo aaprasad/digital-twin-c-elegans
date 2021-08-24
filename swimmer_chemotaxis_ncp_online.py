@@ -4,7 +4,7 @@ import numpy as np
 import os
 import torch
 from torch.utils.tensorboard import SummaryWriter
-from src.data.chemotaxis import ChemotaxisDataset
+from src.data.simulation import SimulationDataset
 from src.data.concat import ConcatDataset
 from src.utils import clock_position, sample_seed
 from swimmer_chemotaxis import make_swimmer
@@ -58,9 +58,8 @@ def online_test(
     results = []
     for env in envs:
         action_size = env.action_space.shape[0]
-        source = env.source.tolist()
-        result = ChemotaxisDataset(
-            data_size, max_episode_steps, action_size, source, seed, online_test_single_simulation,
+        result = SimulationDataset(
+            data_size, max_episode_steps, action_size, seed, online_test_single_simulation,
             env=env, model=model, dataset=dataset
         )
         results.append(result)

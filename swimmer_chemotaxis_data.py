@@ -3,7 +3,7 @@ generate concatenated chemotaxis dataset
 """
 
 import os
-from src.data.chemotaxis import ChemotaxisDataset
+from src.data.simulation import SimulationDataset
 from src.models.computational_model import ComputationalModelChemotaxis
 from src.utils import clock_position, sample_seed
 from swimmer_chemotaxis import make_swimmer
@@ -47,11 +47,10 @@ def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=25
     datasets = []
     for env, model in zip(envs, models):
         action_size = env.action_space.shape[0]
-        source = env.source.tolist()
-        dataset = ChemotaxisDataset(
-            data_size, max_episode_steps, action_size, source, seed, generate_sample, env=env, model=model
+        dataset = SimulationDataset(
+            data_size, max_episode_steps, action_size, seed, generate_sample, env=env, model=model
         )
-        print(dataset.source, len(dataset), dataset[0][0].size(), dataset[0][1].size())
+        print(env.source.tolist(), len(dataset), dataset[0][0].size(), dataset[0][1].size())
         datasets.append(dataset)
     concat_dataset = torch.utils.data.ConcatDataset(datasets)
     print('dataset', len(concat_dataset), concat_dataset[0][0].size(), concat_dataset[0][1].size())
