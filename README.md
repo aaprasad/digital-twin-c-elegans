@@ -6,6 +6,7 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 
 1. swimmer
     * `swimmer_gym_v3`: OpenAI Gym's Swimmer-v3
+    * `swimmer_gym_v3_v0`: OpenAI Gym's Swimmer-v3
     * `swimmer_dm`: dm_control's swimmer
 2. swimmer: n_links and joint_range
     * `swimmer_gym_v3_v1`: based on OpenAI Gym's Swimmer-v3
@@ -29,6 +30,13 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
     * `forage`
 3. maze: box geoms as walls and square boundary
     * `maze`
+
+## gym wrapper
+
+1. distribution: create a chemical distribution and provide concentration and gradient
+    * `distribution`
+2. recorder: record a video
+    * `recorder`
 
 ## mathematical models of locomotion
 
