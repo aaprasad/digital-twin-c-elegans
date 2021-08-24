@@ -3,7 +3,7 @@ generate forward sinusoidal movement dataset
 """
 
 import os
-from src.data.forward import ForwardDataset
+from src.data.simulation import SimulationDataset
 from src.models.forward import Forward
 from src.utils import sample_seed
 from swimmer_forward import make_swimmer
@@ -40,7 +40,7 @@ def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, save_name='
     env = make_swimmer(max_episode_steps=max_episode_steps)
     model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]
-    dataset = ForwardDataset(data_size, max_episode_steps, action_size, seed, generate_sample, env=env, model=model)
+    dataset = SimulationDataset(data_size, max_episode_steps, action_size, seed, generate_sample, env=env, model=model)
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     torch.save(dataset, os.path.join('data', save_name))
 
