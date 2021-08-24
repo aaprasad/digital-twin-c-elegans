@@ -5,7 +5,7 @@ preprocess concatenated chemotaxis dataset for NCP network training
 import numpy as np
 import os
 from src.data.concat import ConcatDataset
-from src.data.ncp import NCPDataset
+from src.data.chemotaxis import ChemotaxisDataset
 from src.data.subset import FilterSubset
 import torch
 
@@ -27,7 +27,7 @@ def preprocess_dataset(data_size=600, seq_len=16, load_name='source.pt', save_na
     print('filtered dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     print('chemotaxis index mean', torch.mean(dataset.tensors[0]).item())
     # preprocess dataset
-    dataset = NCPDataset(dataset, seq_len=seq_len)
+    dataset = ChemotaxisDataset(dataset, seq_len=seq_len)
     print('processed dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     torch.save(dataset, os.path.join('data', save_name))
 

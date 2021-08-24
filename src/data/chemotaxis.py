@@ -2,15 +2,15 @@ import numpy as np
 import torch
 
 
-class NCPDataset(torch.utils.data.TensorDataset):
-    """ prepare dataset for NCP training
+class ChemotaxisDataset(torch.utils.data.TensorDataset):
+    """ prepare dataset for chemotaxis training
     encode the sensory inputs and motor outputs of a chemotaxis TensorDataset
     split each sequence into subsequences
     x: encoded and normalized sensory inputs to ASEL/R
     y: normalized motor outputs
     """
     def __init__(self, dataset, seq_len):
-        """ preprocess a TensorDataset for NCP network training """
+        """ preprocess a TensorDataset for chemotaxis training """
         x, y = dataset.tensors
         x = x[:, 1:] - x[:, 0:-1]
         y = y[:, 1:, :]
@@ -20,7 +20,7 @@ class NCPDataset(torch.utils.data.TensorDataset):
         x = self.encode_input_func(g=x)
         x = self.subsequence(x)
         y = self.subsequence(y)
-        super(NCPDataset, self).__init__(x, y)
+        super(ChemotaxisDataset, self).__init__(x, y)
 
     def encode_input_func(self, g):
         """ encode input: gradient -> ASEL/R input
