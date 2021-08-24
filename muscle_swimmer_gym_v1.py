@@ -31,7 +31,7 @@ def test_random():
         observation, reward, done, info = env.step(action)
         reward_list.append(reward)
         if done:
-            print("Episode finished after {} steps".format(i + 1))
+            print('Episode finished after {} steps'.format(i + 1))
             break
     # n_bodies=5, joint_range='-10 10': ~ -180
     # n_bodies=5, joint_range='-5 5': ~ -510

@@ -28,7 +28,7 @@ def test_random():
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
         if done:
-            print("Episode finished after {} steps".format(i + 1))
+            print('Episode finished after {} steps'.format(i + 1))
             break
     env.close()
 
@@ -78,7 +78,7 @@ def test_stable_baselines3(train: bool):
             observation, reward, done, info = env.step(action)
             total_reward += reward
             if done:  # if done.any():
-                print("Episode finished after {} steps".format(i + 1))
+                print('Episode finished after {} steps'.format(i + 1))
                 break
         print('Episode {} reward: {}'.format(e, total_reward))
         total_reward_list.append(total_reward)
@@ -302,7 +302,7 @@ def run_episode_cv2(env, policy, video_path):
         step += 1
         if env_step.last is True:
             break
-    print("Episode finished after {} steps, reward: {}".format(step, total_reward))
+    print('Episode finished after {} steps, reward: {}'.format(step, total_reward))
     env.close()
     video.release()
 

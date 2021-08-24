@@ -23,6 +23,6 @@ if __name__ == '__main__':
         observation, reward, done, info = env.step(action)
         # print(observation)
         if done:
-            print("Episode finished after {} steps".format(i + 1))
+            print('Episode finished after {} steps'.format(i + 1))
             break
     env.close()

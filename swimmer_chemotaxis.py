@@ -64,7 +64,7 @@ def test_random():
         action = env.action_space.sample()
         observation, reward, done, info = env.step(action)
         if done:
-            print("Episode finished after {} steps".format(i + 1))
+            print('Episode finished after {} steps'.format(i + 1))
             break
     env.close()
 
@@ -83,7 +83,7 @@ def test_sinusoidal_motion(seed=None):
         action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])
         observation, reward, done, info = env.step(action)
         if done:
-            print("Episode finished after {} steps".format(i + 1))
+            print('Episode finished after {} steps'.format(i + 1))
             break
     print('chemotaxis index', np.mean(env.stats['concentration']))
     env.close()
