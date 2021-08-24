@@ -1,25 +1,8 @@
+from .sample import Sample
 import multiprocessing
 import numpy as np
 import torch
 from tqdm import tqdm
-
-
-class ChemotaxisDataSample(torch.utils.data.Dataset):
-    """ generate a single chemotaxis sample with an env and a model
-    x: concentrations sensed at nose tip
-    y: actions performed each step
-    """
-    def __init__(self, data_size, get_item, **kwargs):
-        super(ChemotaxisDataSample, self).__init__()
-        self.data_size = data_size
-        self.get_item = get_item  # function of chemotaxis simulation
-        self.kwargs = kwargs  # all kwargs needed for chemotaxis simulation
-
-    def __getitem__(self, index):
-        return self.get_item(**self.kwargs)
-
-    def __len__(self):
-        return self.data_size
 
 
 class ChemotaxisDataset(torch.utils.data.TensorDataset):
@@ -51,7 +34,7 @@ class ChemotaxisDataset(torch.utils.data.TensorDataset):
         x: torch.Tensor, (data_size, max_episode_steps)
         y: torch.Tensor, (data_size, max_episode_steps, action_size)
         """
-        data_sample = ChemotaxisDataSample(self.data_size, get_item, **kwargs)
+        data_sample = Sample(self.data_size, get_item, **kwargs)
         dataloader = torch.utils.data.DataLoader(
             data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count(),
             worker_init_fn=self.worker_init_fn
