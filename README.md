@@ -30,29 +30,40 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 3. maze: box geoms as walls and square boundary
     * `maze`
 
-## usage
+## mathematical models of locomotion
 
-* chemotaxis simulation
-    ```
-    python swimmer_chemotaxis.py
-    ```
-* generate chemotaxis dataset
-    ```
-    python swimmer_chemotaxis_data.py
-    ```
-* preprocess chemotaxis dataset for offline training
-    ```
-    python swimmer_chemotaxis_ncp_data.py
-    ```
-* offline training and testing
-    ```
-    pyhton swimmer_chemotaxis_ncp.py
-    ```
-* check TensorBoard log
-    ```
-    tensorboard --logdir=runs
-    ```
-* online testing
-    ```
-    python swimmer_chemotaxis_ncp_online.py
-    ```
+1. computational model: chemotaxis with behaviors including forward, pirouette, weathervane and random walk
+    * `computational_model`
+2. forward: forward sinusoidal movement
+    * `forward`
+
+## networks
+
+### ncp
+
+1. swimmer chemotaxis
+    * chemotaxis simulation
+        ```
+        python swimmer_chemotaxis.py
+        ```
+    * generate chemotaxis dataset
+        ```
+        python swimmer_chemotaxis_data.py
+        ```
+    * preprocess chemotaxis dataset for offline training
+        ```
+        python swimmer_chemotaxis_ncp_data.py
+        ```
+    * offline training and testing
+        ```
+        pyhton swimmer_chemotaxis_ncp.py
+        ```
+    * check TensorBoard log
+        ```
+        tensorboard --logdir=runs
+        ```
+    * online testing
+        ```
+        python swimmer_chemotaxis_ncp_online.py
+        ```
+2. swimmer forward
