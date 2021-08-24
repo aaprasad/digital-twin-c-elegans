@@ -61,9 +61,12 @@ class ChemotaxisDataset(torch.utils.data.TensorDataset):
         return x
 
     def subsequence(self, tensor):
-        """ split each sequence into subsequences """
-        tensor = tensor.split(self.seq_len, dim=1)
-        if tensor[-1].size(1) != self.seq_len:
+        """ split each sequence into subsequences
+        target seq_len must NOT be larger than original seq_len
+        """
+        seq_len = min(self.seq_len, tensor.size(1))
+        tensor = tensor.split(seq_len, dim=1)
+        if tensor[-1].size(1) != seq_len:
             tensor = tensor[:-1]
         tensor = torch.cat(tensor, dim=0)
         return tensor
