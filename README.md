@@ -68,7 +68,7 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
         ```
     * check TensorBoard log
         ```
-        tensorboard --logdir=runs
+        tensorboard --logdir=runs --host=10.176.50.34 --port=6006
         ```
     * online testing
         ```
