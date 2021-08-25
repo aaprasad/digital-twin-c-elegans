@@ -2,10 +2,14 @@ import torch
 
 
 class SplitDataset(torch.utils.data.TensorDataset):
-    """ split sequence in dataset """
+    """ split sequence in dataset
+    x: torch.Tensor, (data_size, seq_len, 1)
+    y: torch.Tensor, (data_size, seq_len, action_size)
+    """
     def __init__(self, dataset, seq_len):
         x, y = dataset.tensors
         self.seq_len = seq_len
+        x = x.unsqueeze(-1)
         x = self.subsequence(x)
         y = self.subsequence(y)
         super(SplitDataset, self).__init__(x, y)
