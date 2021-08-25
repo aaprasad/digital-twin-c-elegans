@@ -128,7 +128,7 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
 
 def offline_train_and_test(
     data_name='ncp.pt', model_name='fully_connected', eval_ratio=0.15, test_ratio=0.15, batch_size=2048, seed=42,
-    cuda=0, lr=0.001, epochs=200, early_stop=30
+    cuda=0, lr=0.001, epochs=200, early_stop=30, **kwargs
 ):
     """
     eval_ratio: ratio of eval dataset to the whole dataset
@@ -137,6 +137,7 @@ def offline_train_and_test(
     units: total amount of neurons (excluding input neurons)
     output_dim: amount of neurons that also act as output
     in_features: input channel amount
+    **kwargs: neural network model args
     """
     torch.manual_seed(seed)
     writer = SummaryWriter(comment='swimmer_chemotaxis_ncp')
@@ -144,7 +145,7 @@ def offline_train_and_test(
     train_loader, eval_loader, test_loader = prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed)
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
-    model = prepare_model(model_name, device)
+    model = prepare_model(model_name, device, **kwargs)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = torch.nn.MSELoss(reduction='mean')
     model_path = os.path.join(writer.log_dir, 'model.pt')
