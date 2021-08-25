@@ -75,3 +75,10 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
         python swimmer_chemotaxis_ncp_online.py
         ```
 2. swimmer forward
+    ```
+    python swimmer_forward.py
+    python swimmer_forward_data.py
+    python swimmer_forward_ncp_data.py
+    python swimmer_forward_ncp.py
+    python swimmer_forward_ncp_online.py
+    ```
