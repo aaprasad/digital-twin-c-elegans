@@ -151,7 +151,7 @@ def offline_train_and_test(
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
     # test
-    model = prepare_model(model_name, device, model_path)
+    model = prepare_model(model_name, device, model_path, **kwargs)
     mse = test(model, device, test_loader, criterion)
     # hparams and results
     writer.add_hparams(
