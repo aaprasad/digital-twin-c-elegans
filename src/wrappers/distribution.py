@@ -77,8 +77,6 @@ class Distribution(gym.Wrapper):
         g_p = self._tangential_gradient(com=com)
         g_w = self._normal_gradient(com=com)
         # info
-        info['position'] = position.tolist()
-        info['com'] = com.tolist()
         info['concentration'] = concentration
         info['g'] = g
         info['g_p'] = g_p
