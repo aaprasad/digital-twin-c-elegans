@@ -1,6 +1,7 @@
 """ swimmer: forward movement """
 
 import gym
+import numpy as np
 import os
 from src.envs.mujoco.swimmer_gym_v3_v0 import SwimmerEnv
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
@@ -19,7 +20,7 @@ def make_swimmer(
     env = gym.wrappers.TimeLimit(env, max_episode_steps=max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = Position(env)
-    env = Recorder(env, stats_name=[], camera_name=camera_name)
+    env = Recorder(env, stats_name=['com'], camera_name=camera_name)
     if camera_name is not None:
         env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
     return env
@@ -38,6 +39,7 @@ def test_forward(seed=None):
         if done:
             print('Episode finished after {} steps'.format(i + 1))
             break
+    print('displacement', np.linalg.norm(np.array(env.stats['com'][-1]) - np.array(env.stats['com'][0]), ord=2))
     env.close()
 
 
