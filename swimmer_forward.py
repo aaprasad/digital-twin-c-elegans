@@ -5,6 +5,7 @@ import os
 from src.envs.mujoco.swimmer_gym_v3_v0 import SwimmerEnv
 from src.envs.mujoco.swimmer_gym_v3_v2 import swimmer
 from src.models.forward import Forward
+from src.wrappers.position import Position
 from src.wrappers.recorder import Recorder
 
 
@@ -17,6 +18,7 @@ def make_swimmer(
     env = SwimmerEnv(xml_str=xml_str.decode('utf-8'))
     env = gym.wrappers.TimeLimit(env, max_episode_steps=max_episode_steps)
     env = gym.wrappers.ClipAction(env)
+    env = Position(env)
     env = Recorder(env, stats_name=[], camera_name=camera_name)
     if camera_name is not None:
         env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
