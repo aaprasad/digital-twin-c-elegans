@@ -10,10 +10,11 @@ from swimmer_forward import make_swimmer
 import torch
 
 
-def generate_sample(env, model):
+def generate_sample(env, model, mode):
     """ run a forward movement simulation
     x: torch.Tensor, (max_episode_steps, )
     y: torch.Tensor, (max_episode_steps, action_size)
+    mode: stimuli mode
     """
     seed = sample_seed()
     env.seed(seed)  # seed env
@@ -23,7 +24,7 @@ def generate_sample(env, model):
     y = []
     for i in range(10 ** 6):
         action = model.step(step=i, q=observation[1:12], q_vel=observation[15:])
-        stimuli = model.stimuli(step=i, mode='sine_wave')
+        stimuli = model.stimuli(step=i, mode=mode)
         x.append(stimuli)
         y.append(action.tolist())
         observation, reward, done, info = env.step(action)
@@ -35,7 +36,7 @@ def generate_sample(env, model):
     return x, y
 
 
-def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, save_name='dataset.pt'):
+def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_wave', save_name='dataset.pt'):
     """ generate forward movement dataset
     x: action sequence of the first joint in trials
     y: action sequences in trials
@@ -43,10 +44,14 @@ def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, save_name='
     env = make_swimmer(max_episode_steps=max_episode_steps)
     model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]
-    dataset = SimulationDataset(data_size, max_episode_steps, action_size, seed, generate_sample, env=env, model=model)
+    dataset = SimulationDataset(
+        data_size, max_episode_steps, action_size, seed, generate_sample,
+        # sample fn kwargs
+        env=env, model=model, mode=mode
+    )
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     torch.save(dataset, os.path.join('data', save_name))
 
 
 if __name__ == '__main__':
-    generate_dataset(data_size=100, max_episode_steps=2500, save_name='forward.pt')
+    generate_dataset(data_size=100, max_episode_steps=2500, mode='square_wave', save_name='forward.pt')
