@@ -54,4 +54,5 @@ def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_
 
 
 if __name__ == '__main__':
-    generate_dataset(data_size=100, max_episode_steps=2500, mode='square_wave', save_name='forward.pt')
+    generate_dataset(data_size=100, max_episode_steps=2500, mode='sine_wave', save_name='forward.pt')
+    # generate_dataset(data_size=100, max_episode_steps=2500, mode='square_wave', save_name='forward.pt')
