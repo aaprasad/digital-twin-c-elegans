@@ -43,6 +43,6 @@ class Forward(object):
         return action
 
     def step(self, step, q, q_vel):
-        q_next = self._joint_angle(step=step + 1)  # the next step's joint angles
+        q_next = self._joint_angle(step=step + 1)  # next step's joint angles
         action = self._action(q=q, q_next=q_next, q_vel=q_vel)
         return action
