@@ -46,3 +46,17 @@ class Forward(object):
         q_next = self._joint_angle(step=step + 1)  # next step's joint angles
         action = self._action(q=q, q_next=q_next, q_vel=q_vel)
         return action
+
+    def stimuli(self, step, mode):
+        """ external stimulus signal used as dataset input
+        mode: 'sine_wave' or 'square_wave'
+        """
+        q = self._joint_angle(step=step)  # current step's joint angles
+        q = q[0]  # first joint's angle
+        if mode == 'sine_wave':
+            pass
+        elif mode == 'square_wave':
+            q = np.sign(q)
+        else:
+            raise AssertionError('Unidentified mode {}.'.format(mode))
+        return q

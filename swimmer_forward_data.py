@@ -19,16 +19,19 @@ def generate_sample(env, model):
     env.seed(seed)  # seed env
     model.seed(seed)  # seed model
     observation = env.reset()
+    x = []
     y = []
     for i in range(10 ** 6):
         action = model.step(step=i, q=observation[1:12], q_vel=observation[15:])
+        stimuli = model.stimuli(step=i, mode='sine_wave')
+        x.append(stimuli)
         y.append(action.tolist())
         observation, reward, done, info = env.step(action)
         if done:
             break
     env.close()
+    x = torch.tensor(x, dtype=torch.float32)
     y = torch.tensor(y, dtype=torch.float32)
-    x = y[:, 0]  # the first dimension of action
     return x, y
 
 
