@@ -12,7 +12,7 @@ class RandomSubset(torch.utils.data.TensorDataset):
 
 
 class FilterSubset(torch.utils.data.TensorDataset):
-    """ create a subset of a TensorDataset with its best samples """
+    """ create a subset of a TensorDataset with its best samples according to chemotaxis index """
     def __init__(self, dataset, data_size):
         x, y = dataset.tensors
         data_size = min(data_size, len(dataset))
