@@ -46,7 +46,7 @@ def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_
     action_size = env.action_space.shape[0]
     dataset = SimulationDataset(
         data_size, max_episode_steps, action_size, seed, generate_sample,
-        # sample fn kwargs
+        # simulation fn kwargs
         env=env, model=model, mode=mode
     )
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
