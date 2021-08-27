@@ -77,7 +77,7 @@ def online_test_video(seed=42, max_episode_steps=2500, model_folder=None, model_
     np.random.seed(seed)
     torch.manual_seed(seed)
     assert model_folder is not None, 'model_folder can not be {}'.format(model_folder)
-    env = make_swimmer(max_episode_steps=max_episode_steps)
+    env = make_swimmer(max_episode_steps=max_episode_steps, camera_name='track', video_name=model_folder)
     model = prepare_model(model_name, model_path=os.path.join('runs', model_folder, 'model.pt'), **kwargs)
     math_model = Forward(dt=env.dt, seed=seed)
     x, _ = online_test_single_simulation(env, model, math_model, mode)
