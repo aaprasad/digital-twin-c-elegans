@@ -26,9 +26,9 @@ def make_swimmer(
     return env
 
 
-def test_forward(seed=None):
+def test_forward(seed=None, max_episode_steps=2500):
     """ forward sinusoidal movement """
-    env = make_swimmer(max_episode_steps=2500, camera_z=50, camera_name=None)
+    env = make_swimmer(max_episode_steps=max_episode_steps, camera_z=50, camera_name=None)
     env.seed(seed)
     observation = env.reset()
     model = Forward(dt=env.dt, seed=seed)
@@ -39,7 +39,8 @@ def test_forward(seed=None):
         if done:
             print('Episode finished after {} steps'.format(i + 1))
             break
-    print('displacement', np.linalg.norm(np.array(env.stats['com'][-1]) - np.array(env.stats['com'][0]), ord=2))
+    displacement = np.linalg.norm(np.array(env.stats['com'][-1]) - np.array(env.stats['com'][0]), ord=2)
+    print('displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
     env.close()
 
 
