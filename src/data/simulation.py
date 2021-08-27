@@ -21,9 +21,10 @@ class SimulationSample(torch.utils.data.Dataset):
 
 class SimulationDataset(torch.utils.data.TensorDataset):
     """ run simulations to generate dataset """
-    def __init__(self, data_size, max_episode_steps, action_size, seed, get_item, **kwargs):
+    def __init__(self, data_size, max_episode_steps, input_size, action_size, seed, get_item, **kwargs):
         self.data_size = data_size
         self.max_episode_steps = max_episode_steps
+        self.input_size = input_size  # input features size
         self.action_size = action_size
         """ seeding """
         if seed is not None:
@@ -51,7 +52,7 @@ class SimulationDataset(torch.utils.data.TensorDataset):
             data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count(),
             worker_init_fn=self.worker_init_fn
         )
-        x = torch.zeros(self.data_size, self.max_episode_steps, dtype=torch.float32)
+        x = torch.zeros(self.data_size, self.max_episode_steps, self.input_size, dtype=torch.float32)
         y = torch.zeros(self.data_size, self.max_episode_steps, self.action_size, dtype=torch.float32)
         for i, (sample_x, sample_y) in enumerate(tqdm(dataloader)):
             x[i] = sample_x.squeeze(dim=0)

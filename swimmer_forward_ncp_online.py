@@ -55,7 +55,7 @@ def online_test(
     math_model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]
     result = SimulationDataset(
-        data_size, max_episode_steps, action_size, seed, online_test_single_simulation,
+        data_size, max_episode_steps, 2, action_size, seed, online_test_single_simulation,
         # simulation fn kwargs
         env=env, model=model, math_model=math_model, mode=mode
     )

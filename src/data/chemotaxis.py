@@ -12,6 +12,7 @@ class ChemotaxisDataset(torch.utils.data.TensorDataset):
     def __init__(self, dataset, seq_len):
         """ preprocess a TensorDataset for chemotaxis training """
         x, y = dataset.tensors
+        x = x.squeeze(dim=2)
         x = x[:, 1:] - x[:, 0:-1]
         y = y[:, 1:, :]
         self.seq_len = seq_len

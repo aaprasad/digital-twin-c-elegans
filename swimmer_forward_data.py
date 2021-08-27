@@ -12,7 +12,7 @@ import torch
 
 def generate_sample(env, model, mode):
     """ run a forward movement simulation
-    x: torch.Tensor, (max_episode_steps, )
+    x: torch.Tensor, (max_episode_steps, 1)
     y: torch.Tensor, (max_episode_steps, action_size)
     mode: stimuli mode
     """
@@ -31,7 +31,7 @@ def generate_sample(env, model, mode):
         if done:
             break
     env.close()
-    x = torch.tensor(x, dtype=torch.float32)
+    x = torch.tensor(x, dtype=torch.float32).unsqueeze(-1)
     y = torch.tensor(y, dtype=torch.float32)
     return x, y
 
@@ -45,7 +45,7 @@ def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_
     model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]
     dataset = SimulationDataset(
-        data_size, max_episode_steps, action_size, seed, generate_sample,
+        data_size, max_episode_steps, 1, action_size, seed, generate_sample,
         # simulation fn kwargs
         env=env, model=model, mode=mode
     )

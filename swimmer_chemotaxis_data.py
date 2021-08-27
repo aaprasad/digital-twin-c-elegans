@@ -12,7 +12,7 @@ import torch
 
 def generate_sample(env, model):
     """ run a chemotaxis simulation controlled by strategies
-    x: torch.Tensor, (max_episode_steps, )
+    x: torch.Tensor, (max_episode_steps, 1)
     y: torch.Tensor, (max_episode_steps, action_size)
     """
     seed = sample_seed()
@@ -29,7 +29,7 @@ def generate_sample(env, model):
         if done:
             break
     env.close()
-    x = torch.tensor(env.stats['concentration'], dtype=torch.float32)
+    x = torch.tensor(env.stats['concentration'], dtype=torch.float32).unsqueeze(-1)
     y = torch.tensor(y, dtype=torch.float32)
     return x, y
 
@@ -48,7 +48,7 @@ def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=25
     for env, model in zip(envs, models):
         action_size = env.action_space.shape[0]
         dataset = SimulationDataset(
-            data_size, max_episode_steps, action_size, seed, generate_sample, env=env, model=model
+            data_size, max_episode_steps, 1, action_size, seed, generate_sample, env=env, model=model
         )
         print(env.source.tolist(), len(dataset), dataset[0][0].size(), dataset[0][1].size())
         datasets.append(dataset)

@@ -34,7 +34,7 @@ def online_test_single_simulation(env, model, dataset):
             if done:
                 break
     env.close()
-    x = torch.tensor(env.stats['concentration'], dtype=torch.float32)
+    x = torch.tensor(env.stats['concentration'], dtype=torch.float32).unsqueeze(-1)
     y = torch.tensor(y, dtype=torch.float32)
     return x, y
 
@@ -59,7 +59,7 @@ def online_test(
     for env in envs:
         action_size = env.action_space.shape[0]
         result = SimulationDataset(
-            data_size, max_episode_steps, action_size, seed, online_test_single_simulation,
+            data_size, max_episode_steps, 1, action_size, seed, online_test_single_simulation,
             env=env, model=model, dataset=dataset
         )
         results.append(result)

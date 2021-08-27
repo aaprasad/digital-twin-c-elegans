@@ -9,7 +9,6 @@ class SplitDataset(torch.utils.data.TensorDataset):
     def __init__(self, dataset, seq_len):
         x, y = dataset.tensors
         self.seq_len = seq_len
-        x = x.unsqueeze(-1)
         x = self.subsequence(x)
         y = self.subsequence(y)
         super(SplitDataset, self).__init__(x, y)

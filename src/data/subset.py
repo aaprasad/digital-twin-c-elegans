@@ -16,7 +16,7 @@ class FilterSubset(torch.utils.data.TensorDataset):
     def __init__(self, dataset, data_size):
         x, y = dataset.tensors
         data_size = min(data_size, len(dataset))
-        chemotaxis_index = x.sum(dim=1) / x.size(1)
+        chemotaxis_index = x.squeeze(dim=2).sum(dim=1) / x.size(1)
         indices = torch.argsort(chemotaxis_index, descending=True)
         indices = indices[:data_size]
         super(FilterSubset, self).__init__(x[indices], y[indices])
