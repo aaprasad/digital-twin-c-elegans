@@ -48,7 +48,7 @@ def online_test(
     torch.manual_seed(seed)
     assert model_folder is not None, 'model_folder can not be {}'.format(model_folder)
     model_dir = os.path.join('runs', model_folder)
-    writer = SummaryWriter(lod_dir=model_dir)
+    writer = SummaryWriter(log_dir=model_dir)
     env = make_swimmer(max_episode_steps=max_episode_steps)
     model = prepare_model(model_name, model_path=os.path.join(model_dir, 'model.pt'), **kwargs)
     math_model = Forward(dt=env.dt, seed=seed)
