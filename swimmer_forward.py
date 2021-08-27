@@ -40,7 +40,7 @@ def test_forward(seed=None, max_episode_steps=2500):
             print('Episode finished after {} steps'.format(i + 1))
             break
     displacement = np.linalg.norm(np.array(env.stats['com'][-1]) - np.array(env.stats['com'][0]), ord=2)
-    print('displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
+    print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
     env.close()
 
 
