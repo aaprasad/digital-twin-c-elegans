@@ -24,7 +24,8 @@ def online_test_single_simulation(env, model, math_model, mode):
     with torch.no_grad():
         for i in range(10 ** 6):
             data = math_model.stimuli(step=i, mode=mode)  # external stimulus signal as input
-            data = data.unsqueeze(-1)
+            data = torch.tensor(data)
+            data = data.unsqueeze(-1)  # add input feature's dimension
             data = data.unsqueeze(dim=0)  # add batch dimension
             output, hidden_state = model.step(data, hidden_state)
             action = output.squeeze(dim=0)  # remove batch dimension
