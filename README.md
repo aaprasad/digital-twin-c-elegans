@@ -7,6 +7,7 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 1. swimmer
     * `swimmer_gym_v3`: OpenAI Gym's Swimmer-v3
     * `swimmer_gym_v3_v0`: OpenAI Gym's Swimmer-v3
+    * `swimmer_gym_v3_bullet_v0`: OpenAI Gym's Swimmer-v3 based on Bullet physics instead of MuJoCo
     * `swimmer_dm`: dm_control's swimmer
 2. swimmer: n_links and joint_range
     * `swimmer_gym_v3_v1`: based on OpenAI Gym's Swimmer-v3
@@ -37,6 +38,8 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
     * `distribution`
 2. recorder: record a video
     * `recorder`
+3. position: get info on position and center of mass
+    * `position`
 
 ## mathematical models of locomotion
 
@@ -44,6 +47,19 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
     * `computational_model`
 2. forward: forward sinusoidal movement
     * `forward`
+
+## data
+
+1. concat dataset: concatenate torch.utils.data.TensorDataset
+    * `concat`
+2. filter subset: sample a subset
+    * `subset`: `RandomSubset` sample a random subset, `FilterSubset` sample a subset with higher chemotaxis index
+3. split dataset: split a time sequence
+    * `split`
+4. chemotaxis dataset: create a dataset of chemotaxis locomotion
+    * `chemotaxis`
+5. simulation dataset: do parallel simulations by multiprocessing
+    * `simulation`: `SimulationSample` generates one sample, `SimulationDataset` collects the samples
 
 ## networks
 
