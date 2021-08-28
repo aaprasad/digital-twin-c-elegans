@@ -1,6 +1,6 @@
 # virtual-nematode
 
-Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environments
+Virtual C. elegans simulations with neural networks and MuJoCo environments
 
 ## env for C. elegans
 
