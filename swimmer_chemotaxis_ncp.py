@@ -41,7 +41,7 @@ def prepare_model(model_name, device=None, model_path=None, **kwargs):
     if device is None:
         device = torch.device('cpu')
     if model_path is not None:
-        model.load_state_dict(torch.load(model_path))
+        model.load_state_dict(torch.load(model_path, map_location=device))
     model = model.to(device)
     return model
 
