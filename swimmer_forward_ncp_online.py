@@ -23,6 +23,7 @@ def online_test_single_simulation(env, model, math_model, mode):
     y = []
     with torch.no_grad():
         for i in range(10 ** 6):
+            # env.render()
             data = math_model.stimuli(step=i, mode=mode)  # external stimulus signal as input
             data = torch.tensor(data)
             data = data.unsqueeze(-1)  # add input feature's dimension: []->[1]
@@ -73,12 +74,19 @@ def online_test(
     writer.close()
 
 
-def online_test_video(seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected', mode='sine_wave', **kwargs):
+def online_test_video(
+    seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected', mode='sine_wave', record=True,
+    **kwargs
+):
     """ online test and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
     assert model_folder is not None, 'model_folder can not be {}'.format(model_folder)
-    env = make_swimmer(max_episode_steps=max_episode_steps, camera_name='track', video_name=model_folder)
+    if record is True:
+        record_kwargs = {'camera_name': 'track', 'video_name': model_folder}
+    else:
+        record_kwargs = {}
+    env = make_swimmer(max_episode_steps=max_episode_steps, **record_kwargs)
     model = prepare_model(model_name, model_path=os.path.join('runs', model_folder, 'model.pt'), **kwargs)
     math_model = Forward(dt=env.dt, seed=seed)
     x, _ = online_test_single_simulation(env, model, math_model, mode)
@@ -92,4 +100,4 @@ if __name__ == '__main__':
     mode = 'sine_wave'
     kwargs = {'units': 30, 'output_dim': 11, 'in_features': 1}
     online_test(data_size=100, model_folder=model_folder, model_name=model_name, mode=mode, **kwargs)
-    online_test_video(model_folder=model_folder, model_name=model_name, mode=mode, **kwargs)
+    online_test_video(model_folder=model_folder, model_name=model_name, mode=mode, record=True, **kwargs)
