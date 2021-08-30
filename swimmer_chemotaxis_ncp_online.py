@@ -24,8 +24,8 @@ def online_test_single_simulation(env, model, dataset):
     with torch.no_grad():
         for i in range(10 ** 6):
             # env.render()
-            data = dataset.encode_input_func(g=info['g'])  # encode gradient
-            data = data.unsqueeze(dim=0)  # add batch dimension
+            data = dataset.encode_input_func(g=info['g'])  # encode gradient: []->[2]
+            data = data.unsqueeze(dim=0)  # add batch dimension: [2]->[1, 2]
             output, hidden_state = model.step(data, hidden_state)
             action = output.squeeze(dim=0)  # squeeze batch dimension
             action = action.numpy()
