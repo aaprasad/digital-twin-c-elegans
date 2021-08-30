@@ -12,11 +12,11 @@ from src.wrappers.recorder import Recorder
 
 def make_swimmer(
     n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', camera_z=None, camera_name=None,
-    max_episode_steps=1000, video_name='swimmer_forward'
+    max_episode_steps=1000, video_name='swimmer_forward', reset_noise_scale=0.1
 ):
     """ create swimmer env """
     xml_str = swimmer(n_bodies, joint_range, body_len, 'src/envs/mujoco/assets/swimmer.xml', camera_pos, camera_z)
-    env = SwimmerEnv(xml_str=xml_str.decode('utf-8'))
+    env = SwimmerEnv(xml_str=xml_str.decode('utf-8'), reset_noise_scale=reset_noise_scale)
     env = gym.wrappers.TimeLimit(env, max_episode_steps=max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = Position(env)
@@ -28,7 +28,7 @@ def make_swimmer(
 
 def test_forward(seed=None, max_episode_steps=2500):
     """ forward sinusoidal movement """
-    env = make_swimmer(max_episode_steps=max_episode_steps, camera_z=50, camera_name=None)
+    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=0.1, camera_z=50, camera_name=None)
     env.seed(seed)
     observation = env.reset()
     model = Forward(dt=env.dt, seed=seed)
