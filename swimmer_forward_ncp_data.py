@@ -22,4 +22,4 @@ def preprocess_dataset(data_size=50, seed=42, seq_len=16, load_name='source.pt',
 
 
 if __name__ == '__main__':
-    preprocess_dataset(data_size=100, seq_len=16, load_name='forward.pt', save_name='forward_ncp.pt')
+    preprocess_dataset(data_size=1, seq_len=16, load_name='forward.pt', save_name='forward_ncp.pt')
