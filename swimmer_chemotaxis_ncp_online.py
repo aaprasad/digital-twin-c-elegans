@@ -34,8 +34,8 @@ def online_test_single_simulation(env, model, dataset):
             if done:
                 break
     env.close()
-    x = torch.tensor(env.stats['concentration'], dtype=torch.float32).unsqueeze(-1)
-    y = torch.tensor(y, dtype=torch.float32)
+    x = torch.tensor(env.stats['concentration'], dtype=torch.float64).unsqueeze(-1)
+    y = torch.tensor(y, dtype=torch.float64)
     return x, y
 
 
