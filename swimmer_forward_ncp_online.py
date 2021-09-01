@@ -11,7 +11,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def online_test_single_simulation(env, model, math_model, mode):
+def run_simulation(env, model, math_model, mode):
     """ run a forward locomotion simulation steered by a neural network """
     seed = sample_seed()
     env.seed(seed)
@@ -74,7 +74,7 @@ def online_test(
     writer.close()
 
 
-def online_test_video(
+def online_test_once(
     seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected', mode='sine_wave', record=True,
     **kwargs
 ):
@@ -89,7 +89,7 @@ def online_test_video(
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=0., **record_kwargs)
     model = prepare_model(model_name, model_path=os.path.join('runs', model_folder, 'model.pt'), **kwargs)
     math_model = Forward(dt=env.dt, seed=seed)
-    x, _ = online_test_single_simulation(env, model, math_model, mode)
+    x, _ = run_simulation(env, model, math_model, mode)
     displacement = torch.linalg.norm(x[-1, :] - x[0, :], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
 
@@ -100,4 +100,4 @@ if __name__ == '__main__':
     mode = 'sine_wave'
     kwargs = {'units': 30, 'output_dim': 11, 'in_features': 1}
     # online_test(data_size=100, model_folder=model_folder, model_name=model_name, mode=mode, **kwargs)
-    online_test_video(model_folder=model_folder, model_name=model_name, mode=mode, record=True, **kwargs)
+    online_test_once(model_folder=model_folder, model_name=model_name, mode=mode, record=False, **kwargs)
