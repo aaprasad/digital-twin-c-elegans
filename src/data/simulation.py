@@ -52,8 +52,8 @@ class SimulationDataset(torch.utils.data.TensorDataset):
             data_sample, batch_size=1, shuffle=False, num_workers=multiprocessing.cpu_count(),
             worker_init_fn=self.worker_init_fn
         )
-        x = torch.zeros(self.data_size, self.max_episode_steps, self.input_size, dtype=torch.float32)
-        y = torch.zeros(self.data_size, self.max_episode_steps, self.action_size, dtype=torch.float32)
+        x = torch.zeros(self.data_size, self.max_episode_steps, self.input_size, dtype=torch.float64)
+        y = torch.zeros(self.data_size, self.max_episode_steps, self.action_size, dtype=torch.float64)
         for i, (sample_x, sample_y) in enumerate(tqdm(dataloader)):
             x[i] = sample_x.squeeze(dim=0)
             y[i] = sample_y.squeeze(dim=0)

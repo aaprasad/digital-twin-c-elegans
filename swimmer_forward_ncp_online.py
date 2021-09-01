@@ -25,7 +25,7 @@ def run_simulation(env, model, math_model, mode):
         for i in range(10 ** 6):
             # env.render()
             data = math_model.stimuli(step=i, mode=mode)  # external stimulus signal as input
-            data = torch.tensor(data)
+            data = torch.tensor(data, dtype=torch.float64)
             data = data.unsqueeze(-1)  # add input feature's dimension: []->[1]
             data = data.unsqueeze(dim=0)  # add batch dimension: [1]->[1, 1]
             output, hidden_state = model.step(data, hidden_state)
@@ -36,8 +36,8 @@ def run_simulation(env, model, math_model, mode):
             if done:
                 break
     env.close()
-    x = torch.tensor(env.stats['com'], dtype=torch.float32)  # center of mass, (max_episode_steps, 2)
-    y = torch.tensor(y, dtype=torch.float32)  # (max_episode_steps, action_size)
+    x = torch.tensor(env.stats['com'], dtype=torch.float64)  # center of mass, (max_episode_steps, 2)
+    y = torch.tensor(y, dtype=torch.float64)  # (max_episode_steps, action_size)
     return x, y
 
 
@@ -56,7 +56,7 @@ def online_test(
     math_model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]
     result = SimulationDataset(
-        data_size, max_episode_steps, 2, action_size, seed, online_test_single_simulation,
+        data_size, max_episode_steps, 2, action_size, seed, run_simulation,
         # simulation fn kwargs
         env=env, model=model, math_model=math_model, mode=mode
     )
