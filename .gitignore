@@ -6,6 +6,7 @@ runs*/
 # checkpoints
 checkpoint/
 *.pt
+.ipynb_checkpoints/
 # video recordings
 video/
 # test code
