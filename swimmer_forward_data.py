@@ -1,5 +1,5 @@
-""" swimmer: forward sinusoidal movement
-generate forward sinusoidal movement dataset
+""" swimmer: open-loop control of forward locomotion
+generate forward simulation dataset
 """
 
 import os

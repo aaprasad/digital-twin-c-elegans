@@ -1,4 +1,4 @@
-""" swimmer: forward
+""" swimmer: open-loop control of forward locomotion
 preprocess forward simulation dataset for NCP network training
 """
 

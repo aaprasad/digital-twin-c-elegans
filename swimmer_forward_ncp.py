@@ -1,3 +1,7 @@
+""" swimmer: open-loop control of forward locomotion
+train NCP network to perform forward locomotion control
+"""
+
 from swimmer_chemotaxis_ncp import offline_train_and_test
 
 

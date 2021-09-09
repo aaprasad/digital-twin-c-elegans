@@ -1,4 +1,6 @@
-""" online/active testing of NCP swimmer's forward locomotion ability """
+""" swimmer: open-loop control of forward locomotion
+online (active) test NCP network's forward locomotion control
+"""
 
 import numpy as np
 import os

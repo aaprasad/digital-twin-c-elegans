@@ -1,4 +1,4 @@
-""" swimmer: forward movement """
+""" swimmer: forward locomotion """
 
 import gym
 import numpy as np
