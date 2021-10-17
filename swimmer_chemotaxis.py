@@ -42,7 +42,6 @@ def make_swimmer(
     env = gym.wrappers.ClipAction(env)
     env = Distribution(env, dt=env.dt, f=fick, source=np.array([x, y]))
     env = Recorder(env, stats_name=['concentration'], camera_name=camera_name)
-    # record video: if force is True, clear previous monitor files
     if camera_name is not None:
         env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
     return env
