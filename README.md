@@ -1,6 +1,9 @@
 # virtual-nematode
 Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environments
 
+## prerequisites
+* install `gym-worm`
+
 ## mathematical models of locomotion
 * `computational_model`: chemotaxis with behaviors including forward, pirouette, weathervane and random walk
 * `forward`: forward sinusoidal movement
