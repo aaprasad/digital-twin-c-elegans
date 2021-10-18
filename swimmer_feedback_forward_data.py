@@ -40,8 +40,11 @@ def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_
     """ generate forward movement dataset
     x: first joint's target angle, observed joint angles and joint angular velocity
     y: actions
+    reset_noise_scale: noise ~ U[-scale, scale]
+        sampled noise is added to initial q and q_vel (unit: radian)
+        joint range [-100, 100] degrees -> [-1.745, 1.745] rad
     """
-    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=0.1)
+    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=1.745)
     model = Forward(dt=env.dt, seed=seed)
     input_size = 23  # 1 + 11 + 11
     action_size = env.action_space.shape[0]
