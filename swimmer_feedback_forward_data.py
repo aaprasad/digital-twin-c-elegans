@@ -36,15 +36,19 @@ def generate_sample(env, model, mode):
     return x, y
 
 
-def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_wave', save_name='dataset.pt'):
+def generate_dataset(
+    data_size=100, seed=42, max_episode_steps=128, reset_noise_scale=1.745, mode='sine_wave', save_name='dataset.pt'
+):
     """ generate forward movement dataset
     x: first joint's target angle, observed joint angles and joint angular velocity
     y: actions
+    max_episode_steps: the same amount of time for adapting random init pose to sine pose
+        how long it takes depends on reset_noise_scale
     reset_noise_scale: noise ~ U[-scale, scale]
         sampled noise is added to initial q and q_vel (unit: radian)
         joint range [-100, 100] degrees -> [-1.745, 1.745] rad
     """
-    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=1.745)
+    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
     model = Forward(dt=env.dt, seed=seed)
     input_size = 23  # 1 + 11 + 11
     action_size = env.action_space.shape[0]
@@ -58,5 +62,5 @@ def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_
 
 
 if __name__ == '__main__':
-    generate_dataset(data_size=1, max_episode_steps=5000, mode='sine_wave', save_name='feedback_forward.pt')
-    # generate_dataset(data_size=1, max_episode_steps=5000, mode='square_wave', save_name='feedback_forward.pt')
+    generate_dataset(data_size=1, mode='sine_wave', save_name='feedback_forward.pt')
+    # generate_dataset(data_size=1, mode='square_wave', save_name='feedback_forward.pt')
