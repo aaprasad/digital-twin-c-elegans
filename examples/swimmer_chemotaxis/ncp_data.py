@@ -18,17 +18,17 @@ def preprocess_dataset(data_size=600, seq_len=16, load_name='source.pt', save_na
     """
     # load dataset
     concat_dataset = torch.load(os.path.join('data', load_name))
-    print('loaded dataset', len(concat_dataset), concat_dataset[0][0].size(), concat_dataset[0][1].size())
+    print('load dataset', len(concat_dataset), concat_dataset[0][0].size(), concat_dataset[0][1].size())
     print('chemotaxis index mean', np.mean([torch.mean(dataset.tensors[0]).item() for dataset in concat_dataset.datasets]))
     # filter and concat dataset
     data_size = data_size // len(concat_dataset.datasets)
     datasets = [FilterSubset(dataset, data_size) for dataset in concat_dataset.datasets]
     dataset = ConcatDataset(datasets)
-    print('filtered dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
+    print('filter dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     print('chemotaxis index mean', torch.mean(dataset.tensors[0]).item())
-    # preprocess dataset
+    # chemotaxis dataset
     dataset = ChemotaxisDataset(dataset, seq_len=seq_len)
-    print('processed dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
+    print('chemotaxis dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     torch.save(dataset, os.path.join('data', save_name))
 
 
