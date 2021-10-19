@@ -1,8 +1,5 @@
 import multiprocessing
-import os
 import torch
-from virtual_nematode.data.split import SplitDataset
-from virtual_nematode.data.subset import RandomSubset
 
 
 def prepare_dataloader(data_path, eval_ratio, test_ratio, batch_size, seed):
@@ -20,16 +17,3 @@ def prepare_dataloader(data_path, eval_ratio, test_ratio, batch_size, seed):
     test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False, **kwargs)
     print('dataset', len(dataset), [len(train_loader.dataset), len(eval_loader.dataset), len(test_loader.dataset)])
     return train_loader, eval_loader, test_loader
-
-
-def subset_and_split(data_size=50, seed=42, seq_len=16, load_name='source.pt', save_name='target.pt'):
-    # load dataset
-    dataset = torch.load(os.path.join('data', load_name))
-    print('loaded dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
-    # filter dataset
-    dataset = RandomSubset(dataset, data_size, seed)
-    print('random subset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
-    # preprocess dataset
-    dataset = SplitDataset(dataset, seq_len=seq_len)
-    print('processed dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
-    torch.save(dataset, os.path.join('data', save_name))
