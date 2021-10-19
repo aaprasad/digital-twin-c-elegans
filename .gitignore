@@ -11,3 +11,6 @@ checkpoint/
 video/
 # test code
 test/
+# pip
+build/
+*.egg-info/
