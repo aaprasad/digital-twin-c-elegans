@@ -50,6 +50,7 @@ def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_
         env=env, model=model, mode=mode
     )
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
+    os.makedirs('data', exist_ok=True)
     torch.save(dataset, os.path.join('data', save_name))
 
 

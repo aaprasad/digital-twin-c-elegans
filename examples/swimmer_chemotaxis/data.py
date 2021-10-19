@@ -54,6 +54,7 @@ def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=25
         datasets.append(dataset)
     concat_dataset = torch.utils.data.ConcatDataset(datasets)
     print('dataset', len(concat_dataset), concat_dataset[0][0].size(), concat_dataset[0][1].size())
+    os.makedirs('data', exist_ok=True)
     torch.save(concat_dataset, os.path.join('data', save_name))
 
 

@@ -59,6 +59,7 @@ def generate_dataset(
         env=env, model=model, mode=mode
     )
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
+    os.makedirs('data', exist_ok=True)
     torch.save(dataset, os.path.join('data', save_name))
 
 
