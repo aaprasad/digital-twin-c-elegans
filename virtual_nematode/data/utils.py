@@ -2,14 +2,13 @@ import multiprocessing
 import torch
 
 
-def prepare_dataloader(data_path, eval_ratio, test_ratio, batch_size, seed):
-    """ load data and prepare data loaders """
+def prepare_dataloader(data_path, lengths, batch_size, seed):
+    """ load data and prepare data loaders
+    lengths: [train_size, eval_size, test_size]
+    """
     dataset = torch.load(data_path)
-    eval_size = int(len(dataset) * eval_ratio)
-    test_size = int(len(dataset) * test_ratio)
-    train_size = len(dataset) - eval_size - test_size
     train_data, eval_data, test_data = torch.utils.data.random_split(
-        dataset, [train_size, eval_size, test_size], generator=torch.Generator().manual_seed(seed)
+        dataset, lengths, generator=torch.Generator().manual_seed(seed)
     )
     kwargs = {'drop_last': False, 'num_workers': multiprocessing.cpu_count(), 'pin_memory': True}
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, **kwargs)

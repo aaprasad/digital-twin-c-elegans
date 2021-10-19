@@ -108,12 +108,11 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
 
 
 def offline_train_and_test(
-    data_name='ncp.pt', model_name='fully_connected', eval_ratio=0.15, test_ratio=0.15, batch_size=2048, seed=42,
+    data_name='ncp.pt', model_name='fully_connected', lengths=None, batch_size=2048, seed=42,
     cuda=0, lr=0.001, epochs=200, early_stop=30, comment='', **kwargs
 ):
     """
-    eval_ratio: ratio of eval dataset to the whole dataset
-    test_ratio: ratio of test dataset to the whole dataset
+    lengths: [train_size, eval_size, test_size]
     seed: reproducibility on splitting dataset
     units: total amount of neurons (excluding input neurons)
     output_dim: amount of neurons that also act as output
@@ -123,7 +122,7 @@ def offline_train_and_test(
     torch.manual_seed(seed)
     writer = SummaryWriter(comment=comment)
     data_path = os.path.join('data', data_name)
-    train_loader, eval_loader, test_loader = prepare_dataloader(data_path, eval_ratio, test_ratio, batch_size, seed)
+    train_loader, eval_loader, test_loader = prepare_dataloader(data_path, lengths, batch_size, seed)
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
     model = prepare_model(model_name, device, **kwargs)
@@ -136,10 +135,7 @@ def offline_train_and_test(
     mse = test(model, device, test_loader, criterion)
     # hparams and results
     writer.add_hparams(
-        {
-            'eval_ratio': eval_ratio, 'test_ratio': test_ratio, 'batch_size': batch_size, 'seed': seed, 'cuda': cuda,
-            'model_name': model_name, 'lr': lr
-        },
+        {'lengths': lengths, 'batch_size': batch_size, 'seed': seed, 'cuda': cuda, 'model_name': model_name, 'lr': lr},
         {'hparam/MSE/test': mse}
     )
     writer.close()
