@@ -2,7 +2,7 @@
 train NCP network to perform forward locomotion control
 """
 
-from virtual_nematode.networks.ncp.utils import offline_train_and_test
+from virtual_nematode.trainers.ncp import offline_train_and_test
 
 
 if __name__ == '__main__':
