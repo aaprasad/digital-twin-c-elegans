@@ -36,7 +36,7 @@ def generate_sample(env, model, mode):
     return x, y
 
 
-def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_wave', save_name='dataset.pt'):
+def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_wave', save_name='target.pt'):
     """ generate forward movement dataset
     x: action sequence of the first joint in trials
     y: action sequences in trials
@@ -55,5 +55,5 @@ def generate_dataset(data_size=100, seed=42, max_episode_steps=2500, mode='sine_
 
 
 if __name__ == '__main__':
-    generate_dataset(data_size=1, max_episode_steps=5000, mode='sine_wave', save_name='forward.pt')
-    # generate_dataset(data_size=1, max_episode_steps=5000, mode='square_wave', save_name='forward.pt')
+    generate_dataset(data_size=1, max_episode_steps=5000, mode='sine_wave', save_name='data.pt')
+    # generate_dataset(data_size=1, max_episode_steps=5000, mode='square_wave', save_name='data.pt')

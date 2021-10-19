@@ -40,7 +40,7 @@ def online_test_single_simulation(env, model, dataset):
 
 
 def online_test(
-    seed=42, max_episode_steps=2500, distance=15, model_folder=None, model_name='fully_connected', data_name='ncp.pt',
+    seed=42, max_episode_steps=2500, distance=15, model_folder=None, model_name='fully_connected', data_name='source.pt',
     data_size=1200
 ):
     """
@@ -77,7 +77,7 @@ def online_test(
     writer.close()
 
 
-def online_test_video(seed=42, max_episode_steps=2500, distance=15, model_folder=None, model_name='fully_connected', data_name='ncp.pt'):
+def online_test_video(seed=42, max_episode_steps=2500, distance=15, model_folder=None, model_name='fully_connected', data_name='source.pt'):
     """ online test and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -92,6 +92,6 @@ def online_test_video(seed=42, max_episode_steps=2500, distance=15, model_folder
 if __name__ == '__main__':
     model_folder = None
     model_name = 'fully_connected'
-    data_name = 'computational_model_ncp.pt'
+    data_name = 'ncp.pt'
     online_test(data_size=1200, model_folder=model_folder, model_name=model_name, data_name=data_name)
     online_test_video(model_folder=model_folder, model_name=model_name, data_name=data_name)

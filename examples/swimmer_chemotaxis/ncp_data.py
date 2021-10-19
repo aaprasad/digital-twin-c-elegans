@@ -33,4 +33,4 @@ def preprocess_dataset(data_size=600, seq_len=16, load_name='source.pt', save_na
 
 
 if __name__ == '__main__':
-    preprocess_dataset(data_size=600, seq_len=16, load_name='computational_model_chemotaxis.pt', save_name='computational_model_ncp.pt')
+    preprocess_dataset(data_size=600, seq_len=16, load_name='data.pt', save_name='ncp.pt')

@@ -34,7 +34,7 @@ def generate_sample(env, model):
     return x, y
 
 
-def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500, save_name='dataset.pt'):
+def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=2500, save_name='target.pt'):
     """ generate chemotaxis dataset with different chemical source positions
     x: concentrations sensed at nose tip
     y: actions performed each step
@@ -59,4 +59,4 @@ def generate_dataset(distance=15, data_size=12000, seed=42, max_episode_steps=25
 
 
 if __name__ == '__main__':
-    generate_dataset(data_size=12000, max_episode_steps=2500, save_name='computational_model_chemotaxis.pt')
+    generate_dataset(data_size=12000, max_episode_steps=2500, save_name='data.pt')
