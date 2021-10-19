@@ -14,4 +14,4 @@ def preprocess_dataset(seq_len=16, load_name='source.pt', save_name='target.pt')
 
 
 if __name__ == '__main__':
-    preprocess_dataset(seq_len=16, load_name='feedback_forward.pt', save_name='feedback_forward_ncp.pt')
+    preprocess_dataset(seq_len=16, load_name='data.pt', save_name='ncp.pt')

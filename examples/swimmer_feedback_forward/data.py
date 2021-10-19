@@ -37,7 +37,7 @@ def generate_sample(env, model, mode):
 
 
 def generate_dataset(
-    data_size=9000, seed=42, max_episode_steps=128, reset_noise_scale=1.745, mode='sine_wave', save_name='dataset.pt'
+    data_size=9000, seed=42, max_episode_steps=128, reset_noise_scale=1.745, mode='sine_wave', save_name='target.pt'
 ):
     """ generate forward movement dataset
     x: first joint's target angle, observed joint angles and joint angular velocity
@@ -64,5 +64,5 @@ def generate_dataset(
 
 
 if __name__ == '__main__':
-    generate_dataset(mode='sine_wave', save_name='feedback_forward.pt')
-    # generate_dataset(mode='square_wave', save_name='feedback_forward.pt')
+    generate_dataset(mode='sine_wave', save_name='data.pt')
+    # generate_dataset(mode='square_wave', save_name='data.pt')
