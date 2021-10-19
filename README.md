@@ -7,7 +7,7 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
     ```
     pip install -e .
     ```
-* change local packages to be built in-place without first copying to a temporary directory, but require manual deletion of build files
+* change local packages to be built in-place without first copying to a temporary directory
     ```
     pip install -e . --use-feature=in-tree-build
     ```
