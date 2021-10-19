@@ -5,9 +5,9 @@ import os
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from src.networks.ncp.ltc_cell import LTCCell
-from src.networks.ncp.rnn_sequence import RNNSequence
-from src.networks.ncp.wirings import FullyConnected, NCP
+from virtual_nematode.networks.ncp.ltc_cell import LTCCell
+from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
+from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 
 
 def prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed):

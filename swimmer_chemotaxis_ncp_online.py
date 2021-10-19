@@ -4,9 +4,9 @@ import numpy as np
 import os
 import torch
 from torch.utils.tensorboard import SummaryWriter
-from src.data.simulation import SimulationDataset
-from src.data.concat import ConcatDataset
-from src.utils import clock_position, sample_seed
+from virtual_nematode.data.simulation import SimulationDataset
+from virtual_nematode.data.concat import ConcatDataset
+from virtual_nematode.utils import clock_position, sample_seed
 from swimmer_chemotaxis import make_swimmer
 from swimmer_chemotaxis_ncp import prepare_model
 

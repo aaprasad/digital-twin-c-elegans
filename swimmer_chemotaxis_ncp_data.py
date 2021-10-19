@@ -4,9 +4,9 @@ preprocess concatenated chemotaxis dataset for NCP network training
 
 import numpy as np
 import os
-from src.data.concat import ConcatDataset
-from src.data.chemotaxis import ChemotaxisDataset
-from src.data.subset import FilterSubset
+from virtual_nematode.data.concat import ConcatDataset
+from virtual_nematode.data.chemotaxis import ChemotaxisDataset
+from virtual_nematode.data.subset import FilterSubset
 import torch
 
 

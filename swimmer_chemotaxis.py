@@ -7,7 +7,7 @@ from gym_worm.wrappers.distribution import Distribution
 from gym_worm.wrappers.recorder import Recorder
 import numpy as np
 import os
-from src.models.computational_model import ComputationalModelChemotaxis
+from virtual_nematode.models.computational_model import ComputationalModelChemotaxis
 
 
 def fick(target, source, sigma=5):

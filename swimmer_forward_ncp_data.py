@@ -3,8 +3,8 @@ preprocess forward simulation dataset for NCP network training
 """
 
 import os
-from src.data.split import SplitDataset
-from src.data.subset import RandomSubset
+from virtual_nematode.data.split import SplitDataset
+from virtual_nematode.data.subset import RandomSubset
 import torch
 
 

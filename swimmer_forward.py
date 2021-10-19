@@ -6,7 +6,7 @@ from gym_worm.wrappers.position import Position
 from gym_worm.wrappers.recorder import Recorder
 import numpy as np
 import os
-from src.models.forward import Forward
+from virtual_nematode.models.forward import Forward
 
 
 def make_swimmer(
