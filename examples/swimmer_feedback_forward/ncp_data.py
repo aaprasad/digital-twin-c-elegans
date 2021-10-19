@@ -1,0 +1,17 @@
+import os
+import torch
+from virtual_nematode.data.split import SplitDataset
+
+
+def preprocess_dataset(seq_len=16, load_name='source.pt', save_name='target.pt'):
+    # load dataset
+    dataset = torch.load(os.path.join('data', load_name))
+    print('loaded dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
+    # split dataset
+    dataset = SplitDataset(dataset, seq_len=seq_len)
+    print('processed dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
+    torch.save(dataset, os.path.join('data', save_name))
+
+
+if __name__ == '__main__':
+    preprocess_dataset(seq_len=16, load_name='feedback_forward.pt', save_name='feedback_forward_ncp.pt')
