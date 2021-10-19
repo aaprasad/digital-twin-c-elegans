@@ -3,6 +3,10 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 
 ## prerequisites
 * install `gym-worm`
+* install the project in editable mode from local project path
+    ```
+    pip install .
+    ```
 
 ## mathematical models of locomotion
 * `computational_model`: chemotaxis with behaviors including forward, pirouette, weathervane and random walk
