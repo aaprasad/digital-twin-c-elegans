@@ -5,11 +5,11 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 * install `gym-worm`
 * install the project in editable mode from local project path
     ```
-    pip install .
+    pip install -e .
     ```
 * change local packages to be built in-place without first copying to a temporary directory, but require manual deletion of build files
     ```
-    pip install . --use-feature=in-tree-build
+    pip install -e . --use-feature=in-tree-build
     ```
 
 ## mathematical models of locomotion
