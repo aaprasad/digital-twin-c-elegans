@@ -8,7 +8,7 @@ from virtual_nematode.data.simulation import SimulationDataset
 from virtual_nematode.data.concat import ConcatDataset
 from virtual_nematode.utils import clock_position, sample_seed
 from sim import make_swimmer
-from virtual_nematode.networks.ncp.utils import prepare_model
+from virtual_nematode.trainers.ncp import prepare_model
 
 
 def online_test_single_simulation(env, model, dataset):

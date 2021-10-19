@@ -7,7 +7,7 @@ import os
 from virtual_nematode.data.simulation import SimulationDataset
 from virtual_nematode.models.forward import Forward
 from virtual_nematode.utils import sample_seed
-from virtual_nematode.networks.ncp.utils import prepare_model
+from virtual_nematode.trainers.ncp import prepare_model
 from sim import make_swimmer
 import torch
 from torch.utils.tensorboard import SummaryWriter
