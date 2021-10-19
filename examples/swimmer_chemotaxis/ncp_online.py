@@ -7,8 +7,8 @@ from torch.utils.tensorboard import SummaryWriter
 from virtual_nematode.data.simulation import SimulationDataset
 from virtual_nematode.data.concat import ConcatDataset
 from virtual_nematode.utils import clock_position, sample_seed
-from swimmer_chemotaxis import make_swimmer
-from swimmer_chemotaxis_ncp import prepare_model
+from sim import make_swimmer
+from ncp import prepare_model
 
 
 def online_test_single_simulation(env, model, dataset):

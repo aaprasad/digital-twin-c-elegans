@@ -8,7 +8,7 @@ from virtual_nematode.data.simulation import SimulationDataset
 from virtual_nematode.models.forward import Forward
 from virtual_nematode.utils import sample_seed
 from swimmer_chemotaxis_ncp import prepare_model
-from swimmer_forward import make_swimmer
+from sim import make_swimmer
 import torch
 from torch.utils.tensorboard import SummaryWriter
 

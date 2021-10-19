@@ -6,7 +6,7 @@ import os
 from virtual_nematode.data.simulation import SimulationDataset
 from virtual_nematode.models.computational_model import ComputationalModelChemotaxis
 from virtual_nematode.utils import clock_position, sample_seed
-from swimmer_chemotaxis import make_swimmer
+from sim import make_swimmer
 import torch
 
 
