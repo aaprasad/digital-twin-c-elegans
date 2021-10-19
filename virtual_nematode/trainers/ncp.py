@@ -1,28 +1,11 @@
-import multiprocessing
 import os
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
+from virtual_nematode.data.utils import prepare_dataloader
 from virtual_nematode.networks.ncp.ltc_cell import LTCCell
 from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
 from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
-
-
-def prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed):
-    """ load data and prepare data loaders """
-    dataset = torch.load(data_path)
-    eval_size = int(len(dataset) * eval_ratio)
-    test_size = int(len(dataset) * test_ratio)
-    train_size = len(dataset) - eval_size - test_size
-    train_data, eval_data, test_data = torch.utils.data.random_split(
-        dataset, [train_size, eval_size, test_size], generator=torch.Generator().manual_seed(seed)
-    )
-    kwargs = {'drop_last': False, 'num_workers': multiprocessing.cpu_count(), 'pin_memory': True}
-    train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, **kwargs)
-    eval_loader = torch.utils.data.DataLoader(eval_data, batch_size=batch_size, shuffle=False, **kwargs)
-    test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False, **kwargs)
-    print('dataset', len(dataset), [len(train_loader.dataset), len(eval_loader.dataset), len(test_loader.dataset)])
-    return train_loader, eval_loader, test_loader
 
 
 def prepare_model(model_name, device=None, model_path=None, **kwargs):
@@ -140,7 +123,7 @@ def offline_train_and_test(
     torch.manual_seed(seed)
     writer = SummaryWriter(comment=comment)
     data_path = os.path.join('data', data_name)
-    train_loader, eval_loader, test_loader = prepare_data(data_path, eval_ratio, test_ratio, batch_size, seed)
+    train_loader, eval_loader, test_loader = prepare_dataloader(data_path, eval_ratio, test_ratio, batch_size, seed)
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
     model = prepare_model(model_name, device, **kwargs)
