@@ -7,6 +7,10 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
     ```
     pip install .
     ```
+* change local packages to be built in-place without first copying to a temporary directory, but require manual deletion of build files
+    ```
+    pip install . --use-feature=in-tree-build
+    ```
 
 ## mathematical models of locomotion
 * `computational_model`: chemotaxis with behaviors including forward, pirouette, weathervane and random walk
