@@ -109,7 +109,7 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
 
 def offline_train_and_test(
     data_name='ncp.pt', model_name='fully_connected', eval_ratio=0.15, test_ratio=0.15, batch_size=2048, seed=42,
-    cuda=0, lr=0.001, epochs=200, early_stop=30, comment='swimmer_chemotaxis_ncp', **kwargs
+    cuda=0, lr=0.001, epochs=200, early_stop=30, comment='', **kwargs
 ):
     """
     eval_ratio: ratio of eval dataset to the whole dataset
