@@ -87,7 +87,8 @@ def test(model, device, loader, criterion):
     return mse
 
 
-def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path):
+def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path):
+    """ offline train and eval """
     mse_best, e_best = 100., 0
     for e in tqdm(range(epochs)):
         # train
@@ -107,11 +108,11 @@ def train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, 
             break
 
 
-def offline_train_and_test(
+def train_eval_test(
     data_name='ncp.pt', model_name='fully_connected', lengths=None, batch_size=2048, seed=42,
     cuda=0, lr=0.001, epochs=200, early_stop=30, comment='', **kwargs
 ):
-    """
+    """ offline train, eval and test
     lengths: [train_size, eval_size, test_size]
     seed: reproducibility on splitting dataset
     units: total amount of neurons (excluding input neurons)
@@ -129,7 +130,7 @@ def offline_train_and_test(
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = torch.nn.MSELoss(reduction='mean')
     model_path = os.path.join(writer.log_dir, 'model.pt')
-    train_and_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
+    train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
     # test
     model = prepare_model(model_name, device, model_path, **kwargs)
     mse = test(model, device, test_loader, criterion)
