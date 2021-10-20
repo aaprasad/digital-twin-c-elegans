@@ -135,7 +135,7 @@ def offline_train_and_test(
     mse = test(model, device, test_loader, criterion)
     # hparams and results
     writer.add_hparams(
-        {'lengths': lengths, 'batch_size': batch_size, 'seed': seed, 'cuda': cuda, 'model_name': model_name, 'lr': lr},
+        {'lengths': torch.tensor(lengths), 'batch_size': batch_size, 'seed': seed, 'cuda': cuda, 'model_name': model_name, 'lr': lr},
         {'hparam/MSE/test': mse}
     )
     writer.close()
