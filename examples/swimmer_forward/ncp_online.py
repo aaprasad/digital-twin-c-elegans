@@ -41,5 +41,4 @@ if __name__ == '__main__':
     model_name = 'fully_connected'
     mode = 'sine_wave'
     kwargs = {'units': 30, 'output_dim': 11, 'in_features': 1}
-    # tester(test_func, data_size=100, model_folder=model_folder, model_name=model_name, mode=mode, **kwargs)
     online_test_once(model_folder=model_folder, model_name=model_name, mode=mode, record=False, **kwargs)
