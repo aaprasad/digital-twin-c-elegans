@@ -40,7 +40,7 @@ def generate_dataset(
     data_size=9000, seed=42, max_episode_steps=128, reset_noise_scale=1.745, mode='sine_wave', save_name='target.pt'
 ):
     """ generate forward movement dataset
-    x: first joint's target angle, observed joint angles and joint angular velocity
+    x: external signal (first joint's target angle), proprioceptive observations (joint angles and angular velocity)
     y: actions
     data_size: the total amount of sequences is data_size * (max_episode_steps / seq_len)
     max_episode_steps: the same amount of time for adapting random init pose to sine pose
