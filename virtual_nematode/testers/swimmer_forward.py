@@ -40,7 +40,7 @@ def test_func(env, model, math_model, encode_func, mode):
 
 
 def tester(
-    func, encode_func, input_size, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected', data_size=100,
+    encode_func, input_size, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected', data_size=100,
     mode='sine_wave', **kwargs
 ):
     """ online test for at least 100 trials (if there's no randomness, 1 trial is enough) """
@@ -54,7 +54,7 @@ def tester(
     math_model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]
     result = SimulationDataset(
-        data_size, max_episode_steps, input_size, action_size, seed, func,
+        data_size, max_episode_steps, input_size, action_size, seed, test_func,
         # func kwargs
         env=env, model=model, math_model=math_model, encode_func=encode_func, mode=mode
     )
