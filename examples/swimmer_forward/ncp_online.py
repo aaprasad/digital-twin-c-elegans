@@ -5,41 +5,15 @@ online (active) test NCP network's forward locomotion control
 import numpy as np
 import os
 from virtual_nematode.models.forward import Forward
-from virtual_nematode.utils import sample_seed
-from virtual_nematode.testers.swimmer_forward import tester
+from virtual_nematode.testers.swimmer_forward import test_func
 from virtual_nematode.trainers.ncp import prepare_model
-from sim import make_swimmer
+from virtual_nematode.envs.swimmer_forward import make_swimmer
 import torch
 
 
-def test_func(env, model, math_model, mode):
-    """ run a forward locomotion simulation steered by a neural network """
-    seed = sample_seed()
-    env.seed(seed)
-    torch.manual_seed(seed)
-    env.reset()
-    model.eval()
-    math_model.seed(seed)
-    hidden_state = None
-    y = []
-    with torch.no_grad():
-        for i in range(10 ** 6):
-            # env.render()
-            data = math_model.stimuli(step=i, mode=mode)  # external stimulus signal as input
-            data = torch.tensor(data, dtype=torch.float64)
-            data = data.unsqueeze(-1)  # add input feature's dimension: []->[1]
-            data = data.unsqueeze(dim=0)  # add batch dimension: [1]->[1, 1]
-            output, hidden_state = model.step(data, hidden_state)
-            action = output.squeeze(dim=0)  # remove batch dimension
-            action = action.numpy()
-            observation, reward, done, info = env.step(action)
-            y.append(action.tolist())
-            if done:
-                break
-    env.close()
-    x = torch.tensor(env.stats['com'], dtype=torch.float64)  # center of mass, (max_episode_steps, 2)
-    y = torch.tensor(y, dtype=torch.float64)  # (max_episode_steps, action_size)
-    return x, y
+def encode_func(data, **kwargs):
+    data = data.unsqueeze(-1)  # add input feature's dimension: []->[1]
+    return data
 
 
 def online_test_once(
@@ -57,7 +31,7 @@ def online_test_once(
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=0., **record_kwargs)
     model = prepare_model(model_name, model_path=os.path.join('runs', model_folder, 'model.pt'), **kwargs)
     math_model = Forward(dt=env.dt, seed=seed)
-    x, _ = test_func(env, model, math_model, mode)
+    x, _ = test_func(env, model, math_model, encode_func, mode)
     displacement = torch.linalg.norm(x[-1, :] - x[0, :], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
 
