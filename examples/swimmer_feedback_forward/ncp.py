@@ -6,5 +6,5 @@ if __name__ == '__main__':
         data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=128,
         seed=42, cuda=0, lr=0.001, epochs=300, early_stop=30, comment='',
         # model kwargs
-        units=50, output_dim=11, in_features=1
+        units=50, output_dim=11, in_features=23
     )
