@@ -9,6 +9,9 @@ def encode_func(data, observation):
 
 
 if __name__ == '__main__':
+    """ results
+    100 trials: com displacement mean 40.76 / 2500 steps
+    """
     model_folder = None
     model_name = 'fully_connected'
     mode = 'sine_wave'
