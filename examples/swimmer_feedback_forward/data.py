@@ -64,5 +64,8 @@ def generate_dataset(
 
 
 if __name__ == '__main__':
+    """ results
+    dataset: x [9000, 128, 23], y [9000, 128, 11]
+    """
     generate_dataset(mode='sine_wave', save_name='data.pt')
     # generate_dataset(mode='square_wave', save_name='data.pt')

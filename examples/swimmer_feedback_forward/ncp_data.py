@@ -14,4 +14,7 @@ def preprocess_dataset(seq_len=16, load_name='source.pt', save_name='target.pt')
 
 
 if __name__ == '__main__':
+    """ results
+    dataset: x [72000, 16, 23], y [72000, 16, 11]
+    """
     preprocess_dataset(seq_len=16, load_name='data.pt', save_name='ncp.pt')
