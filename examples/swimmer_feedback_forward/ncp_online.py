@@ -12,10 +12,9 @@ if __name__ == '__main__':
     model_folder = None
     model_name = 'fully_connected'
     mode = 'sine_wave'
-    input_size = 23
     seed = 42
     data_size = 100
     reset_noise_scale = 1.745
     max_episode_steps = 2500
-    kwargs = {'units': 50, 'output_dim': 11, 'in_features': input_size}
+    kwargs = {'units': 50, 'output_dim': 11, 'in_features': 23}
     tester(encode_func, seed, max_episode_steps, reset_noise_scale, model_folder, model_name, data_size, mode, **kwargs)
