@@ -18,4 +18,4 @@ if __name__ == '__main__':
     reset_noise_scale = 1.745
     max_episode_steps = 2500
     kwargs = {'units': 50, 'output_dim': 11, 'in_features': input_size}
-    tester(encode_func, input_size, seed, max_episode_steps, reset_noise_scale, model_folder, model_name, data_size, mode, **kwargs)
+    tester(encode_func, seed, max_episode_steps, reset_noise_scale, model_folder, model_name, data_size, mode, **kwargs)
