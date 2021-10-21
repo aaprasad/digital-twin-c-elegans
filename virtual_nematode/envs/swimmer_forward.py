@@ -23,9 +23,9 @@ def make_swimmer(
     return env
 
 
-def simulate(seed=None, max_episode_steps=2500, trials=1):
+def simulate(seed=None, max_episode_steps=2500, reset_noise_scale=0.1, trials=1):
     """ forward sinusoidal movement """
-    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=0.1, camera_z=50, camera_name=None)
+    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, camera_z=50, camera_name=None)
     displacements = []
     if trials > 1:
         seed = None  # ensure that seed is different in each trial
