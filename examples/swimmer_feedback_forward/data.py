@@ -6,7 +6,7 @@ import os
 from virtual_nematode.data.simulation import SimulationDataset
 from virtual_nematode.models.forward import Forward
 from virtual_nematode.utils import sample_seed
-from virtual_nematode.envs.swimmer_forward import make_swimmer
+from virtual_nematode.envs.swimmer_v3_v2 import make_swimmer
 import torch
 
 

@@ -1,7 +1,7 @@
 """ swimmer: forward locomotion """
 
 import numpy as np
-from virtual_nematode.envs.swimmer_forward import make_swimmer
+from virtual_nematode.envs.swimmer_v3_v2 import make_swimmer
 from virtual_nematode.models.forward import Forward
 
 
