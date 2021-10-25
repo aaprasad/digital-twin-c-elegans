@@ -2,6 +2,8 @@
 online (active) test NCP network's forward locomotion control
 """
 
+import os
+from virtual_nematode.trainers.ncp import prepare_model
 from virtual_nematode.envs.swimmer_v3_v2 import make_swimmer
 from virtual_nematode.testers.swimmer_forward import single_tester
 
@@ -12,7 +14,7 @@ def encode_func(data, **kwargs):
 
 
 if __name__ == '__main__':
-    model_folder = None
+    model_folder = os.path.join('runs', '')
     model_name = 'fully_connected'
     mode = 'sine_wave'
     seed = 42
@@ -22,4 +24,5 @@ if __name__ == '__main__':
     kwargs = {'units': 30, 'output_dim': 11, 'in_features': 1}
     record_kwargs = {'camera_name': 'track', 'video_name': model_folder} if record else {}
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, **record_kwargs)
-    single_tester(env, encode_func, seed, max_episode_steps, model_folder, model_name, mode, **kwargs)
+    model = prepare_model(model_name, model_path=os.path.join(model_folder, 'model.pt'), **kwargs)
+    single_tester(env, model, encode_func, seed, max_episode_steps, mode)

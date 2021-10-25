@@ -1,6 +1,8 @@
+import os
 import torch
 from virtual_nematode.envs.swimmer_v3_v2 import make_swimmer
 from virtual_nematode.testers.swimmer_forward import tester, single_tester
+from virtual_nematode.trainers.ncp import prepare_model
 
 
 def encode_func(data, observation):
@@ -14,7 +16,7 @@ if __name__ == '__main__':
     100 trials: com displacement mean 40.76 / 2500 steps
     1 trial: com displacement 40.44 / 2500 steps
     """
-    model_folder = None
+    model_folder = os.path.join('runs', '')
     model_name = 'fully_connected'
     mode = 'sine_wave'
     seed = 42
@@ -25,5 +27,6 @@ if __name__ == '__main__':
     kwargs = {'units': 50, 'output_dim': 11, 'in_features': 23}
     record_kwargs = {'camera_name': 'track', 'video_name': model_folder} if record else {}
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, **record_kwargs)
-    tester(env, encode_func, seed, max_episode_steps, model_folder, model_name, data_size, mode, **kwargs)
-    single_tester(env, encode_func, seed, max_episode_steps, model_folder, model_name, mode, **kwargs)
+    model = prepare_model(model_name, model_path=os.path.join(model_folder, 'model.pt'), **kwargs)
+    tester(env, model, encode_func, seed, max_episode_steps, model_folder, model_name, data_size, mode)
+    single_tester(env, model, encode_func, seed, max_episode_steps, mode)
