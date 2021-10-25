@@ -47,7 +47,7 @@ def make_swimmer(
     return env
 
 
-def test_sinusoidal_motion(seed=None):
+def simulate(seed=None):
     """ control by sinusoidal motion
     seed: env simulation stays the same with seeding
     """
@@ -68,4 +68,4 @@ def test_sinusoidal_motion(seed=None):
 
 
 if __name__ == '__main__':
-    test_sinusoidal_motion()
+    simulate()
