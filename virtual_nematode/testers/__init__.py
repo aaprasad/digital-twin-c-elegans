@@ -1,1 +1,1 @@
-import virtual_nematode.testers.swimmer_forward
+import virtual_nematode.testers.forward
