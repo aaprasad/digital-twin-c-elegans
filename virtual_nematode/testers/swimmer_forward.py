@@ -1,7 +1,6 @@
 import numpy as np
 import os
 from virtual_nematode.data.simulation import SimulationDataset
-from virtual_nematode.envs.swimmer_v3_v2 import make_swimmer
 from virtual_nematode.models.forward import Forward
 from virtual_nematode.trainers.ncp import prepare_model
 from virtual_nematode.utils import sample_seed
@@ -40,8 +39,8 @@ def test_func(env, model, math_model, encode_func, mode):
 
 
 def tester(
-    encode_func, seed=42, max_episode_steps=2500, reset_noise_scale=0.1, model_folder=None,
-    model_name='fully_connected', data_size=100, mode='sine_wave', **kwargs
+    env, encode_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected', data_size=100,
+    mode='sine_wave', **kwargs
 ):
     """ online test for at least 100 trials """
     np.random.seed(seed)
@@ -49,7 +48,6 @@ def tester(
     assert model_folder is not None, 'model_folder can not be {}'.format(model_folder)
     model_dir = os.path.join('runs', model_folder)
     writer = SummaryWriter(log_dir=model_dir)
-    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, video_name=model_folder)
     model = prepare_model(model_name, model_path=os.path.join(model_dir, 'model.pt'), **kwargs)
     math_model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]
@@ -73,15 +71,13 @@ def tester(
 
 
 def single_tester(
-    encode_func, seed=42, max_episode_steps=2500, reset_noise_scale=0.1, model_folder=None,
-    model_name='fully_connected', mode='sine_wave', record=True, **kwargs
+    env, encode_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
+    mode='sine_wave', **kwargs
 ):
     """ online test for a single trial and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
     assert model_folder is not None, 'model_folder can not be {}'.format(model_folder)
-    record_kwargs = {'camera_name': 'track', 'video_name': model_folder} if record else {}
-    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, **record_kwargs)
     model = prepare_model(model_name, model_path=os.path.join('runs', model_folder, 'model.pt'), **kwargs)
     math_model = Forward(dt=env.dt, seed=seed)
     x, _ = test_func(env, model, math_model, encode_func, mode)

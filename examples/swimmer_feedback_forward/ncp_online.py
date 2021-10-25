@@ -1,4 +1,5 @@
 import torch
+from virtual_nematode.envs.swimmer_v3_v2 import make_swimmer
 from virtual_nematode.testers.swimmer_forward import tester, single_tester
 
 
@@ -22,5 +23,7 @@ if __name__ == '__main__':
     max_episode_steps = 2500
     record = False
     kwargs = {'units': 50, 'output_dim': 11, 'in_features': 23}
-    tester(encode_func, seed, max_episode_steps, reset_noise_scale, model_folder, model_name, data_size, mode, **kwargs)
-    single_tester(encode_func, seed, max_episode_steps, reset_noise_scale, model_folder, model_name, mode, record, **kwargs)
+    record_kwargs = {'camera_name': 'track', 'video_name': model_folder} if record else {}
+    env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, **record_kwargs)
+    tester(env, encode_func, seed, max_episode_steps, model_folder, model_name, data_size, mode, **kwargs)
+    single_tester(env, encode_func, seed, max_episode_steps, model_folder, model_name, mode, **kwargs)
