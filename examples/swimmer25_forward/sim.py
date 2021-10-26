@@ -18,7 +18,7 @@ if __name__ == '__main__':
     camera_z = 50
     camera_name = None
     max_episode_steps = 2500
-    video_name = 'swimmer_forward'
+    video_name = 'swimmer'
     reset_noise_scale = 0.1
     env = make_swimmer(
         n_bodies, joint_range, body_len, camera_pos, camera_z, camera_name, max_episode_steps, video_name,
