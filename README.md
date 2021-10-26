@@ -27,21 +27,25 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 
 ## networks
 ### ncp
-* swimmer_chemotaxis
+* run simulation
     ```
-    python swimmer_chemotaxis.py
-    python swimmer_chemotaxis_data.py
-    python swimmer_chemotaxis_ncp_data.py
-    pyhton swimmer_chemotaxis_ncp.py
-    python swimmer_chemotaxis_ncp_online.py
+    python sim.py
     ```
-* swimmer_forward
+* generate simulation data
     ```
-    python swimmer_forward.py
-    python swimmer_forward_data.py
-    python swimmer_forward_ncp_data.py
-    python swimmer_forward_ncp.py
-    python swimmer_forward_ncp_online.py
+    python data.py
+    ```
+* preprocess data
+    ```
+    python ncp_data.py
+    ```
+* train and test network
+    ```
+    python ncp.py
+    ```
+* online test
+    ```
+    python ncp_online.py
     ```
 
 ## TensorBoard
