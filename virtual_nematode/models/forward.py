@@ -7,9 +7,9 @@ import numpy as np
 
 class Forward(object):
     """ generate action to perform forward sinusoidal movement """
-    def __init__(self, dt, seed=None):
+    def __init__(self, dt, seed=None, n=12):
         self.dt = dt  # real time per step
-        self.n = 12  # number of bodies
+        self.n = n  # number of bodies
         self.q_max = 40 * np.pi / 180  # max joint angle (rad)
         """ affect sinusoidal posture and speed """
         self.a_max = 2.  # action: [-a_max, a_max]
