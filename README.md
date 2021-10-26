@@ -43,7 +43,7 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
     ```
     python ncp.py
     ```
-* online test
+* online test the trained network
     ```
     python ncp_online.py
     ```
