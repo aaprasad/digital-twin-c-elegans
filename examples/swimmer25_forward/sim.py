@@ -23,7 +23,7 @@ def simulate(env, seed=None, max_episode_steps=2500, trials=1):
     for i in range(trials):
         env.seed(seed)
         observation = env.reset()
-        model = Forward(dt=env.dt, seed=seed, n=25, q_max=40, a_max=2., psi=0.2, freq=3.)
+        model = Forward(dt=env.dt, seed=seed, n=25, q_max=20, a_max=1., psi=0.1, freq=2.)
         for step in range(10 ** 6):
             # env.render()
             action = model.step(step=step, q=observation[1:25], q_vel=observation[28:])
