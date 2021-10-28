@@ -2,18 +2,21 @@ import numpy as np
 from virtual_nematode.models.forward import Forward
 
 
-def simulate(env, seed=None, max_episode_steps=2500, trials=1):
-    """ forward sinusoidal movement """
+def simulate(env, model_step_kwargs_func, seed=None, max_episode_steps=2500, trials=1, **kwargs):
+    """ forward sinusoidal movement
+    model_step_kwargs_func: function, take in observation and return the needed kwargs for model.step()
+    **kwargs: configure mathematical model
+    """
     displacements = []
     if trials > 1:
         seed = None  # ensure that seed is different in each trial
     for i in range(trials):
         env.seed(seed)
         observation = env.reset()
-        model = Forward(dt=env.dt, seed=seed)
+        model = Forward(dt=env.dt, seed=seed, **kwargs)
         for step in range(10 ** 6):
             # env.render()
-            action = model.step(step=step, q=observation[1:12], q_vel=observation[15:])
+            action = model.step(step=step, **model_step_kwargs_func(observation))
             observation, reward, done, info = env.step(action)
             if done:
                 d = np.linalg.norm(np.array(env.stats['com'][-1]) - np.array(env.stats['com'][0]), ord=2)
