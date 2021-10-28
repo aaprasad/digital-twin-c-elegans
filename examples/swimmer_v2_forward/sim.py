@@ -10,10 +10,12 @@ def model_step_kwargs_func(observation):
 
 
 def check_wrapper(env):
-    print(env.unwrapped.action_space)
+    """ check if gym.ActionWrapper works """
+    print(env.action_space)  # muscle ctrl: Box([0., ...], [1., ...], (96,), float32)
+    print(env.unwrapped.action_space)  # joint ctrl: Box([-1., ...], [1., ...], (24,), float32)
     action = env.unwrapped.action_space.sample()
-    action_reconstructed = env.action(env.reverse_action(action))
-    print(action == action_reconstructed)
+    action_reconstructed = env.action(env.reverse_action(action))  # ctrl: joint -> muscle -> joint
+    print(action == action_reconstructed)  # reconstructed joint ctrl should be the same as the original one
 
 
 if __name__ == '__main__':
@@ -23,8 +25,6 @@ if __name__ == '__main__':
         max_episode_steps=max_episode_steps, video_name='swimmer', reset_noise_scale=0.1
     )
     env = Muscles(env)
-    # print(env.action_space)
-    # print(env.observation_space)
-    # check_wrapper(env)
+    check_wrapper(env)
     kwargs = {'n': 25, 'q_max': 20, 'a_max': 1., 'psi': 0.1, 'freq': 2.}
     simulate(env, model_step_kwargs_func, seed=None, max_episode_steps=max_episode_steps, trials=1, **kwargs)
