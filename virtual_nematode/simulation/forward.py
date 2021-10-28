@@ -1,9 +1,10 @@
 import numpy as np
 
 
-def simulate(env, model, model_kwargs_func, seed=None, max_episode_steps=2500, trials=1):
+def simulate(env, model, model_kwargs_func, action_func=None, seed=None, max_episode_steps=2500, trials=1):
     """ forward sinusoidal movement
     model_kwargs_func: function, take in observation and return the needed kwargs for model.step()
+    action_func: function, transform action
     **kwargs: configure mathematical model
     """
     displacements = []
@@ -15,6 +16,8 @@ def simulate(env, model, model_kwargs_func, seed=None, max_episode_steps=2500, t
         for step in range(10 ** 6):
             # env.render()
             action = model.step(step=step, **model_kwargs_func(observation))
+            if action_func is not None:
+                action = action_func(env, action)
             observation, reward, done, info = env.step(action)
             if done:
                 d = np.linalg.norm(np.array(env.stats['com'][-1]) - np.array(env.stats['com'][0]), ord=2)

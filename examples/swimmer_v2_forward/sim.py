@@ -10,6 +10,11 @@ def model_kwargs_func(observation):
     return {'q': observation[1:25], 'q_vel': observation[28:]}
 
 
+def action_func(env, action):
+    action = env.reverse_action(action)
+    return action
+
+
 def check_wrapper(env):
     """ check if gym.ActionWrapper works """
     print(env.action_space)  # muscle ctrl: Box([0., ...], [1., ...], (96,), float32)
@@ -28,4 +33,4 @@ if __name__ == '__main__':
     env = Muscles(env)
     # check_wrapper(env)
     model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
-    simulate(env, model, model_kwargs_func, seed=None, max_episode_steps=max_episode_steps, trials=1)
+    simulate(env, model, model_kwargs_func, action_func=action_func, seed=None, max_episode_steps=max_episode_steps, trials=1)
