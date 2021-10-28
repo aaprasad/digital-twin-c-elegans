@@ -5,7 +5,7 @@ from virtual_nematode.envs.swimmer_v3_v2 import make_swimmer
 from virtual_nematode.simulation.forward import simulate
 
 
-def model_step_kwargs_func(observation):
+def model_kwargs_func(observation):
     return {'q': observation[1:25], 'q_vel': observation[28:]}
 
 
@@ -27,4 +27,4 @@ if __name__ == '__main__':
     env = Muscles(env)
     # check_wrapper(env)
     kwargs = {'n': 25, 'q_max': 20, 'a_max': 1., 'psi': 0.1, 'freq': 2.}
-    simulate(env, model_step_kwargs_func, seed=None, max_episode_steps=max_episode_steps, trials=1, **kwargs)
+    simulate(env, model_kwargs_func, seed=None, max_episode_steps=max_episode_steps, trials=1, **kwargs)
