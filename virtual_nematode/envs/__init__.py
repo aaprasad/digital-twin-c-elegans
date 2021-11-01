@@ -1,1 +1,1 @@
-import virtual_nematode.envs.swimmer_v3_v2
+import virtual_nematode.envs.swimmer_v3_v1
