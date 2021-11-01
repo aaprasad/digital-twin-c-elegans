@@ -2,7 +2,7 @@
 
 import gym
 from gym_worm.envs.mujoco.camera import camera
-from gym_worm.envs.mujoco.swimmer_v3_v2 import swimmer
+from gym_worm.envs.mujoco.swimmer_v3_v1 import swimmer
 from gym_worm.envs.mujoco.chemotaxis import chemotaxis
 from gym_worm.wrappers.distribution import Distribution
 from gym_worm.wrappers.recorder import Recorder
