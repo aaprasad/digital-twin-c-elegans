@@ -74,10 +74,11 @@ def generate_sample(env, model, mode, model_kwargs_func, x_func):
     env.seed(seed)  # seed env
     model.seed(seed)  # seed model
     observation = env.reset()
+    info = {}
     x = []
     y = []
     for i in range(10 ** 6):
-        action = model.step(step=i, **model_kwargs_func(observation))
+        action = model.step(step=i, **model_kwargs_func(observation=observation, info=info))
         stimuli = model.stimuli(step=i, mode=mode)
         x.append(x_func(stimuli, observation))
         y.append(action.tolist())

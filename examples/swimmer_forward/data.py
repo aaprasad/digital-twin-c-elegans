@@ -7,7 +7,7 @@ from virtual_nematode.data.simulation import generate_dataset
 from virtual_nematode.models.forward import Forward
 
 
-def model_kwargs_func(observation):
+def model_kwargs_func(observation, **kwargs):
     return {'q': observation[1:12], 'q_vel': observation[15:]}
 
 

@@ -15,7 +15,7 @@ def simulate(env, model, model_kwargs_func, action_func=None, seed=None, max_epi
         observation = env.reset()
         for step in range(10 ** 6):
             # env.render()
-            action = model.step(step=step, **model_kwargs_func(observation))
+            action = model.step(step=step, **model_kwargs_func(observation=observation))
             if action_func is not None:
                 action = action_func(env, action)
             observation, reward, done, info = env.step(action)
