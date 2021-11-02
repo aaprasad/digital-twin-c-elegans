@@ -2,6 +2,8 @@
 generate forward simulation dataset
 """
 
+import os
+import torch
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.models.forward import Forward
 from virtual_nematode.data.simulation import generate_dataset
@@ -34,7 +36,8 @@ if __name__ == '__main__':
     max_episode_steps = 128
     reset_noise_scale = 1.745
     mode = 'sine_wave'  # or 'square_wave'
-    save_name = 'data.pt'
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
     model = Forward(dt=env.dt, seed=seed)
-    generate_dataset(env, model, input_size, model_kwargs_func, x_func, data_size, seed, max_episode_steps, mode, save_name)
+    dataset = generate_dataset(env, model, input_size, model_kwargs_func, x_func, data_size, seed, max_episode_steps, mode)
+    os.makedirs('data', exist_ok=True)
+    torch.save(dataset, 'data/data.pt')
