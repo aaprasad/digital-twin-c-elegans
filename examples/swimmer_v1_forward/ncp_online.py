@@ -12,6 +12,10 @@ def encode_func(stimuli, observation, **kwargs):
 
 
 if __name__ == '__main__':
+    """ results
+    100 trials: com displacement mean 14.27 / 2500 steps
+    1 trial: com displacement 13.56 / 2500 steps
+    """
     model_folder = os.path.join('runs', '')
     model_name = 'fully_connected'
     seed = 42
