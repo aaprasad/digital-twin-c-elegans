@@ -26,9 +26,9 @@ if __name__ == '__main__':
     y: torch.Tensor, (max_episode_steps, action_size)
     """
     input_size = 49  # 1 + 24 + 24
-    data_size = 6000
+    data_size = 4500
     seed = 42
-    max_episode_steps = 192
+    max_episode_steps = 256
     reset_noise_scale = 1.745
     env = make_swimmer(
         n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_steps=max_episode_steps,
