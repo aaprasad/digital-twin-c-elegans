@@ -19,9 +19,9 @@ def test_func(env, model, math_model, encode_func):
     with torch.no_grad():
         for i in range(10 ** 6):
             # env.render()
-            data = math_model.stimuli(step=i)  # external stimulus signal as input
-            data = torch.tensor(data, dtype=torch.float64)
-            data = encode_func(data=data, observation=observation)
+            stimuli = math_model.stimuli(step=i)  # external stimulus signal as input
+            stimuli = torch.tensor(stimuli, dtype=torch.float64)
+            data = encode_func(stimuli=stimuli, observation=observation)
             data = data.unsqueeze(dim=0)  # add batch dimension
             output, hidden_state = model.step(data, hidden_state)
             action = output.squeeze(dim=0)  # remove batch dimension

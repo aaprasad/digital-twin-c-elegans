@@ -8,8 +8,8 @@ from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.testers.forward import single_tester
 
 
-def encode_func(data, **kwargs):
-    data = data.unsqueeze(-1)  # add input feature's dimension: []->[1]
+def encode_func(stimuli, **kwargs):
+    data = stimuli.unsqueeze(-1)  # add input feature's dimension: []->[1]
     return data
 
 

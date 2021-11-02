@@ -5,9 +5,9 @@ from virtual_nematode.testers.forward import tester, single_tester
 from virtual_nematode.trainers.ncp import prepare_model
 
 
-def encode_func(data, observation, **kwargs):
+def encode_func(stimuli, observation, **kwargs):
     """ input_size: 1 + 11 + 11 """
-    data = torch.tensor([data] + observation[1:12].tolist() + observation[15:].tolist(), dtype=torch.float64)
+    data = torch.tensor([stimuli] + observation[1:12].tolist() + observation[15:].tolist(), dtype=torch.float64)
     return data
 
 
