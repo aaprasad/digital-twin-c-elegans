@@ -90,16 +90,15 @@ def generate_sample(env, model, model_kwargs_func, x_func):
     return x, y
 
 
-def generate_dataset(env, input_size, data_size=9000, seed=42, max_episode_steps=128, **kwargs):
+def generate_dataset(env, model, model_kwargs_func, x_func, input_size, data_size=9000, seed=42, max_episode_steps=128):
     """ generate forward movement dataset
     input_size: x size
-    **kwargs: for simulation func
     """
     action_size = env.action_space.shape[0]
     dataset = SimulationDataset(
         data_size, max_episode_steps, input_size, action_size, seed, generate_sample,
         # simulation fn kwargs
-        env=env, **kwargs
+        env=env, model=model, model_kwargs_func=model_kwargs_func, x_func=x_func
     )
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     return dataset
