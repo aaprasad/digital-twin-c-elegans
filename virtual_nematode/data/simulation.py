@@ -62,11 +62,10 @@ class SimulationDataset(torch.utils.data.TensorDataset):
         return x, y
 
 
-def generate_sample(env, model, mode, model_kwargs_func, x_func):
+def generate_sample(env, model, model_kwargs_func, x_func):
     """ run a forward movement simulation
     x: torch.Tensor, (max_episode_steps, x_size)
     y: torch.Tensor, (max_episode_steps, action_size)
-    mode: stimuli mode
     model_kwargs_func: function, take in observation and return the needed kwargs for model.step()
     x_func: function, return x
     """
@@ -79,7 +78,7 @@ def generate_sample(env, model, mode, model_kwargs_func, x_func):
     y = []
     for i in range(10 ** 6):
         action = model.step(step=i, **model_kwargs_func(observation=observation, info=info))
-        stimuli = model.stimuli(step=i, mode=mode)
+        stimuli = model.stimuli(step=i)
         x.append(x_func(stimuli=stimuli, observation=observation, info=info))
         y.append(action.tolist())
         observation, reward, done, info = env.step(action)

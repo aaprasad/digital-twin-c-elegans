@@ -16,7 +16,6 @@ def encode_func(data, **kwargs):
 if __name__ == '__main__':
     model_folder = os.path.join('runs', '')
     model_name = 'fully_connected'
-    mode = 'sine_wave'
     seed = 42
     max_episode_steps = 2500
     reset_noise_scale = 0.
@@ -25,4 +24,4 @@ if __name__ == '__main__':
     record_kwargs = {'camera_name': 'track', 'video_name': model_folder} if record else {}
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, **record_kwargs)
     model = prepare_model(model_name, model_path=os.path.join(model_folder, 'model.pt'), **kwargs)
-    single_tester(env, model, encode_func, seed, max_episode_steps, mode)
+    single_tester(env, model, encode_func, seed, max_episode_steps)

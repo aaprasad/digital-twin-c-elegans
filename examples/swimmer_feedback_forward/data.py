@@ -35,12 +35,11 @@ if __name__ == '__main__':
     seed = 42
     max_episode_steps = 128
     reset_noise_scale = 1.745
-    mode = 'sine_wave'  # or 'square_wave'
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
     model = Forward(dt=env.dt, seed=seed)
     dataset = generate_dataset(
         env, input_size, data_size, seed, max_episode_steps,
-        **{'model': model, 'mode': mode, 'model_kwargs_func': model_kwargs_func, 'x_func': x_func}
+        **{'model': model, 'model_kwargs_func': model_kwargs_func, 'x_func': x_func}
     )
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')

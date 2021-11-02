@@ -18,7 +18,6 @@ if __name__ == '__main__':
     """
     model_folder = os.path.join('runs', '')
     model_name = 'fully_connected'
-    mode = 'sine_wave'
     seed = 42
     data_size = 100
     reset_noise_scale = 1.745
@@ -28,5 +27,5 @@ if __name__ == '__main__':
     record_kwargs = {'camera_name': 'track', 'video_name': model_folder} if record else {}
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, **record_kwargs)
     model = prepare_model(model_name, model_path=os.path.join(model_folder, 'model.pt'), **kwargs)
-    tester(env, model, encode_func, seed, max_episode_steps, model_folder, model_name, data_size, mode)
-    single_tester(env, model, encode_func, seed, max_episode_steps, mode)
+    tester(env, model, encode_func, seed, max_episode_steps, model_folder, model_name, data_size)
+    single_tester(env, model, encode_func, seed, max_episode_steps)

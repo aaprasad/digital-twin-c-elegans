@@ -19,7 +19,6 @@ def x_func(stimuli, **kwargs):
 
 if __name__ == '__main__':
     """
-    mode: stimuli mode
     x: torch.Tensor, (max_episode_steps, input_size)
         action sequence of the first joint in trials
     y: torch.Tensor, (max_episode_steps, action_size)
@@ -30,12 +29,11 @@ if __name__ == '__main__':
     reset_noise_scale = 0.
     max_episode_steps = 5000
     seed = 42
-    mode = 'sine_wave'  # or 'square_wave'
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
     model = Forward(dt=env.dt, seed=seed)
     dataset = generate_dataset(
         env, input_size, data_size, seed, max_episode_steps,
-        **{'model': model, 'mode': mode, 'model_kwargs_func': model_kwargs_func, 'x_func': x_func}
+        **{'model': model, 'model_kwargs_func': model_kwargs_func, 'x_func': x_func}
     )
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')

@@ -6,7 +6,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def test_func(env, model, math_model, encode_func, mode):
+def test_func(env, model, math_model, encode_func):
     """ run a forward locomotion simulation steered by a neural network """
     seed = sample_seed()
     env.seed(seed)
@@ -19,7 +19,7 @@ def test_func(env, model, math_model, encode_func, mode):
     with torch.no_grad():
         for i in range(10 ** 6):
             # env.render()
-            data = math_model.stimuli(step=i, mode=mode)  # external stimulus signal as input
+            data = math_model.stimuli(step=i)  # external stimulus signal as input
             data = torch.tensor(data, dtype=torch.float64)
             data = encode_func(data=data, observation=observation)
             data = data.unsqueeze(dim=0)  # add batch dimension
@@ -38,7 +38,7 @@ def test_func(env, model, math_model, encode_func, mode):
 
 def tester(
     env, model, encode_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
-    data_size=100, mode='sine_wave'
+    data_size=100
 ):
     """ online test for at least 100 trials """
     np.random.seed(seed)
@@ -49,7 +49,7 @@ def tester(
     result = SimulationDataset(
         data_size, max_episode_steps, 2, action_size, seed, test_func,
         # func kwargs
-        env=env, model=model, math_model=math_model, encode_func=encode_func, mode=mode
+        env=env, model=model, math_model=math_model, encode_func=encode_func
     )
     print('result', len(result), result[0][0].size(), result[0][1].size())
     x, _ = result.tensors
@@ -57,17 +57,17 @@ def tester(
     print('com displacement mean {:.2f} / {} steps'.format(displacement_mean, max_episode_steps))
     hparam = {
         'seed': seed, 'max_episode_steps': max_episode_steps, 'model_folder': model_folder, 'model_name': model_name,
-        'data_size': data_size, 'mode': mode
+        'data_size': data_size
     }
     writer.add_hparams(hparam, {'hparam/DisplacementMean/online': displacement_mean})
     writer.close()
 
 
-def single_tester(env, model, encode_func, seed=42, max_episode_steps=2500, mode='sine_wave'):
+def single_tester(env, model, encode_func, seed=42, max_episode_steps=2500):
     """ online test for a single trial and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
     math_model = Forward(dt=env.dt, seed=seed)
-    x, _ = test_func(env, model, math_model, encode_func, mode)
+    x, _ = test_func(env, model, math_model, encode_func)
     displacement = torch.linalg.norm(x[-1, :] - x[0, :], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
