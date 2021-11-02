@@ -10,7 +10,7 @@ observation space: (52,) including qpos[2:27], qvel[0:25],
     qvel[0:27]: x_vel, y_vel, ?, q_vel[0:24]
 """
 
-from virtual_nematode.envs.swimmer_v3_v1 import make_swimmer
+from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.models.forward import Forward
 from virtual_nematode.simulation.forward import simulate
 

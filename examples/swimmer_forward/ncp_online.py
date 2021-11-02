@@ -4,7 +4,7 @@ online (active) test NCP network's forward locomotion control
 
 import os
 from virtual_nematode.trainers.ncp import prepare_model
-from virtual_nematode.envs.swimmer_v3_v1 import make_swimmer
+from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.testers.forward import single_tester
 
 
