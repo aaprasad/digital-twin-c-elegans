@@ -182,3 +182,8 @@ class ComputationalModelChemotaxis(object):
         q_next = self._joint_angle(step=step, g_w=g_w)
         action = self._action(q=q, q_next=q_next, q_vel=q_vel)
         return action
+
+    @staticmethod
+    def stimuli(**kwargs):
+        """ empty func """
+        return None
