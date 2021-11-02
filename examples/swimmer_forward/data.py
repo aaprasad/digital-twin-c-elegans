@@ -11,7 +11,7 @@ def model_kwargs_func(observation, **kwargs):
     return {'q': observation[1:12], 'q_vel': observation[15:]}
 
 
-def x_func(stimuli, observation):
+def x_func(stimuli, **kwargs):
     return [stimuli]
 
 
