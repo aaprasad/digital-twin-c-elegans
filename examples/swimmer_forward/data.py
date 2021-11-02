@@ -3,14 +3,10 @@ generate forward simulation dataset
 """
 
 import os
-from sim import make_swimmer
+from sim import make_swimmer, model_kwargs_func
 import torch
 from virtual_nematode.data.simulation import generate_dataset
 from virtual_nematode.models.forward import Forward
-
-
-def model_kwargs_func(observation, **kwargs):
-    return {'q': observation[1:12], 'q_vel': observation[15:]}
 
 
 def x_func(stimuli, **kwargs):
