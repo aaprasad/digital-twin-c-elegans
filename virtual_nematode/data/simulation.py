@@ -80,7 +80,7 @@ def generate_sample(env, model, mode, model_kwargs_func, x_func):
     for i in range(10 ** 6):
         action = model.step(step=i, **model_kwargs_func(observation=observation, info=info))
         stimuli = model.stimuli(step=i, mode=mode)
-        x.append(x_func(stimuli=stimuli, observation=observation))
+        x.append(x_func(stimuli=stimuli, observation=observation, info=info))
         y.append(action.tolist())
         observation, reward, done, info = env.step(action)
         if done:
