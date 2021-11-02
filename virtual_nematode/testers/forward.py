@@ -21,7 +21,7 @@ def test_func(env, model, math_model, encode_func, mode):
             # env.render()
             data = math_model.stimuli(step=i, mode=mode)  # external stimulus signal as input
             data = torch.tensor(data, dtype=torch.float64)
-            data = encode_func(data, observation)
+            data = encode_func(data=data, observation=observation)
             data = data.unsqueeze(dim=0)  # add batch dimension
             output, hidden_state = model.step(data, hidden_state)
             action = output.squeeze(dim=0)  # remove batch dimension
