@@ -1,7 +1,9 @@
 import multiprocessing
 import numpy as np
+import os
 import torch
 from tqdm import tqdm
+from virtual_nematode.utils import sample_seed
 
 
 class SimulationSample(torch.utils.data.Dataset):
@@ -58,3 +60,49 @@ class SimulationDataset(torch.utils.data.TensorDataset):
             x[i] = sample_x.squeeze(dim=0)
             y[i] = sample_y.squeeze(dim=0)
         return x, y
+
+
+def generate_sample(env, model, mode, model_kwargs_func, x_func):
+    """ run a forward movement simulation
+    x: torch.Tensor, (max_episode_steps, x_size)
+    y: torch.Tensor, (max_episode_steps, action_size)
+    mode: stimuli mode
+    model_kwargs_func: function, take in observation and return the needed kwargs for model.step()
+    x_func: function, return x
+    """
+    seed = sample_seed()
+    env.seed(seed)  # seed env
+    model.seed(seed)  # seed model
+    observation = env.reset()
+    x = []
+    y = []
+    for i in range(10 ** 6):
+        action = model.step(step=i, **model_kwargs_func(observation))
+        stimuli = model.stimuli(step=i, mode=mode)
+        x.append(x_func(stimuli, observation))
+        y.append(action.tolist())
+        observation, reward, done, info = env.step(action)
+        if done:
+            break
+    env.close()
+    x = torch.tensor(x, dtype=torch.float64)
+    y = torch.tensor(y, dtype=torch.float64)
+    return x, y
+
+
+def generate_dataset(
+    env, model, input_size, model_kwargs_func, x_func, data_size=9000, seed=42, max_episode_steps=128, mode='sine_wave',
+    save_name='target.pt'
+):
+    """ generate forward movement dataset
+    input_size: x size
+    """
+    action_size = env.action_space.shape[0]
+    dataset = SimulationDataset(
+        data_size, max_episode_steps, input_size, action_size, seed, generate_sample,
+        # simulation fn kwargs
+        env=env, model=model, mode=mode, model_kwargs_func=model_kwargs_func, x_func=x_func
+    )
+    print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
+    os.makedirs('data', exist_ok=True)
+    torch.save(dataset, os.path.join('data', save_name))
