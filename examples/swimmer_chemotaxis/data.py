@@ -24,6 +24,10 @@ def x_func(info, **kwargs):
     return [info['concentration']]
 
 
+def y_func(action, **kwargs):
+    return action.tolist()
+
+
 if __name__ == '__main__':
     """
     data_size: the total dataset size, should be divided for each env (with different source position)
@@ -41,7 +45,7 @@ if __name__ == '__main__':
     data_size = data_size // len(envs)
     datasets = []
     for env, model in zip(envs, models):
-        dataset = generate_dataset(env, model, model_kwargs_func, x_func, input_size, data_size, seed, max_episode_steps)
+        dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, data_size, seed, max_episode_steps)
         print(env.source.tolist(), len(dataset), dataset[0][0].size(), dataset[0][1].size())
         datasets.append(dataset)
     concat_dataset = torch.utils.data.ConcatDataset(datasets)

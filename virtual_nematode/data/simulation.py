@@ -62,12 +62,13 @@ class SimulationDataset(torch.utils.data.TensorDataset):
         return x, y
 
 
-def generate_sample(env, model, model_kwargs_func, x_func):
+def generate_sample(env, model, model_kwargs_func, x_func, y_func):
     """ run a forward movement simulation
     x: torch.Tensor, (max_episode_steps, x_size)
     y: torch.Tensor, (max_episode_steps, action_size)
     model_kwargs_func: function, take in observation and return the needed kwargs for model.step()
     x_func: function, return x
+    y_func: function, return y
     """
     seed = sample_seed()
     env.seed(seed)  # seed env
@@ -80,7 +81,7 @@ def generate_sample(env, model, model_kwargs_func, x_func):
         action = model.step(step=i, **model_kwargs_func(observation=observation, info=info))
         stimuli = model.stimuli(step=i)
         x.append(x_func(stimuli=stimuli, observation=observation, info=info))
-        y.append(action.tolist())
+        y.append(y_func(action=action))
         observation, reward, done, info = env.step(action)
         if done:
             break
@@ -90,7 +91,7 @@ def generate_sample(env, model, model_kwargs_func, x_func):
     return x, y
 
 
-def generate_dataset(env, model, model_kwargs_func, x_func, input_size, data_size=9000, seed=42, max_episode_steps=128):
+def generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, data_size=9000, seed=42, max_episode_steps=128):
     """ generate forward movement dataset
     input_size: x size
     """
@@ -98,7 +99,7 @@ def generate_dataset(env, model, model_kwargs_func, x_func, input_size, data_siz
     dataset = SimulationDataset(
         data_size, max_episode_steps, input_size, action_size, seed, generate_sample,
         # simulation fn kwargs
-        env=env, model=model, model_kwargs_func=model_kwargs_func, x_func=x_func
+        env=env, model=model, model_kwargs_func=model_kwargs_func, x_func=x_func, y_func=y_func
     )
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     return dataset

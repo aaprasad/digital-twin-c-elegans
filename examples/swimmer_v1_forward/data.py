@@ -14,6 +14,10 @@ def x_func(stimuli, observation, **kwargs):
     return [stimuli] + observation[1:25].tolist() + observation[28:].tolist()
 
 
+def y_func(action, **kwargs):
+    return action.tolist()
+
+
 if __name__ == '__main__':
     """
     max_episode_steps: the same amount of time for adapting random init pose to sine pose
@@ -31,6 +35,6 @@ if __name__ == '__main__':
         reset_noise_scale=reset_noise_scale
     )
     model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
-    dataset = generate_dataset(env, model, model_kwargs_func, x_func, input_size, data_size, seed, max_episode_steps)
+    dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, data_size, seed, max_episode_steps)
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')

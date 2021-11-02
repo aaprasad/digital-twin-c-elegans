@@ -14,6 +14,10 @@ def x_func(stimuli, observation, **kwargs):
     return [stimuli] + observation[1:12].tolist() + observation[15:].tolist()
 
 
+def y_func(action, **kwargs):
+    return action.tolist()
+
+
 if __name__ == '__main__':
     """
     data_size: the total amount of sequences is data_size * (max_episode_steps / seq_len)
@@ -34,6 +38,6 @@ if __name__ == '__main__':
     reset_noise_scale = 1.745
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
     model = Forward(dt=env.dt, seed=seed)
-    dataset = generate_dataset(env, model, model_kwargs_func, x_func, input_size, data_size, seed, max_episode_steps)
+    dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, data_size, seed, max_episode_steps)
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')
