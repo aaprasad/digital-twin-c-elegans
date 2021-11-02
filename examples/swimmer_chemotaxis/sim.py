@@ -4,7 +4,7 @@ import gym
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.swimmer_v3_v1 import swimmer
 from gym_worm.envs.mujoco.chemotaxis import chemotaxis
-from gym_worm.wrappers.distribution import Distribution
+from gym_worm.wrappers.distribution_observation import DistributionObservation
 from gym_worm.wrappers.recorder import Recorder
 import numpy as np
 import os
@@ -42,7 +42,7 @@ def make_swimmer(
     env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'))
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
-    env = Distribution(env, dt=env.dt, f=fick, source=np.array([x, y]))
+    env = DistributionObservation(env, dt=env.dt, f=fick, source=np.array([x, y]))
     env = Recorder(env, stats_name=['concentration'], camera_name=camera_name)
     if camera_name is not None:
         env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
