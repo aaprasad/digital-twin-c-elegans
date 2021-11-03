@@ -24,10 +24,6 @@ def y_func(action, **kwargs):
 
 
 if __name__ == '__main__':
-    """
-
-
-    """
     input_size = 1
     data_size = 1
     reset_noise_scale = 0.
