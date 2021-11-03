@@ -103,7 +103,11 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
         writer.add_scalar('MSE/eval', mse, e)
         # eval best
         if mse < mse_best:
-            torch.save(model.state_dict(), model_path)
+            if type(model) is torch.nn.DataParallel:
+                state_dict = model.module.state_dict()
+            else:
+                state_dict = model.state_dict()
+            torch.save(state_dict, model_path)
             mse_best, e_best = mse, e
             writer.add_scalar('MSE/best', mse_best, e_best)
         # early stop
