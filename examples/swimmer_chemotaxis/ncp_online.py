@@ -16,15 +16,14 @@ def online_test_single_simulation(env, model, dataset):
     seed = sample_seed()
     env.seed(seed)  # seed env
     torch.manual_seed(seed)  # seed model
-    env.reset()
+    observation = env.reset()
     model.eval()
-    info = env.get_info(info={})
     hidden_state = None
     y = []
     with torch.no_grad():
         for i in range(10 ** 6):
             # env.render()
-            data = dataset.encode_input_func(g=info['g'])  # encode gradient: []->[2]
+            data = dataset.encode_input_func(g=observation[27])  # encode gradient: []->[2]
             data = data.unsqueeze(dim=0)  # add batch dimension: [2]->[1, 2]
             output, hidden_state = model.step(data, hidden_state)
             action = output.squeeze(dim=0)  # squeeze batch dimension

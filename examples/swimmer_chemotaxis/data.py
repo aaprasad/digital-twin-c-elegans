@@ -10,15 +10,12 @@ from sim import make_swimmer
 import torch
 
 
-def model_kwargs_func(observation, info, **kwargs):
-    return {'q': observation[1:12], 'q_vel': observation[15:26], 'g_p': info['g_p'], 'g_w': info['g_w']}
+def model_kwargs_func(observation, **kwargs):
+    return {'q': observation[1:12], 'q_vel': observation[15:26], 'g_p': observation[28], 'g_w': observation[29]}
 
 
-def x_func(info, **kwargs):
-    for key in ['concentration']:
-        if key not in info:
-            info[key] = 0.
-    return [info['concentration']]
+def x_func(observation, **kwargs):
+    return [observation[26]]
 
 
 def y_func(action, **kwargs):

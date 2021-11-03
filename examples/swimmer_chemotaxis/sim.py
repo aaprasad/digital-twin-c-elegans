@@ -56,11 +56,10 @@ def simulate(seed=None):
     env = make_swimmer(max_episode_steps=2500, x=9, y=12, camera_z=50, camera_name=None)  # distance from source: 15
     env.seed(seed)
     observation = env.reset()
-    info = {'g_p': 0., 'g_w': 0.}
     model = ComputationalModelChemotaxis(dt=env.dt, seed=seed)
     for i in range(10 ** 6):
         # env.render()
-        action = model.step(step=i, q=observation[1:12], q_vel=observation[15:26], g_p=info['g_p'], g_w=info['g_w'])
+        action = model.step(step=i, q=observation[1:12], q_vel=observation[15:26], g_p=observation[28], g_w=observation[29])
         observation, reward, done, info = env.step(action)
         if done:
             print('Episode finished after {} steps'.format(i + 1))
