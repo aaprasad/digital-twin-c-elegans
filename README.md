@@ -27,6 +27,16 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 
 ## networks
 ### ncp
+#### how to use multiple GPUs using torch.nn.DataParallel
+* DataParallel tutorial: https://pytorch.org/tutorials/beginner/blitz/data_parallel_tutorial.html
+* All manually defined parameters need to be registered, so that they can be transferred along with the module to any devices.
+* torch.nn.ParameterDict can register dict of parameters, but it doesn't support DataParallel.
+* In torch.nn.Module, register parameters one by one with `self.register_parameter(name, param)`, and access `param` directly with `self.name`.
+* save DataParallel models by:
+    ```
+    torch.save(model.module.state_dict(), PATH)
+    ```
+#### usage
 * run simulation
     ```
     python sim.py
