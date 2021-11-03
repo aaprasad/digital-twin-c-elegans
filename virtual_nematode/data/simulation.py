@@ -74,7 +74,6 @@ def generate_sample(env, model, model_kwargs_func, x_func, y_func):
     env.seed(seed)  # seed env
     model.seed(seed)  # seed model
     observation = env.reset()
-    info = {}
     x = []
     y = []
     for i in range(10 ** 6):
