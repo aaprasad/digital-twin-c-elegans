@@ -15,10 +15,16 @@ def model_kwargs_func(observation, **kwargs):
 
 
 def x_func(observation, **kwargs):
+    """ x: input_size = 1
+    external signal: concentrations sensed at nose tip
+    """
     return [observation[26]]
 
 
 def y_func(action, **kwargs):
+    """ y: action_size
+    ctrl signal: joint action
+    """
     return action.tolist()
 
 
@@ -26,8 +32,6 @@ if __name__ == '__main__':
     """
     data_size: the total dataset size, should be divided for each env (with different source position)
     seed: the randomly generated dataset stays the same with seeding
-    x: torch.Tensor, (max_episode_steps, input_size), concentrations sensed at nose tip
-    y: torch.Tensor, (max_episode_steps, action_size), actions performed each step
     """
     input_size = 1
     data_size = 12000

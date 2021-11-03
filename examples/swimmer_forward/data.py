@@ -10,19 +10,23 @@ from virtual_nematode.models.forward import Forward
 
 
 def x_func(stimuli, **kwargs):
+    """ x: input_size = 1
+    external signal: action sequence of the first joint
+    """
     return [stimuli]
 
 
 def y_func(action, **kwargs):
+    """ y: action_size
+    ctrl signal: joint action
+    """
     return action.tolist()
 
 
 if __name__ == '__main__':
     """
-    x: torch.Tensor, (max_episode_steps, input_size)
-        action sequence of the first joint in trials
-    y: torch.Tensor, (max_episode_steps, action_size)
-        action sequences in trials
+
+
     """
     input_size = 1
     data_size = 1

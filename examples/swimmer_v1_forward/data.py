@@ -11,20 +11,16 @@ from virtual_nematode.data.simulation import generate_dataset
 
 
 def x_func(stimuli, observation, **kwargs):
+    """ x: input_size = stimuli_size + q_size + q_vel_size """
     return [stimuli] + observation[1:25].tolist() + observation[28:52].tolist()
 
 
 def y_func(action, **kwargs):
+    """ y: action_size """
     return action.tolist()
 
 
 if __name__ == '__main__':
-    """
-    max_episode_steps: the same amount of time for adapting random init pose to sine pose
-        how long it takes depends on reset_noise_scale
-    x: torch.Tensor, (max_episode_steps, input_size)
-    y: torch.Tensor, (max_episode_steps, action_size)
-    """
     input_size = 49  # 1 + 24 + 24
     data_size = 4500
     seed = 42

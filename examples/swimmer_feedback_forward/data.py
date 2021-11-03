@@ -11,10 +11,17 @@ from virtual_nematode.data.simulation import generate_dataset
 
 
 def x_func(stimuli, observation, **kwargs):
+    """ x: input_size = stimuli_size + q_size + q_vel_size
+    external signal: first joint's target angle
+    proprioceptive observations: joint angles and angular velocity
+    """
     return [stimuli] + observation[1:12].tolist() + observation[15:26].tolist()
 
 
 def y_func(action, **kwargs):
+    """ y: action_size
+    ctrl signal: joint action
+    """
     return action.tolist()
 
 
@@ -26,10 +33,6 @@ if __name__ == '__main__':
         joint range [-100, 100] degrees -> [-1.745, 1.745] rad
     max_episode_steps: the same amount of time for adapting random init pose to sine pose
         how long it takes depends on reset_noise_scale
-    x: torch.Tensor, (max_episode_steps, stimuli_size + q_size + q_vel_size = input_size)
-        external signal (first joint's target angle), proprioceptive observations (joint angles and angular velocity)
-    y: torch.Tensor, (max_episode_steps, action_size)
-        actions
     """
     input_size = 23  # 1 + 11 + 11
     data_size = 9000
