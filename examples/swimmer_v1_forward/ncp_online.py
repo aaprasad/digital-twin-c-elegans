@@ -28,7 +28,7 @@ if __name__ == '__main__':
     )
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
-        **{'units': 50, 'output_dim': 24, 'in_features': 49}
+        **{'units': 100, 'output_dim': 24, 'in_features': 49}
     )
     tester(env, model, encode_func, seed, max_episode_steps, model_folder, model_name, data_size)
     env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
