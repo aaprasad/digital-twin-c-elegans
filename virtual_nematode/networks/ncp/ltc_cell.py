@@ -170,31 +170,31 @@ class LTCCell(nn.Module):
         v_pre = state
 
         # We can pre-compute the effects of the sensory neurons here
-        sensory_w_activation = self._params["sensory_w"] * self._sigmoid(
-            inputs, self._params["sensory_mu"], self._params["sensory_sigma"]
+        sensory_w_activation = self.sensory_w * self._sigmoid(
+            inputs, self.sensory_mu, self.sensory_sigma
         )
         sensory_w_activation *= self._params["sensory_sparsity_mask"].to(
             sensory_w_activation.device
         )
 
-        sensory_rev_activation = sensory_w_activation * self._params["sensory_erev"]
+        sensory_rev_activation = sensory_w_activation * self.sensory_erev
 
         # Reduce over dimension 1 (=source sensory neurons)
         w_numerator_sensory = torch.sum(sensory_rev_activation, dim=1)
         w_denominator_sensory = torch.sum(sensory_w_activation, dim=1)
 
         # cm/t is loop invariant
-        cm_t = self._params["cm"] / (elapsed_time / self._ode_unfolds)
+        cm_t = self.cm / (elapsed_time / self._ode_unfolds)
 
         # Unfold the multiply ODE multiple times into one RNN step
         for t in range(self._ode_unfolds):
-            w_activation = self._params["w"] * self._sigmoid(
-                v_pre, self._params["mu"], self._params["sigma"]
+            w_activation = self.w * self._sigmoid(
+                v_pre, self.mu, self.sigma
             )
 
             w_activation *= self._params["sparsity_mask"].to(w_activation.device)
 
-            rev_activation = w_activation * self._params["erev"]
+            rev_activation = w_activation * self.erev
 
             # Reduce over dimension 1 (=source neurons)
             w_numerator = torch.sum(rev_activation, dim=1) + w_numerator_sensory
@@ -202,10 +202,10 @@ class LTCCell(nn.Module):
 
             numerator = (
                 cm_t * v_pre
-                + self._params["gleak"] * self._params["vleak"]
+                + self.gleak * self.vleak
                 + w_numerator
             )
-            denominator = cm_t + self._params["gleak"] + w_denominator
+            denominator = cm_t + self.gleak + w_denominator
 
             # Avoid dividing by 0
             v_pre = numerator / (denominator + self._epsilon)
@@ -214,9 +214,9 @@ class LTCCell(nn.Module):
 
     def _map_inputs(self, inputs):
         if self._input_mapping in ["affine", "linear"]:
-            inputs = inputs * self._params["input_w"]
+            inputs = inputs * self.input_w
         if self._input_mapping == "affine":
-            inputs = inputs + self._params["input_b"]
+            inputs = inputs + self.input_b
         return inputs
 
     def _map_outputs(self, state):
@@ -225,19 +225,19 @@ class LTCCell(nn.Module):
             output = output[:, 0 : self.motor_size]  # slice
 
         if self._output_mapping in ["affine", "linear"]:
-            output = output * self._params["output_w"]
+            output = output * self.output_w
         if self._output_mapping == "affine":
-            output = output + self._params["output_b"]
+            output = output + self.output_b
         return output
 
     def _clip(self, w):
         return torch.nn.ReLU()(w)
 
     def apply_weight_constraints(self):
-        self._params["w"].data = self._clip(self._params["w"].data)
-        self._params["sensory_w"].data = self._clip(self._params["sensory_w"].data)
-        self._params["cm"].data = self._clip(self._params["cm"].data)
-        self._params["gleak"].data = self._clip(self._params["gleak"].data)
+        self.w.data = self._clip(self.w.data)
+        self.sensory_w.data = self._clip(self.sensory_w.data)
+        self.cm.data = self._clip(self.cm.data)
+        self.gleak.data = self._clip(self.gleak.data)
 
     def forward(self, inputs, states):
         # Regularly sampled mode (elapsed time = 1 second)
