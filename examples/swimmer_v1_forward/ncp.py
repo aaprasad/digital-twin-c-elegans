@@ -3,7 +3,7 @@ from virtual_nematode.trainers.ncp import train_eval_test
 
 if __name__ == '__main__':
     """ results
-    memory: 7597MiB
+    memory: 7G * 4
     time: ~ 1h 50min / 300 epochs
     """
     train_eval_test(
