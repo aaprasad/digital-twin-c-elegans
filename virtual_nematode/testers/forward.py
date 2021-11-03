@@ -16,6 +16,7 @@ def test_func(env, model, math_model, encode_func):
     math_model.seed(seed)
     hidden_state = None
     y = []
+    coms = []
     with torch.no_grad():
         for i in range(10 ** 6):
             # env.render()
@@ -28,10 +29,11 @@ def test_func(env, model, math_model, encode_func):
             action = action.numpy()
             observation, reward, done, info = env.step(action)
             y.append(action.tolist())
+            coms.append(info['com'])
             if done:
                 break
     env.close()
-    x = torch.tensor(env.stats['com'], dtype=torch.float64)  # center of mass, (max_episode_steps, 2)
+    x = torch.tensor(coms, dtype=torch.float64)  # center of mass, (max_episode_steps, 2)
     y = torch.tensor(y, dtype=torch.float64)  # (max_episode_steps, action_size)
     return x, y
 

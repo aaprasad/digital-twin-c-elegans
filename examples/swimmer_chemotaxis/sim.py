@@ -43,7 +43,7 @@ def make_swimmer(
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = DistributionObservation(env, dt=env.dt, f=fick, source=np.array([x, y]))
-    env = Recorder(env, stats_name=['concentration'], camera_name=camera_name)
+    env = Recorder(env, camera_name=camera_name)
     if camera_name is not None:
         env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
     return env
@@ -57,14 +57,16 @@ def simulate(seed=None):
     env.seed(seed)
     observation = env.reset()
     model = ComputationalModelChemotaxis(dt=env.dt, seed=seed)
+    concentrations = []
     for i in range(10 ** 6):
         # env.render()
         action = model.step(step=i, q=observation[1:12], q_vel=observation[15:26], g_p=observation[28], g_w=observation[29])
         observation, reward, done, info = env.step(action)
+        concentrations.append(observation[26])
         if done:
             print('Episode finished after {} steps'.format(i + 1))
             break
-    print('chemotaxis index', np.mean(env.stats['concentration']))
+    print('chemotaxis index', np.mean(concentrations))
     env.close()
 
 

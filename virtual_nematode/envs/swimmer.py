@@ -17,7 +17,7 @@ def make_swimmer(
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = Position(env)
-    env = Recorder(env, stats_name=['com'], camera_name=camera_name)
+    env = Recorder(env, camera_name=camera_name)
     if camera_name is not None:
         env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
     return env

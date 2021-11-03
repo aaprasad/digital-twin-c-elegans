@@ -20,6 +20,7 @@ def online_test_single_simulation(env, model, dataset):
     model.eval()
     hidden_state = None
     y = []
+    concentrations = []
     with torch.no_grad():
         for i in range(10 ** 6):
             # env.render()
@@ -30,10 +31,11 @@ def online_test_single_simulation(env, model, dataset):
             action = action.numpy()
             y.append(action.tolist())
             observation, reward, done, info = env.step(action)
+            concentrations.append(observation[26])
             if done:
                 break
     env.close()
-    x = torch.tensor(env.stats['concentration'], dtype=torch.float64).unsqueeze(-1)
+    x = torch.tensor(concentrations, dtype=torch.float64).unsqueeze(-1)
     y = torch.tensor(y, dtype=torch.float64)
     return x, y
 
