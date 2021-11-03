@@ -7,7 +7,7 @@ from virtual_nematode.trainers.ncp import prepare_model
 
 
 def encode_func(stimuli, observation, **kwargs):
-    data = torch.tensor([stimuli] + observation[1:25].tolist() + observation[28:].tolist(), dtype=torch.float64)
+    data = torch.tensor([stimuli] + observation[1:25].tolist() + observation[28:52].tolist(), dtype=torch.float64)
     return data
 
 

@@ -6,7 +6,7 @@ from virtual_nematode.simulation.forward import simulate
 
 
 def model_kwargs_func(observation, **kwargs):
-    return {'q': observation[1:12], 'q_vel': observation[15:]}
+    return {'q': observation[1:12], 'q_vel': observation[15:26]}
 
 
 if __name__ == '__main__':

@@ -11,10 +11,7 @@ import torch
 
 
 def model_kwargs_func(observation, info, **kwargs):
-    for key in ['g_p', 'g_w']:
-        if key not in info:
-            info[key] = 0.
-    return {'q': observation[1:12], 'q_vel': observation[15:], 'g_p': info['g_p'], 'g_w': info['g_w']}
+    return {'q': observation[1:12], 'q_vel': observation[15:26], 'g_p': info['g_p'], 'g_w': info['g_w']}
 
 
 def x_func(info, **kwargs):

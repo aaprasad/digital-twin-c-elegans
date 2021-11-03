@@ -11,7 +11,7 @@ from virtual_nematode.data.simulation import generate_dataset
 
 
 def x_func(stimuli, observation, **kwargs):
-    return [stimuli] + observation[1:12].tolist() + observation[15:].tolist()
+    return [stimuli] + observation[1:12].tolist() + observation[15:26].tolist()
 
 
 def y_func(action, **kwargs):

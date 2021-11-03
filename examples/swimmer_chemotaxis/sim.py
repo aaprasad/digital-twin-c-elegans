@@ -60,7 +60,7 @@ def simulate(seed=None):
     model = ComputationalModelChemotaxis(dt=env.dt, seed=seed)
     for i in range(10 ** 6):
         # env.render()
-        action = model.step(step=i, q=observation[1:12], q_vel=observation[15:], g_p=info['g_p'], g_w=info['g_w'])
+        action = model.step(step=i, q=observation[1:12], q_vel=observation[15:26], g_p=info['g_p'], g_w=info['g_w'])
         observation, reward, done, info = env.step(action)
         if done:
             print('Episode finished after {} steps'.format(i + 1))
