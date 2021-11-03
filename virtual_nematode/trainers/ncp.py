@@ -27,7 +27,7 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, **k
         model.load_state_dict(torch.load(model_path, map_location=device))
     model = model.to(device)
     if device_ids is not None:
-        model = torch.nn.DataParallel(model, device_ids=[0, 1])
+        model = torch.nn.DataParallel(model, device_ids=device_ids)
     return model
 
 
