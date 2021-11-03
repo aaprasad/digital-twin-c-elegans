@@ -8,9 +8,11 @@ from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
 from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 
 
-def prepare_model(model_name, device=None, model_path=None, **kwargs):
+def prepare_model(model_name, device=None, device_ids=None, model_path=None, **kwargs):
     """ init model
     seed torch rng before initializing model
+    device: main torch device
+    device_ids: list of GPU ids, should include main device id
     **kwargs: kwargs for initializing model
     """
     if model_name == 'fully_connected':
@@ -24,6 +26,8 @@ def prepare_model(model_name, device=None, model_path=None, **kwargs):
     if model_path is not None:
         model.load_state_dict(torch.load(model_path, map_location=device))
     model = model.to(device)
+    if device_ids is not None:
+        model = torch.nn.DataParallel(model, device_ids=[0, 1])
     return model
 
 
@@ -110,7 +114,7 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
 
 def train_eval_test(
     data_name='ncp.pt', model_name='fully_connected', lengths=None, batch_size=2048, seed=42,
-    cuda=0, lr=0.001, epochs=200, early_stop=30, comment='', **kwargs
+    cuda=0, device_ids=None, lr=0.001, epochs=200, early_stop=30, comment='', **kwargs
 ):
     """ offline train, eval and test
     lengths: [train_size, eval_size, test_size]
@@ -126,13 +130,13 @@ def train_eval_test(
     train_loader, eval_loader, test_loader = prepare_dataloader(data_path, lengths, batch_size, seed)
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
-    model = prepare_model(model_name, device, **kwargs)
+    model = prepare_model(model_name, device, device_ids, **kwargs)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = torch.nn.MSELoss(reduction='mean')
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
     # test
-    model = prepare_model(model_name, device, model_path, **kwargs)
+    model = prepare_model(model_name, device, device_ids, model_path, **kwargs)
     mse = test(model, device, test_loader, criterion)
     # hparams and results
     writer.add_hparams(
