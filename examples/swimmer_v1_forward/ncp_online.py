@@ -19,7 +19,6 @@ if __name__ == '__main__':
     model_folder = os.path.join('runs', '')
     model_name = 'fully_connected'
     seed = 42
-    data_size = 100
     reset_noise_scale = 1.745
     max_episode_steps = 2500
     env = make_swimmer(
@@ -30,6 +29,6 @@ if __name__ == '__main__':
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
         **{'units': 100, 'output_dim': 24, 'in_features': 49}
     )
-    tester(env, model, encode_func, seed, max_episode_steps, model_folder, model_name, data_size)
+    tester(env, model, encode_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
     env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     single_tester(env, model, encode_func, seed, max_episode_steps)
