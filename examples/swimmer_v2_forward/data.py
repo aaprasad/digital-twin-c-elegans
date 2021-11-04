@@ -1,13 +1,17 @@
 """ swimmer: closed-loop (feedback) control of forward locomotion
-swimmer configuration: n_bodies = 25
+generate forward simulation dataset
 """
 
+from gym_worm.wrapper.muscle_action import reverse_action
 import os
 import torch
-from sim import model_kwargs_func
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.models.forward import Forward
 from virtual_nematode.data.simulation import generate_dataset
+
+
+def model_kwargs_func(observation, **kwargs):
+    return {'q': observation[1:25], 'q_vel': observation[28:52]}
 
 
 def x_func(stimuli, observation, **kwargs):
@@ -16,7 +20,10 @@ def x_func(stimuli, observation, **kwargs):
 
 
 def y_func(action, **kwargs):
-    """ y: action_size = 24 """
+    """ y: action_size = 96
+    ctrl signal: joint action -> muscle action
+    """
+    action = reverse_action(action)
     return action.tolist()
 
 
