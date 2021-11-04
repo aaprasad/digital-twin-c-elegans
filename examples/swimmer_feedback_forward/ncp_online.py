@@ -1,14 +1,8 @@
+from data import x_func
 import os
-import torch
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.testers.forward import tester, single_tester
 from virtual_nematode.trainers.ncp import prepare_model
-
-
-def encode_func(stimuli, observation, **kwargs):
-    """ input_size: 1 + 11 + 11 """
-    data = torch.tensor([stimuli] + observation[1:12].tolist() + observation[15:26].tolist(), dtype=torch.float64)
-    return data
 
 
 if __name__ == '__main__':
@@ -27,5 +21,5 @@ if __name__ == '__main__':
     record_kwargs = {'camera_name': 'track', 'video_name': model_folder} if record else {}
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, **record_kwargs)
     model = prepare_model(model_name, model_path=os.path.join(model_folder, 'model.pt'), **kwargs)
-    tester(env, model, encode_func, seed, max_episode_steps, model_folder, model_name, data_size)
-    single_tester(env, model, encode_func, seed, max_episode_steps)
+    tester(env, model, x_func, seed, max_episode_steps, model_folder, model_name, data_size)
+    single_tester(env, model, x_func, seed, max_episode_steps)

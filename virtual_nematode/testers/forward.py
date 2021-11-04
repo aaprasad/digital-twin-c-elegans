@@ -6,7 +6,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def test_func(env, model, math_model, encode_func):
+def test_func(env, model, math_model, x_func):
     """ run a forward locomotion simulation steered by a neural network """
     seed = sample_seed()
     env.seed(seed)
@@ -21,8 +21,8 @@ def test_func(env, model, math_model, encode_func):
         for i in range(10 ** 6):
             # env.render()
             stimuli = math_model.stimuli(step=i)  # external stimulus signal as input
-            stimuli = torch.tensor(stimuli, dtype=torch.float64)
-            data = encode_func(stimuli=stimuli, observation=observation)
+            data = x_func(stimuli=stimuli, observation=observation)
+            data = torch.tensor(data, dtype=torch.float64)
             data = data.unsqueeze(dim=0)  # add batch dimension
             output, hidden_state = model.step(data, hidden_state)
             action = output.squeeze(dim=0)  # remove batch dimension
@@ -39,7 +39,7 @@ def test_func(env, model, math_model, encode_func):
 
 
 def tester(
-    env, model, encode_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
+    env, model, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
     data_size=100
 ):
     """ online test for at least 100 trials """
@@ -51,7 +51,7 @@ def tester(
     result = SimulationDataset(
         data_size, max_episode_steps, 2, action_size, seed, test_func,
         # func kwargs
-        env=env, model=model, math_model=math_model, encode_func=encode_func
+        env=env, model=model, math_model=math_model, x_func=x_func
     )
     print('result', len(result), result[0][0].size(), result[0][1].size())
     x, _ = result.tensors
@@ -65,11 +65,11 @@ def tester(
     writer.close()
 
 
-def single_tester(env, model, encode_func, seed=42, max_episode_steps=2500):
+def single_tester(env, model, x_func, seed=42, max_episode_steps=2500):
     """ online test for a single trial and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
     math_model = Forward(dt=env.dt, seed=seed)
-    x, _ = test_func(env, model, math_model, encode_func)
+    x, _ = test_func(env, model, math_model, x_func)
     displacement = torch.linalg.norm(x[-1, :] - x[0, :], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
