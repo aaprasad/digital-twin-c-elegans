@@ -30,7 +30,8 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_steps=max_episode_steps,
         reset_noise_scale=reset_noise_scale
     )
+    action_size = env.action_space.shape[0]
     model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
-    dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, data_size, seed, max_episode_steps)
+    dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, action_size, data_size, seed, max_episode_steps)
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')

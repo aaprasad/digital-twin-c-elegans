@@ -43,7 +43,8 @@ if __name__ == '__main__':
     data_size = data_size // len(envs)
     datasets = []
     for env, model in zip(envs, models):
-        dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, data_size, seed, max_episode_steps)
+        action_size = env.action_space.shape[0]
+        dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, action_size, data_size, seed, max_episode_steps)
         print(env.source.tolist(), len(dataset), dataset[0][0].size(), dataset[0][1].size())
         datasets.append(dataset)
     concat_dataset = torch.utils.data.ConcatDataset(datasets)
