@@ -16,7 +16,8 @@ if __name__ == '__main__':
     100 trials: com displacement mean 14.27 / 2500 steps
     1 trial: com displacement 13.56 / 2500 steps
     """
-    model_folder = os.path.join('runs', '')
+    runs_folder = ''
+    model_folder = os.path.join('runs', runs_folder)
     model_name = 'fully_connected'
     seed = 42
     reset_noise_scale = 1.745
