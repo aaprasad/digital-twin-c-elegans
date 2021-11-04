@@ -1,5 +1,5 @@
 """ swimmer: closed-loop (feedback) control of forward locomotion
-generate forward simulation dataset
+swimmer configuration: n_bodies = 25
 """
 
 from gym_worm.wrapper.muscle_action import reverse_action
