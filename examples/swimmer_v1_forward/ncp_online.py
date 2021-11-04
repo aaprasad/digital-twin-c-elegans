@@ -1,7 +1,6 @@
 from data import x_func
 import gym
 import os
-import torch
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.testers.forward import tester, single_tester
 from virtual_nematode.trainers.ncp import prepare_model
