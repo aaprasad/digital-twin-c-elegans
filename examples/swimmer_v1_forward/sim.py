@@ -21,7 +21,7 @@ def model_kwargs_func(observation, **kwargs):
 
 if __name__ == '__main__':
     """ results
-    100 trials: com displacement mean 17.35 / 2500 steps
+    100 trials: com displacement mean 16.91 / 2500 steps
     """
     max_episode_steps = 2500
     env = make_swimmer(

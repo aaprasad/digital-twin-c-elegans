@@ -13,8 +13,8 @@ def encode_func(stimuli, observation, **kwargs):
 
 if __name__ == '__main__':
     """ results
-    100 trials: com displacement mean 14.27 / 2500 steps
-    1 trial: com displacement 13.56 / 2500 steps
+    100 trials: com displacement mean 11.90 / 2500 steps
+    1 trial: com displacement 11.58 / 2500 steps
     """
     runs_folder = ''
     model_folder = os.path.join('runs', runs_folder)
