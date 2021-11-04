@@ -2,7 +2,7 @@
 swimmer configuration: n_bodies = 25
 """
 
-from gym_worm.wrapper.muscle_action import reverse_action
+from gym_worm.wrappers.muscle_action import reverse_action
 import os
 import torch
 from virtual_nematode.envs.swimmer import make_swimmer
