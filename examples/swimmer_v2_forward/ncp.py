@@ -2,6 +2,10 @@ from virtual_nematode.trainers.ncp import train_eval_test
 
 
 if __name__ == '__main__':
+    """ results
+    memory: 7G * 4
+    time: ~ 2h 40min / 300 epochs
+    """
     train_eval_test(
         data_name='ncp.pt', model_name='fully_connected', lengths=[64000, 16000, 16000], batch_size=1024,
         seed=42, cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=300, early_stop=30, comment='',
