@@ -90,7 +90,7 @@ def generate_sample(env, model, model_kwargs_func, x_func, y_func):
     return x, y
 
 
-def generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, action_size, data_size=9000, seed=42, max_episode_steps=128):
+def generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed):
     """ generate forward movement dataset
     input_size: x size
     """

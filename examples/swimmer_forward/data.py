@@ -32,6 +32,6 @@ if __name__ == '__main__':
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
     action_size = env.action_space.shape[0]
     model = Forward(dt=env.dt, seed=seed)
-    dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, action_size, data_size, seed, max_episode_steps)
+    dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed)
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')
