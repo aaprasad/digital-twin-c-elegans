@@ -1,6 +1,5 @@
 import multiprocessing
 import numpy as np
-import os
 import torch
 from tqdm import tqdm
 from virtual_nematode.utils import sample_seed
