@@ -14,7 +14,7 @@ if __name__ == '__main__':
     runs_folder = ''
     model_folder = os.path.join('runs', runs_folder)
     model_name = 'fully_connected'
-    seed = 42
+    seed = 7
     reset_noise_scale = 1.745
     max_episode_steps = 2500
     env = make_swimmer(
