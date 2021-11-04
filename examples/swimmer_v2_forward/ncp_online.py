@@ -1,5 +1,6 @@
 from data import x_func
 import gym
+from gym_worm.wrappers.muscle_action import MuscleAction
 import os
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.testers.forward import tester, single_tester
@@ -17,6 +18,7 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_steps=max_episode_steps,
         reset_noise_scale=reset_noise_scale
     )
+    env = MuscleAction(env)
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
         **{'units': 100, 'output_dim': 96, 'in_features': 49}
