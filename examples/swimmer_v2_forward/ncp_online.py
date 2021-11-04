@@ -24,5 +24,5 @@ if __name__ == '__main__':
         **{'units': 100, 'output_dim': 96, 'in_features': 49}
     )
     tester(env, model, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
-    env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
+    env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder), force=True)
     single_tester(env, model, x_func, seed, max_episode_steps)
