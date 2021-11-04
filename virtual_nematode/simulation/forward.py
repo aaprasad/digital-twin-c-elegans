@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def simulate(env, model, model_kwargs_func, seed=None, max_episode_steps=2500, trials=1):
+def simulate(env, model, model_kwargs_func, seed=None, max_episode_steps=2500, trials=1, render=False):
     """ forward sinusoidal movement
     model_kwargs_func: function, take in observation and return the needed kwargs for model.step()
     **kwargs: configure mathematical model
@@ -14,7 +14,8 @@ def simulate(env, model, model_kwargs_func, seed=None, max_episode_steps=2500, t
         env.seed(seed)
         observation = env.reset()
         for step in range(10 ** 6):
-            # env.render()
+            if render is True:
+                env.render()
             action = model.step(step=step, **model_kwargs_func(observation=observation))
             observation, reward, done, info = env.step(action)
             coms.append(info['com'])
