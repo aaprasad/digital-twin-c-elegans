@@ -2,7 +2,7 @@
 swimmer configuration: n_bodies = 25
 """
 
-from gym_worm.wrappers.muscle_action import reverse_action, MuscleAction
+from gym_worm.wrappers.muscle_action import joint_to_muscle_action, MuscleAction
 import os
 import torch
 from virtual_nematode.envs.swimmer import make_swimmer
@@ -23,7 +23,7 @@ def y_func(action, **kwargs):
     """ y: action_size = 96
     ctrl signal: joint action -> muscle action
     """
-    action = reverse_action(action)
+    action = joint_to_muscle_action(action)
     return action.tolist()
 
 
