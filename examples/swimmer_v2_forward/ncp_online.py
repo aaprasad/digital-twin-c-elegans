@@ -9,8 +9,8 @@ from virtual_nematode.trainers.ncp import prepare_model
 
 if __name__ == '__main__':
     """ results
-    100 trials: com displacement mean 21.72 / 2500 steps
-    1 trial: com displacement 21.46 / 2500 steps
+    100 trials: com displacement mean 17.94 / 2500 steps
+    1 trial: com displacement 18.43 / 2500 steps
     """
     runs_folder = ''
     model_folder = os.path.join('runs', runs_folder)
