@@ -16,5 +16,5 @@ if __name__ == '__main__':
     max_episode_steps = 2500
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=0.7)
     env = JointAction(env)  # ctrl: joint -> muscle
-    model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
+    model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=1.5)
     simulate(env, model, model_kwargs_func, seed=None, max_episode_steps=max_episode_steps, trials=100, render=False)
