@@ -21,4 +21,4 @@ if __name__ == '__main__':
         max_episode_steps=max_episode_steps, reset_noise_scale=0.1
     )
     model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
-    simulate(env, model, model_kwargs_func, seed=None, max_episode_steps=max_episode_steps, trials=1, render=True)
+    simulate(env, model, model_kwargs_func, seed=None, max_episode_steps=max_episode_steps, trials=1, render=False)
