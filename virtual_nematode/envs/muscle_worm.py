@@ -16,5 +16,5 @@ def make_swimmer(
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = MuscleObservation(env)
-    env = Position(env)
+    env = Position(env, n_bodies)
     return env
