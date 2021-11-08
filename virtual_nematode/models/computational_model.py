@@ -1,5 +1,13 @@
 """ A computational model of internal representations of chemical gradients for chemotaxis
-- https://doi.org/10.1038/s41598-018-35157-1
+chemotaxis crawling based on five basic behavioral motifs in robotics perspective
+    forward crawling
+    backward crawling
+    shallow turn
+    gradual turn
+    omega turn
+    random walk: all the time/only when gradient is too small?
+https://doi.org/10.1038/s41598-018-35157-1
+https://doi.org/10.1126/scirobotics.abe3950
 """
 
 import numpy as np
