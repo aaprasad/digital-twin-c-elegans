@@ -25,7 +25,7 @@ class ComputationalModelChemotaxis(object):
     joint range
         >= q_max (sinusoidal) + kappa_omega (sharp turn) + kappa_w_max (weathervane) + 3 * c_r (random walk)
     """
-    def __init__(self, dt, seed=None, n=12, q_max=40, a_max=2., psi=0.2, freq=3.):
+    def __init__(self, dt, seed=None, n=12, q_max=40, a_max=2., psi=0.2, freq=3., **kwargs):
         self.dt = dt  # real time per step
         self.n = n  # number of bodies
         self.q_max = q_max * np.pi / 180  # max joint angle (rad)
@@ -33,6 +33,8 @@ class ComputationalModelChemotaxis(object):
         self.a_max = a_max  # action: [-a_max, a_max]
         self.psi = psi  # body wavelength (rad)
         self.omega = 2 * np.pi * freq  # angular velocity of bending (rad/s): 2 * pi * freq
+        """ flags for enabling/disabling directional navigation """
+        self.kwargs = kwargs  # {'backward': True, 'omega': True, 'weathervane': True, 'random_walk': True}
         """ state """
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1)
         self.step_b0 = None  # start of backward movement
@@ -170,10 +172,18 @@ class ComputationalModelChemotaxis(object):
             backward: q = q_max * sin(omega * t - phi)
             forward: q = q_max * sin(omega * t - (pi - phi))
         """
-        self._backward(step=step)
-        kappa_omega = self._sharp_turn(step=step)
-        kappa_w = self._weathervane(g_w=g_w)
-        self._random_walk(step=step)
+        if self.kwargs.get('backward', True) is True:
+            self._backward(step=step)
+        if self.kwargs.get('omega', True) is True:
+            kappa_omega = self._sharp_turn(step=step)
+        else:
+            kappa_omega = 0.
+        if self.kwargs.get('weathervane', True) is True:
+            kappa_w = self._weathervane(g_w=g_w)
+        else:
+            kappa_w = 0.
+        if self.kwargs.get('random_walk', True) is True:
+            self._random_walk(step=step)
         q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - self.phi)) + kappa_omega + kappa_w + self.kappa_r
         return q
 
