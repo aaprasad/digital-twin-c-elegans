@@ -5,41 +5,30 @@ from gym_worm.envs.mujoco.friction import friction
 from gym_worm.envs.mujoco.position import position
 from gym_worm.wrappers.recorder import Recorder
 from gym_worm.wrappers.sensor_observation import SensorObservation
-import os
 
 
-def make_swimmer(
-    n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', camera_z=None, camera_name=None,
-    max_episode_steps=1000, video_name='swimmer', reset_noise_scale=0.1
-):
+def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode_steps=1000, reset_noise_scale=0.1):
     """ create swimmer env """
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, body_len)
     xml_str = position(xml_str)
-    xml_str = camera(xml_str, camera_pos, camera_z)
+    xml_str = camera(xml_str, camera_pos='0 -5 5', camera_z=None)
     env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), reset_noise_scale=reset_noise_scale)
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = SensorObservation(env)
-    env = Recorder(env, camera_name=camera_name)
-    if camera_name is not None:
-        env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
+    env = Recorder(env, camera_name=None)
     return env
 
 
-def make_swimmer_friction(
-    n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', camera_z=None, camera_name=None,
-    max_episode_steps=1000, video_name='swimmer', reset_noise_scale=0.1
-):
+def make_swimmer_friction(n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode_steps=1000, reset_noise_scale=0.1):
     """ create swimmer env """
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, body_len)
     xml_str = position(xml_str)
-    xml_str = camera(xml_str, camera_pos, camera_z)
+    xml_str = camera(xml_str, camera_pos='0 -5 5', camera_z=None)
     xml_str = friction(xml_str, n_section=7, width=1.5, nconmax=400)
     env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), reset_noise_scale=reset_noise_scale)
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = SensorObservation(env)
-    env = Recorder(env, camera_name=camera_name)
-    if camera_name is not None:
-        env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
+    env = Recorder(env, camera_name=None)
     return env
