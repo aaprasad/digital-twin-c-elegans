@@ -1,8 +1,8 @@
 import gym
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.muscle_worm_v0 import swimmer
-from gym_worm.wrappers.muscle_observation import MuscleObservation
-from gym_worm.wrappers.position import Position
+from gym_worm.envs.mujoco.position import position
+from gym_worm.wrappers.sensor_observation import SensorObservation
 
 
 def make_swimmer(
@@ -11,10 +11,10 @@ def make_swimmer(
 ):
     """ create swimmer env """
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, body_len, muscle_len, y_sidesite, z_medial, z_lateral, arrangement)
+    xml_str = position(xml_str)
     xml_str = camera(xml_str, camera_pos, camera_z)
     env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), reset_noise_scale=reset_noise_scale)
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
-    env = MuscleObservation(env)
-    env = Position(env, n_bodies)
+    env = SensorObservation(env)
     return env
