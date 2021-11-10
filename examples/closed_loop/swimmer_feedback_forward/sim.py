@@ -2,7 +2,7 @@
 
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.models.forward import Forward
-from virtual_nematode.simulation.forward import simulate
+from virtual_nematode.simulation import simulate
 
 
 def model_kwargs_func(observation, **kwargs):

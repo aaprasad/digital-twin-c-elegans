@@ -5,7 +5,7 @@ joint range [-40, 40] degrees -> [-0.7, 0.7] rad
 from gym_worm.wrappers.muscle_action import JointAction
 from virtual_nematode.envs.muscle_worm import make_swimmer
 from virtual_nematode.models.forward import Forward
-from virtual_nematode.simulation.forward import simulate
+from virtual_nematode.simulation import simulate
 
 
 def model_kwargs_func(observation, **kwargs):

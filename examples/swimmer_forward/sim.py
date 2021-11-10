@@ -13,7 +13,7 @@ observation space: (52,) including qpos[2:27], qvel[0:25],
 import numpy as np
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.models.forward import Forward
-from virtual_nematode.simulation.forward import simulate
+from virtual_nematode.simulation import simulate
 
 
 def action_func(model, step, observation, **kwargs):
