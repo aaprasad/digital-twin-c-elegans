@@ -14,7 +14,7 @@ def make_swimmer(
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, body_len, muscle_len, y_sidesite, z_medial, z_lateral, arrangement=None)
     xml_str = tendon(xml_str)
     xml_str = position(xml_str)
-    xml_str = camera(xml_str, camera_pos='0 -6 6', camera_z=None)
+    xml_str = camera(xml_str)
     env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), reset_noise_scale=reset_noise_scale)
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)

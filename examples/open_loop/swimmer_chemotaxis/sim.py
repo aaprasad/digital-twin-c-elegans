@@ -7,7 +7,6 @@ from gym_worm.envs.mujoco.chemotaxis import chemotaxis
 from gym_worm.wrappers.distribution_observation import DistributionObservation
 from gym_worm.wrappers.recorder import Recorder
 import numpy as np
-import os
 from virtual_nematode.models.computational_model import ComputationalModelChemotaxis
 
 
@@ -25,10 +24,7 @@ def fick(target, source, sigma=5):
     return c
 
 
-def make_swimmer(
-    n_bodies=12, joint_range='-100 100', body_len=0.25, camera_pos='0 -6 6', camera_z=None, camera_name=None,
-    max_episode_steps=1000, x=0, y=0, video_name='swimmer'
-):
+def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode_steps=1000, x=0, y=0, record=False):
     """ create swimmer env: multibody model
     radius=0.04mm, body_len=0.1mm, n_bodies=12, q_max=0.69rad (~39.53409 degrees)
     joint_size=0.1 (radius) -> body_len=0.25
@@ -37,15 +33,15 @@ def make_swimmer(
         https://doi.org/10.1038/s41598-018-35157-1
     """
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, body_len)
-    xml_str = camera(xml_str, camera_pos, camera_z)
+    xml_str = camera(xml_str)
     xml_str = chemotaxis(xml_str, x, y)
     env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'))
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = DistributionObservation(env, dt=env.dt, f=fick, source=np.array([x, y]))
-    env = Recorder(env, camera_name=camera_name)
-    if camera_name is not None:
-        env = gym.wrappers.Monitor(env, directory=os.path.join('video', video_name), force=True)
+    env = Recorder(env, camera_name=None)
+    if record is True:
+        env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     return env
 
 
@@ -53,7 +49,7 @@ def simulate(seed=None):
     """ control by sinusoidal motion
     seed: env simulation stays the same with seeding
     """
-    env = make_swimmer(max_episode_steps=2500, x=9, y=12, camera_z=50, camera_name=None)  # distance from source: 15
+    env = make_swimmer(max_episode_steps=2500, x=9, y=12)  # distance from source: 15
     env.seed(seed)
     observation = env.reset()
     model = ComputationalModelChemotaxis(dt=env.dt, seed=seed)
