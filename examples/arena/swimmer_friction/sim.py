@@ -1,5 +1,3 @@
-""" swimmer: forward locomotion """
-
 import gym
 import numpy as np
 from virtual_nematode.envs.swimmer import make_swimmer_friction
