@@ -1,6 +1,6 @@
-def simulate(env, model, model_kwargs_func, step_func, done_func, seed=None, trials=1, render=False):
+def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False):
     """ forward sinusoidal movement
-    model_kwargs_func: function, take in observation and return the needed kwargs for model.step()
+    action_func: called before every step, generate action
     step_func: called after every step, process observation and collect result of 1 simulation
     done_func: called after every simulation, process simulation result and collect results of all simulations
     **kwargs: configure mathematical model
@@ -15,7 +15,7 @@ def simulate(env, model, model_kwargs_func, step_func, done_func, seed=None, tri
         for step in range(10 ** 6):
             if render is True:
                 env.render()
-            action = model.step(step=step, **model_kwargs_func(observation=observation))
+            action = action_func(model=model, step=step, observation=observation)
             observation, reward, done, info = env.step(action)
             result.append(step_func(observation=observation))
             if done:

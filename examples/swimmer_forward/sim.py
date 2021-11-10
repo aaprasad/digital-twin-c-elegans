@@ -16,8 +16,15 @@ from virtual_nematode.models.forward import Forward
 from virtual_nematode.simulation.forward import simulate
 
 
-def model_kwargs_func(observation, **kwargs):
-    return {'q': observation[1:25], 'q_vel': observation[28:52]}
+def action_func(model, step, observation, **kwargs):
+    """
+    model: mathematical model of controller
+    return: action
+    """
+    q = observation[1:25]
+    q_vel = observation[28:52]
+    action = model.step(step, q, q_vel)
+    return action
 
 
 def step_func(observation, **kwargs):
@@ -47,5 +54,5 @@ if __name__ == '__main__':
     print(env.action_space)
     print(env.observation_space)
     model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
-    results = simulate(env, model, model_kwargs_func, step_func, done_func, seed=None, trials=100, render=False)
+    results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=100, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
