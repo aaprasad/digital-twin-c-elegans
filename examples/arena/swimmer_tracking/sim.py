@@ -34,8 +34,6 @@ def make_swimmer(x, y, n_bodies=25, joint_range='-100 100', body_len=0.1):
     xml_str = position(xml_str)
     xml_str = tracking(xml_str, x, y, kp=1)
     xml_str = camera(xml_str)
-    with open('test.xml', 'w') as f:
-        f.write(xml_str.decode('utf-8'))
     env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), reset_noise_scale=0.)
     env = gym.wrappers.TimeLimit(env, max_episode_steps=1000)
     env = gym.wrappers.ClipAction(env)
@@ -51,7 +49,7 @@ def action_func(model, step, observation, **kwargs):
     g_w = observation[68]
     action = model.step(step, q, q_vel, g_p, g_w)
     theta = step / 100.
-    radius = 5
+    radius = 10
     action = np.concatenate((action, [np.cos(theta) * radius, np.sin(theta) * radius]), axis=0)
     return action
 
