@@ -33,8 +33,8 @@ def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode
         https://doi.org/10.1038/s41598-018-35157-1
     """
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, body_len)
-    xml_str = camera(xml_str)
     xml_str = chemotaxis(xml_str, x, y)
+    xml_str = camera(xml_str)
     env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'))
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
