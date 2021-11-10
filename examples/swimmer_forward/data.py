@@ -4,7 +4,7 @@ swimmer configuration: n_bodies = 25
 
 import os
 import torch
-from sim import model_kwargs_func
+from sim import action_func
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.models.forward import Forward
 from virtual_nematode.data.simulation import generate_dataset
@@ -32,6 +32,6 @@ if __name__ == '__main__':
     )
     action_size = env.action_space.shape[0]
     model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
-    dataset = generate_dataset(env, model, model_kwargs_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed)
+    dataset = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed)
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')
