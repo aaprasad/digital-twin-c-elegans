@@ -28,11 +28,11 @@ def source_func(observation):
     return observation[62:64]
 
 
-def make_swimmer(x, y, n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_steps=1000):
+def make_swimmer(x, y, n_bodies=25, joint_range='-100 100', body_len=0.1, rgba='0 1 0 1', max_episode_steps=1000):
     """ create swimmer env """
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, body_len)
     xml_str = position(xml_str)
-    xml_str = tracking(xml_str, x, y, kp=1)
+    xml_str = tracking(xml_str, x, y, rgba, kp=1)
     xml_str = camera(xml_str)
     env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), reset_noise_scale=0.)
     env = gym.wrappers.TimeLimit(env, max_episode_steps=max_episode_steps)
