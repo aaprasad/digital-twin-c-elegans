@@ -34,7 +34,7 @@ class ComputationalModelChemotaxis(object):
         self.psi = psi  # body wavelength (rad)
         self.omega = 2 * np.pi * freq  # angular velocity of bending (rad/s): 2 * pi * freq
         """ flags for enabling/disabling directional navigation """
-        self.kwargs = kwargs  # {'backward': True, 'omega': True, 'weathervane': True, 'random_walk': True}
+        self.kwargs = kwargs  # {'backward': True, 'omega': True, 'weathervane': True, 'random_walk': True, 'weathervane_reverse': False}
         """ state """
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1)
         self.step_b0 = None  # start of backward movement
@@ -147,6 +147,8 @@ class ComputationalModelChemotaxis(object):
         tanh: prevent sharp turn
         """
         kappa_w = -self.c_w * g_w
+        if self.kwargs.get('weathervane_reverse', False) is True:
+            kappa_w *= -1
         kappa_w = np.tanh(kappa_w) * self.kappa_w_max
         return kappa_w
 
