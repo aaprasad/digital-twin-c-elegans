@@ -19,7 +19,7 @@ def action_func(model, step, observation, **kwargs):
 if __name__ == '__main__':
     max_episode_steps = 2500
     env = make_swimmer(x=0, y=0, rgba='1 0 0 1', max_episode_steps=max_episode_steps)
-    # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
+    # env = gym.wrappers.Monitor(env, directory='video/swimmer_avoiding', force=True)
     print(env.action_space)
     print(env.observation_space)
     kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': True}
