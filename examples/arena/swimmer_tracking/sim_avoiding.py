@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
-    kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False}
+    kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': True}
     model = ComputationalModelChemotaxis(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., **kwargs)
-    results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=True)
+    results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: chemotaxis index mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
