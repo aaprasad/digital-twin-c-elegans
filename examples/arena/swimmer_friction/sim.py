@@ -10,7 +10,7 @@ from virtual_nematode.models.forward import Forward
 from virtual_nematode.simulation import simulate
 
 
-def make_swimmer_friction(n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode_steps=1000, reset_noise_scale=0.1):
+def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode_steps=1000, reset_noise_scale=0.1):
     """ create swimmer env """
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, body_len)
     xml_str = position(xml_str)
@@ -44,7 +44,7 @@ def done_func(index, result, **kwargs):
 
 if __name__ == '__main__':
     max_episode_steps = 2500
-    env = make_swimmer_friction(
+    env = make_swimmer(
         n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_steps=max_episode_steps, reset_noise_scale=0.1
     )
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
