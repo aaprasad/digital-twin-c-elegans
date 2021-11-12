@@ -32,7 +32,7 @@ def action_func(model, step, observation, **kwargs):
 
 
 def step_func(observation, **kwargs):
-    com = observation[52:54]
+    com = observation[54:56]
     return com
 
 
@@ -48,5 +48,7 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_steps=max_episode_steps, reset_noise_scale=0.1
     )
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
+    print(env.action_space)
+    print(env.observation_space)
     model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
     simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
