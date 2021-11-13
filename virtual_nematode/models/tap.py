@@ -36,6 +36,7 @@ class Tap(object):
     def _backward(self, step):
         """ reverse """
         if self.step_b0 is not None:
+            # enter and exit reverse phase
             if step == self.step_b0 or step == self.step_b0 + self.step_b and self.forwarding is False:
                 self.forwarding = bool(1 - self.forwarding)  # reverse direction
                 self.phi = np.pi + 2 * self.omega * self.step_b0 * self.dt - self.phi
@@ -43,6 +44,7 @@ class Tap(object):
     def _weathervane(self, step):
         """ sample random weathervane bias angle """
         if self.step_b0 is not None and self.step_b0 + self.step_b <= step < self.step_b0 + self.step_b + self.step_w:
+            # turning phase
             kappa_w = self.kappa_w
         else:
             kappa_w = 0.
@@ -61,11 +63,13 @@ class Tap(object):
         return action
 
     def step(self, step, q, q_vel, force):
+        # touch force is sensed and last period of tap-withdrawal has finished: start a new period of tap-withdrawal
         if force.any() and self.step_b0 is None:
             self.step_b0 = step + 1  # start reverse phase next step
             self.kappa_w = np.random.uniform(-self.kappa_w_max, self.kappa_w_max)
+        # currently in tap-withdrawal period, but time has run out -> stop tap-withdrawal
         elif self.step_b0 is not None and step >= self.step_b0 + self.step_b + self.step_w:
-            self.step_b0 = None  # both reverse and turning phase has finished
+            self.step_b0 = None
             self.kappa_w = None
         q_next = self._joint_angle(step=step + 1)  # next step's joint angles
         action = self._action(q=q, q_next=q_next, q_vel=q_vel)
