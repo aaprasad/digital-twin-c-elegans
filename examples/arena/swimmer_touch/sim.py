@@ -5,7 +5,7 @@ from gym_worm.envs.mujoco.maze import maze
 from gym_worm.envs.mujoco.swimmer_v3_v1 import swimmer
 from gym_worm.envs.mujoco.touch import touch
 from gym_worm.wrappers.sensor_observation import SensorObservation
-from virtual_nematode.models.forward import Forward
+from virtual_nematode.models.tap import Tap
 from virtual_nematode.simulation import simulate
 
 
@@ -24,7 +24,8 @@ def make_swimmer(n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_
 def action_func(model, step, observation, **kwargs):
     q = observation[1:25]
     q_vel = observation[28:52]
-    action = model.step(step, q, q_vel)
+    force = step_func(observation)
+    action = model.step(step, q, q_vel, force)
     return action
 
 
@@ -44,6 +45,8 @@ if __name__ == '__main__':
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
-    model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
+    model = Tap(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
-    print(results[0])
+    for i, r in enumerate(results[0]):
+        if r.any():  # touch force
+            print('step {}: {}'.format(i, r))
