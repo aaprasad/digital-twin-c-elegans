@@ -15,6 +15,7 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 ## mathematical models of locomotion
 * `computational_model`: chemotaxis with behaviors including forward, pirouette, weathervane and random walk
 * `forward`: forward sinusoidal movement
+* `tap`: tap-withdrawal composing of forward, backward and stochastic turning behaviors
 
 ## data
 * `concat`: concatenate torch.utils.data.TensorDataset
