@@ -34,7 +34,6 @@ class Tap(object):
     def _backward(self, step):
         """ reverse """
         if self.step_b0 is not None and (step == self.step_b0 or step == self.step_b0 + self.step_b):
-            print(self.step_b0, self.step_b, step)
             self.phi = np.pi + 2 * self.omega * self.step_b0 * self.dt - self.phi
 
     def _weathervane(self, step):
