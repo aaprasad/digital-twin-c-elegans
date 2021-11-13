@@ -6,7 +6,8 @@ import numpy as np
 class Tap(object):
     """ tap-withdrawal
     forward: default behavior
-    tap head/tail: reverse for a short period, then stochastic forward turning, and then forward
+    tap head: backward for a short period, then stochastic forward turning, and then forward
+    tap tail: forward for a short period, then stochastic forward turning, and then forward
     """
     def __init__(self, dt, seed=None, n=12, q_max=40, a_max=2., psi=0.2, freq=3.):
         self.dt = dt  # real time per step
@@ -23,6 +24,7 @@ class Tap(object):
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1)
         self.step_b0 = None
         self.kappa_w = None
+        self.forwarding = True  # or False
         """ seeding """
         self.seed(seed)
 
@@ -33,8 +35,10 @@ class Tap(object):
 
     def _backward(self, step):
         """ reverse """
-        if self.step_b0 is not None and (step == self.step_b0 or step == self.step_b0 + self.step_b):
-            self.phi = np.pi + 2 * self.omega * self.step_b0 * self.dt - self.phi
+        if self.step_b0 is not None:
+            if step == self.step_b0 or step == self.step_b0 + self.step_b and self.forwarding is False:
+                self.forwarding = bool(1 - self.forwarding)  # reverse direction
+                self.phi = np.pi + 2 * self.omega * self.step_b0 * self.dt - self.phi
 
     def _weathervane(self, step):
         """ sample random weathervane bias angle """
@@ -57,7 +61,7 @@ class Tap(object):
         return action
 
     def step(self, step, q, q_vel, force):
-        if force[0] and self.step_b0 is None:
+        if force.any() and self.step_b0 is None:
             self.step_b0 = step + 1  # start reverse phase next step
             self.kappa_w = np.random.uniform(-self.kappa_w_max, self.kappa_w_max)
         elif self.step_b0 is not None and step >= self.step_b0 + self.step_b + self.step_w:
