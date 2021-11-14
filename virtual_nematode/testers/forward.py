@@ -6,7 +6,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def test_func(env, model, math_model, data_func):
+def test_func(env, model, math_model, data_func, x_func):
     """ run a forward locomotion simulation steered by a neural network """
     seed = sample_seed()
     env.seed(seed)
@@ -15,8 +15,7 @@ def test_func(env, model, math_model, data_func):
     model.eval()
     math_model.seed(seed)
     hidden_state = None
-    y = []
-    coms = []
+    x, y = [], []
     with torch.no_grad():
         for i in range(10 ** 6):
             # env.render()
@@ -28,18 +27,18 @@ def test_func(env, model, math_model, data_func):
             action = output.squeeze(dim=0)  # remove batch dimension
             action = action.numpy()
             observation, reward, done, info = env.step(action)
+            x.append(x_func(observation=observation))
             y.append(action.tolist())
-            coms.append(info['com'])
             if done:
                 break
     env.close()
-    x = torch.tensor(coms, dtype=torch.float64)  # center of mass, (max_episode_steps, 2)
+    x = torch.tensor(x, dtype=torch.float64)  # center of mass, (max_episode_steps, 2)
     y = torch.tensor(y, dtype=torch.float64)  # (max_episode_steps, action_size)
     return x, y
 
 
 def tester(
-    env, model, data_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
+    env, model, data_func, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
     data_size=100
 ):
     """ online test for at least 100 trials """
@@ -51,7 +50,7 @@ def tester(
     result = SimulationDataset(
         data_size, max_episode_steps, 2, action_size, seed, test_func,
         # func kwargs
-        env=env, model=model, math_model=math_model, data_func=data_func
+        env=env, model=model, math_model=math_model, data_func=data_func, x_func=x_func
     )
     print('result', len(result), result[0][0].size(), result[0][1].size())
     x, _ = result.tensors
@@ -65,11 +64,11 @@ def tester(
     writer.close()
 
 
-def single_tester(env, model, data_func, seed=42, max_episode_steps=2500):
+def single_tester(env, model, data_func, x_func, seed=42, max_episode_steps=2500):
     """ online test for a single trial and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
     math_model = Forward(dt=env.dt, seed=seed)
-    x, _ = test_func(env, model, math_model, data_func)
+    x, _ = test_func(env, model, math_model, data_func, x_func)
     displacement = torch.linalg.norm(x[-1, :] - x[0, :], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
