@@ -28,7 +28,7 @@ def y_func(action, **kwargs):
 if __name__ == '__main__':
     input_size = 193  # 1 + 96 + 96
     data_size = 6000
-    seed = 3
+    seed = 7
     max_episode_steps = 192
     reset_noise_scale = 0.7
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
