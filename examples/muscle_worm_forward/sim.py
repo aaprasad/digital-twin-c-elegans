@@ -30,7 +30,7 @@ def done_func(index, result, **kwargs):
 
 if __name__ == '__main__':
     """ results
-    100 trials: com displacement mean 10.07 / 2500 steps
+    100 trials: com displacement mean 10.10 / 2500 steps
     """
     max_episode_steps = 2500
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=0.7)
