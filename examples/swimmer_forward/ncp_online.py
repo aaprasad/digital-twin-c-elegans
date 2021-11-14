@@ -1,4 +1,4 @@
-from data import x_func
+from data import x_func as data_func
 import gym
 import os
 from virtual_nematode.envs.swimmer import make_swimmer
@@ -25,6 +25,6 @@ if __name__ == '__main__':
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
         **{'units': 100, 'output_dim': 24, 'in_features': 49}
     )
-    tester(env, model, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
+    tester(env, model, data_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder), force=True)
-    single_tester(env, model, x_func, seed, max_episode_steps)
+    single_tester(env, model, data_func, seed, max_episode_steps)
