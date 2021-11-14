@@ -10,6 +10,7 @@ from virtual_nematode.simulation import simulate
 
 
 def action_func(model, step, observation, **kwargs):
+    """ generate action """
     q = observation[1:25]
     q_vel = observation[28:52]
     action = model.step(step, q, q_vel)
