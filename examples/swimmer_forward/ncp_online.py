@@ -9,13 +9,15 @@ from virtual_nematode.trainers.ncp import prepare_model
 
 def fully_connected():
     """ results
-    100 trials: com displacement mean 11.90 / 2500 steps
-    1 trial: com displacement 11.58 / 2500 steps
+    units = 100
+        100 trials: com displacement mean 11.90 / 2500 steps
+        1 trial: com displacement 11.58 / 2500 steps
+    units = 72
     """
     model_name = 'fully_connected'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
-        **{'units': 100, 'output_dim': 24, 'in_features': 49}
+        **{'units': 72, 'output_dim': 24, 'in_features': 49}
     )
     return model, model_name
 
