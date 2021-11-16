@@ -3,8 +3,8 @@ from virtual_nematode.trainers.ncp import train_eval_test
 
 if __name__ == '__main__':
     """ results
-    memory: ~ 7GB+
-    time: ~ 1h 40min / 300 epochs
+    memory: 7.5G
+    time: 1h 40min / 300 epochs
     """
     train_eval_test(
         data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=1024,

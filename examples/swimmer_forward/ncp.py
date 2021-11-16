@@ -5,13 +5,13 @@ def fully_connected():
     """ results
     units = 100, batch_size = 1024
         memory: 7G * 4
-        time: ~ 2h / 300 epochs
+        time: 2h / 300 epochs
     units = 72, batch_size = 1024
         memory: 4.9G * 4
-        time: ~ 2h / 300 epochs
+        time: 2h / 300 epochs
     units = 150, batch_size = 512
         memory: 7.5G * 4
-        time: ~ 4h / 300 epochs
+        time: 4h / 300 epochs
     """
     train_eval_test(
         data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=512,
@@ -24,7 +24,7 @@ def fully_connected():
 def ncp():
     """ results
     memory: 7G * 4
-    time: ~ 2h / 300 epochs
+    time: 2h / 300 epochs
     """
     train_eval_test(
         data_name='ncp.pt', model_name='ncp', lengths=[48000, 12000, 12000], batch_size=1024,

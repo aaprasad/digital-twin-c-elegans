@@ -4,7 +4,7 @@ from virtual_nematode.trainers.ncp import train_eval_test
 def fully_connected():
     """ results
     memory: 7G * 4
-    time: ~ 2h 40min / 300 epochs
+    time: 2h 40min / 300 epochs
     """
     train_eval_test(
         data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=1024,
