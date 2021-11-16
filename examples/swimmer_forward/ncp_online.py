@@ -27,7 +27,7 @@ def ncp():
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
         **{
-            'in_features': 49, 'inter_neuron': 12, 'command_neurons': 36, 'motor_neurons': 24, 'sensory_fanout': 6,
+            'in_features': 49, 'inter_neurons': 12, 'command_neurons': 36, 'motor_neurons': 24, 'sensory_fanout': 6,
             'inter_fanout': 12, 'recurrent_command_synapses': 6, 'motor_fanin': 6
         }
     )
