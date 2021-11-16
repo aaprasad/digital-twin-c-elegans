@@ -25,8 +25,8 @@ def ncp():
         data_name='ncp.pt', model_name='ncp', lengths=[48000, 12000, 12000], batch_size=1024,
         seed=11, cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=300, early_stop=30, comment='',
         # model kwargs
-        in_features=49, inter_neurons=12, command_neurons=36, motor_neurons=24, sensory_fanout=12, inter_fanout=36,
-        recurrent_command_synapses=36, motor_fanin=36
+        in_features=49, inter_neurons=24, command_neurons=48, motor_neurons=24, sensory_fanout=24, inter_fanout=48,
+        recurrent_command_synapses=48, motor_fanin=48
     )
 
 
