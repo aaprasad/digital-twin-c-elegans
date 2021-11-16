@@ -20,7 +20,7 @@ def ncp():
         seed=11, cuda=0, device_ids=[0, 1], lr=0.001, epochs=300, early_stop=30, comment='',
         # model kwargs
         in_features=49, inter_neurons=24, command_neurons=24, motor_neurons=96, sensory_fanout=24, inter_fanout=24,
-        recurrent_command_synapses=24, motor_fanin=96
+        recurrent_command_synapses=24, motor_fanin=24
     )
 
 
