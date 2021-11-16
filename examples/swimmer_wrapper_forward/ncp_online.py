@@ -21,6 +21,18 @@ def fully_connected():
     return model, model_name
 
 
+def ncp():
+    model_name = 'ncp'
+    model = prepare_model(
+        model_name, model_path=os.path.join(model_folder, 'model.pt'),
+        **{
+            'in_features': 49, 'inter_neurons': 24, 'command_neurons': 24, 'motor_neurons': 96, 'sensory_fanout': 24,
+            'inter_fanout': 24, 'recurrent_command_synapses': 24, 'motor_fanin': 24
+        }
+    )
+    return model, model_name
+
+
 if __name__ == '__main__':
     runs_folder = ''
     model_folder = os.path.join('runs', runs_folder)
@@ -33,6 +45,7 @@ if __name__ == '__main__':
     )
     env = MuscleAction(env)
     model, model_name = fully_connected()
+    # model, model_name = ncp()
     tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder), force=True)
     single_tester(env, model, data_func, x_func, seed, max_episode_steps)
