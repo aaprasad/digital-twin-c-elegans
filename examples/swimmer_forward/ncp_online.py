@@ -19,7 +19,7 @@ def fully_connected():
     model_name = 'fully_connected'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
-        **{'units': 72, 'output_dim': 24, 'in_features': 49}
+        **{'units': 150, 'output_dim': 24, 'in_features': 49}
     )
     return model, model_name
 
