@@ -28,6 +28,10 @@ def fully_connected():
 
 
 def ncp():
+    """ results
+    100 trials: com displacement mean 6.90 / 2500 steps
+    1 trial: com displacement 6.73 / 2500 steps
+    """
     model_name = 'ncp'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
