@@ -1,7 +1,7 @@
 from virtual_nematode.trainers.ncp import train_eval_test
 
 
-if __name__ == '__main__':
+def fully_connected():
     """ results
     memory: 7.5G * 4
     time: 7h 30min / 300 epochs
@@ -12,3 +12,7 @@ if __name__ == '__main__':
         # model kwargs
         units=200, output_dim=96, in_features=193
     )
+
+
+if __name__ == '__main__':
+    fully_connected()
