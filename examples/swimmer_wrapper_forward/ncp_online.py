@@ -14,6 +14,8 @@ def fully_connected():
         100 trials: com displacement mean 1.82 / 2500 steps
         1 trial: com displacement 2.20 / 2500 steps
     units = 128
+        100 trials: com displacement mean 18.39 / 2500 steps
+        1 trial: com displacement 18.01 / 2500 steps
     """
     model_name = 'fully_connected'
     model = prepare_model(
