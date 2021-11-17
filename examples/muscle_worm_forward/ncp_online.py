@@ -9,23 +9,23 @@ from virtual_nematode.trainers.ncp import prepare_model
 
 def fully_connected():
     """ results
-    units = 200, batch_size = 256
+    units = 200, batch_size = 256, output_mapping='affine'
         100 trials: com displacement mean 3.25 / 2500 steps
         1 trial: com displacement 3.42 / 2500 steps
-    units = 150, batch_size = 512
+    units = 150, batch_size = 512, output_mapping='affine'
         100 trials: com displacement mean 2.78 / 2500 steps
         1 trial: com displacement 2.95 / 2500 steps
-    units = 100, batch_size = 1024
+    units = 100, batch_size = 1024, output_mapping='affine'
         100 trials: com displacement mean 2.38 / 2500 steps
         1 trial: com displacement 2.60 / 2500 steps
-    units = 128, batch_size = 512
+    units = 128, batch_size = 512, output_mapping='affine'
         100 trials: com displacement mean 3.02 / 2500 steps
         1 trial: com displacement 3.23 / 2500 steps
     """
     model_name = 'fully_connected'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
-        **{'units': 100, 'output_dim': 96, 'in_features': 193, 'output_mapping': 'affine'}
+        **{'units': 150, 'output_dim': 96, 'in_features': 193, 'output_mapping': 'sigmoid'}
     )
     return model, model_name
 

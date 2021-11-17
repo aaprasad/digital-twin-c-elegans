@@ -17,10 +17,10 @@ def fully_connected():
         time: 3h 45min / 300 epochs
     """
     train_eval_test(
-        data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=1024,
+        data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=512,
         seed=11, cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=300, early_stop=30, comment='',
         # model kwargs
-        units=100, output_dim=96, in_features=193, output_mapping='affine'
+        units=150, output_dim=96, in_features=193, output_mapping='sigmoid'
     )
 
 
