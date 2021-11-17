@@ -15,6 +15,9 @@ def fully_connected():
     units = 128, batch_size = 512, output_mapping='affine'
         memory: 6.7G * 4
         time: 3h 45min / 300 epochs
+    units = 100, batch_size = 1024, output_mapping='exp'
+        memory: 8.5G * 4
+        time: 30min / 67 epochs (early stop)
     """
     train_eval_test(
         data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=1024,
