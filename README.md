@@ -2,6 +2,11 @@
 Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environments
 
 ## prerequisites
+* python==3.8
+* pytorch==1.8.0
+* tensorboard==2.4.1
+
+## installation
 * install `gym-worm`
 * install the project in editable mode from local project path
     ```
@@ -63,4 +68,8 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 * check TensorBoard log
     ```
     tensorboard --logdir=runs --host=10.176.50.34 --port=6006
+    ```
+* local
+    ```
+    tensorboard --logdir=runs
     ```
