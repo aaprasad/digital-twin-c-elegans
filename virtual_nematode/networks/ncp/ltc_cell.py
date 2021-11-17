@@ -149,12 +149,12 @@ class LTCCell(nn.Module):
                 init_value=torch.zeros((self.sensory_size,)),
             )
 
-        if self._output_mapping in ["affine", "linear"]:
+        if self._output_mapping in ["affine", "linear", 'exp']:  # added 'exp'
             self._params["output_w"] = self.add_weight(
                 name="output_w",
                 init_value=torch.ones((self.motor_size,)),
             )
-        if self._output_mapping == "affine":
+        if self._output_mapping in ["affine", 'exp']:  # added 'exp'
             self._params["output_b"] = self.add_weight(
                 name="output_b",
                 init_value=torch.zeros((self.motor_size,)),
@@ -224,10 +224,12 @@ class LTCCell(nn.Module):
         if self.motor_size < self.state_size:
             output = output[:, 0 : self.motor_size]  # slice
 
-        if self._output_mapping in ["affine", "linear"]:
+        if self._output_mapping in ["affine", "linear", 'exp']:  # added 'exp'
             output = output * self.output_w
-        if self._output_mapping == "affine":
+        if self._output_mapping in ["affine", 'exp']:  # added 'exp'
             output = output + self.output_b
+        if self._output_mapping == 'exp':  # added 'exp'
+            output = torch.exp(output)
         return output
 
     def _clip(self, w):

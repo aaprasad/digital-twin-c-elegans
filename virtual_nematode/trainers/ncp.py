@@ -31,23 +31,17 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, **k
     return model
 
 
-def fully_connected(units=60, output_dim=11, in_features=2):
-    """ network model
-    batch_size: 2048, takes up 9621MiB
-    """
+def fully_connected(units=60, output_dim=11, in_features=2, output_mapping='affine'):
     wiring = FullyConnected(units=units, output_dim=output_dim)
-    ltc_cell = LTCCell(wiring, in_features=in_features)
+    ltc_cell = LTCCell(wiring, in_features=in_features, output_mapping=output_mapping)
     model = RNNSequence(ltc_cell)
     return model
 
 
 def ncp(
     in_features=2, inter_neurons=24, command_neurons=48, motor_neurons=11, sensory_fanout=12, inter_fanout=5,
-    recurrent_command_synapses=6, motor_fanin=4
+    recurrent_command_synapses=6, motor_fanin=4, output_mapping='affine'
 ):
-    """ network model
-    batch_size: 1024, takes up 8929MiB
-    """
     wiring = NCP(
         inter_neurons=inter_neurons,
         command_neurons=command_neurons,
@@ -57,7 +51,7 @@ def ncp(
         recurrent_command_synapses=recurrent_command_synapses,
         motor_fanin=motor_fanin,
     )
-    ltc_cell = LTCCell(wiring, in_features=in_features)
+    ltc_cell = LTCCell(wiring, in_features=in_features, output_mapping=output_mapping)
     model = RNNSequence(ltc_cell)
     return model
 
