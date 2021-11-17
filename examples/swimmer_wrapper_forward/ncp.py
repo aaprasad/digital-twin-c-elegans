@@ -21,6 +21,7 @@ def fully_connected():
 def ncp():
     """ results
     memory: 7.5G * 2
+    time: 8h / 300 epochs
     """
     train_eval_test(
         data_name='ncp.pt', model_name='ncp', lengths=[48000, 12000, 12000], batch_size=256,
