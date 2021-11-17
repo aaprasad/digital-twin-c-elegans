@@ -3,14 +3,15 @@ from virtual_nematode.trainers.ncp import train_eval_test
 
 def fully_connected():
     """ results
-    memory: 7.5G * 4
-    time: 7h 30min / 300 epochs
+    units = 200, batch_size = 256
+        memory: 7.5G * 4
+        time: 7h 30min / 300 epochs
     """
     train_eval_test(
-        data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=256,
+        data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=512,
         seed=11, cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=300, early_stop=30, comment='',
         # model kwargs
-        units=200, output_dim=96, in_features=193
+        units=150, output_dim=96, in_features=193
     )
 
 
