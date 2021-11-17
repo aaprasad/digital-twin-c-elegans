@@ -6,6 +6,8 @@ def fully_connected():
     units = 200, batch_size = 256
         memory: 7.5G * 4
         time: 7h 30min / 300 epochs
+    units = 150, batch_size = 512
+        memory: 8.6G * 4
     """
     train_eval_test(
         data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=512,
