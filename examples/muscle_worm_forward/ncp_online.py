@@ -15,11 +15,14 @@ def fully_connected():
     units = 150, batch_size = 512
         100 trials: com displacement mean 2.78 / 2500 steps
         1 trial: com displacement 2.95 / 2500 steps
+    units = 100, batch_size = 1024
+        100 trials: com displacement mean 2.38 / 2500 steps
+        1 trial: com displacement 2.60 / 2500 steps
     """
     model_name = 'fully_connected'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, 'model.pt'),
-        **{'units': 100, 'output_dim': 96, 'in_features': 193}
+        **{'units': 128, 'output_dim': 96, 'in_features': 193}
     )
     return model, model_name
 
