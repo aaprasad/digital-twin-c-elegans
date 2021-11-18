@@ -2,6 +2,7 @@ from data import x_func as data_func
 import gym
 import os
 from sim import step_func as x_func
+import torch
 from virtual_nematode.envs.muscle_worm import make_swimmer
 from virtual_nematode.testers.forward import tester, single_tester
 from virtual_nematode.trainers.ncp import prepare_model
@@ -43,4 +44,5 @@ if __name__ == '__main__':
     model, model_name = fully_connected()
     tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder), force=True)
-    single_tester(env, model, data_func, x_func, seed, max_episode_steps)
+    _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
+    torch.save(y, 'data/{}.pt'.format(runs_folder))  # action sequence
