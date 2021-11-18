@@ -25,6 +25,9 @@ def fully_connected():
     units = 150, batch_size = 512, output_mapping='sigmoid'
         100 trials: com displacement mean 3.37 / 2500 steps
         1 trial: com displacement 3.95 / 2500 steps
+    units = 150, batch_size = 512, output_mapping='relu'
+        100 trials: com displacement mean 3.47 / 2500 steps
+        1 trial: com displacement 3.66 / 2500 steps
     """
     model_name = 'fully_connected'
     model = prepare_model(

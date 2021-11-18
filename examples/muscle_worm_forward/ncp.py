@@ -18,6 +18,8 @@ def fully_connected():
     units = 150, batch_size = 512, output_mapping='sigmoid'
         memory: 8.6G * 4
         time: 50min / 55 epochs (early stop)
+    units = 150, batch_size = 512, output_mapping='relu'
+        time: 4h 30min / 300 epochs
     """
     train_eval_test(
         data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=512,
