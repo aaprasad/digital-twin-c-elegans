@@ -8,7 +8,7 @@ from virtual_nematode.testers.forward import tester, single_tester
 from virtual_nematode.trainers.ncp import prepare_model
 
 
-def fully_connected():
+def fully_connected(ckpt_name='model.pt'):
     """ results
     units = 200, batch_size = 256
         100 trials: com displacement mean 3.25 / 2500 steps
@@ -31,10 +31,19 @@ def fully_connected():
     """
     model_name = 'fully_connected'
     model = prepare_model(
-        model_name, model_path=os.path.join(model_folder, 'model.pt'),
+        model_name, model_path=os.path.join(model_folder, ckpt_name),
         **{'units': 100, 'output_dim': 96, 'in_features': 193, 'output_mapping': 'linear-relu'}
     )
     return model, model_name
+
+
+def evaluate(start, end):
+    for i in range(start, end):
+        ckpt_name = 'model{}.pt'.format(i)
+        model, _ = fully_connected(ckpt_name)
+        print(ckpt_name, end=' ')
+        _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
+        torch.save(y, 'data/{}/{}'.format(runs_folder, ckpt_name))  # action sequence
 
 
 if __name__ == '__main__':
@@ -46,6 +55,7 @@ if __name__ == '__main__':
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
     model, model_name = fully_connected()
     tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
+    # evaluate(start=0, end=300)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder), force=True)
     _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
     torch.save(y, 'data/{}.pt'.format(runs_folder))  # action sequence
