@@ -65,12 +65,13 @@ def tester(
     return x, y  # center of mass, action
 
 
-def single_tester(env, model, data_func, x_func, seed=42, max_episode_steps=2500):
+def single_tester(env, model, data_func, x_func, seed=42, max_episode_steps=2500, verbose=True):
     """ online test for a single trial and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
     math_model = Forward(dt=env.dt, seed=seed)
     x, y = test_func(env, model, math_model, data_func, x_func)
     displacement = torch.linalg.norm(x[-1, :] - x[0, :], ord=2).item()
-    print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
+    if verbose is True:
+        print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
     return x, y  # center of mass, action
