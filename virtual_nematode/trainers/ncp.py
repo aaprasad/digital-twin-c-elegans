@@ -95,12 +95,15 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
         # eval
         mse = test(model, device, eval_loader, criterion)
         writer.add_scalar('MSE/eval', mse, e)
+        # state dict
+        if type(model) is torch.nn.DataParallel:  # unwrap DataParallel to get module and save state dict
+            state_dict = model.module.state_dict()
+        else:
+            state_dict = model.state_dict()
+        # save
+        torch.save(state_dict, '{}{}.pt'.format(model_path[0:-3], e))
         # eval best
         if mse < mse_best:
-            if type(model) is torch.nn.DataParallel:  # unwrap DataParallel to get module and save state dict
-                state_dict = model.module.state_dict()
-            else:
-                state_dict = model.state_dict()
             torch.save(state_dict, model_path)
             mse_best, e_best = mse, e
             writer.add_scalar('MSE/best', mse_best, e_best)
