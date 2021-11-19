@@ -32,7 +32,7 @@ def fully_connected(ckpt_name):
     model_name = 'fully_connected'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, ckpt_name),
-        **{'units': 100, 'output_dim': 96, 'in_features': 193, 'output_mapping': 'linear-relu'}
+        **{'units': 200, 'output_dim': 96, 'in_features': 193, 'output_mapping': 'affine'}
     )
     return model, model_name
 
