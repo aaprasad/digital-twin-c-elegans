@@ -149,12 +149,12 @@ class LTCCell(nn.Module):
                 init_value=torch.zeros((self.sensory_size,)),
             )
 
-        if self._output_mapping in ["affine", "linear", 'sigmoid', 'relu']:  # added 'sigmoid', 'relu'
+        if self._output_mapping in ["affine", "linear", 'sigmoid', 'relu', 'linear-relu']:
             self._params["output_w"] = self.add_weight(
                 name="output_w",
                 init_value=torch.ones((self.motor_size,)),
             )
-        if self._output_mapping in ["affine", 'sigmoid', 'relu']:  # added 'sigmoid', 'relu'
+        if self._output_mapping in ["affine", 'sigmoid', 'relu']:
             self._params["output_b"] = self.add_weight(
                 name="output_b",
                 init_value=torch.zeros((self.motor_size,)),
@@ -224,13 +224,13 @@ class LTCCell(nn.Module):
         if self.motor_size < self.state_size:
             output = output[:, 0 : self.motor_size]  # slice
 
-        if self._output_mapping in ["affine", "linear", 'sigmoid', 'relu']:  # added 'sigmoid', 'relu'
+        if self._output_mapping in ["affine", "linear", 'sigmoid', 'relu', 'linear-relu']:
             output = output * self.output_w
-        if self._output_mapping in ["affine", 'sigmoid', 'relu']:  # added 'sigmoid', 'relu'
+        if self._output_mapping in ["affine", 'sigmoid', 'relu']:
             output = output + self.output_b
-        if self._output_mapping == 'sigmoid':  # added 'sigmoid'
+        if self._output_mapping == 'sigmoid':
             output = torch.sigmoid(output)
-        if self._output_mapping == 'relu':  # add 'relu'
+        if self._output_mapping in ['relu', 'linear-relu']:
             output = torch.relu(output)
         return output
 
