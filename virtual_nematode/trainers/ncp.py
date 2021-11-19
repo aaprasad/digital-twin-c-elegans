@@ -112,7 +112,7 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
 
 def train_eval_test(
     data_name='ncp.pt', model_name='fully_connected', lengths=None, batch_size=2048, seed=42,
-    cuda=0, device_ids=None, lr=0.001, epochs=200, early_stop=30, comment='', **kwargs
+    cuda=0, device_ids=None, lr=0.001, weight_decay=0, epochs=200, early_stop=30, comment='', **kwargs
 ):
     """ offline train, eval and test
     lengths: [train_size, eval_size, test_size]
@@ -129,7 +129,7 @@ def train_eval_test(
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
     model = prepare_model(model_name, device, device_ids, **kwargs)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     criterion = torch.nn.MSELoss(reduction='mean')
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
