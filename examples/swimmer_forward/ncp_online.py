@@ -44,6 +44,15 @@ def ncp():
     return model, model_name
 
 
+def evaluate(start, end):
+    for i in range(start, end):
+        ckpt_name = 'model{}.pt'.format(i)
+        model, _ = fully_connected(ckpt_name)
+        print(ckpt_name, end=' ')
+        _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
+        torch.save(y, 'data/{}/{}'.format(runs_folder, ckpt_name))  # action sequence
+
+
 if __name__ == '__main__':
     runs_folder = ''
     model_folder = os.path.join('runs', runs_folder)
@@ -57,6 +66,7 @@ if __name__ == '__main__':
     model, model_name = fully_connected()
     # model, model_name = ncp()
     tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
+    # evaluate(start=0, end=300)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder), force=True)
     _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
-    torch.save(y, 'data/{}.pt'.format(runs_folder))  # action sequence
+    torch.save(y, 'data/{}/model.pt'.format(runs_folder))  # action sequence
