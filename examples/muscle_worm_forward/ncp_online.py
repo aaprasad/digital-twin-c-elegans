@@ -43,7 +43,7 @@ def evaluate(start, end):
         model, _ = fully_connected(ckpt_name)
         print(ckpt_name, end=' ')
         _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
-        torch.save(y, 'data/{}/{}'.format(runs_folder, ckpt_name))  # action sequence
+        torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
 if __name__ == '__main__':
@@ -52,10 +52,12 @@ if __name__ == '__main__':
     seed = 42
     reset_noise_scale = 0.7
     max_episode_steps = 2500
+    data_path = os.path.join('data', runs_folder)  # data folder for storing model action sequence output
+    os.makedirs(data_path, exist_ok=True)
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
     model, model_name = fully_connected()
     tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
     # evaluate(start=0, end=300)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder), force=True)
     _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
-    torch.save(y, 'data/{}.pt'.format(runs_folder))  # action sequence
+    torch.save(y, os.path.join(data_path, 'model.pt'))  # action sequence
