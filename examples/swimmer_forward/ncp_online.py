@@ -8,7 +8,7 @@ from virtual_nematode.testers.forward import tester, single_tester
 from virtual_nematode.trainers.ncp import prepare_model
 
 
-def fully_connected():
+def fully_connected(ckpt_name='model.pt'):
     """ results
     units = 100
         100 trials: com displacement mean 21.76 / 2500 steps
@@ -22,7 +22,7 @@ def fully_connected():
     """
     model_name = 'fully_connected'
     model = prepare_model(
-        model_name, model_path=os.path.join(model_folder, 'model.pt'),
+        model_name, model_path=os.path.join(model_folder, ckpt_name),
         **{'units': 150, 'output_dim': 24, 'in_features': 49}
     )
     return model, model_name
