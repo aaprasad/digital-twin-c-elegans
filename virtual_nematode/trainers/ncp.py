@@ -6,6 +6,7 @@ from virtual_nematode.data.utils import prepare_dataloader
 from virtual_nematode.networks.ncp.ltc_cell import LTCCell
 from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
 from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
+from virtual_nematode.trainers.loss import MSESymmetricJointLoss, MSESymmetricMuscleLoss
 
 
 def prepare_model(model_name, device=None, device_ids=None, model_path=None, **kwargs):
@@ -114,8 +115,8 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
 
 
 def train_eval_test(
-    data_name='ncp.pt', model_name='fully_connected', lengths=None, batch_size=2048, seed=42,
-    cuda=0, device_ids=None, lr=0.001, weight_decay=0, epochs=200, early_stop=30, comment='', **kwargs
+    data_name='ncp.pt', model_name='fully_connected', lengths=None, batch_size=2048, seed=42, cuda=0, device_ids=None,
+    lr=0.001, weight_decay=0, epochs=200, early_stop=30, comment='', loss='MSELoss', **kwargs
 ):
     """ offline train, eval and test
     lengths: [train_size, eval_size, test_size]
@@ -133,7 +134,14 @@ def train_eval_test(
     # train
     model = prepare_model(model_name, device, device_ids, **kwargs)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-    criterion = torch.nn.MSELoss(reduction='mean')
+    if loss == 'MSELoss':
+        criterion = torch.nn.MSELoss(reduction='mean')
+    elif loss == 'MSESymmetricJointLoss':
+        criterion = MSESymmetricJointLoss(reduction='mean')
+    elif loss == 'MSESymmetricMuscleLoss':
+        criterion = MSESymmetricMuscleLoss(reduction='mean')
+    else:
+        assert ValueError('Invalid loss type {}'.format(loss))
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
     # test
