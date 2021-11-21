@@ -2,6 +2,7 @@ from data import x_func as data_func
 import gym
 import os
 from sim import step_func as x_func
+import sys
 import torch
 from virtual_nematode.envs.muscle_worm import make_swimmer
 from virtual_nematode.testers.forward import tester, single_tester
@@ -62,8 +63,10 @@ def test(ckpt_name):
 
 
 if __name__ == '__main__':
-    runs_folder = ''
+    runs_folder = sys.argv[1]
     model_folder = os.path.join('runs', runs_folder)
+    if os.path.exists(model_folder) is False:
+        raise ValueError('Invalid runs folder {}'.format(runs_folder))
     seed = 42
     reset_noise_scale = 0.7
     max_episode_steps = 2500
