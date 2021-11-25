@@ -13,7 +13,7 @@ class Forward(object):
         self.q_max = q_max * np.pi / 180  # max joint angle (rad)
         self.motor = motor  # if True, return motor control, else return position control
         """ affect sinusoidal posture and speed """
-        self.a_max = a_max  # action: [-a_max, a_max]
+        self.a_max = a_max  # action: [-a_max, a_max], only applicable when motor=True
         self.psi = psi  # body wavelength (rad)
         self.omega = 2 * np.pi * freq  # angular velocity of bending (rad/s): 2 * pi * freq
         """ state """
