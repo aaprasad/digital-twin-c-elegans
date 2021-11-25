@@ -7,10 +7,11 @@ import numpy as np
 
 class Forward(object):
     """ generate action to perform forward sinusoidal movement """
-    def __init__(self, dt, seed=None, n=12, q_max=40, a_max=2., psi=0.2, freq=3.):
+    def __init__(self, dt, seed=None, n=12, q_max=40, a_max=2., psi=0.2, freq=3., motor=True):
         self.dt = dt  # real time per step
         self.n = n  # number of bodies
         self.q_max = q_max * np.pi / 180  # max joint angle (rad)
+        self.motor = motor  # if True, return motor control, else return position control
         """ affect sinusoidal posture and speed """
         self.a_max = a_max  # action: [-a_max, a_max]
         self.psi = psi  # body wavelength (rad)
@@ -44,7 +45,10 @@ class Forward(object):
 
     def step(self, step, q, q_vel):
         q_next = self._joint_angle(step=step + 1)  # next step's joint angles
-        action = self._action(q=q, q_next=q_next, q_vel=q_vel)
+        if self.motor is True:  # return motor control
+            action = self._action(q=q, q_next=q_next, q_vel=q_vel)
+        else:  # return position control
+            action = q_next
         return action
 
     def stimuli(self, step):
