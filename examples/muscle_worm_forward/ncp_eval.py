@@ -67,6 +67,6 @@ if __name__ == '__main__':
     data_path = os.path.join('data', runs_folder)  # data folder for storing model action sequence output
     os.makedirs(data_path, exist_ok=True)
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
-    evaluate_all(start=0, end=300)
+    evaluate_all(start=0, end=100)
     # evaluate(env, ckpt_name='model.pt')
     # test(ckpt_name='model.pt')
