@@ -21,7 +21,7 @@ def fully_connected():
         cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, weight_decay=0, epochs=100, early_stop=30, comment='',
         loss='MSELoss', sr=None,
         # model kwargs
-        units=150, output_dim=96, in_features=193, output_mapping='affine'
+        units=150, output_dim=96, in_features=192, output_mapping='affine'
     )
 
 

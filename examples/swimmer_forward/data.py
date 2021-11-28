@@ -10,7 +10,7 @@ from virtual_nematode.models.forward import Forward
 from virtual_nematode.data.simulation import generate_dataset
 
 
-def x_func(stimuli, observation, **kwargs):
+def x_func(observation, **kwargs):
     """ input_size = q_size + q_vel_size """
     # return [stimuli] + observation[1:25].tolist() + observation[28:52].tolist()
     return observation[1:25].tolist() + observation[28:52].tolist()

@@ -9,12 +9,13 @@ from virtual_nematode.models.forward import Forward
 from virtual_nematode.data.simulation import generate_dataset
 
 
-def x_func(stimuli, observation, **kwargs):
-    """ x: input_size = stimuli_size + tendon_length_size + tendon_velocity_size
+def x_func(observation, **kwargs):
+    """ x: input_size = tendon_length_size + tendon_velocity_size
     external signal: first joint's target angle
     proprioceptive observations: tendon lengths and velocity
     """
-    return [stimuli] + observation[52:148].tolist() + observation[148:244].tolist()
+    # return [stimuli] + observation[52:148].tolist() + observation[148:244].tolist()
+    return observation[52:148].tolist() + observation[148:244].tolist()
 
 
 def y_func(action, **kwargs):
@@ -26,7 +27,7 @@ def y_func(action, **kwargs):
 
 
 if __name__ == '__main__':
-    input_size = 193  # 1 + 96 + 96
+    input_size = 192
     data_size = 6000
     seed = 7
     max_episode_steps = 192
