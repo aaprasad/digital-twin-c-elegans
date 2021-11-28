@@ -116,7 +116,7 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
 
 def train_eval_test(
     data_name='ncp.pt', model_name='fully_connected', lengths=None, batch_size=2048, seed=42, cuda=0, device_ids=None,
-    lr=0.001, weight_decay=0, epochs=200, early_stop=30, comment='', loss='MSELoss', sr=1, **kwargs
+    lr=0.001, weight_decay=0, epochs=200, early_stop=30, comment='', loss='MSELoss', sr=None, **kwargs
 ):
     """ offline train, eval and test
     lengths: [train_size, eval_size, test_size]

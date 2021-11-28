@@ -2,7 +2,7 @@ import torch
 
 
 class MSESymmetricJointLoss(torch.nn.MSELoss):
-    def __init__(self, sr, **kwargs):
+    def __init__(self, sr=1, **kwargs):
         super(MSESymmetricJointLoss, self).__init__(**kwargs)
         self.sr = sr  # symmetric rate
 
@@ -13,7 +13,7 @@ class MSESymmetricJointLoss(torch.nn.MSELoss):
 
 
 class MSESymmetricMuscleLoss(torch.nn.MSELoss):
-    def __init__(self, sr, **kwargs):
+    def __init__(self, sr=1, **kwargs):
         super(MSESymmetricMuscleLoss, self).__init__(**kwargs)
         self.sr = sr  # symmetric rate
     
