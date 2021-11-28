@@ -24,7 +24,7 @@ def fully_connected(ckpt_name):
     model_name = 'fully_connected'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, ckpt_name),
-        **{'units': 150, 'output_dim': 24, 'in_features': 49}
+        **{'units': 100, 'output_dim': 24, 'in_features': 48}
     )
     return model, model_name
 
@@ -38,7 +38,7 @@ def ncp(ckpt_name):
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, ckpt_name),
         **{
-            'in_features': 49, 'inter_neurons': 24, 'command_neurons': 48, 'motor_neurons': 24, 'sensory_fanout': 24,
+            'in_features': 48, 'inter_neurons': 24, 'command_neurons': 48, 'motor_neurons': 24, 'sensory_fanout': 24,
             'inter_fanout': 48, 'recurrent_command_synapses': 48, 'motor_fanin': 48
         }
     )

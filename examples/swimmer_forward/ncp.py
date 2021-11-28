@@ -17,7 +17,7 @@ def fully_connected():
         data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=1024,
         seed=11, cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=300, early_stop=30, comment='', loss='MSELoss',
         # model kwargs
-        units=100, output_dim=24, in_features=49
+        units=100, output_dim=24, in_features=48
     )
 
 
@@ -30,7 +30,7 @@ def ncp():
         data_name='ncp.pt', model_name='ncp', lengths=[48000, 12000, 12000], batch_size=1024, seed=11,
         cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=300, early_stop=30, comment='', loss='MSELoss',
         # model kwargs
-        in_features=49, inter_neurons=24, command_neurons=48, motor_neurons=24, sensory_fanout=24, inter_fanout=48,
+        in_features=48, inter_neurons=24, command_neurons=48, motor_neurons=24, sensory_fanout=24, inter_fanout=48,
         recurrent_command_synapses=48, motor_fanin=48
     )
 

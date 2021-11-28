@@ -11,17 +11,18 @@ from virtual_nematode.data.simulation import generate_dataset
 
 
 def x_func(stimuli, observation, **kwargs):
-    """ x: input_size = stimuli_size + q_size + q_vel_size """
-    return [stimuli] + observation[1:25].tolist() + observation[28:52].tolist()
+    """ input_size = q_size + q_vel_size """
+    # return [stimuli] + observation[1:25].tolist() + observation[28:52].tolist()
+    return observation[1:25].tolist() + observation[28:52].tolist()
 
 
 def y_func(action, **kwargs):
-    """ y: action_size = 24 """
+    """ action_size = 24 """
     return action.tolist()
 
 
 if __name__ == '__main__':
-    input_size = 49  # 1 + 24 + 24
+    input_size = 48
     data_size = 6000
     seed = 7
     max_episode_steps = 192
