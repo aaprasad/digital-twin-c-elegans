@@ -86,6 +86,6 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_steps=max_episode_steps,
         reset_noise_scale=reset_noise_scale
     )
-    evaluate_all(start=0, end=300)
+    evaluate_all(start=0, end=100)
     # evaluate(env, ckpt_name='model.pt')
     # test(ckpt_name='model.pt')
