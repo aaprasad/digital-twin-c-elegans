@@ -56,7 +56,7 @@ def evaluate_all(start, end):
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
-def evaluate(env, ckpt_name):
+def test_once(env, ckpt_name):
     """ online test once for evaluation and record video """
     model, _ = fully_connected(ckpt_name)
     # model, _ = ncp(ckpt_name)
@@ -87,5 +87,5 @@ if __name__ == '__main__':
         reset_noise_scale=reset_noise_scale
     )
     evaluate_all(start=0, end=100)
-    # evaluate(env, ckpt_name='model.pt')
+    # test_once(env, ckpt_name='model.pt')
     # test(ckpt_name='model.pt')
