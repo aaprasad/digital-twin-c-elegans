@@ -24,7 +24,7 @@ def fully_connected(ckpt_name):
     model_name = 'fully_connected'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, ckpt_name),
-        **{'units': 50, 'output_dim': 24, 'in_features': 48}
+        **{'units': 150, 'output_dim': 24, 'in_features': 48}
     )
     return model, model_name
 
