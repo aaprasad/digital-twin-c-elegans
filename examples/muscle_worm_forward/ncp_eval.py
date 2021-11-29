@@ -32,7 +32,7 @@ def fully_connected(ckpt_name):
     return model, model_name
 
 
-def evaluate_all(start, end):
+def evaluate(start, end):
     """ online test each checkpoint once for evaluation """
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
@@ -42,18 +42,18 @@ def evaluate_all(start, end):
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
-def test_once(env, ckpt_name):
+def test(ckpt_name):
+    """ online test multiple trials for testing """
+    model, model_name = fully_connected(ckpt_name)
+    tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
+
+
+def record(env, ckpt_name):
     """ online test once for evaluation and record video """
     model, _ = fully_connected(ckpt_name)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
     _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
     torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
-
-
-def test(ckpt_name):
-    """ online test multiple trials for testing """
-    model, model_name = fully_connected(ckpt_name)
-    tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
 
 
 if __name__ == '__main__':
@@ -67,6 +67,6 @@ if __name__ == '__main__':
     data_path = os.path.join('data', runs_folder)  # data folder for storing model action sequence output
     os.makedirs(data_path, exist_ok=True)
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
-    evaluate_all(start=0, end=100)
-    # test_once(env, ckpt_name='model.pt')
+    evaluate(start=0, end=100)
     # test(ckpt_name='model.pt')
+    # record(env, ckpt_name='model.pt')
