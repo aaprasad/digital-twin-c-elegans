@@ -60,7 +60,7 @@ def test_once(env, ckpt_name):
     """ online test once for evaluation and record video """
     model, _ = fully_connected(ckpt_name)
     # model, _ = ncp(ckpt_name)
-    env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder), force=True)
+    env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
     _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
     torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
