@@ -89,5 +89,5 @@ if __name__ == '__main__':
         reset_noise_scale=reset_noise_scale
     )
     evaluate(start=0, end=100)
-    test(start=0, end=100)
+    # test(start=0, end=100)
     # record(env, ckpt_name='model.pt')
