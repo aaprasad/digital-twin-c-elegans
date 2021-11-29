@@ -46,7 +46,7 @@ def ncp(ckpt_name):
 
 
 def evaluate(start, end):
-    """ online test each checkpoint once for evaluation """
+    """ online test once for evaluation """
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
         model, _ = fully_connected(ckpt_name)
@@ -56,11 +56,13 @@ def evaluate(start, end):
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
-def test(ckpt_name):
+def test(start, end):
     """ online test multiple trials for testing """
-    model, model_name = fully_connected(ckpt_name)
-    # model, model_name = ncp(ckpt_name)
-    tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
+    for i in range(start, end):
+        ckpt_name = 'model{}.pt'.format(i)
+        model, model_name = fully_connected(ckpt_name)
+        # model, model_name = ncp(ckpt_name)
+        tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
 
 
 def record(env, ckpt_name):
@@ -87,5 +89,5 @@ if __name__ == '__main__':
         reset_noise_scale=reset_noise_scale
     )
     evaluate(start=0, end=100)
-    # test(ckpt_name='model.pt')
+    test(start=0, end=100)
     # record(env, ckpt_name='model.pt')
