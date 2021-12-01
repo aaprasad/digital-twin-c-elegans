@@ -10,17 +10,6 @@ from virtual_nematode.trainers.ncp import prepare_model
 
 
 def fully_connected(ckpt_name):
-    """ results
-    units = 100
-        100 trials: com displacement mean 21.76 / 2500 steps
-        1 trial: com displacement 21.60 / 2500 steps
-    units = 72
-        100 trials: com displacement mean 21.75 / 2500 steps
-        1 trial: com displacement 21.40 / 2500 steps
-    units = 150
-        100 trials: com displacement mean 2.81 / 2500 steps
-        1 trial: com displacement 2.60 / 2500 steps
-    """
     model_name = 'fully_connected'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, ckpt_name),
@@ -30,10 +19,6 @@ def fully_connected(ckpt_name):
 
 
 def ncp(ckpt_name):
-    """ results
-    100 trials: com displacement mean 6.90 / 2500 steps
-    1 trial: com displacement 6.73 / 2500 steps
-    """
     model_name = 'ncp'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, ckpt_name),
