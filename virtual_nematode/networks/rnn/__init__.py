@@ -1,1 +1,1 @@
-import virtual_nematode.networks.rnn.ctrnn
+import virtual_nematode.networks.rnn.ctrnn_cell
