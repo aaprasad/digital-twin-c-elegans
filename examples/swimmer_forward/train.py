@@ -14,8 +14,8 @@ def fully_connected():
         time: 4h / 300 epochs
     """
     train_eval_test(
-        data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=512,
-        seed=11, cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=100, early_stop=30, comment='', loss='MSELoss',
+        data_name='ncp.pt', model_name='fully_connected', lengths=[48000, 12000, 12000], batch_size=1024, seed=11,
+        cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=100, early_stop=30, comment='', loss='MSELoss',
         # model kwargs
         units=50, output_dim=24, in_features=48
     )
@@ -28,7 +28,7 @@ def ncp():
     """
     train_eval_test(
         data_name='ncp.pt', model_name='ncp', lengths=[48000, 12000, 12000], batch_size=1024, seed=11,
-        cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=300, early_stop=30, comment='', loss='MSELoss',
+        cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=100, early_stop=30, comment='', loss='MSELoss',
         # model kwargs
         in_features=48, inter_neurons=24, command_neurons=48, motor_neurons=24, sensory_fanout=24, inter_fanout=48,
         recurrent_command_synapses=48, motor_fanin=48
