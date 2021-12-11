@@ -21,7 +21,7 @@ import torch
 
 
 class CTRNNCell(torch.nn.Module):
-    def __init__(self, input_size, hidden_size, cell_clip=-1, unfolds=6, delta_t=0.1, tau=1):
+    def __init__(self, input_size, hidden_size, feedback=False, cell_clip=-1, unfolds=6, delta_t=0.1, tau=1):
         """ Continuous-time RNN
         input_size: input size
         hidden_size: amount of RNN hidden units
@@ -31,17 +31,23 @@ class CTRNNCell(torch.nn.Module):
         tau: time-constant of the cell
         """
         super(CTRNNCell, self).__init__()
+        if feedback is True:
+            input_size = input_size + hidden_size
         self.linear = torch.nn.Sequential(
             torch.nn.Linear(input_size, hidden_size, bias=True),
             torch.nn.Tanh()
         )
+        self.feedback = feedback  # if True, use hidden state as part of input
         self.cell_clip = cell_clip
         self.unfolds = unfolds
         self.delta_t = delta_t
         self.tau = tau
 
     def forward(self, inputs, states):
-        inputs_prime = self.linear(inputs)
+        if self.feedback is False:
+            inputs_prime = self.linear(inputs)
+        else:
+            inputs_prime = self.linear(torch.cat((inputs, states), dim=-1))
         for i in range(self.unfolds):
             states_prime = (-states + inputs_prime) / self.tau
             states = states + self.delta_t * states_prime
