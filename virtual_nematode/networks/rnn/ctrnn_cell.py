@@ -53,4 +53,5 @@ class CTRNNCell(torch.nn.Module):
             states = states + self.delta_t * states_prime
             if self.cell_clip > 0:
                 states = torch.clamp(states, min=-self.cell_clip, max=self.cell_clip)
-        return states
+        outputs = states
+        return outputs, states
