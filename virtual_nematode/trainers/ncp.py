@@ -6,6 +6,7 @@ from virtual_nematode.data.utils import prepare_dataloader
 from virtual_nematode.networks.ncp.ltc_cell import LTCCell
 from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
 from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
+from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
 from virtual_nematode.trainers.loss import MSESymmetricJointLoss, MSESymmetricMuscleLoss
 
 
@@ -20,6 +21,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, **k
         model = fully_connected(**kwargs)
     elif model_name == 'ncp':
         model = ncp(**kwargs)
+    elif model_name == 'ctrnn':
+        model = ctrnn(**kwargs)
     else:
         raise AssertionError('{} not exist'.format(model_name))
     if device is None:
@@ -54,6 +57,12 @@ def ncp(
     )
     ltc_cell = LTCCell(wiring, in_features=in_features, output_mapping=output_mapping)
     model = RNNSequence(ltc_cell)
+    return model
+
+
+def ctrnn(input_size, hidden_size, **kwargs):
+    cell = CTRNNCell(input_size, hidden_size, **kwargs)
+    model = RNNSequence(cell)
     return model
 
 
