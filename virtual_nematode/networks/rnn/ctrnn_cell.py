@@ -50,7 +50,6 @@ class CTRNNCell(torch.nn.Module):
         return self.hidden_size
 
     def forward(self, inputs, states):
-        inputs = inputs.float()
         if self.feedback is False:
             inputs_prime = self.linear(inputs)
         else:
