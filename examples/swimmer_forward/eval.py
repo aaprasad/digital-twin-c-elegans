@@ -31,6 +31,7 @@ def ncp(ckpt_name):
 
 
 def ctrnn(ckpt_name):
+    torch.set_default_dtype(torch.float64)
     model_name = 'ctrnn'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, ckpt_name),
