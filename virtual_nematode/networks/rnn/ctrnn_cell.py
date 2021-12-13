@@ -37,12 +37,17 @@ class CTRNNCell(torch.nn.Module):
             torch.nn.Linear(input_size, hidden_size, bias=True),
             torch.nn.Tanh()
         )
+        self.hidden_size = hidden_size
         self.output_size = output_size
         self.feedback = feedback  # if True, use hidden state as part of input
         self.cell_clip = cell_clip
         self.unfolds = unfolds
         self.delta_t = delta_t
         self.tau = tau
+
+    @property
+    def state_size(self):
+        return self.hidden_size
 
     def forward(self, inputs, states):
         if self.feedback is False:
