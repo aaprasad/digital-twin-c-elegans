@@ -40,7 +40,7 @@ def ctrnn():
     torch.set_default_dtype(torch.float64)
     train_eval_test(
         data_name='ncp.pt', model_name='ctrnn', lengths=[48000, 12000, 12000], batch_size=1024, seed=11,
-        cuda=0, device_ids=[0, 1, 2, 3], lr=0.001, epochs=100, early_stop=30, comment='', loss='MSELoss',
+        cuda=0, device_ids=[0], lr=0.001, epochs=100, early_stop=30, comment='', loss='MSELoss',
         # model kwargs
         input_size=48, hidden_size=50, output_size=24, feedback=False
     )
