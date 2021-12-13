@@ -38,10 +38,7 @@ def ncp():
 
 def ctrnn():
     """ results
-    hidden_size = 50
-        memory: 0.8G
-        time: 7min / 100 epochs
-    hidden_size = 100
+    hidden_size = 50/100/150
         memory: 0.8G
         time: 7min / 100 epochs
     """
@@ -50,7 +47,7 @@ def ctrnn():
         data_name='ncp.pt', model_name='ctrnn', lengths=[48000, 12000, 12000], batch_size=1024, seed=11,
         cuda=0, device_ids=[0], lr=0.001, epochs=100, early_stop=30, comment='', loss='MSELoss',
         # model kwargs
-        input_size=48, hidden_size=150, output_size=24, feedback=False
+        input_size=48, hidden_size=50, output_size=24, feedback=False
     )
 
 
