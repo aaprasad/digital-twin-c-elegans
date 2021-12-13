@@ -30,12 +30,22 @@ def ncp(ckpt_name):
     return model, model_name
 
 
+def ctrnn(ckpt_name):
+    model_name = 'ctrnn'
+    model = prepare_model(
+        model_name, model_path=os.path.join(model_folder, ckpt_name),
+        **{'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': False}
+    )
+    return model, model_name
+
+
 def evaluate(start, end):
     """ online test once for evaluation """
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
-        model, _ = fully_connected(ckpt_name)
+        # model, _ = fully_connected(ckpt_name)
         # model, _ = ncp(ckpt_name)
+        model, _ = ctrnn(ckpt_name)
         print(ckpt_name, end=' ')
         _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
@@ -45,15 +55,17 @@ def test(start, end):
     """ online test multiple trials for testing """
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
-        model, model_name = fully_connected(ckpt_name)
+        # model, model_name = fully_connected(ckpt_name)
         # model, model_name = ncp(ckpt_name)
+        model, model_name = ctrnn(ckpt_name)
         tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
 
 
 def record(env, ckpt_name):
     """ online test once for evaluation and record video """
-    model, _ = fully_connected(ckpt_name)
+    # model, _ = fully_connected(ckpt_name)
     # model, _ = ncp(ckpt_name)
+    model, _ = ctrnn(ckpt_name)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
     _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
     torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
