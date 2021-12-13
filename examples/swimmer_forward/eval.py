@@ -35,7 +35,7 @@ def ctrnn(ckpt_name):
     model_name = 'ctrnn'
     model = prepare_model(
         model_name, model_path=os.path.join(model_folder, ckpt_name),
-        **{'input_size': 48, 'hidden_size': 100, 'output_size': 24, 'feedback': False}
+        **{'input_size': 48, 'hidden_size': 150, 'output_size': 24, 'feedback': False}
     )
     return model, model_name
 
