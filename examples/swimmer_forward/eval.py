@@ -18,6 +18,7 @@ def select_model(model_name, ckpt_name):
             'inter_fanout': 48, 'recurrent_command_synapses': 48, 'motor_fanin': 48
         }
     elif model_name == 'ctrnn':
+        torch.set_default_dtype(torch.float64)
         kwargs = {'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True}
     elif model_name == 'rnn':
         kwargs = {'input_size': 48, 'hidden_size': 50, 'output_size': 24}
