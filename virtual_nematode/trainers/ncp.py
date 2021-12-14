@@ -23,6 +23,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, **k
         model = ncp(**kwargs)
     elif model_name == 'ctrnn':
         model = ctrnn(**kwargs)
+    elif model_name == 'rnn':
+        model = rnn(**kwargs)
     else:
         raise AssertionError('{} not exist'.format(model_name))
     if device is None:
@@ -62,6 +64,12 @@ def ncp(
 
 def ctrnn(input_size, hidden_size, **kwargs):
     cell = CTRNNCell(input_size, hidden_size, **kwargs)
+    model = RNNSequence(cell)
+    return model
+
+
+def rnn(input_size, hidden_size, **kwargs):
+    cell = torch.nn.RNNCell(input_size, hidden_size, **kwargs)  # bias=True, nonlinearity='tanh'
     model = RNNSequence(cell)
     return model
 
