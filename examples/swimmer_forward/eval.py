@@ -70,5 +70,5 @@ if __name__ == '__main__':
         reset_noise_scale=reset_noise_scale
     )
     evaluate('rnn', start=0, end=100)
-    test('rnn', start=0, end=100)
-    record('rnn', env, ckpt_name='model.pt')
+    # test('rnn', start=0, end=100)
+    # record('rnn', env, ckpt_name='model.pt')
