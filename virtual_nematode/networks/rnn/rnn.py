@@ -9,7 +9,7 @@ class RNNCell(torch.nn.Module):
         super(RNNCell, self).__init__()
         # self.rnn_cell = torch.nn.RNNCell(input_size, hidden_size, **kwargs)
         self.linear = torch.nn.Sequential(
-            torch.nn.Linear(input_size, hidden_size, bias=True),
+            torch.nn.Linear(input_size + hidden_size, hidden_size, bias=True),
             torch.nn.Tanh()
         )
         self.hidden_size = hidden_size
