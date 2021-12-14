@@ -10,75 +10,76 @@ from virtual_nematode.trainers.ncp import prepare_model
 
 
 def fully_connected(ckpt_name):
-    model_name = 'fully_connected'
     model = prepare_model(
-        model_name, model_path=os.path.join(model_folder, ckpt_name),
+        'fully_connected', model_path=os.path.join(model_folder, ckpt_name),
         **{'units': 50, 'output_dim': 24, 'in_features': 48}
     )
-    return model, model_name
+    return model
 
 
 def ncp(ckpt_name):
-    model_name = 'ncp'
     model = prepare_model(
-        model_name, model_path=os.path.join(model_folder, ckpt_name),
+        'ncp', model_path=os.path.join(model_folder, ckpt_name),
         **{
             'in_features': 48, 'inter_neurons': 24, 'command_neurons': 48, 'motor_neurons': 24, 'sensory_fanout': 24,
             'inter_fanout': 48, 'recurrent_command_synapses': 48, 'motor_fanin': 48
         }
     )
-    return model, model_name
+    return model
 
 
 def ctrnn(ckpt_name):
     torch.set_default_dtype(torch.float64)
-    model_name = 'ctrnn'
     model = prepare_model(
-        model_name, model_path=os.path.join(model_folder, ckpt_name),
+        'ctrnn', model_path=os.path.join(model_folder, ckpt_name),
         **{'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True}
     )
-    return model, model_name
+    return model
 
 
 def rnn(ckpt_name):
-    model_name = 'rnn'
     model = prepare_model(
-        model_name, model_path=os.path.join(model_folder, ckpt_name),
+        'rnn', model_path=os.path.join(model_folder, ckpt_name),
         **{'input_size': 48, 'hidden_size': 50, 'output_size': 24}
     )
-    return model, model_name
+    return model
 
 
-def evaluate(start, end):
+def select_model(model_name, ckpt_name):
+    if model_name == 'fully_connected':
+        model = fully_connected(ckpt_name)
+    elif model_name == 'ncp':
+        model = ncp(ckpt_name)
+    elif model_name == 'ctrnn':
+        model = ctrnn(ckpt_name)
+    elif model_name == 'rnn':
+        model = rnn(ckpt_name)
+    else:
+        raise AssertionError('{} not exist'.format(model_name))
+    return model
+
+
+def evaluate(model_name, start, end):
     """ online test once for evaluation """
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
-        # model, _ = fully_connected(ckpt_name)
-        # model, _ = ncp(ckpt_name)
-        # model, _ = ctrnn(ckpt_name)
-        model, _ = rnn(ckpt_name)
+        model = select_model(model_name, ckpt_name)
         print(ckpt_name, end=' ')
         _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
-def test(start, end):
+def test(model_name, start, end):
     """ online test multiple trials for testing """
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
-        # model, model_name = fully_connected(ckpt_name)
-        # model, model_name = ncp(ckpt_name)
-        # model, model_name = ctrnn(ckpt_name)
-        model, model_name = rnn(ckpt_name)
+        model = select_model(model_name, ckpt_name)
         tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
 
 
-def record(env, ckpt_name):
+def record(model_name, env, ckpt_name):
     """ online test once for evaluation and record video """
-    # model, _ = fully_connected(ckpt_name)
-    # model, _ = ncp(ckpt_name)
-    # model, _ = ctrnn(ckpt_name)
-    model, _ = rnn(ckpt_name)
+    model = select_model(model_name, ckpt_name)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
     _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
     torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
@@ -98,6 +99,6 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_steps=max_episode_steps,
         reset_noise_scale=reset_noise_scale
     )
-    evaluate(start=0, end=100)
-    # test(start=0, end=100)
-    # record(env, ckpt_name='model.pt')
+    evaluate('rnn', start=0, end=100)
+    test('rnn', start=0, end=100)
+    record('rnn', env, ckpt_name='model.pt')
