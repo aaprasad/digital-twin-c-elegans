@@ -9,53 +9,21 @@ from virtual_nematode.testers.forward import tester, single_tester
 from virtual_nematode.trainers.ncp import prepare_model
 
 
-def fully_connected(ckpt_name):
-    model = prepare_model(
-        'fully_connected', model_path=os.path.join(model_folder, ckpt_name),
-        **{'units': 50, 'output_dim': 24, 'in_features': 48}
-    )
-    return model
-
-
-def ncp(ckpt_name):
-    model = prepare_model(
-        'ncp', model_path=os.path.join(model_folder, ckpt_name),
-        **{
+def select_model(model_name, ckpt_name):
+    if model_name == 'fully_connected':
+        kwargs = {'units': 50, 'output_dim': 24, 'in_features': 48}
+    elif model_name == 'ncp':
+        kwargs = {
             'in_features': 48, 'inter_neurons': 24, 'command_neurons': 48, 'motor_neurons': 24, 'sensory_fanout': 24,
             'inter_fanout': 48, 'recurrent_command_synapses': 48, 'motor_fanin': 48
         }
-    )
-    return model
-
-
-def ctrnn(ckpt_name):
-    torch.set_default_dtype(torch.float64)
-    model = prepare_model(
-        'ctrnn', model_path=os.path.join(model_folder, ckpt_name),
-        **{'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True}
-    )
-    return model
-
-
-def rnn(ckpt_name):
-    model = prepare_model(
-        'rnn', model_path=os.path.join(model_folder, ckpt_name),
-        **{'input_size': 48, 'hidden_size': 50, 'output_size': 24}
-    )
-    return model
-
-
-def select_model(model_name, ckpt_name):
-    if model_name == 'fully_connected':
-        model = fully_connected(ckpt_name)
-    elif model_name == 'ncp':
-        model = ncp(ckpt_name)
     elif model_name == 'ctrnn':
-        model = ctrnn(ckpt_name)
+        kwargs = {'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True}
     elif model_name == 'rnn':
-        model = rnn(ckpt_name)
+        kwargs = {'input_size': 48, 'hidden_size': 50, 'output_size': 24}
     else:
         raise AssertionError('{} not exist'.format(model_name))
+    model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
     return model
 
 
