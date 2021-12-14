@@ -39,7 +39,7 @@ def test_func(env, model, math_model, data_func, x_func):
 
 def tester(
     env, model, data_func, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
-    data_size=100
+    data_size=100, disable=False
 ):
     """ online test for at least 100 trials """
     np.random.seed(seed)
@@ -48,7 +48,7 @@ def tester(
     math_model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]
     result = SimulationDataset(
-        data_size, max_episode_steps, 2, action_size, seed, test_func,
+        data_size, max_episode_steps, 2, action_size, seed, test_func, disable,
         # func kwargs
         env=env, model=model, math_model=math_model, data_func=data_func, x_func=x_func
     )

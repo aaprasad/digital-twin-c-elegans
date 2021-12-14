@@ -22,11 +22,12 @@ class SimulationSample(torch.utils.data.Dataset):
 
 class SimulationDataset(torch.utils.data.TensorDataset):
     """ run simulations to generate dataset """
-    def __init__(self, data_size, max_episode_steps, input_size, action_size, seed, get_item, **kwargs):
+    def __init__(self, data_size, max_episode_steps, input_size, action_size, seed, get_item, disable=False, **kwargs):
         self.data_size = data_size
         self.max_episode_steps = max_episode_steps
         self.input_size = input_size  # input features size
         self.action_size = action_size
+        self.disable = disable  # disable tqdm progress bar
         """ seeding """
         if seed is not None:
             np.random.seed(seed)
@@ -55,7 +56,7 @@ class SimulationDataset(torch.utils.data.TensorDataset):
         )
         x = torch.zeros(self.data_size, self.max_episode_steps, self.input_size, dtype=torch.float64)
         y = torch.zeros(self.data_size, self.max_episode_steps, self.action_size, dtype=torch.float64)
-        for i, (sample_x, sample_y) in enumerate(tqdm(dataloader)):
+        for i, (sample_x, sample_y) in enumerate(tqdm(dataloader, disable=self.disable)):
             x[i] = sample_x.squeeze(dim=0)
             y[i] = sample_y.squeeze(dim=0)
         return x, y
