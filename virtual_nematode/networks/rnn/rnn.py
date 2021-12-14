@@ -4,9 +4,9 @@ import torch
 class RNNCell(torch.nn.RNNCell):
     def __init__(self, input_size, hidden_size, output_size, **kwargs):
         """ Vanilla RNN
-        **kwargs: bias=True, nonlinearity='tanh', device=None
+        **kwargs: bias=True, nonlinearity='tanh'
         """
-        super(RNNCell, self).__init__(input_size, hidden_size, dtype=torch.float64, **kwargs)
+        super(RNNCell, self).__init__(input_size, hidden_size, **kwargs)
         self.hidden_size = hidden_size
         self.output_size = output_size
 
