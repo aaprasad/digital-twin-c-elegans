@@ -63,8 +63,8 @@ def ncp(
     return model
 
 
-def ctrnn(input_size, hidden_size, **kwargs):
-    cell = CTRNNCell(input_size, hidden_size, **kwargs)
+def ctrnn(input_size, hidden_size, output_size, **kwargs):
+    cell = CTRNNCell(input_size, hidden_size, output_size, **kwargs)
     model = RNNSequence(cell)
     return model
 
