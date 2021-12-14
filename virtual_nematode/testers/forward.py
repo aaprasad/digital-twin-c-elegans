@@ -52,7 +52,8 @@ def tester(
         # func kwargs
         env=env, model=model, math_model=math_model, data_func=data_func, x_func=x_func
     )
-    print('result', len(result), result[0][0].size(), result[0][1].size())
+    if disable is False:
+        print('result', len(result), result[0][0].size(), result[0][1].size())
     x, y = result.tensors
     displacement_mean = torch.linalg.norm(x[:, -1, :] - x[:, 0, :], ord=2, dim=1).mean().item()
     print('com displacement mean {:.2f} / {} steps'.format(displacement_mean, max_episode_steps))
