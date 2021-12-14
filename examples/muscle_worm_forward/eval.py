@@ -12,6 +12,8 @@ from virtual_nematode.trainers.ncp import prepare_model
 def select_model(model_name, ckpt_name):
     if model_name == 'fully_connected':
         kwargs = {'units': 100, 'output_dim': 96, 'in_features': 192, 'output_mapping': 'affine'}
+    elif model_name == 'ctrnn':
+        kwargs = {'input_size': 192, 'hidden_size': 100, 'output_size': 96, 'feedback': True}
     else:
         raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
@@ -55,6 +57,6 @@ if __name__ == '__main__':
     data_path = os.path.join('data', runs_folder)  # data folder for storing model action sequence output
     os.makedirs(data_path, exist_ok=True)
     env = make_swimmer(max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale)
-    evaluate('fully_connected', start=0, end=100)
-    # test('fully_connected', start=0, end=100)
-    # record('fully_connected', env, ckpt_name='model.pt')
+    evaluate('ctrnn', start=0, end=100)
+    # test('ctrnn', start=0, end=100)
+    # record('ctrnn', env, ckpt_name='model.pt')
