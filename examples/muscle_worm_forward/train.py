@@ -24,10 +24,18 @@ def train(model_name):
             # model kwargs
             'units': 100, 'output_dim': 96, 'in_features': 192, 'output_mapping': 'affine'
         }
+    elif model_name == 'ctrnn':
+        kwargs = {
+            'data_name': 'ncp.pt', 'model_name': model_name, 'lengths': [48000, 12000, 12000], 'batch_size': 1024,
+            'seed': 11, 'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'weight_decay': 0, 'epochs': 100,
+            'early_stop': 30, 'comment': '', 'loss': 'MSELoss', 'sr': None,
+            # model kwargs
+            'input_size': 192, 'hidden_size': 100, 'output_size': 96, 'feedback': True
+        }
     else:
         raise AssertionError('{} not exist'.format(model_name))
     train_eval_test(**kwargs)
 
 
 if __name__ == '__main__':
-    train(model_name='fully_connected')
+    train(model_name='ctrnn')
