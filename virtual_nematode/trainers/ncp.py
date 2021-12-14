@@ -7,6 +7,7 @@ from virtual_nematode.networks.ncp.ltc_cell import LTCCell
 from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
 from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
+from virtual_nematode.networks.rnn.rnn import RNNCell
 from virtual_nematode.trainers.loss import MSESymmetricJointLoss, MSESymmetricMuscleLoss
 
 
@@ -68,8 +69,8 @@ def ctrnn(input_size, hidden_size, **kwargs):
     return model
 
 
-def rnn(input_size, hidden_size, **kwargs):
-    cell = torch.nn.RNNCell(input_size, hidden_size, **kwargs)  # bias=True, nonlinearity='tanh'
+def rnn(input_size, hidden_size, output_size, **kwargs):
+    cell = RNNCell(input_size, hidden_size, output_size, **kwargs)
     model = RNNSequence(cell)
     return model
 
