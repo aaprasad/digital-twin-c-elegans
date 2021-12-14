@@ -16,7 +16,7 @@ def train(model_name):
             time: 4h / 300 epochs
         """
         kwargs = {
-            'data_name': 'ncp.pt', 'model_name': 'fully_connected', 'lengths': [48000, 12000, 12000],
+            'data_name': 'ncp.pt', 'model_name': model_name, 'lengths': [48000, 12000, 12000],
             'batch_size': 1024, 'seed': 11, 'cuda': 0, 'device_ids': [0, 1, 2, 3], 'lr': 0.001, 'epochs': 100,
             'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
             # model kwargs
@@ -28,7 +28,7 @@ def train(model_name):
         time: 2h / 300 epochs
         """
         kwargs = {
-            'data_name': 'ncp.pt', 'model_name': 'ncp', 'lengths': [48000, 12000, 12000], 'batch_size': 1024, 'seed': 11,
+            'data_name': 'ncp.pt', 'model_name': model_name, 'lengths': [48000, 12000, 12000], 'batch_size': 1024, 'seed': 11,
             'cuda': 0, 'device_ids': [0, 1, 2, 3], 'lr': 0.001, 'epochs': 100, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
             # model kwargs
             'in_features': 48, 'inter_neurons': 24, 'command_neurons': 48, 'motor_neurons': 24, 'sensory_fanout': 24,
@@ -42,7 +42,7 @@ def train(model_name):
         """
         torch.set_default_dtype(torch.float64)
         kwargs = {
-            'data_name': 'ncp.pt', 'model_name': 'ctrnn', 'lengths': [48000, 12000, 12000], 'batch_size': 1024, 'seed': 11,
+            'data_name': 'ncp.pt', 'model_name': model_name, 'lengths': [48000, 12000, 12000], 'batch_size': 1024, 'seed': 11,
             'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'epochs': 100, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
             # model kwargs
             'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True
@@ -50,7 +50,7 @@ def train(model_name):
     elif model_name == 'rnn':
         torch.set_default_dtype(torch.float64)
         kwargs = {
-            'data_name': 'ncp.pt', 'model_name': 'rnn', 'lengths': [48000, 12000, 12000], 'batch_size': 1024, 'seed': 11,
+            'data_name': 'ncp.pt', 'model_name': model_name, 'lengths': [48000, 12000, 12000], 'batch_size': 1024, 'seed': 11,
             'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'epochs': 100, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
             # model kwargs
             'input_size': 48, 'hidden_size': 50, 'output_size': 24
