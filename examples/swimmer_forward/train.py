@@ -51,7 +51,17 @@ def ctrnn():
     )
 
 
+def rnn():
+    train_eval_test(
+        data_name='ncp.pt', model_name='rnn', lengths=[48000, 12000, 12000], batch_size=1024, seed=11,
+        cuda=0, device_ids=[0], lr=0.001, epochs=100, early_stop=30, comment='', loss='MSELoss',
+        # model kwargs
+        input_size=48, hidden_size=50, output_size=24
+    )
+
+
 if __name__ == '__main__':
     # fully_connected()
     # ncp()
-    ctrnn()
+    # ctrnn()
+    rnn()
