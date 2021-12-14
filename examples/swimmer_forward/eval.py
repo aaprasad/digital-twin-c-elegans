@@ -21,6 +21,7 @@ def select_model(model_name, ckpt_name):
         torch.set_default_dtype(torch.float64)
         kwargs = {'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True}
     elif model_name == 'rnn':
+        torch.set_default_dtype(torch.float64)
         kwargs = {'input_size': 48, 'hidden_size': 50, 'output_size': 24}
     else:
         raise AssertionError('{} not exist'.format(model_name))
