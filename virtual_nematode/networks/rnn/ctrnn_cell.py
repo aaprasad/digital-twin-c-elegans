@@ -50,7 +50,8 @@ class CTRNNCell(torch.nn.Module):
         return self.hidden_size
 
     def forward(self, inputs, states):
-        inputs_prime = self.linear(inputs)  # if feedback is False
+        if self.feedback is False:
+            inputs_prime = self.linear(inputs)
         for i in range(self.unfolds):
             if self.feedback is True:
                 inputs_prime = self.linear(torch.cat((inputs, states), dim=-1))  # concat input and new hidden
