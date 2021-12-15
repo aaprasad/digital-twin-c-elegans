@@ -50,12 +50,11 @@ class CTRNNCell(torch.nn.Module):
         return self.hidden_size
 
     def forward(self, inputs, states):
-        if self.feedback is False:
-            inputs_prime = self.linear(inputs)
-        else:
-            inputs_prime = self.linear(torch.cat((inputs, states), dim=-1))
+        inputs_prime = self.linear(inputs)  # if feedback is False
         for i in range(self.unfolds):
-            states_prime = (-states + inputs_prime) / self.tau
+            if self.feedback is True:
+                inputs_prime = self.linear(torch.cat((inputs, states), dim=-1))  # concat input and new hidden
+            states_prime = (-states + inputs_prime) / self.tau  # dy/dt
             states = states + self.delta_t * states_prime
             if self.cell_clip > 0:
                 states = torch.clamp(states, min=-self.cell_clip, max=self.cell_clip)
