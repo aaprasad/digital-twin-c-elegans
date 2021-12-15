@@ -21,10 +21,12 @@ import torch
 
 
 class CTRNNCell(torch.nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, feedback=False, cell_clip=-1, unfolds=6, delta_t=0.1, tau=1):
+    def __init__(self, input_size, hidden_size, output_size, feedback=True, cell_clip=-1, unfolds=6, delta_t=0.1, tau=1):
         """ Continuous-time RNN
         input_size: input size
         hidden_size: amount of RNN hidden units
+        output_size: output size
+        feedback: if True, use input and hidden concat as input
         cell_clip: if > 0, clamp cell state
         unfolds: number of ODE solver steps
         delta_t: time of each ODE solver step
@@ -39,7 +41,7 @@ class CTRNNCell(torch.nn.Module):
         )
         self.hidden_size = hidden_size
         self.output_size = output_size
-        self.feedback = feedback  # if True, use hidden state as part of input
+        self.feedback = feedback
         self.cell_clip = cell_clip
         self.unfolds = unfolds
         self.delta_t = delta_t
