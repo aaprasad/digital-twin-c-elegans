@@ -70,6 +70,6 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-100 100', body_len=0.1, max_episode_steps=max_episode_steps,
         reset_noise_scale=reset_noise_scale
     )
-    evaluate('rnn', start=0, end=100)
-    # test('rnn', start=0, end=100)
-    # record('rnn', env, ckpt_name='model.pt')
+    evaluate('ctrnn', start=0, end=100)
+    # test('ctrnn', start=0, end=100)
+    # record('ctrnn', env, ckpt_name='model.pt')

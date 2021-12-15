@@ -61,4 +61,4 @@ def train(model_name):
 
 
 if __name__ == '__main__':
-    train(model_name='rnn')
+    train(model_name='ctrnn')
