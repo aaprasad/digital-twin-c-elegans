@@ -19,7 +19,7 @@ def select_model(model_name, ckpt_name):
         }
     elif model_name == 'ctrnn':
         torch.set_default_dtype(torch.float64)
-        kwargs = {'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True, 'readout': 'affine'}
+        kwargs = {'input_size': 48, 'hidden_size': 100, 'output_size': 24, 'feedback': True, 'readout': 'affine'}
     elif model_name == 'rnn':
         torch.set_default_dtype(torch.float64)
         kwargs = {'input_size': 48, 'hidden_size': 50, 'output_size': 24}
