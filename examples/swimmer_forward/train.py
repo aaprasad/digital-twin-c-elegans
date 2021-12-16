@@ -45,7 +45,7 @@ def train(model_name):
             'data_name': 'ncp.pt', 'model_name': model_name, 'lengths': [48000, 12000, 12000], 'batch_size': 1024, 'seed': 11,
             'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'epochs': 100, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
             # model kwargs
-            'input_size': 48, 'hidden_size': 24, 'output_size': 24, 'feedback': True, 'readout': 'identity'
+            'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True, 'readout': 'identity'
         }
     elif model_name == 'rnn':
         torch.set_default_dtype(torch.float64)
