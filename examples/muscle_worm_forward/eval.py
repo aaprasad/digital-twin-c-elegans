@@ -13,7 +13,7 @@ def select_model(model_name, ckpt_name):
     if model_name == 'fully_connected':
         kwargs = {'units': 100, 'output_dim': 96, 'in_features': 192, 'output_mapping': 'affine'}
     elif model_name == 'ctrnn':
-        kwargs = {'input_size': 192, 'hidden_size': 100, 'output_size': 96, 'feedback': True}
+        kwargs = {'input_size': 192, 'hidden_size': 100, 'output_size': 96, 'feedback': True, 'readout': 'affine'}
     else:
         raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
