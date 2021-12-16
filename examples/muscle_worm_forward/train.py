@@ -30,7 +30,7 @@ def train(model_name):
             'seed': 11, 'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'weight_decay': 0, 'epochs': 100,
             'early_stop': 30, 'comment': '', 'loss': 'MSELoss', 'sr': None,
             # model kwargs
-            'input_size': 192, 'hidden_size': 100, 'output_size': 96, 'feedback': True, 'readout': 'affine'
+            'input_size': 192, 'hidden_size': 100, 'output_size': 96, 'feedback': True, 'readout': 'identity'
         }
     else:
         raise AssertionError('{} not exist'.format(model_name))
