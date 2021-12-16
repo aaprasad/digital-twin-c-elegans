@@ -18,15 +18,18 @@ https://github.com/mlech26l/keras-ncp/tree/master/reproducibility
 """
 
 import torch
+from virtual_nematode.networks.rnn.affine_activation import AffineActivation
+from virtual_nematode.networks.rnn.identity import Identity
 
 
 class CTRNNCell(torch.nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, feedback=True, cell_clip=-1, unfolds=6, delta_t=0.1, tau=1):
+    def __init__(self, input_size, hidden_size, output_size, feedback=True, readout='identity', cell_clip=-1, unfolds=6, delta_t=0.1, tau=1):
         """ Continuous-time RNN
         input_size: input size
         hidden_size: amount of RNN hidden units
         output_size: output size
         feedback: if True, use input and hidden concat as input
+        readout: type of readout mapping, ['identity', 'affine', 'fully_connected']
         cell_clip: if > 0, clamp cell state
         unfolds: number of ODE solver steps
         delta_t: time of each ODE solver step
@@ -39,6 +42,17 @@ class CTRNNCell(torch.nn.Module):
             torch.nn.Linear(input_size, hidden_size, bias=True),
             torch.nn.Tanh()
         )
+        if readout == 'identity':
+            self.readout = Identity(output_size)
+        elif readout == 'affine':
+            self.readout = torch.nn.Sequential(
+                Identity(output_size),
+                AffineActivation(output_size)
+            )
+        elif readout == 'fully_connected':
+            self.readout = torch.nn.Linear(hidden_size, output_size, bias=True)
+        else:
+            assert ValueError('Invalid readout type {}'.format(readout))
         self.hidden_size = hidden_size
         self.output_size = output_size
         self.feedback = feedback
@@ -61,5 +75,5 @@ class CTRNNCell(torch.nn.Module):
             states = states + self.delta_t * states_prime
             if self.cell_clip > 0:
                 states = torch.clamp(states, min=-self.cell_clip, max=self.cell_clip)
-        outputs = states[:, 0:self.output_size]
+        outputs = self.readout(states)
         return outputs, states
