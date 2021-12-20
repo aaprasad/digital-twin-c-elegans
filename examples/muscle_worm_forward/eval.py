@@ -13,8 +13,10 @@ def select_model(model_name, ckpt_name):
     if model_name == 'fully_connected':
         kwargs = {'units': 100, 'output_dim': 96, 'in_features': 192, 'output_mapping': 'affine'}
     elif model_name == 'ctrnn':
+        torch.set_default_dtype(torch.float64)
         kwargs = {'input_size': 192, 'hidden_size': 100, 'output_size': 96, 'feedback': True, 'readout': 'identity'}
     elif model_name == 'rnn':
+        torch.set_default_dtype(torch.float64)
         kwargs = {'input_size': 192, 'hidden_size': 100, 'output_size': 96}
     else:
         raise AssertionError('{} not exist'.format(model_name))

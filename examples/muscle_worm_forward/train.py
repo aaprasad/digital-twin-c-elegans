@@ -26,6 +26,7 @@ def train(model_name):
             'units': 100, 'output_dim': 96, 'in_features': 192, 'output_mapping': 'affine'
         }
     elif model_name == 'ctrnn':
+        torch.set_default_dtype(torch.float64)
         kwargs = {
             'data_name': 'ncp.pt', 'model_name': model_name, 'lengths': [48000, 12000, 12000], 'batch_size': 1024,
             'seed': 11, 'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'weight_decay': 0, 'epochs': 100,
