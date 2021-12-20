@@ -1,3 +1,4 @@
+import torch
 from virtual_nematode.trainers.ncp import train_eval_test
 
 
@@ -31,6 +32,14 @@ def train(model_name):
             'early_stop': 30, 'comment': '', 'loss': 'MSELoss', 'sr': None,
             # model kwargs
             'input_size': 192, 'hidden_size': 100, 'output_size': 96, 'feedback': True, 'readout': 'identity'
+        }
+    elif model_name == 'rnn':
+        torch.set_default_dtype(torch.float64)
+        kwargs = {
+            'data_name': 'ncp.pt', 'model_name': model_name, 'lengths': [48000, 12000, 12000], 'batch_size': 1024, 'seed': 11,
+            'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'epochs': 100, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
+            # model kwargs
+            'input_size': 192, 'hidden_size': 100, 'output_size': 96
         }
     else:
         raise AssertionError('{} not exist'.format(model_name))
