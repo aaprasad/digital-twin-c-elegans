@@ -14,6 +14,8 @@ def select_model(model_name, ckpt_name):
         kwargs = {'units': 100, 'output_dim': 96, 'in_features': 192, 'output_mapping': 'affine'}
     elif model_name == 'ctrnn':
         kwargs = {'input_size': 192, 'hidden_size': 100, 'output_size': 96, 'feedback': True, 'readout': 'identity'}
+    elif model_name == 'rnn':
+        kwargs = {'input_size': 192, 'hidden_size': 100, 'output_size': 96}
     else:
         raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
