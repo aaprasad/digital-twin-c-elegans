@@ -25,7 +25,7 @@ def select_model(model_name, ckpt_name):
 
 
 def evaluate(model_name, start, end):
-    """ online test each checkpoint once for evaluation """
+    """ online test once for evaluation """
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
         model = select_model(model_name, ckpt_name)
@@ -38,8 +38,9 @@ def test(model_name, start, end):
     """ online test multiple trials for testing """
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
+        print(ckpt_name, end=' ')
         model = select_model(model_name, ckpt_name)
-        tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
+        tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100, disable=True)
 
 
 def record(model_name, env, ckpt_name):
