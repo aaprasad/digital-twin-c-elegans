@@ -2,7 +2,13 @@ import torch
 
 
 class HeavisideStep(torch.autograd.Function):
-    """ Heaviside step function """
+    """ Heaviside step function
+    forward: O(t) = U(v(t) - V_th)
+    backward: dU(v)/dv ~= dP(v)/dv = exp(-(v - V_th) ** 2 / (2 * sigma ** 2)) / (sqrt(2 * pi) * sigma)
+        where P(v) = erfc(-(v - V_th) / (sqrt(2) * sigma)) / 2
+            ~= U(v) = U(v - V_th)
+    reference: Exploiting Neuron and Synapse Filter Dynamics in Spatial Temporal Learning of Deep Spiking Neural Network
+    """
     @staticmethod
     def forward(ctx, input, sigma):
         ctx.save_for_backward(input)
