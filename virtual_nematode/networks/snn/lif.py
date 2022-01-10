@@ -1,3 +1,5 @@
+""" LIF neuron model """
+
 import torch
 
 
