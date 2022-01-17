@@ -1,1 +1,0 @@
-""" Adaptive LIF neuron model """
