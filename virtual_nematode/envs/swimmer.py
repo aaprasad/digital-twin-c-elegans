@@ -30,7 +30,10 @@ def fick(target, source, sigma=5):
     return c
 
 
-def make_chemotaxis_swimmer(seed, trials, distance, position_func, n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode_steps=1000, reset_noise_scale=0.1):
+def make_chemotaxis_swimmer(
+    seed, trials, distance, position_func, n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode_steps=1000,
+    reset_noise_scale=0.1, camera_name=None
+):
     np.random.seed(seed)
     xml_str_base = swimmer('swimmer.xml', n_bodies, joint_range, body_len)
     xml_str_base = position(xml_str_base)
@@ -45,6 +48,8 @@ def make_chemotaxis_swimmer(seed, trials, distance, position_func, n_bodies=12, 
         env = gym.wrappers.ClipAction(env)
         env = SensorObservation(env)
         env = DistributionObservation(env, dt=env.dt, f=fick, source=[x, y], position_func=position_func)
-        env = Recorder(env, camera_name=None)
+        if camera_name is not None:
+            env = Recorder(env, camera_name=camera_name)
+            env = gym.wrappers.Monitor(env, directory='video/swimmer_weathervane', force=True)
         envs.append(env)
     return envs
