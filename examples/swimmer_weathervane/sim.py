@@ -46,11 +46,11 @@ def done_func(index, result, **kwargs):
 
 if __name__ == '__main__':
     """ results
-    100 trials: chemotaxis index mean ?
+    100 trials: chemotaxis index mean 0.42
     """
     trails = 100
     envs = make_chemotaxis_swimmer(
-        seed=101, trials=trails, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
+        seed=11, trials=trails, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
         max_episode_steps=2500, reset_noise_scale=1.745
     )
     print(envs[0].action_space, envs[0].observation_space)
