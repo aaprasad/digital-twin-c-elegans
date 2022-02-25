@@ -33,7 +33,9 @@ class ComputationalModelChemotaxis(object):
         self.a_max = a_max  # action: [-a_max, a_max]
         self.psi = psi  # body wavelength (rad)
         self.omega = 2 * np.pi * freq  # angular velocity of bending (rad/s): 2 * pi * freq
-        """ flags for enabling/disabling directional navigation """
+        """ flags for enabling/disabling directional navigation
+        weathervane_reverse: if False, positive chemotaxis
+        """
         self.kwargs = kwargs  # {'backward': True, 'omega': True, 'weathervane': True, 'random_walk': True, 'weathervane_reverse': False}
         """ state """
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1)
