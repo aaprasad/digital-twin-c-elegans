@@ -40,7 +40,7 @@ def step_func(observation, **kwargs):
 def done_func(index, result, **kwargs):
     """ calculate chemotaxis index with concentrations along the path """
     chemotaxis_index = np.mean(result)
-    print('Trial {}: chemotaxis index {:.2f}'.format(index + 1, chemotaxis_index))
+    print('Trial {}: chemotaxis index {:.2f}, start concentration {:.2f}'.format(index + 1, chemotaxis_index, result[0]))
     return chemotaxis_index
 
 
