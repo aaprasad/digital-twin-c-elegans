@@ -48,7 +48,7 @@ if __name__ == '__main__':
     """ results
     100 trials: chemotaxis index mean ?
     """
-    trails = 1
+    trails = 100
     envs = make_chemotaxis_swimmer(
         seed=101, trials=trails, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
         max_episode_steps=2500, reset_noise_scale=1.745
