@@ -24,6 +24,7 @@ def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode
 
 
 def fick(target, source, sigma=5):
+    """ gaussian concentration distribution in (0, 1] """
     r = np.linalg.norm(target - source)
     c = np.exp(-r ** 2 / (2 * sigma ** 2))
     return c
