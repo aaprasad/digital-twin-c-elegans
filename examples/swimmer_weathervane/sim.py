@@ -40,8 +40,9 @@ def step_func(observation, **kwargs):
 def done_func(index, result, **kwargs):
     """ calculate chemotaxis index with concentrations along the path """
     chemotaxis_index = np.mean(result)
-    print('Trial {}: chemotaxis index {:.2f}, start concentration {:.2f}'.format(index + 1, chemotaxis_index, result[0]))
-    return chemotaxis_index
+    start_concentration = result[0]
+    print('Trial {}: chemotaxis index {:.2f}, start concentration {:.2f}'.format(index + 1, chemotaxis_index, start_concentration))
+    return result
 
 
 if __name__ == '__main__':
@@ -61,5 +62,7 @@ if __name__ == '__main__':
     for i in range(trails):
         model = ComputationalModelChemotaxis(dt=envs[i].dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., n_bias=25, **kwargs)
         result = simulate(envs[i], model, action_func, step_func, done_func, seed=None, trials=1, render=False)
-        results += result
-    print('{} trials: chemotaxis index mean {:.2f}'.format(len(results), np.mean(results)))
+        results.append(result)
+    results = np.array(results)
+    results = np.reshape(results, (-1, results.shape[2]))
+    print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(len(results), results.mean(), results[:, 0].mean()))
