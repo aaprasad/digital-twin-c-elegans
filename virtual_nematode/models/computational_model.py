@@ -25,9 +25,10 @@ class ComputationalModelChemotaxis(object):
     joint range
         >= q_max (sinusoidal) + kappa_omega (sharp turn) + kappa_w_max (weathervane) + 3 * c_r (random walk)
     """
-    def __init__(self, dt, seed=None, n=12, q_max=40, a_max=2., psi=0.2, freq=3., **kwargs):
+    def __init__(self, dt, seed=None, n=12, q_max=40, a_max=2., psi=0.2, freq=3., n_bias=None, **kwargs):
         self.dt = dt  # real time per step
         self.n = n  # number of bodies
+        self.n_bias = n if n_bias is None else n_bias  # the number of bodies in the front that support turning, default all bodies support turning
         self.q_max = q_max * np.pi / 180  # max joint angle (rad)
         """ affect sinusoidal posture and speed """
         self.a_max = a_max  # action: [-a_max, a_max]
@@ -188,7 +189,8 @@ class ComputationalModelChemotaxis(object):
             kappa_w = 0.
         if self.kwargs.get('random_walk', True) is True:
             self._random_walk(step=step)
-        q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - self.phi)) + kappa_omega + kappa_w + self.kappa_r
+        q = self.q_max * np.sin(self.omega * step * self.dt - (np.pi - self.phi))
+        q[0:self.n_bias] += kappa_omega + kappa_w + self.kappa_r  # bodies in the front that support turning
         return q
 
     def _action(self, q, q_next, q_vel):

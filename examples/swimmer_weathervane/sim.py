@@ -59,7 +59,7 @@ if __name__ == '__main__':
     kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}
     results = []
     for i in range(trails):
-        model = ComputationalModelChemotaxis(dt=envs[i].dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., **kwargs)
+        model = ComputationalModelChemotaxis(dt=envs[i].dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., n_bias=25, **kwargs)
         result = simulate(envs[i], model, action_func, step_func, done_func, seed=None, trials=1, render=False)
         results += result
     print('{} trials: chemotaxis index mean {:.2f}'.format(len(results), np.mean(results)))
