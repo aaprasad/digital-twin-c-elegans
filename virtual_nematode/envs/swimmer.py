@@ -29,13 +29,13 @@ def fick(target, source, sigma=5):
     return c
 
 
-def make_chemotaxis_swimmer(seed, trial, distance, position_func, n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode_steps=1000, reset_noise_scale=0.1):
+def make_chemotaxis_swimmer(seed, trials, distance, position_func, n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode_steps=1000, reset_noise_scale=0.1):
     np.random.seed(seed)
     xml_str_base = swimmer('swimmer.xml', n_bodies, joint_range, body_len)
     xml_str_base = position(xml_str_base)
     xml_str_base = camera(xml_str_base)
     envs = []
-    for _ in range(trial):
+    for _ in range(trials):
         angle = np.random.uniform(0, 2 * np.pi)
         x, y = distance * np.cos(angle), distance * np.sin(angle)
         xml_str = chemotaxis(copy.deepcopy(xml_str_base), x, y)
