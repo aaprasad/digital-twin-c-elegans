@@ -1,10 +1,15 @@
 """ swimmer: chemotaxis based on weathervane mechanism
+qpos[0:2]: x and y position of the front tip
 observation[0:52]: qpos[2:27] and qvel[0:27]
-    qpos[0:27]: x_pos, y_pos, ?, q[0:24]
-    qvel[0:27]: x_vel, y_vel, ?, q_vel[0:24]
-observation[52:55]: 3D center of mass
-observation[55:58]: 3D position of the first body segment
-observation[58:62]: concentration, g, g_p, g_w
+    [0]: angle of the front tip (angle, rad)
+    [1:25]: angle of the rotors (angle, rad)
+    [25:27]: velocity of the tip along the x- and y-axis (velocity, m/s)
+    [27]: angular velocity of front tip (angular velocity, rad/s)
+    [28:52]: angular velocity of the rotors (angular velocity, rad/s)
+observation[52:62]: additional
+    [52:55]: 3D center of mass
+    [55:58]: 3D position of the front tip
+    [58:62]: concentration, g, g_p, g_w
 """
 
 import numpy as np
