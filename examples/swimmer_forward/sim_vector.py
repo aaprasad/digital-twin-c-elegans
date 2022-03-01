@@ -35,7 +35,7 @@ def make_env(**kwargs):
     return _make
 
 
-def simulate(env, model):
+def simulate(env, model, seed):
     result, results = [], None
     observation = env.reset(seed=seed, return_info=False)
     for step in range(10 ** 6):
@@ -59,5 +59,5 @@ if __name__ == '__main__':
     print(env.observation_space)
     env_dummy = make_env(**env_kwargs)()
     model = Forward(dt=env_dummy.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
-    results = simulate(env, model)
+    results = simulate(env, model, seed=11)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
