@@ -14,9 +14,8 @@ from virtual_nematode.trainers.ncp import prepare_model
 def online_test_single_simulation(env, model, dataset):
     """ run a chemotaxis simulation controlled by a network model """
     seed = sample_seed()
-    env.seed(seed)  # seed env
     torch.manual_seed(seed)  # seed model
-    observation = env.reset()
+    observation = env.reset(seed=seed, return_info=False)
     model.eval()
     hidden_state = None
     y = []

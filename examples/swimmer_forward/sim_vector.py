@@ -27,18 +27,17 @@ def done_func(result, **kwargs):
     return displacement
 
 
-def make_env(seed, **kwargs):
+def make_env(**kwargs):
     """ https://github.com/openai/gym/blob/master/tests/vector/utils.py """
     def _make():
         env = make_swimmer(**kwargs)
-        env.seed(seed)
         return env
     return _make
 
 
 def simulate(env, model):
     result, results = [], None
-    observation = env.reset()
+    observation = env.reset(seed=seed, return_info=False)
     for step in range(10 ** 6):
         action = action_func(model=model, step=step, observation=observation)
         observation, reward, done, info = env.step(action)
@@ -53,12 +52,12 @@ if __name__ == '__main__':
     max_episode_steps = 2500
     trials = 100
     env_kwargs = {'n_bodies': 25, 'joint_range': '-100 100', 'body_len': 0.1, 'max_episode_steps': max_episode_steps, 'reset_noise_scale': 1.745}
-    env_fns = [make_env(seed=i, **env_kwargs) for i in range(trials)]
+    env_fns = [make_env(**env_kwargs) for _ in range(trials)]
     env = gym.vector.AsyncVectorEnv(env_fns)
     # env = gym.vector.SyncVectorEnv(env_fns)
     print(env.action_space)
     print(env.observation_space)
-    env_dummy = make_env(seed=0, **env_kwargs)()
+    env_dummy = make_env(**env_kwargs)()
     model = Forward(dt=env_dummy.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
     results = simulate(env, model)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))

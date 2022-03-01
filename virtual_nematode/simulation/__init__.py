@@ -10,8 +10,7 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
         seed = None  # ensure that seed is different in each trial
     for i in range(trials):
         result = []  # results of 1 simulation
-        env.seed(seed)
-        observation = env.reset()
+        observation = env.reset(seed=seed, return_info=False)
         for step in range(10 ** 6):
             if render is True:
                 env.render()

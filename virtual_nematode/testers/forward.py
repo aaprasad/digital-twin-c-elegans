@@ -9,9 +9,8 @@ from torch.utils.tensorboard import SummaryWriter
 def test_func(env, model, math_model, data_func, x_func):
     """ run a forward locomotion simulation steered by a neural network """
     seed = sample_seed()
-    env.seed(seed)
     torch.manual_seed(seed)
-    observation = env.reset()
+    observation = env.reset(seed=seed, return_info=False)
     model.eval()
     math_model.seed(seed)
     hidden_state = None
