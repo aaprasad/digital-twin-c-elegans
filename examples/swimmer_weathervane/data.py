@@ -38,5 +38,6 @@ if __name__ == '__main__':
         d = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size_per_trial, max_episode_steps, seed, disable=True)
         dataset.append(d)
     dataset = ConcatDataset(dataset)
+    print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')
