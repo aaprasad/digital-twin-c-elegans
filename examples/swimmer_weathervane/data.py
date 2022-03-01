@@ -20,8 +20,8 @@ def y_func(action, **kwargs):
 
 if __name__ == '__main__':
     input_size = 52
-    data_size_per_trial = 10
-    trials = 100
+    trials = 100  # amount of envs with different source positions
+    data_size_per_trial = 30
     seed = 11
     max_episode_steps = 3500
     reset_noise_scale = 1.745
