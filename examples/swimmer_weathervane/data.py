@@ -23,7 +23,7 @@ if __name__ == '__main__':
     data_size_per_trial = 10
     trials = 100
     seed = 11
-    max_episode_steps = 192
+    max_episode_steps = 3500
     reset_noise_scale = 1.745
     envs = make_chemotaxis_swimmer(
         seed=seed, trials=trials, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
