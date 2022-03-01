@@ -34,7 +34,7 @@ if __name__ == '__main__':
     model = ComputationalModelChemotaxis(dt=envs[0].dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., **kwargs)
     dataset = []
     for i, env in enumerate(envs):
-        print(i, end=' ')
+        print(i, env.source.tolist(), end=' ')
         d = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size_per_trial, max_episode_steps, seed, disable=True)
         dataset.append(d)
     dataset = ConcatDataset(dataset)
