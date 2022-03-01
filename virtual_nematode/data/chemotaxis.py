@@ -2,6 +2,19 @@ import numpy as np
 import torch
 
 
+class GradientDataset(torch.utils.data.TensorDataset):
+    """ simplified chemosensory encoding """
+    def __init__(self, dataset, p_range, g_index):
+        x, y = dataset.tensors
+        start, end = p_range
+        proprioception = x[:, :, start:end]
+        gradient = x[:, :, g_index].unsqueeze(dim=2)
+        gradient_positive = torch.nn.functional.relu(gradient)
+        gradient_negative = torch.nn.functional.relu(-gradient)
+        x = torch.cat([proprioception, gradient_positive, gradient_negative], dim=2)
+        super(GradientDataset, self).__init__(x, y)
+
+
 class ChemotaxisDataset(torch.utils.data.TensorDataset):
     """ prepare dataset for chemotaxis training
     encode the sensory inputs and motor outputs of a chemotaxis TensorDataset
