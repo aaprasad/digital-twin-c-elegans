@@ -28,4 +28,5 @@ def preprocess_dataset(seq_ranges, data_size, seq_len=16, seed=11, load_name='so
 
 
 if __name__ == '__main__':
-    preprocess_dataset([(0, 3500)], data_size=72000, seq_len=16, seed=11, load_name='data.pt', save_name='full.pt')
+    preprocess_dataset([(0, 400)], data_size=72000, seq_len=16, seed=11, load_name='data.pt', save_name='steering.pt')
+    # preprocess_dataset([(0, 3500)], data_size=72000, seq_len=16, seed=11, load_name='data.pt', save_name='full.pt')
