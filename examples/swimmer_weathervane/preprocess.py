@@ -1,5 +1,6 @@
 import os
 import torch
+from virtual_nematode.data.chemotaxis import GradientDataset
 from virtual_nematode.data.concat import ConcatDataset
 from virtual_nematode.data.split import SplitDataset
 from virtual_nematode.data.subsequence import SubsequenceDataset
@@ -24,6 +25,8 @@ def preprocess_dataset(seq_ranges, data_size, seq_len=16, seed=11, load_name='so
     print('concat dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     dataset = RandomSubset(dataset, data_size, seed)
     print('random subset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
+    dataset = GradientDataset(dataset, p_range=(0, 48), g_index=48)
+    print('gradient dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     torch.save(dataset, os.path.join('data', save_name))
 
 
