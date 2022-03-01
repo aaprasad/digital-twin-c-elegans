@@ -4,13 +4,14 @@ import torch
 
 class GradientDataset(torch.utils.data.TensorDataset):
     """ simplified chemosensory encoding """
-    def __init__(self, dataset, p_range, g_index):
+    def __init__(self, dataset, p_range, g_index, g_coef):
         x, y = dataset.tensors
         start, end = p_range
-        proprioception = x[:, :, start:end]
-        gradient = x[:, :, g_index].unsqueeze(dim=2)
-        gradient_positive = torch.nn.functional.relu(gradient)
-        gradient_negative = torch.nn.functional.relu(-gradient)
+        proprioception = x[:, :, start:end]  # proprioception
+        gradient = x[:, :, g_index].unsqueeze(dim=2)  # gradient
+        gradient = gradient / g_coef  # normalized gradient, where g_coef is the max of distribution function derivative
+        gradient_positive = torch.nn.functional.relu(gradient)  # gradient encoding
+        gradient_negative = torch.nn.functional.relu(-gradient)  # gradient encoding
         x = torch.cat([proprioception, gradient_positive, gradient_negative], dim=2)
         super(GradientDataset, self).__init__(x, y)
 
