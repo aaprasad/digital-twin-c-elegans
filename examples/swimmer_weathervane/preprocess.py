@@ -29,7 +29,7 @@ def preprocess_dataset(seq_ranges, data_size, seq_len=16, seed=11, load_name='so
     dataset = GradientDataset(dataset, p_range=(0, 48), g_index=48, g_coef=fick())
     print('gradient dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size(), 'max abs gradient', fick())
     x, _ = dataset.tensors
-    print('max positive gradient', x[:, :, 48], 'max negative gradient', x[:, :, 49])
+    print('max positive gradient', x[:, :, 48].max().item(), 'max negative gradient', x[:, :, 49].max().item())
     torch.save(dataset, os.path.join('data', save_name))
 
 
