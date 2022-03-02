@@ -3,7 +3,11 @@ import torch
 
 
 class GradientDataset(torch.utils.data.TensorDataset):
-    """ simplified chemosensory encoding """
+    """ simplified chemosensory encoding
+    proprioception: angle and angular velocity of the rotors
+    positive gradient: relu(gradient)
+    negative gradient: relu(-gradient)
+    """
     def __init__(self, dataset, p_range, g_index, g_coef):
         x, y = dataset.tensors
         start, end = p_range
