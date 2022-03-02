@@ -1,3 +1,5 @@
+""" swimmer: chemotaxis based on weathervane mechanism """
+
 import os
 import torch
 from virtual_nematode.data.chemotaxis import GradientDataset
