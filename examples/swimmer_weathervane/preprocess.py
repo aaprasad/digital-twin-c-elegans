@@ -27,8 +27,8 @@ def preprocess_dataset(seq_ranges, data_size, seq_len=16, seed=11, load_name='so
     dataset = RandomSubset(dataset, data_size, seed)
     print('random subset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     x, _ = dataset.tensors
-    print('max gradient', x[:, :, 48].max().item(), 'min gradient', x[:, :, 48].min().item())
-    dataset = GradientDataset(dataset, p_range=(0, 48), g_index=48, g_coef=fick())
+    print('max gradient', x[:, :, 49].max().item(), 'min gradient', x[:, :, 49].min().item())
+    dataset = GradientDataset(dataset, p_range=(0, 48), g_index=49, g_coef=fick())
     print('gradient dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size(), 'max abs gradient', fick())
     x, _ = dataset.tensors
     print('max positive gradient', x[:, :, 48].max().item(), 'max negative gradient', x[:, :, 49].max().item())
