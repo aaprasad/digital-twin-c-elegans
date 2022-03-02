@@ -23,7 +23,7 @@ def make_swimmer(n_bodies=12, joint_range='-100 100', body_len=0.25, max_episode
     return env
 
 
-def fick(target, source, sigma=5):
+def fick(target=None, source=None, sigma=5):
     """ gaussian concentration distribution in (0, 1]
     c = e^{-r^2/(2*sigma^2)}
     dc/dr = -r/(sigma^2)*e^{-r^2/(2*sigma^2)}
@@ -32,10 +32,11 @@ def fick(target, source, sigma=5):
     d^2c/dr^2 = (r^2-sigma^2)/(sigma^4)*e^{-r^2/(2*sigma^2)}
         d^2c/dr^2 = 0 -> r = sigma or r = -sigma, where dc/dr reaches max abs value
     """
+    if target is None or source is None:
+        return np.exp(-0.5) / sigma  # max abs gradient
     r = np.linalg.norm(target - source)  # L2 distance
     c = np.exp(-r ** 2 / (2 * sigma ** 2))  # concentration
-    g_max = np.exp(-0.5) / sigma  # max abs gradient
-    return c, g_max
+    return c
 
 
 def make_chemotaxis_swimmer(
