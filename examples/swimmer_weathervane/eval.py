@@ -30,8 +30,8 @@ if __name__ == '__main__':
     seed = 42
     reset_noise_scale = 1.745
     max_episode_steps = 3500
-    trials = 10  # amount of envs with different source positions
-    data_size_per_trial = 10  # amount of simulations per env
+    trials = 100  # amount of envs with different source positions
+    data_size_per_trial = 1  # amount of simulations per env
     data_path = os.path.join('data', runs_folder)  # data folder for storing model action sequence output
     os.makedirs(data_path, exist_ok=True)
     envs = make_chemotaxis_swimmer(
