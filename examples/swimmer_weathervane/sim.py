@@ -56,6 +56,7 @@ if __name__ == '__main__':
     """
     # set trials = 1, camera_name = 'track' or 'fixedcam', to record video
     trails = 100
+    data_size_per_trial = 1
     camera_name = None
     envs = make_chemotaxis_swimmer(
         seed=11, trials=trails, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
@@ -66,7 +67,7 @@ if __name__ == '__main__':
     results = []
     for i in range(trails):
         model = ComputationalModelChemotaxis(dt=envs[i].dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., n_bias=25, **kwargs)
-        result = simulate(envs[i], model, action_func, step_func, done_func, seed=None, trials=1, render=False)
+        result = simulate(envs[i], model, action_func, step_func, done_func, seed=None, trials=data_size_per_trial, render=False)
         results.append(result)
     results = np.array(results)
     results = np.reshape(results, (-1, results.shape[2]))
