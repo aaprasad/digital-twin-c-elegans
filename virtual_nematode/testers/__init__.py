@@ -1,1 +1,2 @@
+import virtual_nematode.testers.chemotaxis
 import virtual_nematode.testers.forward
