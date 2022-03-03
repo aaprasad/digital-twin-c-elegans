@@ -6,20 +6,18 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def test_func(env, model, math_model, data_func, x_func):
+def test_func(env, model, data_func, x_func):
     """ run a forward locomotion simulation steered by a neural network """
     seed = sample_seed()
     torch.manual_seed(seed)
     observation = env.reset(seed=seed, return_info=False)
     model.eval()
-    math_model.seed(seed)
     hidden_state = None
     x, y = [], []
     with torch.no_grad():
         for i in range(10 ** 6):
             # env.render()
-            stimuli = math_model.stimuli(step=i)  # external stimulus signal as input
-            data = data_func(stimuli=stimuli, observation=observation)
+            data = data_func(observation=observation)
             data = torch.tensor(data, dtype=torch.float64)
             data = data.unsqueeze(dim=0)  # add batch dimension
             output, hidden_state = model.step(data, hidden_state)
@@ -44,12 +42,11 @@ def tester(
     np.random.seed(seed)
     torch.manual_seed(seed)
     writer = SummaryWriter(log_dir=model_folder)
-    math_model = Forward(dt=env.dt, seed=seed)
     action_size = env.action_space.shape[0]
     result = SimulationDataset(
         data_size, max_episode_steps, 2, action_size, seed, test_func, disable,
         # func kwargs
-        env=env, model=model, math_model=math_model, data_func=data_func, x_func=x_func
+        env=env, model=model, data_func=data_func, x_func=x_func
     )
     if disable is False:
         print('result', len(result), result[0][0].size(), result[0][1].size())
@@ -69,8 +66,7 @@ def single_tester(env, model, data_func, x_func, seed=42, max_episode_steps=2500
     """ online test for a single trial and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
-    math_model = Forward(dt=env.dt, seed=seed)
-    x, y = test_func(env, model, math_model, data_func, x_func)
+    x, y = test_func(env, model, data_func, x_func)
     displacement = torch.linalg.norm(x[-1, :] - x[0, :], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
     return x, y  # center of mass, action
