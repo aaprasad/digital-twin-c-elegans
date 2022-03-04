@@ -53,8 +53,8 @@ def done_func(result, **kwargs):
     x: (batch_size, max_episode_steps, *)
     y: (batch_size, max_episode_steps, action_size)
     """
-    x = torch.cat([rx for rx, _ in result], dim=1)
-    y = torch.cat([ry for _, ry in result], dim=1)
+    x = torch.stack([rx for rx, _ in result], dim=1)
+    y = torch.stack([ry for _, ry in result], dim=1)
     return x, y
 
 
