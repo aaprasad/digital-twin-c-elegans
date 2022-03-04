@@ -70,7 +70,7 @@ def done_func(result, index=None, vectorized=False, **kwargs):
 if __name__ == '__main__':
     """ results
     100 trials: chemotaxis index mean 0.42 / 2500 steps
-    100 trials: chemotaxis index mean 0.57, start concentration mean 0.01 / 3500 steps
+    100 trials: chemotaxis index mean 0.55, start concentration mean 0.01 / 3500 steps
     """
     # set trials = 1, camera_name = 'track' or 'fixedcam', to record video
     trails = 100
