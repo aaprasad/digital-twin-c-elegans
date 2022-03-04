@@ -11,11 +11,11 @@ observation[52:62]: additional
     [55:58]: 3D position of the front tip
     [58:62]: concentration, g, g_p, g_w
 """
-
+import gym
 import numpy as np
 from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
-from virtual_nematode.models.computational_model import ComputationalModelChemotaxis
-from virtual_nematode.simulation import simulate
+from virtual_nematode.models.computational_model import ComputationalModelChemotaxisVector
+from virtual_nematode.simulation import simulate_vector
 
 
 def position_func(observation, **kwargs):
@@ -24,29 +24,46 @@ def position_func(observation, **kwargs):
     return com, position
 
 
-def action_func(model, step, observation, **kwargs):
+def action_func(model, step, observation, vectorized=False, **kwargs):
     """
     model: mathematical model of controller
     return: action
     """
-    q = observation[1:25]
-    q_vel = observation[28:52]
-    g_p, g_w = observation[60], observation[61]
+    observation = np.array(observation)
+    if vectorized is False:  # action: (action_size, )
+        q = observation[1:25]
+        q_vel = observation[28:52]
+        g_p, g_w = observation[60], observation[61]
+    else:  # action: (batch_size, action_size)
+        q = observation[:, 1:25]
+        q_vel = observation[:, 28:52]
+        g_p, g_w = observation[:, 60], observation[:, 61]
     action = model.step(step, q, q_vel, g_p, g_w)
     return action
 
 
-def step_func(observation, **kwargs):
+def step_func(observation, vectorized=False, **kwargs):
     """ accumulate concentrations along the path """
-    concentration = [observation[58]]
+    if vectorized is False:
+        concentration = [observation[58]]  # (1, )
+    else:
+        concentration = np.expand_dims(observation[:, 58], axis=1)  # (batch_size, 1)
     return concentration
 
 
-def done_func(index, result, **kwargs):
+def done_func(result, index=None, vectorized=False, **kwargs):
     """ calculate chemotaxis index with concentrations along the path """
-    chemotaxis_index = np.mean(result)
-    start_concentration = result[0][0]
-    print('Trial {}: chemotaxis index {:.2f}, start concentration {:.2f}'.format(index + 1, chemotaxis_index, start_concentration))
+    result = np.array(result)
+    if vectorized is False:  # result: (max_episode_steps, 1)
+        chemotaxis_index = np.mean(result)
+        start_concentration = result[0][0]
+        print('Trial {}: chemotaxis index {:.2f}, start concentration {:.2f}'.format(index + 1, chemotaxis_index, start_concentration))
+    else:
+        result = np.swapaxes(result, 0, 1)  # (max_episode_steps, batch_size, 1) -> (batch_size, max_episode_steps, 1)
+        for i in range(result.shape[0]):
+            chemotaxis_index = np.mean(result[i])
+            start_concentration = result[i, 0, 0]
+            print('Trial {}: chemotaxis index {:.2f}, start concentration {:.2f}'.format(i + 1, chemotaxis_index, start_concentration))
     return result
 
 
@@ -59,17 +76,17 @@ if __name__ == '__main__':
     trails = 100
     data_size_per_trial = 1
     camera_name = None
-    envs = make_chemotaxis_swimmers(
+    env = make_chemotaxis_swimmers(
         seed=11, trials=trails, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
-        max_episode_steps=3500, reset_noise_scale=1.745, camera_name=camera_name, return_func=False
+        max_episode_steps=3500, reset_noise_scale=1.745, camera_name=camera_name, return_func=True
     )
-    print(envs[0].action_space, envs[0].observation_space)
+    env = env * data_size_per_trial
+    env = gym.vector.AsyncVectorEnv(env)
+    print(env.action_space, env.observation_space)
     kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}
-    results = []
-    for i in range(trails):
-        model = ComputationalModelChemotaxis(dt=envs[i].dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., n_bias=25, **kwargs)
-        result = simulate(envs[i], model, action_func, step_func, done_func, seed=None, trials=data_size_per_trial, render=False)
-        results.append(result)
-    results = np.array(results)  # (trials, data_size_per_trial, max_episode_steps, 1)
-    results = np.reshape(results, (-1, results.shape[2], results.shape[3]))  # (trials * data_size_per_trial, max_episode_steps, 1)
-    print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(len(results), results.mean(), results[:, 0].mean()))
+    model = ComputationalModelChemotaxisVector(
+        dt=env.get_attr('dt')[0], seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., n_bias=25,
+        batch_size=env.num_envs, **kwargs
+    )
+    result = simulate_vector(env, model, action_func, step_func, done_func, seed=None, render=False)  # (batch_size, max_episode_steps, 1)
+    print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(result.shape[0], result.mean(), result[:, 0].mean()))
