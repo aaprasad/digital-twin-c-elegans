@@ -1,6 +1,5 @@
 import numpy as np
 from virtual_nematode.data.simulation import SimulationDataset
-from virtual_nematode.models.forward import Forward
 from virtual_nematode.utils import sample_seed
 import torch
 from torch.utils.tensorboard import SummaryWriter
