@@ -18,19 +18,12 @@ def y_func(action, **kwargs):
     return action.tolist()
 
 
-if __name__ == '__main__':
-    input_size = 52
-    trials = 100  # amount of envs with different source positions
-    data_size_per_trial = 30
-    seed = 11
-    max_episode_steps = 3500
-    reset_noise_scale = 1.745
+def data():
     envs = make_chemotaxis_swimmers(
         seed=seed, trials=trials, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
         max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, camera_name=None, return_func=False
     )
     action_size = envs[0].action_space.shape[0]
-    kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}
     model = ComputationalModelChemotaxis(dt=envs[0].dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., **kwargs)
     dataset = []
     for i, env in enumerate(envs):
@@ -38,6 +31,18 @@ if __name__ == '__main__':
         d = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size_per_trial, max_episode_steps, seed, disable=True)
         dataset.append(d)
     dataset = ConcatDataset(dataset)
+    return dataset
+
+
+if __name__ == '__main__':
+    input_size = 52
+    trials = 100  # amount of envs with different source positions
+    data_size_per_trial = 30
+    seed = 11
+    max_episode_steps = 3500
+    reset_noise_scale = 1.745
+    kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}
+    dataset = data()
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')
