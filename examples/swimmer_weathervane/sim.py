@@ -45,7 +45,7 @@ def step_func(observation, **kwargs):
 def done_func(index, result, **kwargs):
     """ calculate chemotaxis index with concentrations along the path """
     chemotaxis_index = np.mean(result)
-    start_concentration = result[0, 0]
+    start_concentration = result[0][0]
     print('Trial {}: chemotaxis index {:.2f}, start concentration {:.2f}'.format(index + 1, chemotaxis_index, start_concentration))
     return result
 
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     100 trials: chemotaxis index mean 0.42 / 2500 steps
     """
     # set trials = 1, camera_name = 'track' or 'fixedcam', to record video
-    trails = 100
+    trails = 4
     data_size_per_trial = 1
     camera_name = None
     envs = make_chemotaxis_swimmer(
@@ -70,5 +70,6 @@ if __name__ == '__main__':
         result = simulate(envs[i], model, action_func, step_func, done_func, seed=None, trials=data_size_per_trial, render=False)
         results.append(result)
     results = np.array(results)
+    print(results.shape)
     results = np.reshape(results, (-1, results.shape[2]))
     print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(len(results), results.mean(), results[:, 0].mean()))
