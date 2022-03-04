@@ -10,7 +10,10 @@ def tester(
     envs, model, data_func, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
     data_size_per_trial=1, disable=False
 ):
-    """ online test for at least 100 times """
+    """ online test for at least 100 times
+    x: (trials * data_size_per_trial, max_episode_steps, 1), concentration
+    y: (trials * data_size_per_trial, max_episode_steps, action_size), action
+    """
     np.random.seed(seed)
     torch.manual_seed(seed)
     writer = SummaryWriter(log_dir=model_folder)
@@ -46,11 +49,14 @@ def tester(
 
 
 def single_tester(env, model, data_func, x_func, seed=42):
-    """ online test for a single trial and record video """
+    """ online test for a single trial and record video
+    x: (max_episode_steps, 1), concentration
+    y: (max_episode_steps, action_size), action
+    """
     np.random.seed(seed)
     torch.manual_seed(seed)
-    x, y = test_func(env, model, data_func, x_func)  # x: (max_episode_steps, 1), y: (max_episode_steps, action_size)
+    x, y = test_func(env, model, data_func, x_func)
     chemotaxis_index = x.mean().item()
     start_concentration = x[0, 0].item()
     print('chemotaxis index {:.2f}, start concentration {:.2f}'.format(chemotaxis_index, start_concentration))
-    return x, y  # concentration, action
+    return x, y
