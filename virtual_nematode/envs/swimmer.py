@@ -39,19 +39,24 @@ def fick(target=None, source=None, sigma=5):
     return c
 
 
-def make_chemotaxis_swimmer(angle, xml_str_base, distance, reset_noise_scale, max_episode_steps, position_func, camera_name):
+def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_noise_scale, max_episode_steps, position_func, camera_name):
     """ create chemotaxis swimmer env """
-    x, y = distance * np.cos(angle), distance * np.sin(angle)
-    xml_str = chemotaxis(copy.deepcopy(xml_str_base), x, y)
-    env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), reset_noise_scale=reset_noise_scale)
-    env = gym.wrappers.TimeLimit(env, max_episode_steps)
-    env = gym.wrappers.ClipAction(env)
-    env = SensorObservation(env)
-    env = DistributionObservation(env, dt=env.dt, f=fick, source=[x, y], position_func=position_func)
-    if camera_name is not None:
-        env = Recorder(env, camera_name=camera_name)
-        env = gym.wrappers.Monitor(env, directory='video/swimmer_weathervane', force=True)
-    return env
+    def func():
+        x, y = distance * np.cos(angle), distance * np.sin(angle)
+        xml_str = chemotaxis(copy.deepcopy(xml_str_base), x, y)
+        env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), reset_noise_scale=reset_noise_scale)
+        env = gym.wrappers.TimeLimit(env, max_episode_steps)
+        env = gym.wrappers.ClipAction(env)
+        env = SensorObservation(env)
+        env = DistributionObservation(env, dt=env.dt, f=fick, source=[x, y], position_func=position_func)
+        if camera_name is not None:
+            env = Recorder(env, camera_name=camera_name)
+            env = gym.wrappers.Monitor(env, directory='video/swimmer_weathervane', force=True)
+        return env
+    if return_func is False:
+        return func()
+    else:
+        return func
 
 
 def make_chemotaxis_swimmers(
@@ -64,14 +69,8 @@ def make_chemotaxis_swimmers(
     xml_str_base = position(xml_str_base)
     xml_str_base = camera(xml_str_base)
     envs = []
-    kwargs = {
-        'xml_str_base': xml_str_base, 'distance': distance, 'reset_noise_scale': reset_noise_scale,
-        'max_episode_steps': max_episode_steps, 'position_func': position_func, 'camera_name': camera_name
-    }
     for _ in range(trials):
         angle = np.random.uniform(0, 2 * np.pi)
-        if return_func is False:
-            envs.append(make_chemotaxis_swimmer(angle, **kwargs))
-        else:
-            envs.append(lambda: make_chemotaxis_swimmer(angle, **kwargs))
+        env = make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_noise_scale, max_episode_steps, position_func, camera_name)
+        envs.append(env)
     return envs
