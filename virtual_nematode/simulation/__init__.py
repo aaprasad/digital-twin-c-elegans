@@ -31,7 +31,7 @@ def simulate_vector(env, model, action_func, step_func, done_func, seed=None, re
             env.render()
         action = action_func(model=model, step=step, observation=observation, vectorized=True)
         observation, reward, done, info = env.step(action)
-        result.append(step_func(observation=observation, vectorized=True))
+        result.append(step_func(observation=observation, action=action, vectorized=True))
         if done.all():
             results = done_func(result=result, vectorized=True)
             break
