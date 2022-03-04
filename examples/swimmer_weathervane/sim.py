@@ -55,7 +55,7 @@ if __name__ == '__main__':
     100 trials: chemotaxis index mean 0.42 / 2500 steps
     """
     # set trials = 1, camera_name = 'track' or 'fixedcam', to record video
-    trails = 4
+    trails = 100
     data_size_per_trial = 1
     camera_name = None
     envs = make_chemotaxis_swimmer(
@@ -69,7 +69,6 @@ if __name__ == '__main__':
         model = ComputationalModelChemotaxis(dt=envs[i].dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., n_bias=25, **kwargs)
         result = simulate(envs[i], model, action_func, step_func, done_func, seed=None, trials=data_size_per_trial, render=False)
         results.append(result)
-    results = np.array(results)
-    print(results.shape)
-    results = np.reshape(results, (-1, results.shape[2]))
+    results = np.array(results)  # (trials, data_size_per_trial, max_episode_steps, 1)
+    results = np.reshape(results, (-1, results.shape[2], results.shape[3]))  # (trials * data_size_per_trial, max_episode_steps, 1)
     print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(len(results), results.mean(), results[:, 0].mean()))
