@@ -83,10 +83,12 @@ if __name__ == '__main__':
     env = env * data_size_per_trial
     env = gym.vector.AsyncVectorEnv(env)
     print(env.action_space, env.observation_space)
+    # print(env.single_action_space, env.single_observation_space)
+    print([source.tolist() for source in env.get_attr('source')])
     kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}
     model = ComputationalModelChemotaxisVector(
         dt=env.get_attr('dt')[0], seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., n_bias=25,
         batch_size=env.num_envs, **kwargs
     )
-    result = simulate_vector(env, model, action_func, step_func, done_func, seed=None, render=False)  # (batch_size, max_episode_steps, 1)
+    result = simulate_vector(env, model, action_func, step_func, done_func, seed=11, render=False)  # (batch_size, max_episode_steps, 1)
     print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(result.shape[0], result.mean(), result[:, 0].mean()))
