@@ -21,3 +21,18 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
                 results.append(done_func(index=i, result=result))
                 break
     return results
+
+
+def simulate_vector(env, model, action_func, step_func, done_func, seed=None, render=False):
+    observation = env.reset(seed=seed, return_info=False)
+    result = []
+    for step in range(10 ** 6):
+        if render is True:
+            env.render()
+        action = action_func(model=model, step=step, observation=observation, vectorized=True)
+        observation, reward, done, info = env.step(action)
+        result.append(step_func(observation=observation, vectorized=True))
+        if done.all():
+            results = done_func(result=result, vectorized=True)
+            break
+    return results
