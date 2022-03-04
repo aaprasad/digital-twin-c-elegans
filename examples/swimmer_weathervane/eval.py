@@ -5,7 +5,7 @@ from sim import position_func
 from sim import step_func as x_func
 import sys
 import torch
-from virtual_nematode.envs.swimmer import make_chemotaxis_swimmer
+from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
 from virtual_nematode.testers.chemotaxis import single_tester, tester
 from virtual_nematode.trainers.ncp import prepare_model
 
@@ -70,9 +70,9 @@ if __name__ == '__main__':
     data_size_per_trial = 1  # amount of simulations per env
     data_path = os.path.join('data', runs_folder)  # data folder for storing model action sequence output
     os.makedirs(data_path, exist_ok=True)
-    envs = make_chemotaxis_swimmer(
+    envs = make_chemotaxis_swimmers(
         seed=seed, trials=trials, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
-        max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, camera_name=None
+        max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, camera_name=None, return_func=False
     )
     evaluate('fully_connected', start=0, end=100)
     # test('fully_connected', start=0, end=100)

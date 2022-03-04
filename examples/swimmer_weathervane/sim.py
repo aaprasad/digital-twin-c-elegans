@@ -13,7 +13,7 @@ observation[52:62]: additional
 """
 
 import numpy as np
-from virtual_nematode.envs.swimmer import make_chemotaxis_swimmer
+from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
 from virtual_nematode.models.computational_model import ComputationalModelChemotaxis
 from virtual_nematode.simulation import simulate
 
@@ -59,9 +59,9 @@ if __name__ == '__main__':
     trails = 100
     data_size_per_trial = 1
     camera_name = None
-    envs = make_chemotaxis_swimmer(
+    envs = make_chemotaxis_swimmers(
         seed=11, trials=trails, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
-        max_episode_steps=3500, reset_noise_scale=1.745, camera_name=camera_name
+        max_episode_steps=3500, reset_noise_scale=1.745, camera_name=camera_name, return_func=False
     )
     print(envs[0].action_space, envs[0].observation_space)
     kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}

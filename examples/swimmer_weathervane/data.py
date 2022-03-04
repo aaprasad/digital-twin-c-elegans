@@ -3,7 +3,7 @@
 import os
 import torch
 from sim import position_func, action_func
-from virtual_nematode.envs.swimmer import make_chemotaxis_swimmer
+from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
 from virtual_nematode.models.computational_model import ComputationalModelChemotaxis
 from virtual_nematode.data.simulation import generate_dataset
 from virtual_nematode.data.concat import ConcatDataset
@@ -25,9 +25,9 @@ if __name__ == '__main__':
     seed = 11
     max_episode_steps = 3500
     reset_noise_scale = 1.745
-    envs = make_chemotaxis_swimmer(
+    envs = make_chemotaxis_swimmers(
         seed=seed, trials=trials, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
-        max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, camera_name=None
+        max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, camera_name=None, return_func=False
     )
     action_size = envs[0].action_space.shape[0]
     kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}
