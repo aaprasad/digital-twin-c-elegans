@@ -52,7 +52,7 @@ def done_func(index, result, **kwargs):
 
 if __name__ == '__main__':
     """ results
-    100 trials: chemotaxis index mean 0.42
+    100 trials: chemotaxis index mean 0.42 / 2500 steps
     """
     # set trials = 1, camera_name = 'track' or 'fixedcam', to record video
     trails = 100
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     camera_name = None
     envs = make_chemotaxis_swimmer(
         seed=11, trials=trails, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
-        max_episode_steps=2500, reset_noise_scale=1.745, camera_name=camera_name
+        max_episode_steps=3500, reset_noise_scale=1.745, camera_name=camera_name
     )
     print(envs[0].action_space, envs[0].observation_space)
     kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}
