@@ -73,11 +73,11 @@ if __name__ == '__main__':
     100 trials: chemotaxis index mean 0.55, start concentration mean 0.01 / 3500 steps
     """
     # set trials = 1, camera_name = 'track' or 'fixedcam', to record video
-    trails = 100
+    trials = 100
     data_size_per_trial = 1
     camera_name = None
     env = make_chemotaxis_swimmers(
-        seed=11, trials=trails, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
+        seed=11, trials=trials, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
         max_episode_steps=3500, reset_noise_scale=1.745, camera_name=camera_name, return_func=True
     )
     env = env * data_size_per_trial
