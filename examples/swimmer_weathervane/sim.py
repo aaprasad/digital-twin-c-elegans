@@ -38,14 +38,14 @@ def action_func(model, step, observation, **kwargs):
 
 def step_func(observation, **kwargs):
     """ accumulate concentrations along the path """
-    concentration = observation[58]
+    concentration = [observation[58]]
     return concentration
 
 
 def done_func(index, result, **kwargs):
     """ calculate chemotaxis index with concentrations along the path """
     chemotaxis_index = np.mean(result)
-    start_concentration = result[0]
+    start_concentration = result[0, 0]
     print('Trial {}: chemotaxis index {:.2f}, start concentration {:.2f}'.format(index + 1, chemotaxis_index, start_concentration))
     return result
 
