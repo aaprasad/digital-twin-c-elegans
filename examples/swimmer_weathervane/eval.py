@@ -71,7 +71,7 @@ def test(model_name, start, end):
         ckpt_name = 'model{}.pt'.format(i)
         print(ckpt_name, end=' ')
         model = select_model(model_name, ckpt_name)
-        tester_vector(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size_per_trial, disable=True)
+        tester_vector(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name)
 
 
 def record(model_name, ckpt_name):
