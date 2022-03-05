@@ -69,7 +69,7 @@ def tester_vector(
             observation, reward, done, info = env.step(action)
             x.append(torch.from_numpy(x_func(observation=observation, vectorized=True)))
             y.append(torch.from_numpy(action))
-            if done:
+            if done.all():
                 break
     env.close()
     x = torch.stack(x, dim=1, dtype=torch.float64)  # (batch_size, max_episode_steps, 1)
