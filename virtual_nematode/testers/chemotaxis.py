@@ -65,7 +65,7 @@ def tester_vector(
             data = data_func(observation=observation, vectorized=True)
             data = torch.tensor(data, dtype=torch.float64)
             output, hidden_state = model.step(data, hidden_state)
-            action = action.numpy()
+            action = output.numpy()
             observation, reward, done, info = env.step(action)
             x.append(torch.from_numpy(x_func(observation=observation, vectorized=True)))
             y.append(torch.from_numpy(action))
