@@ -1,22 +1,34 @@
 from data import x_func as data_func_base
 import gym
+import numpy as np
 import os
 from sim import position_func
 from sim import step_func as x_func
 import sys
 import torch
 from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
-from virtual_nematode.testers.chemotaxis import single_tester, tester
+from virtual_nematode.testers.chemotaxis import single_tester, tester_vector
 from virtual_nematode.trainers.ncp import prepare_model
 
 
-def data_func(observation, **kwargs):
-    data = data_func_base(observation, **kwargs)
-    proprioception = data[0:48]
-    gradient = data[49]
-    gradient_positive = gradient if gradient > 0 else 0
-    gradient_negative = abs(gradient) if gradient < 0 else 0
-    return proprioception + [gradient_positive, gradient_negative]
+def data_func(observation, vectorized=False, **kwargs):
+    data = data_func_base(observation, vectorized, **kwargs)
+    if vectorized is False:
+        # (*, )
+        proprioception = data[0:48]
+        gradient = data[49]
+        gradient_positive = gradient if gradient > 0 else 0
+        gradient_negative = abs(gradient) if gradient < 0 else 0
+        return proprioception + [gradient_positive, gradient_negative]
+    else:
+        # (batch_size, *)
+        proprioception = data[:, 0:48]
+        gradient = np.expand_dims(data[:, 49], axis=1)
+        gradient_positive = gradient.copy()
+        gradient_positive[gradient < 0] = 0
+        gradient_negative = np.abs(gradient)
+        gradient_negative[gradient > 0] = 0
+        return np.hstack([proprioception, gradient_positive, gradient_negative])
 
 
 def select_model(model_name, ckpt_name):
@@ -33,6 +45,11 @@ def select_model(model_name, ckpt_name):
 
 def evaluate(model_name, start, end):
     """ online test once for evaluation """
+    envs = make_chemotaxis_swimmers(
+        seed=seed, trials=1, distance=distance, position_func=position_func, n_bodies=n_bodies,
+        joint_range=joint_range, body_len=body_len, max_episode_steps=max_episode_steps,
+        reset_noise_scale=reset_noise_scale, camera_name=None, return_func=False
+    )
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
         model = select_model(model_name, ckpt_name)
@@ -43,17 +60,29 @@ def evaluate(model_name, start, end):
 
 def test(model_name, start, end):
     """ online test multiple trials for testing """
+    env = make_chemotaxis_swimmers(
+        seed=seed, trials=trials, distance=distance, position_func=position_func, n_bodies=n_bodies,
+        joint_range=joint_range, body_len=body_len, max_episode_steps=max_episode_steps,
+        reset_noise_scale=reset_noise_scale, camera_name=None, return_func=True
+    )
+    env = env * data_size_per_trial
+    env = gym.vector.AsyncVectorEnv(env)
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
         print(ckpt_name, end=' ')
         model = select_model(model_name, ckpt_name)
-        tester(envs, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size_per_trial, disable=True)
+        tester_vector(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size_per_trial, disable=True)
 
 
-def record(model_name, env, ckpt_name):
+def record(model_name, ckpt_name):
     """ online test once for evaluation and record video """
+    envs = make_chemotaxis_swimmers(
+        seed=seed, trials=1, distance=distance, position_func=position_func, n_bodies=n_bodies,
+        joint_range=joint_range, body_len=body_len, max_episode_steps=max_episode_steps,
+        reset_noise_scale=reset_noise_scale, camera_name=None, return_func=False
+    )
     model = select_model(model_name, ckpt_name)
-    env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
+    env = gym.wrappers.Monitor(envs[0], directory=os.path.join('video', runs_folder, ckpt_name), force=True)
     _, y = single_tester(env, model, data_func, x_func, seed)
     torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
@@ -68,12 +97,13 @@ if __name__ == '__main__':
     max_episode_steps = 3500
     trials = 100  # amount of envs with different source positions
     data_size_per_trial = 1  # amount of simulations per env
+    distance = 15
+    n_bodies = 25
+    joint_range = '-100 100'
+    body_len = 0.1
     data_path = os.path.join('data', runs_folder)  # data folder for storing model action sequence output
     os.makedirs(data_path, exist_ok=True)
-    envs = make_chemotaxis_swimmers(
-        seed=seed, trials=trials, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
-        max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, camera_name=None, return_func=False
-    )
+    """ evaluate, test and record """
     evaluate('fully_connected', start=0, end=100)
     # test('fully_connected', start=0, end=100)
-    # record('fully_connected', envs[0], ckpt_name='model.pt')
+    # record('fully_connected', ckpt_name='model.pt')
