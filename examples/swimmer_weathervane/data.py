@@ -12,9 +12,12 @@ from virtual_nematode.data.concat import ConcatDataset
 from virtual_nematode.simulation import simulate_vector
 
 
-def x_func(observation, **kwargs):
+def x_func(observation, vectorized=False, **kwargs):
     """ angle and angular velocity of the rotors, concentration, g, g_p, g_w """
-    return observation[1:25].tolist() + observation[28:52].tolist() + observation[58:62].tolist()
+    if vectorized is False:
+        return observation[1:25].tolist() + observation[28:52].tolist() + observation[58:62].tolist()
+    else:
+        return np.hstack([observation[:, 1:25], observation[:, 28:52], observation[:, 58:62]])
 
 
 def y_func(action, **kwargs):
