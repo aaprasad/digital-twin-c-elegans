@@ -37,7 +37,8 @@ def make_env(**kwargs):
 
 def simulate(env, model, seed):
     result, results = [], None
-    observation = env.reset(seed=seed, return_info=False)
+    env.seed(seed)
+    observation = env.reset()
     for step in range(10 ** 6):
         action = action_func(model=model, step=step, observation=observation)
         observation, reward, done, info = env.step(action)

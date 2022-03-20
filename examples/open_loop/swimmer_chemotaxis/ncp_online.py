@@ -15,7 +15,8 @@ def online_test_single_simulation(env, model, dataset):
     """ run a chemotaxis simulation controlled by a network model """
     seed = sample_seed()
     torch.manual_seed(seed)  # seed model
-    observation = env.reset(seed=seed, return_info=False)
+    env.seed(seed)
+    observation = env.reset()
     model.eval()
     hidden_state = None
     y = []

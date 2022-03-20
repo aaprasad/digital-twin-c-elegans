@@ -9,7 +9,8 @@ def test_func(env, model, data_func, x_func):
     """ run a forward locomotion simulation steered by a neural network """
     seed = sample_seed()
     torch.manual_seed(seed)
-    observation = env.reset(seed=seed, return_info=False)
+    env.seed(seed)
+    observation = env.reset()
     model.eval()
     hidden_state = None
     x, y = [], []

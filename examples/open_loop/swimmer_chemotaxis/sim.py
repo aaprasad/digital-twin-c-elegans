@@ -50,7 +50,8 @@ def simulate(seed=None):
     seed: env simulation stays the same with seeding
     """
     env = make_swimmer(max_episode_steps=2500, x=9, y=12)  # distance from source: 15
-    observation = env.reset(seed=seed, return_info=False)
+    env.seed(seed)
+    observation = env.reset()
     model = ComputationalModelChemotaxis(dt=env.dt, seed=seed)
     concentrations = []
     for i in range(10 ** 6):

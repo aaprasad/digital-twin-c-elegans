@@ -55,7 +55,8 @@ def tester_vector(
     np.random.seed(seed)
     torch.manual_seed(seed)
     writer = SummaryWriter(log_dir=model_folder)
-    observation = env.reset(seed=seed, return_info=False)
+    env.seed(seed)
+    observation = env.reset()
     model.eval()
     hidden_state = None
     x, y = [], []
