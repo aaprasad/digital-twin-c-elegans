@@ -3,7 +3,7 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 
 ## prerequisites
 * python==3.8
-* gym==0.21.0
+* gym==0.22.0
 * pytorch==1.8.0
 * tensorboard==2.4.1
 
