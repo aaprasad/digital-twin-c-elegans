@@ -52,6 +52,7 @@ def done_func(index, result, **kwargs):
 
 
 if __name__ == '__main__':
+    # gym.logger.set_level(gym.logger.DEBUG)
     max_episode_steps = 2500
     env = make_swimmer(n_bodies=25, joint_range='-100 100', max_episode_steps=max_episode_steps, reset_noise_scale=1.745)
     env = gym.wrappers.Monitor(env, directory='video/sphere_v0', force=True)
