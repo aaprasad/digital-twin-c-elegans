@@ -58,8 +58,8 @@ def evaluate(model_name, start, end):
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
-def test(model_name, start, end):
-    """ online test multiple trials for testing """
+def test_vector(model_name, start, end):
+    """ online test multiple trials for testing: based on vectorized env """
     env = make_chemotaxis_swimmers(
         seed=seed, trials=trials, distance=distance, position_func=position_func, n_bodies=n_bodies,
         joint_range=joint_range, body_len=body_len, max_episode_steps=max_episode_steps,
@@ -105,5 +105,5 @@ if __name__ == '__main__':
     os.makedirs(data_path, exist_ok=True)
     """ evaluate, test and record """
     evaluate('fully_connected', start=0, end=100)
-    # test('fully_connected', start=0, end=100)
+    # test_vector('fully_connected', start=0, end=100)
     # record('fully_connected', ckpt_name='model.pt')
