@@ -7,7 +7,7 @@ from sim import step_func as x_func
 import sys
 import torch
 from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
-from virtual_nematode.testers.chemotaxis import single_tester, tester_vector
+from virtual_nematode.testers.chemotaxis import single_tester, tester, tester_vector
 from virtual_nematode.trainers.ncp import prepare_model
 
 
@@ -58,8 +58,23 @@ def evaluate(model_name, start, end):
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
+def test(model_name, start, end):
+    """ online test multiple trials for testing with torch multiprocessing """
+    envs = make_chemotaxis_swimmers(
+        seed=seed, trials=trials, distance=distance, position_func=position_func, n_bodies=n_bodies,
+        joint_range=joint_range, body_len=body_len, max_episode_steps=max_episode_steps,
+        reset_noise_scale=reset_noise_scale, camera_name=None, return_func=False
+    )
+    envs = envs * data_size_per_trial
+    for i in range(start, end):
+        ckpt_name = 'model{}.pt'.format(i)
+        print(ckpt_name, end=' ')
+        model = select_model(model_name, ckpt_name)
+        tester(envs, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, disable=True)
+
+
 def test_vector(model_name, start, end):
-    """ online test multiple trials for testing: based on vectorized env """
+    """ online test multiple trials for testing with gym.vector.AsyncVectorEnv multiprocessing """
     env = make_chemotaxis_swimmers(
         seed=seed, trials=trials, distance=distance, position_func=position_func, n_bodies=n_bodies,
         joint_range=joint_range, body_len=body_len, max_episode_steps=max_episode_steps,
@@ -105,5 +120,5 @@ if __name__ == '__main__':
     os.makedirs(data_path, exist_ok=True)
     """ evaluate, test and record """
     evaluate('fully_connected', start=0, end=100)
-    # test_vector('fully_connected', start=0, end=100)
+    # test('fully_connected', start=0, end=100)  # test_vector('fully_connected', start=0, end=100)
     # record('fully_connected', ckpt_name='model.pt')
