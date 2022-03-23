@@ -41,7 +41,7 @@ def tester(
     env, model, data_func, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
     data_size=100, disable=False
 ):
-    """ online test for at least 100 trials """
+    """ online test for at least 100 trials with torch multiprocessing """
     np.random.seed(seed)
     torch.manual_seed(seed)
     writer = SummaryWriter(log_dir=model_folder)

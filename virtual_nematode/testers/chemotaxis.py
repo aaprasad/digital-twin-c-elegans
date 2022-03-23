@@ -9,7 +9,7 @@ def tester(
     envs, model, data_func, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
     data_size_per_trial=1, disable=False
 ):
-    """ online test for at least 100 times
+    """ online test for at least 100 times with torch multiprocessing
     x: (trials * data_size_per_trial, max_episode_steps, 1), concentration
     y: (trials * data_size_per_trial, max_episode_steps, action_size), action
     """
@@ -46,7 +46,7 @@ def tester(
 def tester_vector(
     env, model, data_func, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected'
 ):
-    """ online test for at least 100 times """
+    """ online test for at least 100 times with gym.vector.AsyncVectorEnv multiprocessing """
     np.random.seed(seed)
     torch.manual_seed(seed)
     writer = SummaryWriter(log_dir=model_folder)
