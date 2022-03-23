@@ -1,12 +1,15 @@
 import numpy as np
 from virtual_nematode.data.simulation import SimulationDataset
-from virtual_nematode.utils import sample_seed
+from virtual_nematode.utils import sample_seed, rng_state_seed
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def test_func(env, model, data_func, x_func):
+def test_func(env, model, data_func, x_func, init_seed=None):
     """ run a forward locomotion simulation steered by a neural network """
+    if type(env) is list and init_seed is not None:  # env is a list, take the one according to worker_id
+        worker_id = rng_state_seed() - init_seed  # integer in [0, data_size)
+        env = env[worker_id]
     seed = sample_seed()
     torch.manual_seed(seed)
     env.seed(seed)
