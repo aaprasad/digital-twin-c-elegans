@@ -21,3 +21,10 @@ def sample_seed():
     seed numpy rng first
     """
     return np.random.randint(np.iinfo(np.uint32).max)
+
+
+def rng_state_seed():
+    """ get the seed from the internal state of numpy random generator """
+    _, keys, _, _, _ = np.random.get_state()
+    seed = keys[0]
+    return seed

@@ -2,7 +2,7 @@ import multiprocessing
 import numpy as np
 import torch
 from tqdm import tqdm
-from virtual_nematode.utils import sample_seed
+from virtual_nematode.utils import sample_seed, rng_state_seed
 
 
 class SimulationSample(torch.utils.data.Dataset):
@@ -40,8 +40,7 @@ class SimulationDataset(torch.utils.data.TensorDataset):
         """ init fn for multiprocessing workers
         seed: seed + worker_id to generate different seeds for different workers
         """
-        _, keys, _, _, _ = np.random.get_state()
-        seed = keys[0]
+        seed = rng_state_seed()
         np.random.seed(np.uint32(seed + worker_id))
 
     def get_tensors(self, get_item, **kwargs):
