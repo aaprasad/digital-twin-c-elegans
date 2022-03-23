@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
-from virtual_nematode.data.concat import ConcatDataset
 from virtual_nematode.data.simulation import SimulationDataset
 from virtual_nematode.testers.forward import test_func
 
@@ -18,15 +17,11 @@ def tester(
     torch.manual_seed(seed)
     writer = SummaryWriter(log_dir=model_folder)
     action_size = envs[0].action_space.shape[0]
-    result = []
-    for env in envs:
-        r = SimulationDataset(
-            data_size_per_trial, max_episode_steps, 1, action_size, seed, test_func, disable,
-            # func kwargs
-            env=env, model=model, data_func=data_func, x_func=x_func
-        )
-        result.append(r)
-    result = ConcatDataset(result)
+    result = SimulationDataset(
+        data_size_per_trial, max_episode_steps, 1, action_size, seed, test_func, disable,
+        # func kwargs
+        env=envs, model=model, data_func=data_func, x_func=x_func, init_seed=seed
+    )
     if disable is False:
         print('result', len(result), result[0][0].size(), result[0][1].size())
     x, y = result.tensors
