@@ -10,8 +10,9 @@ def tester(
     disable=False
 ):
     """ online test for at least 100 times with torch multiprocessing
-    x: (trials * data_size_per_trial, max_episode_steps, 1), concentration
-    y: (trials * data_size_per_trial, max_episode_steps, action_size), action
+    data_size = len(envs) = trials * data_size_per_trial
+    x: (data_size, max_episode_steps, 1), concentration
+    y: (data_size, max_episode_steps, action_size), action
     """
     np.random.seed(seed)
     torch.manual_seed(seed)
