@@ -7,7 +7,7 @@ from virtual_nematode.testers.forward import test_func
 
 def tester(
     envs, model, data_func, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
-    data_size_per_trial=1, disable=False
+    disable=False
 ):
     """ online test for at least 100 times with torch multiprocessing
     x: (trials * data_size_per_trial, max_episode_steps, 1), concentration
@@ -17,8 +17,9 @@ def tester(
     torch.manual_seed(seed)
     writer = SummaryWriter(log_dir=model_folder)
     action_size = envs[0].action_space.shape[0]
+    data_size = len(envs)
     result = SimulationDataset(
-        data_size_per_trial, max_episode_steps, 1, action_size, seed, test_func, disable,
+        data_size, max_episode_steps, 1, action_size, seed, test_func, disable,
         # func kwargs
         env=envs, model=model, data_func=data_func, x_func=x_func, init_seed=seed
     )
@@ -30,7 +31,7 @@ def tester(
     print('chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(chemotaxis_index_mean, start_concentration_mean))
     hparam = {
         'seed': seed, 'max_episode_steps': max_episode_steps, 'model_folder': model_folder, 'model_name': model_name,
-        'data_size_per_trial': data_size_per_trial
+        'data_size': data_size
     }
     writer.add_hparams(
         hparam,
