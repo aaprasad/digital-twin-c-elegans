@@ -10,7 +10,8 @@ def tester(
     disable=False
 ):
     """ online test for at least 100 times with torch multiprocessing
-    data_size = len(envs) = trials * data_size_per_trial
+    each env in envs will be simulated only once, any env with more than one trial should be simply duplicated
+    data_size = len(envs) = env number * trials per env
     x: (data_size, max_episode_steps, 1), concentration
     y: (data_size, max_episode_steps, action_size), action
     """
