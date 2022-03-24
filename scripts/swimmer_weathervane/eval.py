@@ -33,10 +33,10 @@ def data_func(observation, vectorized=False, **kwargs):
 
 def select_model(model_name, ckpt_name):
     if model_name == 'fully_connected':
-        kwargs = {'units': 50, 'output_dim': 24, 'in_features': 50}
+        kwargs = {'units': 100, 'output_dim': 24, 'in_features': 50}
     elif model_name == 'ctrnn':
         torch.set_default_dtype(torch.float64)
-        kwargs = {'input_size': 50, 'hidden_size': 50, 'output_size': 24, 'feedback': True, 'readout': 'identity'}
+        kwargs = {'input_size': 50, 'hidden_size': 100, 'output_size': 24, 'feedback': True, 'readout': 'identity'}
     else:
         raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
