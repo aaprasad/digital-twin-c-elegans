@@ -61,8 +61,9 @@ class SimulationDataset(torch.utils.data.TensorDataset):
         return x, y
 
 
-def generate_sample(env, model, action_func, x_func, y_func, **kwargs):
+def generate_sample(index, env, model, action_func, x_func, y_func):
     """ run a forward movement simulation
+    index: item index
     x: torch.Tensor, (max_episode_steps, x_size)
     y: torch.Tensor, (max_episode_steps, action_size)
     action_func: function, generate action

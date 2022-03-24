@@ -5,10 +5,9 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def test_func(env, model, data_func, x_func, **kwargs):
+def test_func(index, env, model, data_func, x_func):
     """ run a forward locomotion simulation steered by a neural network """
     if type(env) is list:  # env is a list, take the one according to item index
-        index = kwargs.get('index')
         env = env[index]
     seed = sample_seed()
     torch.manual_seed(seed)
