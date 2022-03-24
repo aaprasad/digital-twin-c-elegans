@@ -4,7 +4,7 @@ import gym
 import numpy as np
 import os
 import torch
-from sim import position_func, action_func
+from sim_vector import position_func, action_func
 from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
 from virtual_nematode.models.computational_model import ComputationalModelChemotaxis, ComputationalModelChemotaxisVector
 from virtual_nematode.data.simulation import generate_dataset

@@ -2,8 +2,8 @@ from data import x_func as data_func_base
 import gym
 import numpy as np
 import os
-from sim import position_func
-from sim import step_func as x_func
+from sim_vector import position_func
+from sim_vector import step_func as x_func
 import sys
 import torch
 from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
