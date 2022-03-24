@@ -76,8 +76,8 @@ def data_vector():
 
 if __name__ == '__main__':
     input_size = 52
-    trials = 3000  # number of envs with different source positions
-    data_size_per_trial = 1  # number of trials for each env
+    trials = 100  # number of envs with different source positions
+    data_size_per_trial = 30  # number of trials for each env
     seed = 11
     max_episode_steps = 3500
     reset_noise_scale = 1.745
