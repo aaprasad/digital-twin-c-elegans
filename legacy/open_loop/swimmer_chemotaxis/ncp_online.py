@@ -11,7 +11,7 @@ from sim import make_swimmer
 from virtual_nematode.trainers.ncp import prepare_model
 
 
-def online_test_single_simulation(env, model, dataset):
+def online_test_single_simulation(env, model, dataset, **kwargs):
     """ run a chemotaxis simulation controlled by a network model """
     seed = sample_seed()
     torch.manual_seed(seed)  # seed model

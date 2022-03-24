@@ -14,7 +14,7 @@ class SimulationSample(torch.utils.data.Dataset):
         self.kwargs = kwargs  # kwargs for simulation
 
     def __getitem__(self, index):
-        return self.get_item(**self.kwargs)
+        return self.get_item(index, **self.kwargs)
 
     def __len__(self):
         return self.data_size
@@ -61,7 +61,7 @@ class SimulationDataset(torch.utils.data.TensorDataset):
         return x, y
 
 
-def generate_sample(env, model, action_func, x_func, y_func):
+def generate_sample(env, model, action_func, x_func, y_func, **kwargs):
     """ run a forward movement simulation
     x: torch.Tensor, (max_episode_steps, x_size)
     y: torch.Tensor, (max_episode_steps, action_size)

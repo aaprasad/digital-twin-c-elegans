@@ -5,7 +5,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def test_func(env, model, data_func, x_func, init_seed=None):
+def test_func(env, model, data_func, x_func, init_seed=None, **kwargs):
     """ run a forward locomotion simulation steered by a neural network """
     if type(env) is list and init_seed is not None:  # env is a list, take the one according to worker_id
         worker_id = rng_state_seed() - init_seed  # integer in [0, data_size)
