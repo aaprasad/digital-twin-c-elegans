@@ -27,4 +27,8 @@ def train(model_name, data_name):
 
 
 if __name__ == '__main__':
+    """ experiments
+    model_name: 'fully_connected', 'ctrnn'
+    data_name: 'steering.pt', 'steering_and_roaming.pt', 'full.pt'
+    """
     train(model_name='fully_connected', data_name='steering.pt')
