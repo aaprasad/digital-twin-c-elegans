@@ -8,7 +8,6 @@ from sim import position_func, action_func
 from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
 from virtual_nematode.models.computational_model import ComputationalModelChemotaxis, ComputationalModelChemotaxisVector
 from virtual_nematode.data.simulation import generate_dataset
-from virtual_nematode.data.concat import ConcatDataset
 from virtual_nematode.simulation import simulate_vector
 
 
@@ -32,12 +31,9 @@ def data():
     )
     action_size = envs[0].action_space.shape[0]
     model = ComputationalModelChemotaxis(dt=envs[0].dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., n_bias=25, **kwargs)
-    dataset = []
-    for i, env in enumerate(envs):
-        print(i, env.source.tolist(), end=' ')
-        d = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size_per_trial, max_episode_steps, seed, disable=True)
-        dataset.append(d)
-    dataset = ConcatDataset(dataset)
+    envs = envs * data_size_per_trial
+    data_size = len(envs)
+    dataset = generate_dataset(envs, model, action_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed, disable=False)
     return dataset
 
 
