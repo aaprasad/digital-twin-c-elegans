@@ -98,7 +98,8 @@ def single_tester(env, model, data_func, x_func, seed=42):
     """
     np.random.seed(seed)
     torch.manual_seed(seed)
-    x, y = test_func(env, model, data_func, x_func)
+    index = 0
+    x, y = test_func(index, env, model, data_func, x_func)
     chemotaxis_index = x.mean().item()
     start_concentration = x[0, 0].item()
     print('chemotaxis index {:.2f}, start concentration {:.2f}'.format(chemotaxis_index, start_concentration))
