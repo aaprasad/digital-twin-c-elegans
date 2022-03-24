@@ -23,7 +23,7 @@ def tester(
     result = SimulationDataset(
         data_size, max_episode_steps, 1, action_size, seed, test_func, disable,
         # func kwargs
-        env=envs, model=model, data_func=data_func, x_func=x_func, init_seed=seed
+        env=envs, model=model, data_func=data_func, x_func=x_func
     )
     if disable is False:
         print('result', len(result), result[0][0].size(), result[0][1].size())
