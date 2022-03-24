@@ -86,8 +86,7 @@ if __name__ == '__main__':
     max_episode_steps = 3500
     reset_noise_scale = 1.745
     kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}
-    dataset = data()
-    # dataset = data_vector()
+    dataset = data()  # dataset = data_vector()
     print('dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data.pt')
