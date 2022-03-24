@@ -14,7 +14,7 @@ class SimulationSample(torch.utils.data.Dataset):
         self.kwargs = kwargs  # kwargs for simulation
 
     def __getitem__(self, index):
-        return self.get_item(index, **self.kwargs)
+        return self.get_item(index, **self.kwargs)  # index: item index
 
     def __len__(self):
         return self.data_size
