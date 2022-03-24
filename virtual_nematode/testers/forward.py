@@ -68,7 +68,8 @@ def single_tester(env, model, data_func, x_func, seed=42, max_episode_steps=2500
     """ online test for a single trial and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
-    x, y = test_func(env, model, data_func, x_func)
+    index = 0
+    x, y = test_func(index, env, model, data_func, x_func)
     displacement = torch.linalg.norm(x[-1, :] - x[0, :], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
     return x, y  # center of mass, action
