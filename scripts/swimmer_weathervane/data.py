@@ -26,7 +26,7 @@ def y_func(action, **kwargs):
 def data():
     """ generate data with torch multiprocessing """
     envs = make_chemotaxis_swimmers(
-        seed=seed, trials=trials, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
+        seed=seed, trials=trials, distance=distance, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
         max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, camera_name=None, return_func=False
     )
     action_size = envs[0].action_space.shape[0]
@@ -60,7 +60,7 @@ def done_func(result, **kwargs):
 def data_vector():
     """ generate data with gym.vector.AsyncVectorEnv multiprocessing """
     env = make_chemotaxis_swimmers(
-        seed=seed, trials=trials, distance=15, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
+        seed=seed, trials=trials, distance=distance, position_func=position_func, n_bodies=25, joint_range='-100 100', body_len=0.1,
         max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale, camera_name=None, return_func=True
     )
     env = env * data_size_per_trial
@@ -80,6 +80,7 @@ if __name__ == '__main__':
     data_size_per_trial = 30  # number of trials for each env
     seed = 11
     max_episode_steps = 3500
+    distance = 15
     reset_noise_scale = 1.745
     kwargs = {'backward': False, 'omega': False, 'weathervane': True, 'random_walk': False, 'weathervane_reverse': False}
     dataset = data()  # dataset = data_vector()
