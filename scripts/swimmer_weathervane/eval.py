@@ -6,24 +6,26 @@ from sim_vector import position_func
 from sim_vector import step_func as x_func
 import sys
 import torch
-from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
+from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers, fick
 from virtual_nematode.testers.chemotaxis import single_tester, tester, tester_vector
 from virtual_nematode.trainers.ncp import prepare_model
 
 
 def data_func(observation, vectorized=False, **kwargs):
     data = data_func_base(observation, vectorized, **kwargs)
+    g_coef = fick()
     if vectorized is False:
         # (*, )
         proprioception = data[0:48]
         gradient = data[49]
+        gradient = gradient / g_coef  # normalized gradient, where g_coef is the max of distribution function derivative
         gradient_positive = gradient if gradient > 0 else 0
         gradient_negative = abs(gradient) if gradient < 0 else 0
         return proprioception + [gradient_positive, gradient_negative]
     else:
         # (batch_size, *)
         proprioception = data[:, 0:48]
-        gradient = np.expand_dims(data[:, 49], axis=1)
+        gradient = np.expand_dims(data[:, 49], axis=1) / g_coef  # normalized gradient
         gradient_positive = gradient.copy()
         gradient_positive[gradient < 0] = 0
         gradient_negative = np.abs(gradient)
