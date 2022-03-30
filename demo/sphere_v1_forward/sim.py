@@ -66,10 +66,10 @@ def done_func(index, result, **kwargs):
 if __name__ == '__main__':
     # gym.logger.set_level(gym.logger.DEBUG)
     max_episode_steps = 2500
-    env = make_swimmer(n_bodies=25, joint_range='-100 100', max_episode_steps=max_episode_steps, reset_noise_scale=1.745)
+    env = make_swimmer(n_bodies=25, joint_range='-100 100', max_episode_steps=max_episode_steps, reset_noise_scale=0.)
     # env = gym.wrappers.Monitor(env, directory='video/sphere_v1', force=True)
     print(env.action_space)
     print(env.observation_space)
-    model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2.)
+    model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=0.1)
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
