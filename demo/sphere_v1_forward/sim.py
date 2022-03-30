@@ -1,7 +1,16 @@
+""" Sphere-v1 forward locomotion
+action space: Box(-1.0, 1.0, (24,), float32)
+    [0:24]: torque applied on the rotors (torque, N*m)
+observation space
+    [0:106]: base model's observation space
+    [106:109]: 3D center of mass (length, m)
+    [109:112]: 3D frame position of the first body (length, m)
+"""
+
 import gym
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.position import position
-from gym_worm.envs.mujoco.sphere_v0 import swimmer
+from gym_worm.envs.mujoco.sphere_v1 import swimmer
 from gym_worm.wrappers.recorder import Recorder
 from gym_worm.wrappers.sensor_observation import SensorObservation
 import numpy as np
@@ -30,8 +39,8 @@ def action_func(model, step, observation, **kwargs):
     model: mathematical model of controller
     return: action
     """
-    q = observation[3:27]
-    q_vel = observation[30:54]
+    q = observation[5:53][1::2]
+    q_vel = observation[58:106][1::2]
     action = model.step(step, q, q_vel)
     return action
 
@@ -40,7 +49,7 @@ def step_func(observation, **kwargs):
     """
     return: 2D center of mass
     """
-    com = observation[54:56]
+    com = observation[106:108]
     return com
 
 
