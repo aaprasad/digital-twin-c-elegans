@@ -27,6 +27,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, **k
         model = ctrnn(**kwargs)
     elif model_name == 'rnn':
         model = rnn(**kwargs)
+    elif model_name == 'ctrnn_2_stage':
+        model = ctrnn_2_stage(**kwargs)
     else:
         raise AssertionError('{} not exist'.format(model_name))
     if device is None:
