@@ -4,6 +4,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from virtual_nematode.data.utils import prepare_dataloader
 from virtual_nematode.networks.ncp.ltc_cell import LTCCell
+from virtual_nematode.networks.ncp.rnn_cell_fused import RNNCell2Stage
 from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
 from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
@@ -65,6 +66,25 @@ def ncp(
 
 def ctrnn(input_size, hidden_size, output_size, **kwargs):
     cell = CTRNNCell(input_size, hidden_size, output_size, **kwargs)
+    model = RNNSequence(cell)
+    return model
+
+
+def ctrnn_2_stage(input_size, hidden_size, output_size, load_kwargs, load_path, input1_range, input2_range, **kwargs):
+    """ CTRNN 2 stage
+    load_kwargs: kwargs for the model to be loaded
+    load_path: path to load the model
+    """
+    # create cells
+    cell1 = CTRNNCell(input_size, hidden_size, output_size, **kwargs)
+    cell2 = CTRNNCell(**load_kwargs)
+    # load state dict
+    state_dict = torch.load(load_path)
+    cell2.linear[0].weight.data = state_dict.get('rnn_cell.linear.0.weight')
+    cell2.linear[0].bias.data = state_dict.get('rnn_cell.linear.0.bias')
+    cell2.requires_grad_(False)
+    # create
+    cell = RNNCell2Stage(cell1, cell2, input1_range=input1_range, input2_range=input2_range)
     model = RNNSequence(cell)
     return model
 
