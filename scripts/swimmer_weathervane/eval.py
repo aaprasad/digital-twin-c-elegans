@@ -39,6 +39,14 @@ def select_model(model_name, ckpt_name):
     elif model_name == 'ctrnn':
         torch.set_default_dtype(torch.float64)
         kwargs = {'input_size': 50, 'hidden_size': 100, 'output_size': 24, 'feedback': True, 'readout': 'identity'}
+    elif model_name == 'ctrnn_2_stage':
+        torch.set_default_dtype(torch.float64)
+        kwargs = {
+            'input_size': 2, 'hidden_size': 50, 'output_size': 48, 'feedback': True, 'readout': 'identity',
+            'load_kwargs': {'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True, 'readout': 'identity'},
+            'load_path': None,
+            'input1_range': (48, 50), 'input2_range': (0, 48)
+        }
     else:
         raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
@@ -121,6 +129,6 @@ if __name__ == '__main__':
     data_path = os.path.join('data', runs_folder)  # data folder for storing model action sequence output
     os.makedirs(data_path, exist_ok=True)
     """ evaluate, test and record """
-    evaluate('fully_connected', start=0, end=100)
-    # test('fully_connected', start=0, end=100)  # test_vector('fully_connected', start=0, end=100)
-    # record('fully_connected', ckpt_name='model.pt')
+    evaluate('ctrnn_2_stage', start=0, end=100)
+    # test('ctrnn_2_stage', start=0, end=100)  # test_vector('fully_connected', start=0, end=100)
+    # record('ctrnn_2_stage', ckpt_name='model.pt')
