@@ -72,7 +72,7 @@ def ctrnn(input_size, hidden_size, output_size, **kwargs):
     return model
 
 
-def ctrnn_2_stage(input_size, hidden_size, output_size, load_kwargs, load_path, input1_range, input2_range, **kwargs):
+def ctrnn_2_stage(input_size, hidden_size, output_size, load_kwargs, input1_range, input2_range, load_path=None, **kwargs):
     """ CTRNN 2 stage
     load_kwargs: kwargs for the model to be loaded
     load_path: path to load the model
@@ -80,11 +80,12 @@ def ctrnn_2_stage(input_size, hidden_size, output_size, load_kwargs, load_path, 
     # create cells
     cell1 = CTRNNCell(input_size, hidden_size, output_size, **kwargs)
     cell2 = CTRNNCell(**load_kwargs)
-    # load state dict
-    state_dict = torch.load(load_path)
-    cell2.linear[0].weight.data = state_dict.get('rnn_cell.linear.0.weight')
-    cell2.linear[0].bias.data = state_dict.get('rnn_cell.linear.0.bias')
-    cell2.requires_grad_(False)
+    if load_path is not None:
+        # load state dict
+        state_dict = torch.load(load_path)
+        cell2.linear[0].weight.data = state_dict.get('rnn_cell.linear.0.weight')
+        cell2.linear[0].bias.data = state_dict.get('rnn_cell.linear.0.bias')
+        cell2.requires_grad_(False)
     # create
     cell = RNNCell2Stage(cell1, cell2, input1_range=input1_range, input2_range=input2_range)
     model = RNNSequence(cell)
