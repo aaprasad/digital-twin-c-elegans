@@ -44,7 +44,6 @@ def select_model(model_name, ckpt_name):
         kwargs = {
             'input_size': 2, 'hidden_size': 50, 'output_size': 48, 'feedback': True, 'readout': 'identity',
             'load_kwargs': {'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True, 'readout': 'identity'},
-            'load_path': None,
             'input1_range': (48, 50), 'input2_range': (0, 48)
         }
     else:
