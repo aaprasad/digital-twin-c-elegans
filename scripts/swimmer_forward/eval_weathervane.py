@@ -1,8 +1,9 @@
 from data import x_func as data_func
-from eval import select_model
 import os
+import torch
 from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
 from virtual_nematode.testers.chemotaxis import tester
+from virtual_nematode.trainers.ncp import prepare_model
 
 
 def position_func(observation, **kwargs):
@@ -15,6 +16,16 @@ def x_func(observation, **kwargs):
     """ accumulate concentrations along the path """
     concentration = [observation[58]]  # (1, )
     return concentration
+
+
+def select_model(model_name, ckpt_name):
+    if model_name == 'ctrnn':
+        torch.set_default_dtype(torch.float64)
+        kwargs = {'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True, 'readout': 'identity'}
+    else:
+        raise AssertionError('{} not exist'.format(model_name))
+    model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
+    return model
 
 
 def test(model_name, start, end):
