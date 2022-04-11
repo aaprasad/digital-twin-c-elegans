@@ -1,2 +1,3 @@
 import virtual_nematode.envs.muscle_worm
+import virtual_nematode.envs.servo_ellipsoid
 import virtual_nematode.envs.swimmer
