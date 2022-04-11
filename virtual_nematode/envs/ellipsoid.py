@@ -8,7 +8,7 @@ from gym_worm.wrappers.sensor_observation import SensorObservation
 from gym_worm.wrappers.skip_frame import SkipFrame
 
 
-def make_swimmer(n_bodies, joint_range, body_len, max_episode_steps, reset_noise_scale, kp=1, skip=10):
+def make_swimmer_with_servo(n_bodies, joint_range, body_len, max_episode_steps, reset_noise_scale, kp=1, skip=10):
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, body_len)
     xml_str = position_actuator(xml_str, joint_range, kp)
     xml_str = position(xml_str)
