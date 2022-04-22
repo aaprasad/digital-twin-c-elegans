@@ -1,3 +1,9 @@
+"""
+action space: Box(-1.0, 1.0, (24,), float32)
+    [0:24]: angles applied on the position servos around z-axis (angle, rad)
+    [24:48]: angles applied on the position servos around y-axis (angle, rad)
+"""
+
 import gym
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.ellipsoid_v1 import swimmer
