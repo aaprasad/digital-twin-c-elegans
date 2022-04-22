@@ -23,6 +23,6 @@ if __name__ == '__main__':
     observation = observation.astype(np.float32)
     angles = observation[4:28]
     print(angles)
-    with open('y_axis_angles.csv', 'w') as f:
+    with open('y_axis_angles_32bit.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerows(np.expand_dims(angles, axis=0).T)
