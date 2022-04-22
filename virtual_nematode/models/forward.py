@@ -58,3 +58,19 @@ class Forward(object):
         q = self._joint_angle(step=step)  # current step's joint angles
         q = q[0]  # first joint's angle
         return q
+
+
+class ForwardZY(Forward):
+    """ generate action around z- and y-axis to perform forward sinusoidal movement
+    action space: Box(-100.0, 100.0, (48,), float32)
+        [0:24]: angles applied on the position servos around z-axis (angle, rad)
+        [24:48]: angles applied on the position servos around y-axis (angle, rad)
+    """
+    def __init__(self, y_ctrl, **kwargs):
+        super(ForwardZY, self).__init__(**kwargs)
+        self.y_ctrl = y_ctrl
+
+    def step(self, step, q, q_vel):
+        action = super(ForwardZY, self).step(step, q, q_vel)
+        action = np.concatenate(action, self.y_ctrl)
+        return action
