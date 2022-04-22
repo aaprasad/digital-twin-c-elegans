@@ -10,9 +10,11 @@ from gym_worm.wrappers.skip_frame import SkipFrame
 
 def make_swimmer_with_servo(n_bodies, joint_range, max_episode_steps, reset_noise_scale, kp=1, skip=10):
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range)
-    xml_str = position_actuator(xml_str, joint_range, kp)
+    xml_str = position_actuator(xml_str, joint_range, kp, names=['rot{}y'.format(i) for i in range(2, n_bodies + 1)])
     xml_str = position(xml_str)
     xml_str = camera(xml_str)
+    # with open('swimmer.xml', 'w') as f:
+    #     f.write(xml_str.decode('utf-8'))
     env = gym.make(
         'Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
         reset_noise_scale=reset_noise_scale
