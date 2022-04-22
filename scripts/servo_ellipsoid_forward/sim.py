@@ -1,6 +1,6 @@
 import numpy as np
 from virtual_nematode.envs.ellipsoid import make_swimmer_with_servo
-from virtual_nematode.models.forward import Forward
+from virtual_nematode.models.forward import ForwardZY
 from virtual_nematode.simulation import simulate
 
 
@@ -28,12 +28,11 @@ def done_func(index, result, **kwargs):
 
 if __name__ == '__main__':
     max_episode_steps = 2500
-    env = make_swimmer_with_servo(
-        n_bodies=25, joint_range='-100 100', max_episode_steps=max_episode_steps, reset_noise_scale=0., kp=1, skip=10
-    )
+    env = make_swimmer_with_servo(n_bodies=25, joint_range='-100 100', max_episode_steps=max_episode_steps, reset_noise_scale=0., kp=10, skip=1)
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
-    model = Forward(dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.1, freq=2., motor=False)
+    y_ctrl = np.zeros(24, dtype=np.float64)
+    model = ForwardZY(y_ctrl, dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.05, freq=0.1, motor=False)
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
