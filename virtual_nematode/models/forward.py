@@ -72,5 +72,5 @@ class ForwardZY(Forward):
 
     def step(self, step, q, q_vel):
         action = super(ForwardZY, self).step(step, q, q_vel)
-        action = np.concatenate(action, self.y_ctrl)
+        action = np.concatenate((action, self.y_ctrl))
         return action
