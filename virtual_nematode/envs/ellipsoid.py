@@ -1,5 +1,5 @@
 """
-action space: Box(-1.0, 1.0, (24,), float32)
+action space: Box(-100.0, 100.0, (48,), float32)
     [0:24]: angles applied on the position servos around z-axis (angle, rad)
     [24:48]: angles applied on the position servos around y-axis (angle, rad)
 """
