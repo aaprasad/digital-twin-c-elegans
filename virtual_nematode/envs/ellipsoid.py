@@ -30,7 +30,7 @@ def make_swimmer_with_servo(n_bodies, joint_range, max_episode_steps, reset_nois
         [24:48]: angles applied on the position servos around y-axis (angle, rad)
     """
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range)
-    xml_str = position_actuator(xml_str, joint_range, kp, names=['rot{}y'.format(i) for i in range(2, n_bodies + 1)])
+    xml_str = position_actuator(xml_str, joint_range, kp)
     xml_str = position(xml_str)
     xml_str = camera(xml_str)
     # with open('swimmer.xml', 'w') as f:
