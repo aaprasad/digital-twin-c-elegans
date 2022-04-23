@@ -33,6 +33,6 @@ if __name__ == '__main__':
     print(env.action_space)
     print(env.observation_space)
     y_ctrl = np.zeros(24, dtype=np.float64)
-    model = ForwardZY(y_ctrl, dt=env.dt, seed=None, n=25, q_max=20., a_max=1., psi=0.05, freq=0.1, motor=False)
+    model = ForwardZY(y_ctrl, dt=env.dt, seed=None, n=25, q_max=20., a_max=None, psi=0.05, freq=0.1, motor=False)
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
