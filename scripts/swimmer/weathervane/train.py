@@ -30,7 +30,7 @@ def train(model_name, data_name):
             'input_size': 2, 'hidden_size': 50, 'output_size': 48, 'feedback': True, 'readout': 'identity',
             'load_kwargs': {'input_size': 48, 'hidden_size': 50, 'output_size': 24, 'feedback': True, 'readout': 'identity'},
             'input1_range': (48, 50), 'input2_range': (0, 48),
-            'load_path': '/home/imc/disk1/virtual-nematode/scripts/swimmer_forward/runs/Dec16_16-02-23_h-10-176-50-34/model47.pt',
+            'load_path': '/home/imc/disk1/virtual-nematode/scripts/swimmer/forward/runs/Dec16_16-02-23_h-10-176-50-34/model47.pt',
             'freeze': True
         }
     else:
