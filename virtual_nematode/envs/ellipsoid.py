@@ -24,7 +24,7 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale):
     return env
 
 
-def make_swimmer_with_servo(n_bodies, joint_range, max_episode_steps, reset_noise_scale, friction='1 1', kp=1, skip=10):
+def make_swimmer_with_servo(n_bodies, joint_range, max_episode_steps, reset_noise_scale, friction='1 1', kp=1, skip=1):
     """ z-axis and y-axis position servos
     action space: Box(-100.0, 100.0, (48,), float32)
         [0:24]: angles applied on the position servos around z-axis (angle, rad)
