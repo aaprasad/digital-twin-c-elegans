@@ -30,7 +30,7 @@ if __name__ == '__main__':
     max_episode_steps = 2500
     env = make_swimmer_with_servo(
         n_bodies=25, joint_range='-100 100', max_episode_steps=max_episode_steps, reset_noise_scale=0.,
-        friction='1 1', kp=10, skip=1
+        friction='0.1 1', kp=10, skip=1
     )
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
