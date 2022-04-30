@@ -5,10 +5,7 @@ import numpy as np
 from virtual_nematode.envs.ellipsoid import make_swimmer_y
 
 
-if __name__ == '__main__':
-    env = make_swimmer_y(n_bodies=25, joint_range='-100 100', max_episode_steps=1000, reset_noise_scale=0., friction='0.1 1')
-    print(env.action_space)
-    print(env.observation_space)
+def main(env):
     # simulate with zero z-axis rotation ctrl
     observation = env.reset()
     for i in range(10 ** 6):
@@ -26,3 +23,11 @@ if __name__ == '__main__':
     with open('y_axis_angles_32bit.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerows(np.expand_dims(angles, axis=0).T)
+
+
+if __name__ == '__main__':
+    # output xml file and run simulation with MuJoCo app
+    env = make_swimmer_y(n_bodies=25, joint_range='-100 100', max_episode_steps=1000, reset_noise_scale=0., friction='0.1 1')
+    print(env.action_space)
+    print(env.observation_space)
+    # main(env)
