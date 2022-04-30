@@ -1,7 +1,9 @@
+import csv
 import numpy as np
 from virtual_nematode.envs.ellipsoid import make_swimmer_with_servo
 from virtual_nematode.models.forward import ForwardZY
 from virtual_nematode.simulation import simulate
+import worm_assets
 
 
 def action_func(model, step, observation, **kwargs):
@@ -35,7 +37,9 @@ if __name__ == '__main__':
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
-    y_ctrl = np.zeros(24, dtype=np.float64)
+    with open(worm_assets.asset_path(filename='y_axis_angles_32bit.csv'), 'r') as f:
+        reader = csv.reader(f)
+        y_ctrl = np.array([float(row[0]) for row in reader], dtype=np.float32)
     model = ForwardZY(y_ctrl, dt=env.dt, seed=None, n=25, q_max=20., a_max=None, psi=0.05, freq=0.1, motor=False)  # 40, 1.54, 0.8
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
