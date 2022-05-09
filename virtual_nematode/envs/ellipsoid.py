@@ -24,13 +24,13 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale):
     return env
 
 
-def make_swimmer_with_servo(n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, friction, kp=1, skip=1):
+def make_swimmer_with_servo(n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction, kp=1, skip=1):
     """ z-axis and y-axis position servos
     action space: Box(-100.0, 100.0, (48,), float32)
         [0:24]: angles applied on the position servos around z-axis (angle, rad)
         [24:48]: angles applied on the position servos around y-axis (angle, rad)
     """
-    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, friction)
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
     xml_str = position_actuator(xml_str, joint_range, kp)
     xml_str = position(xml_str)
     xml_str = camera(xml_str)
