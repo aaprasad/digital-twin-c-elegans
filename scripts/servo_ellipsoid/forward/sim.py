@@ -29,7 +29,7 @@ def done_func(index, result, **kwargs):
 
 
 if __name__ == '__main__':
-    max_episode_steps = 250  # 0.04s/step, 10s in total
+    max_episode_steps = 2500  # 0.04s/step, 100s in total
     env = make_swimmer_with_servo(
         n_bodies=25, joint_range='-100 100', max_episode_steps=max_episode_steps, reset_noise_scale=0.,
         density=1.2, viscosity=0.00002, friction='0.1 1', kp=1, skip=1
