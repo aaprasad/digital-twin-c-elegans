@@ -1,4 +1,4 @@
-""" forward sinusoidal movement
+""" forward sinusoidal movement based on joint angle function
 https://doi.org/10.1038/s41598-018-35157-1
 """
 
@@ -6,7 +6,7 @@ import numpy as np
 
 
 class Forward(object):
-    """ generate action to perform forward sinusoidal movement """
+    """ generate action to perform forward sinusoidal movement based on joint angle function """
     def __init__(self, dt, seed=None, n=12, q_max=40, a_max=2., psi=0.2, freq=3., motor=True):
         self.dt = dt  # real time per step
         self.n = n  # number of bodies
@@ -61,7 +61,7 @@ class Forward(object):
 
 
 class ForwardZY(Forward):
-    """ generate action around z- and y-axis to perform forward sinusoidal movement
+    """ generate action around z- and y-axis to perform forward sinusoidal movement based on joint angle function
     action space: Box(-100.0, 100.0, (48,), float32)
         [0:24]: angles applied on the position servos around z-axis (angle, rad)
         [24:48]: angles applied on the position servos around y-axis (angle, rad)
