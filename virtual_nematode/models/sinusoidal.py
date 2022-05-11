@@ -26,6 +26,7 @@ class Sinusoidal(object):
 
 
 class SinusoidalServo(Sinusoidal):
+    """ generate sinusoidal servo control signal """
     def __init__(self, y_angle, **kwargs):
         super(SinusoidalServo, self).__init__(**kwargs)
         self.y_angle = y_angle  # joint angles around y-axis (angle, rad)
