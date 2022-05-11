@@ -2,6 +2,7 @@ import csv
 import numpy as np
 from virtual_nematode.envs.ellipsoid import make_swimmer_with_servo
 from virtual_nematode.models.forward import ForwardZY
+from virtual_nematode.models.sinusoidal import SinusoidalServo
 from virtual_nematode.simulation import simulate
 import worm_assets
 
@@ -9,7 +10,7 @@ import worm_assets
 def action_func(model, step, observation, **kwargs):
     q = observation[5:53][1::2]
     q_vel = observation[58:106][1::2]
-    action = model.step(step, q, q_vel)
+    action = model.step(step, q=q, q_vel=q_vel)
     return action
 
 
@@ -41,7 +42,7 @@ if __name__ == '__main__':
     with open(worm_assets.asset_path(filename='y_axis_angles_32bit.csv'), 'r') as f:
         reader = csv.reader(f)
         y_ctrl = np.array([float(row[0]) for row in reader], dtype=np.float32)
-    # q_max=40, psi=1.54, freq=0.8
-    model = ForwardZY(y_ctrl, dt=env.dt, seed=None, n=25, q_max=20., a_max=None, psi=0.05, freq=0.8, motor=False)
+    # model = ForwardZY(y_ctrl, dt=env.dt, seed=None, n=25, q_max=20., a_max=None, psi=0.05, freq=0.8, motor=False)  # q_max=40, psi=1.54, freq=0.8
+    model = SinusoidalServo(y_angle=y_ctrl, dt=env.dt, n=25, a=20*np.pi/180, freq=0.8, psi=0.05)
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
