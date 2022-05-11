@@ -18,7 +18,10 @@ class Sinusoidal(object):
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1) - np.pi
 
     def step(self, step, **kwargs):
-        return self.a * np.sin(self.omega * step * self.dt + self.phi)
+        """ get next step's angles as control signal """
+        step += 1
+        q_next = self.a * np.sin(self.omega * step * self.dt + self.phi)
+        return q_next
 
     def stimuli(self, step):
         """ extra signal used as dataset input """
@@ -32,6 +35,6 @@ class SinusoidalServo(Sinusoidal):
         self.y_angle = y_angle  # joint angles around y-axis (angle, rad)
 
     def step(self, step, **kwargs):
-        action = super(SinusoidalServo, self).step(step)
+        action = super(SinusoidalServo, self).step(step, **kwargs)
         action = np.concatenate((action, self.y_angle))
         return action
