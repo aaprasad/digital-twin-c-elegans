@@ -17,7 +17,7 @@ class Sinusoidal(object):
         self.psi = psi  # body wavelength (rad)
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1) - np.pi
 
-    def step(self, step):
+    def step(self, step, **kwargs):
         return self.a * np.sin(self.omega * step * self.dt + self.phi)
 
     def stimuli(self, step):
@@ -31,7 +31,7 @@ class SinusoidalServo(Sinusoidal):
         super(SinusoidalServo, self).__init__(**kwargs)
         self.y_angle = y_angle  # joint angles around y-axis (angle, rad)
 
-    def step(self, step):
+    def step(self, step, **kwargs):
         action = super(SinusoidalServo, self).step(step)
         action = np.concatenate((action, self.y_angle))
         return action
