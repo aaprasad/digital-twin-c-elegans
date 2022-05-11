@@ -23,3 +23,14 @@ class Sinusoidal(object):
     def stimuli(self, step):
         """ extra signal used as dataset input """
         return None
+
+
+class SinusoidalServo(Sinusoidal):
+    def __init__(self, y_angle, **kwargs):
+        super(SinusoidalServo, self).__init__(**kwargs)
+        self.y_angle = y_angle  # joint angles around y-axis (angle, rad)
+
+    def step(self, step):
+        action = super(SinusoidalServo, self).step(step)
+        action = np.concatenate((action, self.y_angle))
+        return action
