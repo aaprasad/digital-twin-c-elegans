@@ -7,8 +7,8 @@ from gym_worm.wrappers.recorder import Recorder
 from gym_worm.wrappers.sensor_observation import SensorObservation
 
 
-def make_swimmer(n_bodies, joint_range, theta, max_episode_steps, reset_noise_scale):
-    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, theta)
+def make_swimmer(n_bodies, joint_range, theta, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction):
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, theta, density, viscosity, condim, friction)
     xml_str = tendon(xml_str)
     xml_str = position(xml_str)
     xml_str = camera(xml_str)
