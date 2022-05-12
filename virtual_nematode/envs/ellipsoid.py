@@ -9,8 +9,8 @@ from gym_worm.wrappers.sensor_observation import SensorObservation
 from gym_worm.wrappers.skip_frame import SkipFrame
 
 
-def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction):
-    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
+def make_swimmer(n_bodies, joint_range, y_joint_ranges, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction):
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, y_joint_ranges, density, viscosity, condim, friction)
     xml_str = position(xml_str)
     xml_str = camera(xml_str)
     # with open('swimmer.xml', 'w') as f:
@@ -26,13 +26,13 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
     return env
 
 
-def make_swimmer_with_servo(n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction, kp=1, skip=1):
+def make_swimmer_with_servo(n_bodies, joint_range, y_joint_ranges, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction, kp=1, skip=1):
     """ z-axis and y-axis position servos
     action space: Box(-100.0, 100.0, (48,), float32)
         [0:24]: angles applied on the position servos around z-axis (angle, rad)
         [24:48]: angles applied on the position servos around y-axis (angle, rad)
     """
-    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, y_joint_ranges, density, viscosity, condim, friction)
     xml_str = position_actuator(xml_str, joint_range, kp)
     xml_str = position(xml_str)
     xml_str = camera(xml_str)
@@ -50,9 +50,9 @@ def make_swimmer_with_servo(n_bodies, joint_range, max_episode_steps, reset_nois
     return env
 
 
-def make_swimmer_y(n_bodies, joint_range, max_episode_steps, reset_noise_scale, friction='1 1'):
+def make_swimmer_y(n_bodies, joint_range, y_joint_ranges, max_episode_steps, reset_noise_scale, friction='1 1'):
     """ no z-axis rotation dof, only y-axis rotation dof, use motor actuator on y-axis rotation """
-    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, friction)
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, y_joint_ranges, friction)
     xml_str = remove_joint(xml_str, n_bodies)
     xml_str = position(xml_str)
     xml_str = camera(xml_str)
