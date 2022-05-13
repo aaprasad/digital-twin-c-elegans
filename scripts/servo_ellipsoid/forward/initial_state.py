@@ -7,7 +7,10 @@ from virtual_nematode.envs.ellipsoid import make_swimmer_y
 
 if __name__ == '__main__':
     # use larger friction coefficients
-    env = make_swimmer_y(n_bodies=25, joint_range='-100 100', max_episode_steps=1000, reset_noise_scale=0., friction='1 1')
+    env = make_swimmer_y(
+        n_bodies=25, joint_range='-100 100', y_joint_ranges=['-100 100'] * 24, max_episode_steps=1000,
+        reset_noise_scale=0., density=4000, viscosity=0.1, condim=3, friction='1 1'
+    )
     print(env.action_space)
     print(env.observation_space)
     # simulate with zero z-axis rotation ctrl
