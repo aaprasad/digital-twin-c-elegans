@@ -50,9 +50,9 @@ def make_swimmer_with_servo(n_bodies, joint_range, y_joint_ranges, max_episode_s
     return env
 
 
-def make_swimmer_y(n_bodies, joint_range, y_joint_ranges, max_episode_steps, reset_noise_scale, friction='1 1'):
+def make_swimmer_y(n_bodies, joint_range, y_joint_ranges, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction):
     """ no z-axis rotation dof, only y-axis rotation dof, use motor actuator on y-axis rotation """
-    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, y_joint_ranges, friction)
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, y_joint_ranges, density, viscosity, condim, friction)
     xml_str = remove_joint(xml_str, n_bodies)
     xml_str = position(xml_str)
     xml_str = camera(xml_str)
