@@ -36,11 +36,11 @@ if __name__ == '__main__':
     env = make_swimmer(
         n_bodies=25, joint_range='-40 40', y_joint_ranges=['-10 10'] * 24, theta=np.pi / 12,
         max_episode_steps=max_episode_steps, reset_noise_scale=0.,
-        density=4000, viscosity=0.1, condim=3, friction='0.1 1'
+        density=4000, viscosity=0.1, condim=3, friction='0.01 0.1'
     )
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
-    model = SinusoidalMuscle(dt=env.dt, n=25, a=20 * np.pi / 180, freq=0.8, psi=0.05)
+    model = SinusoidalMuscle(dt=env.dt, n=25, a=0.02, freq=0.8, psi=0.05)
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
