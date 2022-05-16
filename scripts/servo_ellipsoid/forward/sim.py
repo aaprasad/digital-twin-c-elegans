@@ -39,7 +39,7 @@ if __name__ == '__main__':
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
-    with open(worm_assets.asset_path(filename='y_axis_angles_32bit.csv'), 'r') as f:
+    with open(worm_assets.asset_path(filename='y_axis_angles.csv'), 'r') as f:
         reader = csv.reader(f)
         y_ctrl = np.array([float(row[0]) for row in reader], dtype=np.float32)
     # model = ForwardZY(y_ctrl, dt=env.dt, seed=None, n=25, q_max=20., a_max=None, psi=0.05, freq=0.8, motor=False)  # q_max=40, psi=1.54, freq=0.8
