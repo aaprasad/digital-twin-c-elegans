@@ -1,6 +1,7 @@
 import gym
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.frame_sensor import frame_sensor_for_muscle
+from gym_worm.envs.mujoco.gravity import gravity
 from gym_worm.envs.mujoco.joint import remove_joint
 from gym_worm.envs.mujoco.muscle_ellipsoid_v0 import swimmer
 from gym_worm.envs.mujoco.position import position
@@ -33,6 +34,7 @@ def make_swimmer_y_with_frame_sensor(n_bodies, joint_range, y_joint_ranges, thet
     xml_str = tendon(xml_str)
     xml_str = position(xml_str)
     xml_str = frame_sensor_for_muscle(xml_str, n_bodies)
+    xml_str = gravity(xml_str, g='0 0 -20')
     xml_str = camera(xml_str)
     # with open('swimmer.xml', 'w') as f:
     #     f.write(xml_str.decode('utf-8'))
