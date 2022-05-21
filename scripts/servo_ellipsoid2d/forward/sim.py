@@ -5,14 +5,14 @@ from virtual_nematode.simulation import simulate
 
 
 def action_func(model, step, observation, **kwargs):
-    q = observation[3:27]
-    q_vel = observation[30:54]
+    q = observation[4:28]
+    q_vel = observation[32:56]
     action = model.step(step, q=q, q_vel=q_vel)
     return action
 
 
 def step_func(observation, **kwargs):
-    com = observation[54:56]  # 2D center of mass
+    com = observation[56:58]  # 2D center of mass
     return com
 
 
