@@ -32,11 +32,11 @@ if __name__ == '__main__':
     max_episode_steps = 2500
     env = make_servo_swimmer(
         n_bodies=25, joint_range='-100 100', max_episode_steps=max_episode_steps, reset_noise_scale=0.,
-        density=4000, viscosity=0.1, condim=3, friction='0.01 0.1', kp=5, skip=1
+        density=4000, viscosity=0.1, condim=3, friction='0.0075 0.05', kp=5, skip=5
     )
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
-    model = Sinusoidal(dt=env.dt, n=25, a=20 * np.pi / 180, freq=0.8, psi=0.05)
+    model = Sinusoidal(dt=env.dt, n=25, a=30 * np.pi / 180, freq=0.8, psi=0.05)
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
