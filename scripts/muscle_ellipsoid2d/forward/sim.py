@@ -27,7 +27,8 @@ def done_func(index, result, **kwargs):
     return: displacement in this simulation
     """
     displacement = np.linalg.norm(np.array(result[-1]) - np.array(result[0]), ord=2)
-    print('Trial {}: com displacement {:.2f}'.format(index + 1, displacement))
+    d = np.linalg.norm(np.array(result[-1]) - np.array(result[-250]), ord=2)
+    print('Trial {}: com displacement {:.2f}, last 250 steps {:.2f}'.format(index + 1, displacement, d))
     return displacement
 
 
