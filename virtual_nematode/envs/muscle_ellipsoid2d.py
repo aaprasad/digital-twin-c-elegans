@@ -1,6 +1,6 @@
 import gym
 from gym_worm.envs.mujoco.camera import camera
-from gym_worm.envs.mujoco.muscle_ellipsoid2d import swimmer
+from gym_worm.envs.mujoco.muscle_ellipsoid2d_v0 import swimmer
 from gym_worm.envs.mujoco.position import position
 from gym_worm.envs.mujoco.tendon import tendon
 from gym_worm.wrappers.recorder import Recorder
