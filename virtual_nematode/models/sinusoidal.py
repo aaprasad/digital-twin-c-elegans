@@ -43,14 +43,14 @@ class SinusoidalServo(Sinusoidal):
 class SinusoidalMuscle(Sinusoidal):
     def step(self, step, **kwargs):
         """ ellipsoid swimmer with tendon muscles
-        action space: Box(0.0, 1.0, (96,), float32)
-            [0:24]: control signal for 24 muscles in DL quadrant
-            [24:48]: DR
-            [48:72]: VL
-            [72:96]: VR
+        action space: Box(0.0, 1.0, (95,), float32)
+            [0:24]: control signal for DL quadrant's 24 muscles
+            [24:48]: DR's 24
+            [48:71]: VL's 23
+            [71:95]: VR's 24
         """
         action = super(SinusoidalMuscle, self).step(step, **kwargs)
         dorsal = (action <= 0.) * np.abs(action)
         ventral = (action >= 0.) * action
-        action = np.concatenate((dorsal, dorsal, ventral, ventral), axis=0)
+        action = np.concatenate((dorsal, dorsal, ventral[0:23], ventral), axis=0)
         return action
