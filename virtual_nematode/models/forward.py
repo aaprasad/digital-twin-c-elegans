@@ -74,3 +74,22 @@ class ForwardZY(Forward):
         action = super(ForwardZY, self).step(step, q, q_vel)
         action = np.concatenate((action, self.y_ctrl))
         return action
+
+
+class ForwardMuscle(object):
+    def __init__(self, dt, n, a, freq, psi, kp, kv):
+        self.dt = dt  # real time per step
+        self.n = n  # number of bodies
+        self.a = a  # max control value
+        self.omega = 2 * np.pi * freq
+        self.psi = psi  # body wavelength (rad)
+        self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1) - np.pi
+        self.kp = kp  # position feedback gain
+        self.kv = kv  # velocity feedback gain
+
+    def step(self, step, q, q_vel, **kwargs):
+        """ get next step's angles as control signal """
+        step += 1
+        q_next = self.a * np.sin(self.omega * step * self.dt + self.phi)
+        action = (q_next - q) * self.kp - q_vel * self.kv
+        return action
