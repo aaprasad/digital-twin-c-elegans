@@ -1,8 +1,8 @@
 """
 observation space: Box(-inf, inf, (157,), float64)
-    [0:151]: Muscle-Ellipsoid2D-v0 observation space
-    [151:154]: x-, y- and z-coordinates of the robot's center of mass (length, m)
-    [154:157]: x-, y- and z-coordinates of the front tip (length, m)
+    [0:341]: Muscle-Ellipsoid2D-v0 observation space
+    [341:344]: x-, y- and z-coordinates of the robot's center of mass (length, m)
+    [344:347]: x-, y- and z-coordinates of the front tip (length, m)
 """
 
 import numpy as np
@@ -17,7 +17,7 @@ def action_func(model, step, **kwargs):
 
 
 def step_func(observation, **kwargs):
-    com = observation[151:153]  # 2D center of mass
+    com = observation[341:343]  # 2D center of mass
     return com
 
 
