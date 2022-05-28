@@ -92,4 +92,7 @@ class ForwardMuscle(object):
         step += 1
         q_next = self.a * np.sin(self.omega * step * self.dt + self.phi)
         action = (q_next - q) * self.kp - q_vel * self.kv
+        dorsal = (action <= 0.) * np.abs(action)
+        ventral = (action >= 0.) * action
+        action = np.concatenate((dorsal, dorsal, ventral[0:23], ventral), axis=0)
         return action
