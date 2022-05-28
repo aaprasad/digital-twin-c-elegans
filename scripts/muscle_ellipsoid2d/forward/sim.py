@@ -7,12 +7,15 @@ observation space: Box(-inf, inf, (157,), float64)
 
 import numpy as np
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
+from virtual_nematode.models.forward import ForwardMuscle
 from virtual_nematode.models.sinusoidal import SinusoidalMuscle
 from virtual_nematode.simulation import simulate
 
 
-def action_func(model, step, **kwargs):
-    action = model.step(step)
+def action_func(model, step, observation, **kwargs):
+    q = observation[4:28]
+    q_vel = observation[32:56]
+    action = model.step(step, q=q, q_vel=q_vel)
     return action
 
 
@@ -41,6 +44,7 @@ if __name__ == '__main__':
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
-    model = SinusoidalMuscle(dt=env.dt, n=25, a=0.02, freq=0.8, psi=0.05)
+    # model = SinusoidalMuscle(dt=env.dt, n=25, a=0.02, freq=0.8, psi=0.05)
+    model = ForwardMuscle(dt=env.dt, n=25, a=30 * np.pi / 180, freq=0.8, psi=0.05, kp=1, kv=0)
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
