@@ -1,15 +1,15 @@
 import gym
+from gym_worm.envs.mujoco.actuatorfrc import actuatorfrc
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.muscle_ellipsoid2d_v0 import swimmer
 from gym_worm.envs.mujoco.position import position
-from gym_worm.envs.mujoco.tendon import tendon
 from gym_worm.wrappers.recorder import Recorder
 from gym_worm.wrappers.sensor_observation import SensorObservation
 
 
 def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction):
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
-    xml_str = tendon(xml_str)
+    xml_str = actuatorfrc(xml_str, n_bodies)
     xml_str = position(xml_str)
     xml_str = camera(xml_str)
     # with open('swimmer.xml', 'w') as f:
