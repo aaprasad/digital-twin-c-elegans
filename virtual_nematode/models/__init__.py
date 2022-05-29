@@ -1,4 +1,5 @@
 import virtual_nematode.models.computational_model
 import virtual_nematode.models.forward
+import virtual_nematode.models.muscle
 import virtual_nematode.models.sinusoidal
 import virtual_nematode.models.tap

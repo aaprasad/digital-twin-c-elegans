@@ -7,7 +7,7 @@ observation space: Box(-inf, inf, (157,), float64)
 
 import numpy as np
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
-from virtual_nematode.models.forward import ForwardMuscle
+from virtual_nematode.models.muscle import ForwardMuscle
 from virtual_nematode.models.sinusoidal import SinusoidalMuscle
 from virtual_nematode.simulation import simulate
 

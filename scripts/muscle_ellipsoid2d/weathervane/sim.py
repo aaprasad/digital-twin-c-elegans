@@ -1,6 +1,6 @@
 import numpy as np
 from virtual_nematode.envs.muscle_ellipsoid2d import make_chemotaxis_swimmers
-from virtual_nematode.models.forward import WeathervaneMuscle
+from virtual_nematode.models.muscle import WeathervaneMuscle
 from virtual_nematode.simulation import simulate
 
 
