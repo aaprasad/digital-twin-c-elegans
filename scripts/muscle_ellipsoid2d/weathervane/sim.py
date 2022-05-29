@@ -49,6 +49,6 @@ if __name__ == '__main__':
     print(env.action_space, env.observation_space)
     print(env.source)
     model = WeathervaneMuscle(dt=env.dt, n=25, a=30 * np.pi / 180, freq=0.8, psi=0.05, kp=1, kv=0)
-    result = simulate(env, model, action_func, step_func, done_func, seed, trials=trials, render=True)  # (batch_size, max_episode_steps, 1)
+    result = simulate(env, model, action_func, step_func, done_func, seed, trials=trials, render=False)  # (batch_size, max_episode_steps, 1)
     result = np.array(result)
     print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(result.shape[0], result.mean(), result[:, 0].mean()))
