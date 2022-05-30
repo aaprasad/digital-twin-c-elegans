@@ -1,3 +1,7 @@
+from matplotlib import pyplot as plt
+import numpy as np
+
+
 def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False):
     """ forward sinusoidal movement
     action_func: called before every step, generate action
@@ -8,6 +12,7 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     results = []  # results of all simulations
     if trials > 1:
         seed = None  # ensure that seed is different in each trial
+    # obs_list = []
     for i in range(trials):
         result = []  # results of 1 simulation
         env.seed(seed)
@@ -17,10 +22,14 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
                 env.render()
             action = action_func(model=model, step=step, observation=observation)
             observation, reward, done, info = env.step(action)
+            # obs_list.append(observation[4] * 180 / np.pi)
             result.append(step_func(observation=observation))
             if done:
                 results.append(done_func(index=i, result=result))
                 break
+    # plt.plot(obs_list)
+    # plt.savefig('observation.png')
+    # plt.show()
     return results
 
 
