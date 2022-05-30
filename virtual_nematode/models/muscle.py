@@ -23,6 +23,30 @@ class ForwardMuscle(object):
         return action
 
 
+class ForwardPIDMuscle(object):
+    """ PD controller """
+    def __init__(self, dt, n, a, freq, psi, kp, kd):
+        self.dt = dt  # real time per step
+        self.n = n  # number of bodies
+        self.a = a  # max control value
+        self.omega = 2 * np.pi * freq
+        self.psi = psi  # body wavelength (rad)
+        self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1) - np.pi
+        self.kp = kp  # position gain
+        self.kd = kd  # derivative gain
+        self.last_error = 0.
+
+    def step(self, step, q, **kwargs):
+        q_target = self.a * np.sin(self.omega * step * self.dt + self.phi)
+        error = q_target - q
+        u = self.kp * error + self.kd * (error - self.last_error) / self.dt
+        dorsal = (u <= 0.) * np.abs(u)
+        ventral = (u >= 0.) * u
+        action = np.concatenate((dorsal, dorsal, ventral[0:23], ventral), axis=0)
+        self.last_error = error
+        return action
+
+
 class WeathervaneMuscle(object):
     def __init__(self, dt, n, a, freq, psi, kp, kv):
         self.dt = dt  # real time per step
