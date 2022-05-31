@@ -46,6 +46,6 @@ if __name__ == '__main__':
     print(env.observation_space)
     # model = SinusoidalMuscle(dt=env.dt, n=25, a=0.02, freq=0.8, psi=0.05)
     # model = ForwardMuscle(dt=env.dt, n=25, a=30 * np.pi / 180, freq=0.8, psi=0.05, kp=1, kv=0)
-    model = ForwardPIDMuscle(dt=env.dt, n=25, a=30 * np.pi / 180, freq=0.8, psi=0.05, kp=1, kd=0.1)
+    model = ForwardPIDMuscle(dt=env.dt, n=25, a=30 * np.pi / 180, freq=0.8, psi=0.07, kp=1.5, kd=0.1)
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
