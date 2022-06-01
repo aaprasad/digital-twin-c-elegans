@@ -12,23 +12,27 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     results = []  # results of all simulations
     if trials > 1:
         seed = None  # ensure that seed is different in each trial
-    # obs_list = []
+    # obs_list = [[], []]
     for i in range(trials):
         result = []  # results of 1 simulation
         env.seed(seed)
         observation = env.reset()
+        model.reset()
         for step in range(10 ** 6):
             if render is True:
                 env.render()
             action = action_func(model=model, step=step, observation=observation)
             observation, reward, done, info = env.step(action)
-            # obs_list.append(observation[4] * 180 / np.pi)
+            # for j, index in enumerate([4, 27]):
+            #     obs_list[j].append(observation[index] * 180 / np.pi)
             result.append(step_func(observation=observation))
             if done:
                 results.append(done_func(index=i, result=result))
                 break
-    # plt.plot(obs_list)
+    # for x, label in zip(obs_list, [4, 27]):
+    #     plt.plot(x, label=str(label))
     # plt.savefig('observation.png')
+    # plt.legend()
     # plt.show()
     return results
 
