@@ -25,7 +25,7 @@ class ForwardMuscle(object):
 
 class ForwardPIDMuscle(object):
     """ PD controller """
-    def __init__(self, dt, n, a, freq, psi, kp, kd, kp_direction):
+    def __init__(self, dt, n, a, freq, psi, kp, kd):
         self.dt = dt  # real time per step
         self.n = n  # number of bodies
         self.a = a  # max control value
@@ -34,7 +34,7 @@ class ForwardPIDMuscle(object):
         self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1) - np.pi
         self.kp = kp  # position gain
         self.kd = kd  # derivative gain
-        self.kp_direction = kp_direction  # gradual turn coefficient
+        # self.kp_direction = kp_direction  # gradual turn coefficient
         # state
         self.last_error = 0.
         # self.direction_target = None  # np.array([1, 0])

@@ -52,7 +52,7 @@ if __name__ == '__main__':
     # model = ForwardMuscle(dt=env.dt, n=25, a=30 * np.pi / 180, freq=0.8, psi=0.05, kp=1, kv=0)
     model = ForwardPIDMuscle(
         dt=env.dt, n=25, a=40 * np.pi / 180, freq=0.8, psi=0.07,
-        kp=1, kd=np.array([0.15 + i * 0.002 for i in range(24)]), kp_direction=0
+        kp=1, kd=np.array([0.15 + i * 0.002 for i in range(24)])
     )
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
