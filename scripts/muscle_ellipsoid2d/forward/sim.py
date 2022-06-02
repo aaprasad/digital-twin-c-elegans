@@ -16,10 +16,10 @@ from virtual_nematode.simulation import simulate
 def action_func(model, step, observation, **kwargs):
     q = observation[4:28]
     q_vel = observation[32:56]
-    pos1 = observation[344:346]
-    pos15 = observation[347:349]
-    direction = pos1 - pos15
-    action = model.step(step, q=q, direction=direction)
+    # pos1 = observation[344:346]
+    # pos15 = observation[347:349]
+    # direction = pos1 - pos15
+    action = model.step(step, q=q)
     return action
 
 
