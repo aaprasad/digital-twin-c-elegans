@@ -14,9 +14,9 @@ from virtual_nematode.envs.swimmer import fick
 
 def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction):
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
-    xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorpos')
-    xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorvel')
-    xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorfrc')
+    # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorpos')
+    # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorvel')
+    # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorfrc')
     xml_str = position(xml_str)
     xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
     # with open('swimmer.xml', 'w') as f:

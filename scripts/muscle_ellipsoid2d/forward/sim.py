@@ -1,9 +1,9 @@
 """
-observation space: Box(-inf, inf, (350,), float64)
-    [0:341]: Muscle-Ellipsoid2D-v0 observation space
-    [341:344]: x-, y- and z-coordinates of the robot's center of mass (length, m)
-    [344:347]: x-, y- and z-coordinates of the front tip (length, m)
-    [347:350]: x-, y- and z-coordinates of the 17th body (length, m)
+observation space: Box(-inf, inf, (65,), float64)
+    [0:56]: Ellipsoid2d-v0 observation space
+    [56:59]: x-, y- and z-coordinates of the robot's center of mass (length, m)
+    [59:62]: x-, y- and z-coordinates of the front tip (length, m)
+    [62:65]: x-, y- and z-coordinates of the 17th body (length, m)
 """
 
 import numpy as np
@@ -15,16 +15,13 @@ from virtual_nematode.simulation import simulate
 
 def action_func(model, step, observation, **kwargs):
     q = observation[4:28]
-    q_vel = observation[32:56]
-    # pos1 = observation[344:346]
-    # pos15 = observation[347:349]
-    # direction = pos1 - pos15
+    # q_vel = observation[32:56]
     action = model.step(step, q=q)
     return action
 
 
 def step_func(observation, **kwargs):
-    com = observation[341:343]  # 2D center of mass
+    com = observation[56:58]  # 2D center of mass
     return com
 
 
