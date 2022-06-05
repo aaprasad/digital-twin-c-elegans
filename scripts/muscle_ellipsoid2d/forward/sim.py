@@ -1,9 +1,8 @@
 """
-observation space: Box(-inf, inf, (65,), float64)
+observation space: Box(-inf, inf, (62,), float64)
     [0:56]: Ellipsoid2d-v0 observation space
     [56:59]: x-, y- and z-coordinates of the robot's center of mass (length, m)
     [59:62]: x-, y- and z-coordinates of the front tip (length, m)
-    [62:65]: x-, y- and z-coordinates of the 17th body (length, m)
 """
 
 import numpy as np
