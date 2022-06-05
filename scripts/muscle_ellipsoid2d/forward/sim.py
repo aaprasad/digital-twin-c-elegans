@@ -1,4 +1,5 @@
 """
+action space: Box(0.0, 1.0, (95,), float32)
 observation space: Box(-inf, inf, (62,), float64)
     [0:56]: Ellipsoid2d-v0 observation space
     [56:59]: x-, y- and z-coordinates of the robot's center of mass (length, m)
