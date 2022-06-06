@@ -39,7 +39,10 @@ class ForwardPIDMuscle(object):
         self.last_error = 0.
         # self.direction_target = None  # np.array([1, 0])
 
-    def seed(self, seed):
+    def seed(self, **kwargs):
+        pass
+
+    def stimuli(self, **kwargs):
         pass
 
     def reset(self):

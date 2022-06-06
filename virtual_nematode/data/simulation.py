@@ -73,7 +73,7 @@ def generate_sample(index, env, model, action_func, x_func, y_func):
     if type(env) is list:  # env is a list, take the one according to item index
         env = env[index]
     seed = sample_seed()
-    model.seed(seed)  # seed model
+    model.seed(seed=seed)  # seed model
     env.seed(seed)
     observation = env.reset()
     x = []
