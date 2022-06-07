@@ -1,4 +1,33 @@
+import numpy as np
+import pandas as pd
 import torch
+
+
+class Connectome(object):
+    def __init__(self, path):
+        self.chemical = self._load(path, sheet_name='hermaphrodite chemical')
+        self.gap_junction = self._load(path, sheet_name='hermaphrodite gap jn symmetric')
+
+    @staticmethod
+    def _load(path, sheet_name):
+        df = pd.read_excel(path, sheet_name=sheet_name, header=2, index_col=2).iloc[:-1, 2:-1]
+        return df
+
+    def check(self, cells):
+        for cell in cells:
+            if cell not in self.chemical.index or cell not in self.chemical.columns:
+                raise KeyError('Chemical adjacency matrix does not include {}'.format(cell))
+            if cell not in self.gap_junction.index or cell not in self.gap_junction.columns:
+                raise KeyError('Gap junction adjacency matrix does not include {}'.format(cell))
+
+    def slice(self, cells):
+        self.chemical = self.chemical.loc[cells, cells]
+        self.gap_junction = self.chemical.loc[cells, cells]
+
+    def weight(self):
+        chemical = self.chemical.replace(np.nan, 0).to_numpy(dtype=np.int32)
+        gap_junction = self.gap_junction.replace(np.nan, 0).to_numpy(dtype=np.int32)
+        return chemical, gap_junction
 
 
 class SNN(torch.nn.Module):
