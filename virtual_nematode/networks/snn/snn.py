@@ -115,7 +115,8 @@ class SNNCell(torch.nn.Module):
         proprioception_input = torch.mm(proprioception, self.w_p)  # proprioception input, (batch_size, cell_count)
         total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
         # cell state, (batch_size, cell_count)
-        state = 1 / (1 + self.freq * self.tau) * state + self.freq * self.tau / (1 + self.freq * self.tau) * total_input
+        tau = self.tau.abs()
+        state = 1 / (1 + self.freq * tau) * state + self.freq * tau / (1 + self.freq * tau) * total_input
         # cell activation, (batch_size, cell_count)
         activation = torch.nn.functional.sigmoid(state)
         return state, activation
