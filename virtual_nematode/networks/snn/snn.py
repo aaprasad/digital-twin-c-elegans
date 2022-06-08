@@ -4,8 +4,9 @@ import torch
 
 
 class Connectome(object):
-    def __init__(self, cells, ex_synapses, in_synapses, path):
-        self.cells = cells
+    def __init__(self, cells, muscles, ex_synapses, in_synapses, path):
+        self.cells = cells  # including muscles
+        self.muscles = muscles
         self.ex_synapses = ex_synapses
         self.in_synapses = in_synapses
         self.chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
@@ -79,14 +80,16 @@ class Connectome(object):
         in_mask_c *= mask_c  # inhibitory chemical synapse bool mask
         if torch.any(ex_mask_c == in_mask_c) is True:
             raise ValueError('There is overlap in excitatory mask and inhibitory mask!')
-        return mask_c, mask_g, ex_mask_c, in_mask_c
+        muscles = set(self.muscles)
+        mask_output = torch.tensor([True if cell in muscles else False for cell in self.cells])
+        return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output
 
 
 class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, freq, n, p, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p):
+    def __init__(self, freq, n, p, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
         super(SNNCell, self).__init__()
         self.freq = freq  # freq of data sequence
         self.n = n  # cell count
@@ -101,6 +104,7 @@ class SNNCell(torch.nn.Module):
         self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # proprioception input synapse weight, (proprioception_size, cell_count)
         self.mask_p = torch.nn.Parameter(mask_p, requires_grad=False)  # proprioception input synapse bool mask, (proprioception_size, cell_count)
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # cell state bias, (cell_count, )
+        self.mask_output = torch.nn.Parameter(mask_output, requires_grad=False)  # muscle output mask, (cell_count, )
 
     @property
     def state_size(self):
@@ -125,7 +129,9 @@ class SNNCell(torch.nn.Module):
         state = 1 / (1 + self.freq * tau) * state + self.freq * tau / (1 + self.freq * tau) * total_input
         # cell activation, (batch_size, cell_count)
         activation = torch.nn.functional.sigmoid(state)
-        return state, activation
+        # muscle output, (batch_size, muscle_count)
+        action = activation[:, self.mask_output]
+        return state, activation, action
 
 
 class SNN(torch.nn.Module):
@@ -133,22 +139,27 @@ class SNN(torch.nn.Module):
         super(SNN, self).__init__()
         self.cell = cell
 
-    def forward(self, x):
-        device = x.device
-        batch_size = x.size(0)
-        seq_len = x.size(1)
+    def forward(self, proprioceptions):
+        device = proprioceptions.device
+        batch_size = proprioceptions.size(0)
+        seq_len = proprioceptions.size(1)
+        # initial state and activation
         state = torch.zeros((batch_size, self.cell.state_size), device=device)
-        output = []
+        activation = torch.zeros((batch_size, self.cell.state_size), device=device)
+        # simulate sequence
+        actions = []
         for t in range(seq_len):
-            inputs = x[:, t]
-            new_output, state = self.cell.forward(inputs, state)
-            output.append(new_output)
-        output = torch.stack(output, dim=1)  # return entire sequence
-        return output
+            p = proprioceptions[:, t]
+            state, activation, action = self.cell.forward(state, activation, p)
+            actions.append(action)  # action, (batch_size, muscle_count)
+        actions = torch.stack(actions, dim=1)  # action sequence, (batch_size, seq_len, muscle_count)
+        return actions
 
-    def step(self, x, state=None):
-        if state is None:
-            batch_size = x.size(0)
-            state = torch.zeros((batch_size, self.cell.state_size))
-        output, state = self.cell.forward(x, state)
-        return output, state
+    def step(self, state, activation, proprioception):
+        if state is None or activation is None:
+            device = proprioception.device
+            batch_size = proprioception.size(0)
+            state = torch.zeros((batch_size, self.cell.state_size), device=device)
+            activation = torch.zeros((batch_size, self.cell.state_size), device=device)
+        state, activation, action = self.cell.forward(state, activation, proprioception)
+        return state, activation, action
