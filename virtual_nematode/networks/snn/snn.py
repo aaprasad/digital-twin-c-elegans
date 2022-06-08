@@ -5,23 +5,38 @@ import torch
 
 class Connectome(object):
     def __init__(self, path):
-        self.chemical = self._load(path, sheet_name='hermaphrodite chemical')
-        self.gap_junction = self._load(path, sheet_name='hermaphrodite gap jn symmetric')
-
-    @staticmethod
-    def _load(path, sheet_name):
-        df = pd.read_excel(path, sheet_name=sheet_name, header=2, index_col=2).iloc[:-1, 2:-1]
-        return df
+        self.chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
+        self.gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
 
     def check(self, cells):
         """ check if cells exist
         cells: a list of cell names
         """
+        chemical_index = set([cell.lower() for cell in self.chemical.index])
+        chemical_columns = set([cell.lower() for cell in self.chemical.columns])
+        gap_junction_index = set([cell.lower() for cell in self.gap_junction.index])
+        gap_junction_columns = set([cell.lower() for cell in self.gap_junction.columns])
         for cell in cells:
-            if cell not in self.chemical.index or cell not in self.chemical.columns:
-                raise KeyError('Chemical adjacency matrix does not include {}'.format(cell))
-            if cell not in self.gap_junction.index or cell not in self.gap_junction.columns:
-                raise KeyError('Gap junction adjacency matrix does not include {}'.format(cell))
+            if cell not in self.chemical.index:
+                if cell.lower() not in chemical_index:
+                    self.chemical.loc[cell, :] = np.full_like(self.chemical.columns, fill_value=np.nan)
+                else:
+                    raise KeyError('Chemical adjacency rows do not include {}'.format(cell))
+            if cell not in self.chemical.columns:
+                if cell.lower() not in chemical_columns:
+                    self.chemical.loc[:, cell] = np.full_like(self.chemical.index, fill_value=np.nan)
+                else:
+                    raise KeyError('Chemical adjacency columns do not include {}'.format(cell))
+            if cell not in self.gap_junction.index:
+                if cell.lower() not in gap_junction_index:
+                    self.gap_junction[cell, :] = np.full_like(self.gap_junction.columns, fill_value=np.nan)
+                else:
+                    raise KeyError('Gap junction adjacency rows do not include {}'.format(cell))
+            if cell not in self.gap_junction.columns:
+                if cell.lower() not in gap_junction_columns:
+                    self.gap_junction[:, cell] = np.full_like(self.gap_junction.index, fill_value=np.nan)
+                else:
+                    raise KeyError('Gap junction adjacency columns do not include {}'.format(cell))
 
     def slice(self, cells):
         # cells: a list of cell names
