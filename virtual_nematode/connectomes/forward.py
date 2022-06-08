@@ -39,6 +39,48 @@ def body_wall_muscles():
     return cells
 
 
+def vb_motor_neurons():
+    """ ventral b-type motor neurons
+    https://doi.org/10.1038/s41586-019-1352-7
+    """
+    return ['VB{:02d}'.format(i) for i in range(1, 12)]
+
+
+def db_motor_neurons():
+    """ dorsal b-type motor neurons
+    https://doi.org/10.1038/s41586-019-1352-7
+    """
+    return ['DB{:02d}'.format(i) for i in range(1, 8)]
+
+
+def vd_motor_neurons():
+    """ ventral d-type motor neurons
+    https://doi.org/10.1038/s41586-019-1352-7
+    """
+    return ['VD{:02d}'.format(i) for i in range(1, 14)]
+
+
+def dd_motor_neurons():
+    """ dorsal d-type motor neurons
+    https://doi.org/10.1038/s41586-019-1352-7
+    """
+    return ['DD{:02d}'.format(i) for i in range(1, 7)]
+
+
+def chemical_synapse_polarity():
+    """ excitatory chemical synapses
+    https://doi.org/10.1098/rstb.2017.0379
+    """
+    vb = vb_motor_neurons()
+    db = db_motor_neurons()
+    vd = vd_motor_neurons()
+    dd = dd_motor_neurons()
+    muscles = body_wall_muscles()
+    excitatory_synapses = [(db, muscles), (vb, muscles), (db, vd), (vb, dd)]
+    inhibitory_synapses = [(dd, muscles), (vd, muscles), (db, dd), (vb, vd)]
+    return excitatory_synapses, inhibitory_synapses
+
+
 def cell_list():
     """ head motor neurons + vnc motor neurons + sublateral motor neurons + body wall muscles
     https://doi.org/10.1038/s41586-019-1352-7
@@ -46,10 +88,7 @@ def cell_list():
     # head motor neurons: URA, RME, RMD, RIV, RMH
     head = head_motor_neurons()
     # ventral cord motor neurons: VA, DA, VB, DB, VD, DD, AS
-    vnc = ['VB{:02d}'.format(i) for i in range(1, 12)] + \
-          ['DB{:02d}'.format(i) for i in range(1, 8)] + \
-          ['VD{:02d}'.format(i) for i in range(1, 14)] + \
-          ['DD{:02d}'.format(i) for i in range(1, 7)]
+    vnc = vb_motor_neurons() + db_motor_neurons() + vd_motor_neurons() + dd_motor_neurons()
     # sublateral motor neurons: SAB, SMD, SMB, SIB, SIA
     sublateral = sublateral_motor_neurons()
     # body wall muscles
