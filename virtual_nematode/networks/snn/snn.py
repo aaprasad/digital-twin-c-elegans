@@ -4,11 +4,14 @@ import torch
 
 
 class Connectome(object):
-    def __init__(self, path):
+    def __init__(self, cells, path):
+        self.cells = cells
         self.chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
         self.gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
+        self._check(cells)
+        self._slice(cells)
 
-    def check(self, cells):
+    def _check(self, cells):
         """ check if cells exist
         cells: a list of cell names
         """
@@ -38,7 +41,7 @@ class Connectome(object):
                 else:
                     raise KeyError('Gap junction adjacency columns do not include {}'.format(cell))
 
-    def slice(self, cells):
+    def _slice(self, cells):
         # cells: a list of cell names
         self.chemical = self.chemical.loc[cells, cells]
         self.gap_junction = self.chemical.loc[cells, cells]
@@ -48,19 +51,26 @@ class Connectome(object):
         gap_junction = self.gap_junction.replace(np.nan, 0).to_numpy(dtype=np.int32)
         return chemical, gap_junction
 
+    def mask(self):
+        chemical, gap_junction = self.weight()
+        mask_c, mask_g = chemical.bool(), gap_junction.bool()
+        return mask_c, mask_g
+
 
 class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, freq, n, p):
+    def __init__(self, freq, n, p, mask_c, mask_g):
         super(SNNCell, self).__init__()
         self.freq = freq  # freq of data sequence
         self.n = n  # cell count
         self.p = p  # proprioception size
         self.tau = torch.nn.Parameter(torch.rand(n))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.rand((n, n)))  # chemical synapse weight, (cell_count, cell_count)
+        self.mask_c = torch.nn.Parameter(mask_c, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
         self.w_g = torch.nn.Parameter(torch.rand((n, n)))  # gap junction weight, (cell_count, cell_count)
+        self.mask_g = torch.nn.Parameter(mask_g, requires_grad=False)  # gap junction bool mask, (cell_count, cell_count)
         self.w_p = torch.nn.Parameter(torch.rand((p, n)))  # proprioception input synapse weight, (proprioception_size, cell_count)
         self.bias = torch.nn.Parameter(torch.rand(n))  # cell state bias, (cell_count, )
 
@@ -70,9 +80,11 @@ class SNNCell(torch.nn.Module):
         activation: cell activation, (batch_size, cell_count)
         proprioception: (batch_size, proprioception_size)
         """
-        synapse_input = torch.mm(activation, self.w_c)  # chemical synapse input, (batch_size, cell_count)
+        # w_c: w_c * mask_c
+        synapse_input = torch.mm(activation, self.w_c * self.mask_c)  # chemical synapse input, (batch_size, cell_count)
         delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
-        gap_input = torch.sum(delta_state * self.w_g, dim=1)  # gap junction input, (batch_size, cell_count)
+        # w_g: w_g * mask_c
+        gap_input = torch.sum(delta_state * self.w_g * self.mask_g, dim=1)  # gap junction input, (batch_size, cell_count)
         proprioception_input = torch.mm(proprioception, self.w_p)  # proprioception input, (batch_size, cell_count)
         total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
         # cell state, (batch_size, cell_count)
