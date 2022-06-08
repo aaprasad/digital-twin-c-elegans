@@ -91,16 +91,16 @@ class SNNCell(torch.nn.Module):
         self.freq = freq  # freq of data sequence
         self.n = n  # cell count
         self.p = p  # proprioception size
-        self.tau = torch.nn.Parameter(torch.rand(n))  # cell time constant, (cell_count, )
-        self.w_c = torch.nn.Parameter(torch.rand((n, n)))  # chemical synapse weight, (cell_count, cell_count)
+        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0, 0.01))  # cell time constant, (cell_count, )
+        self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
         self.mask_c = torch.nn.Parameter(mask_c, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
         self.ex_mask_c = torch.nn.Parameter(ex_mask_c, requires_grad=False)  # excitatory chemical synapse bool mask, (cell_count, cell_count)
         self.in_mask_c = torch.nn.Parameter(in_mask_c, requires_grad=False)  # inhibitory chemical synapse bool mask, (cell_count, cell_count)
-        self.w_g = torch.nn.Parameter(torch.rand((n, n)))  # gap junction weight, (cell_count, cell_count)
+        self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))  # gap junction weight, (cell_count, cell_count)
         self.mask_g = torch.nn.Parameter(mask_g, requires_grad=False)  # gap junction bool mask, (cell_count, cell_count)
-        self.w_p = torch.nn.Parameter(torch.rand((p, n)))  # proprioception input synapse weight, (proprioception_size, cell_count)
+        self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # proprioception input synapse weight, (proprioception_size, cell_count)
         self.mask_p = torch.nn.Parameter(mask_p, requires_grad=False)  # proprioception input synapse bool mask, (proprioception_size, cell_count)
-        self.bias = torch.nn.Parameter(torch.rand(n))  # cell state bias, (cell_count, )
+        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # cell state bias, (cell_count, )
 
     def forward(self, state, activation, proprioception):
         """ forward 1 step
