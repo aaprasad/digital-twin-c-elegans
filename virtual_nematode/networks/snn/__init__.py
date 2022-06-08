@@ -1,2 +1,2 @@
 import virtual_nematode.networks.snn.lif
-import virtual_nematode.networks.snn.snn
+import virtual_nematode.networks.snn.forward
