@@ -14,6 +14,9 @@ class Connectome(object):
         return df
 
     def check(self, cells):
+        """ check if cells exist
+        cells: a list of cell names
+        """
         for cell in cells:
             if cell not in self.chemical.index or cell not in self.chemical.columns:
                 raise KeyError('Chemical adjacency matrix does not include {}'.format(cell))
@@ -21,6 +24,7 @@ class Connectome(object):
                 raise KeyError('Gap junction adjacency matrix does not include {}'.format(cell))
 
     def slice(self, cells):
+        # cells: a list of cell names
         self.chemical = self.chemical.loc[cells, cells]
         self.gap_junction = self.chemical.loc[cells, cells]
 
