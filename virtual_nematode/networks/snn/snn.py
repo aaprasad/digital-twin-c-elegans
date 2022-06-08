@@ -110,7 +110,7 @@ class SNNCell(torch.nn.Module):
         w_c = self.w_c.abs() * self.ex_mask_c - self.w_c.abs() * self.in_mask_c + self.w_c * (self.mask_c - self.ex_mask_c - self.in_mask_c)
         synapse_input = torch.mm(activation, w_c)  # chemical synapse input, (batch_size, cell_count)
         delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
-        w_g = self.w_g * self.mask_g
+        w_g = self.w_g.abs() * self.mask_g
         gap_input = torch.sum(delta_state * w_g, dim=1)  # gap junction input, (batch_size, cell_count)
         proprioception_input = torch.mm(proprioception, self.w_p)  # proprioception input, (batch_size, cell_count)
         total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
