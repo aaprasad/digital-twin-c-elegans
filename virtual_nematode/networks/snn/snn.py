@@ -30,6 +30,39 @@ class Connectome(object):
         return chemical, gap_junction
 
 
+class SNNCell(torch.nn.Module):
+    """ neuronal network model
+    https://doi.org/10.1038/s41598-021-92690-2
+    """
+    def __init__(self, freq, n, p):
+        super(SNNCell, self).__init__()
+        self.freq = freq  # freq of data sequence
+        self.n = n  # cell count
+        self.p = p  # proprioception size
+        self.tau = torch.nn.Parameter(torch.rand(n))  # cell time constant, (cell_count, )
+        self.w_c = torch.nn.Parameter(torch.rand((n, n)))  # chemical synapse weight, (cell_count, cell_count)
+        self.w_g = torch.nn.Parameter(torch.rand((n, n)))  # gap junction weight, (cell_count, cell_count)
+        self.w_p = torch.nn.Parameter(torch.rand((p, n)))  # proprioception input synapse weight, (proprioception_size, cell_count)
+        self.bias = torch.nn.Parameter(torch.rand(n))  # cell state bias, (cell_count, )
+
+    def forward(self, state, activation, proprioception):
+        """ forward 1 step
+        state: cell state, (batch_size, cell_count)
+        activation: cell activation, (batch_size, cell_count)
+        proprioception: (batch_size, proprioception_size)
+        """
+        synapse_input = torch.mm(activation, self.w_c)  # chemical synapse input, (batch_size, cell_count)
+        delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
+        gap_input = torch.sum(delta_state * self.w_g, dim=1)  # gap junction input, (batch_size, cell_count)
+        proprioception_input = torch.mm(proprioception, self.w_p)  # proprioception input, (batch_size, cell_count)
+        total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
+        # cell state, (batch_size, cell_count)
+        state = 1 / (1 + self.freq * self.tau) * state + self.freq * self.tau / (1 + self.freq * self.tau) * total_input
+        # cell activation, (batch_size, cell_count)
+        activation = torch.nn.functional.sigmoid(state)
+        return state, activation
+
+
 class SNN(torch.nn.Module):
     def __init__(self, cell):
         super(SNN, self).__init__()
