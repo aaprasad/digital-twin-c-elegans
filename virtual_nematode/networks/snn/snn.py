@@ -86,7 +86,7 @@ class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, freq, n, p, mask_c, ex_mask_c, in_mask_c, mask_g):
+    def __init__(self, freq, n, p, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p):
         super(SNNCell, self).__init__()
         self.freq = freq  # freq of data sequence
         self.n = n  # cell count
@@ -99,6 +99,7 @@ class SNNCell(torch.nn.Module):
         self.w_g = torch.nn.Parameter(torch.rand((n, n)))  # gap junction weight, (cell_count, cell_count)
         self.mask_g = torch.nn.Parameter(mask_g, requires_grad=False)  # gap junction bool mask, (cell_count, cell_count)
         self.w_p = torch.nn.Parameter(torch.rand((p, n)))  # proprioception input synapse weight, (proprioception_size, cell_count)
+        self.mask_p = torch.nn.Parameter(mask_p, requires_grad=False)  # proprioception input synapse bool mask, (proprioception_size, cell_count)
         self.bias = torch.nn.Parameter(torch.rand(n))  # cell state bias, (cell_count, )
 
     def forward(self, state, activation, proprioception):
@@ -112,7 +113,8 @@ class SNNCell(torch.nn.Module):
         delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
         w_g = self.w_g.abs() * self.mask_g
         gap_input = torch.sum(delta_state * w_g, dim=1)  # gap junction input, (batch_size, cell_count)
-        proprioception_input = torch.mm(proprioception, self.w_p)  # proprioception input, (batch_size, cell_count)
+        w_p = self.w_p * self.mask_p
+        proprioception_input = torch.mm(proprioception, w_p)  # proprioception input, (batch_size, cell_count)
         total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
         # cell state, (batch_size, cell_count)
         tau = self.tau.abs()
