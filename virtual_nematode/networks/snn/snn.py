@@ -102,6 +102,10 @@ class SNNCell(torch.nn.Module):
         self.mask_p = torch.nn.Parameter(mask_p, requires_grad=False)  # proprioception input synapse bool mask, (proprioception_size, cell_count)
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # cell state bias, (cell_count, )
 
+    @property
+    def state_size(self):
+        return self.n
+
     def forward(self, state, activation, proprioception):
         """ forward 1 step
         state: cell state, (batch_size, cell_count)
