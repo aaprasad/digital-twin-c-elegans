@@ -4,8 +4,10 @@ import torch
 
 
 class Connectome(object):
-    def __init__(self, cells, path):
+    def __init__(self, cells, ex_synapses, in_synapses, path):
         self.cells = cells
+        self.ex_synapses = ex_synapses
+        self.in_synapses = in_synapses
         self.chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
         self.gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
         self._check(cells)
@@ -46,22 +48,45 @@ class Connectome(object):
         self.chemical = self.chemical.loc[cells, cells]
         self.gap_junction = self.chemical.loc[cells, cells]
 
-    def weight(self):
+    def _weight(self):
         chemical = self.chemical.replace(np.nan, 0).to_numpy(dtype=np.int32)
         gap_junction = self.gap_junction.replace(np.nan, 0).to_numpy(dtype=np.int32)
+        chemical = torch.from_numpy(chemical)
+        gap_junction = torch.from_numpy(gap_junction)
         return chemical, gap_junction
 
+    def _polarity_mask(self, synapses):
+        """ chemical synaptic polarity mask
+        excitatory mask: if True, the connection is excitatory
+        inhibitory mask: if True, the connection is inhibitory
+        synapses: [(pre_cells1, post_cells1), (pre_cells2, post_cells2), ...]
+        """
+        mask = self.chemical.copy()
+        mask.loc[:, :] = False
+        for pre_cells, post_cells in synapses:
+            mask.loc[pre_cells, post_cells] = True
+        mask = mask.to_numpy(dtype=np.bool)
+        mask = torch.from_numpy(mask)
+        return mask
+
     def mask(self):
-        chemical, gap_junction = self.weight()
-        mask_c, mask_g = chemical.bool(), gap_junction.bool()
-        return mask_c, mask_g
+        chemical, gap_junction = self._weight()
+        mask_c = chemical.bool()  # chemical synapse bool mask
+        mask_g = gap_junction.bool()  # gap junction bool mask
+        ex_mask_c = self._polarity_mask(self.ex_synapses)
+        in_mask_c = self._polarity_mask(self.in_synapses)
+        ex_mask_c *= mask_c  # excitatory chemical synapse bool mask
+        in_mask_c *= mask_c  # inhibitory chemical synapse bool mask
+        if torch.any(ex_mask_c == in_mask_c) is True:
+            raise ValueError('There is overlap in excitatory mask and inhibitory mask!')
+        return mask_c, mask_g, ex_mask_c, in_mask_c
 
 
 class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, freq, n, p, mask_c, mask_g):
+    def __init__(self, freq, n, p, mask_c, ex_mask_c, in_mask_c, mask_g):
         super(SNNCell, self).__init__()
         self.freq = freq  # freq of data sequence
         self.n = n  # cell count
@@ -69,6 +94,8 @@ class SNNCell(torch.nn.Module):
         self.tau = torch.nn.Parameter(torch.rand(n))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.rand((n, n)))  # chemical synapse weight, (cell_count, cell_count)
         self.mask_c = torch.nn.Parameter(mask_c, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
+        self.ex_mask_c = torch.nn.Parameter(ex_mask_c, requires_grad=False)  # excitatory chemical synapse bool mask, (cell_count, cell_count)
+        self.in_mask_c = torch.nn.Parameter(in_mask_c, requires_grad=False)  # inhibitory chemical synapse bool mask, (cell_count, cell_count)
         self.w_g = torch.nn.Parameter(torch.rand((n, n)))  # gap junction weight, (cell_count, cell_count)
         self.mask_g = torch.nn.Parameter(mask_g, requires_grad=False)  # gap junction bool mask, (cell_count, cell_count)
         self.w_p = torch.nn.Parameter(torch.rand((p, n)))  # proprioception input synapse weight, (proprioception_size, cell_count)
@@ -80,11 +107,11 @@ class SNNCell(torch.nn.Module):
         activation: cell activation, (batch_size, cell_count)
         proprioception: (batch_size, proprioception_size)
         """
-        # w_c: w_c * mask_c
-        synapse_input = torch.mm(activation, self.w_c * self.mask_c)  # chemical synapse input, (batch_size, cell_count)
+        w_c = self.w_c.abs() * self.ex_mask_c - self.w_c.abs() * self.in_mask_c + self.w_c * (self.mask_c - self.ex_mask_c - self.in_mask_c)
+        synapse_input = torch.mm(activation, w_c)  # chemical synapse input, (batch_size, cell_count)
         delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
-        # w_g: w_g * mask_c
-        gap_input = torch.sum(delta_state * self.w_g * self.mask_g, dim=1)  # gap junction input, (batch_size, cell_count)
+        w_g = self.w_g * self.mask_g
+        gap_input = torch.sum(delta_state * w_g, dim=1)  # gap junction input, (batch_size, cell_count)
         proprioception_input = torch.mm(proprioception, self.w_p)  # proprioception input, (batch_size, cell_count)
         total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
         # cell state, (batch_size, cell_count)
