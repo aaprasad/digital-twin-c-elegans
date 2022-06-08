@@ -1,3 +1,4 @@
+import virtual_nematode.connectomes
 import virtual_nematode.data
 import virtual_nematode.envs
 import virtual_nematode.models
