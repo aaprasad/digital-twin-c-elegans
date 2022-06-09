@@ -9,6 +9,7 @@ from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
 from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
 from virtual_nematode.networks.rnn.rnn import RNNCell
+from virtual_nematode.networks.snn.forward import SNNCell, SNN
 from virtual_nematode.trainers.loss import MSESymmetricJointLoss, MSESymmetricMuscleLoss
 
 
@@ -29,6 +30,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, **k
         model = rnn(**kwargs)
     elif model_name == 'ctrnn_2_stage':
         model = ctrnn_2_stage(**kwargs)
+    elif model_name == 'snn_forward':
+        model = snn_forward(**kwargs)
     else:
         raise AssertionError('{} not exist'.format(model_name))
     if device is None:
@@ -97,6 +100,12 @@ def ctrnn_2_stage(input_size, hidden_size, output_size, load_kwargs, input1_rang
 def rnn(input_size, hidden_size, output_size, **kwargs):
     cell = RNNCell(input_size, hidden_size, output_size, **kwargs)
     model = RNNSequence(cell)
+    return model
+
+
+def snn_forward(**kwargs):
+    cell = SNNCell(**kwargs)
+    model = SNN(cell)
     return model
 
 
