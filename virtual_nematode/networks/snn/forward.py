@@ -103,7 +103,7 @@ class SNNCell(torch.nn.Module):
     """
     def __init__(self, freq, n, p, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
         super(SNNCell, self).__init__()
-        self.freq = freq  # freq of data sequence
+        self.freq = freq  # env dt
         self.n = n  # cell count
         self.p = p  # proprioception size
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0, 0.01))  # cell time constant, (cell_count, )
