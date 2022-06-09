@@ -5,7 +5,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def test_func(index, env, model, data_func, x_func):
+def test_func1(index, env, model, data_func, x_func):
     """ run a forward locomotion simulation steered by a neural network """
     if type(env) is list:  # env is a list, take the one according to item index
         env = env[index]
@@ -36,9 +36,40 @@ def test_func(index, env, model, data_func, x_func):
     return x, y
 
 
+def test_func2(index, env, model, data_func, x_func):
+    """ run a forward locomotion simulation steered by a neural network """
+    if type(env) is list:  # env is a list, take the one according to item index
+        env = env[index]
+    seed = sample_seed()
+    torch.manual_seed(seed)
+    env.seed(seed)
+    observation = env.reset()
+    model.eval()
+    state, activation = None, None
+    x, y = [], []
+    with torch.no_grad():
+        for i in range(10 ** 6):
+            # env.render()
+            data = data_func(observation=observation)
+            data = torch.tensor(data, dtype=torch.float64)
+            data = data.unsqueeze(dim=0)  # add batch dimension
+            state, activation, action = model.step(state, activation, proprioception=data)
+            action = action.squeeze(dim=0)  # remove batch dimension
+            action = action.numpy()
+            observation, reward, done, info = env.step(action)
+            x.append(x_func(observation=observation))
+            y.append(action.tolist())
+            if done:
+                break
+    env.close()
+    x = torch.tensor(x, dtype=torch.float64)  # center of mass, (max_episode_steps, 2)
+    y = torch.tensor(y, dtype=torch.float64)  # (max_episode_steps, action_size)
+    return x, y
+
+
 def tester(
     env, model, data_func, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
-    data_size=100, disable=False
+    data_size=100, disable=False, test_func=test_func1
 ):
     """ online test for at least 100 trials with torch multiprocessing """
     np.random.seed(seed)
@@ -64,7 +95,7 @@ def tester(
     return x, y  # center of mass, action
 
 
-def single_tester(env, model, data_func, x_func, seed=42, max_episode_steps=2500):
+def single_tester(env, model, data_func, x_func, seed=42, max_episode_steps=2500, test_func=test_func1):
     """ online test for a single trial and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
