@@ -17,8 +17,8 @@ def y_func(action, **kwargs):
 
 if __name__ == '__main__':
     input_size = 24  # joint angles
-    data_size = 6000
-    max_episode_steps = 300
+    data_size = 7000
+    max_episode_steps = 320
     reset_noise_scale = 0.7
     seed = 7
     env = make_swimmer(
