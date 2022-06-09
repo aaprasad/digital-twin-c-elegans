@@ -31,6 +31,12 @@ def select_model(ckpt_name):
         'mask_p': mask_p, 'mask_output': mask_output
     }
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
+    # print(torch.all(mask_c == model.cell.mask_c))
+    # print(torch.all(mask_g == model.cell.mask_g))
+    # print(torch.all(ex_mask_c == model.cell.ex_mask_c))
+    # print(torch.all(in_mask_c == model.cell.in_mask_c))
+    # print(torch.all(mask_output == model.cell.mask_output))
+    # print(torch.all(mask_p == model.cell.mask_p))
     return model
 
 
