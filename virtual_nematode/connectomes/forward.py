@@ -94,3 +94,13 @@ def neuron_list():
     # all cells
     cells = head + vnc + sublateral
     return cells
+
+
+def neuron_list1():
+    """ include AVB interneurons
+    https://doi.org/10.1098/rstb.2017.0379
+    https://doi.org/10.1073/pnas.1717022115
+    https://doi.org/10.1038/s41598-021-92690-2
+    """
+    cells = ['AVBL', 'AVBR'] + neuron_list()
+    return cells
