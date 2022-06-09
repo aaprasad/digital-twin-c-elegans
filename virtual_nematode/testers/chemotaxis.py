@@ -2,7 +2,7 @@ import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from virtual_nematode.data.simulation import SimulationDataset
-from virtual_nematode.testers.forward import test_func
+from virtual_nematode.testers.forward import test_func1 as test_func
 
 
 def tester(
