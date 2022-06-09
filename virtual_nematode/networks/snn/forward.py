@@ -130,7 +130,7 @@ class SNNCell(torch.nn.Module):
         """
         w_c = self.w_c.abs() * self.ex_mask_c - self.w_c.abs() * self.in_mask_c + self.w_c * (self.mask_c.float() - self.ex_mask_c.float() - self.in_mask_c.float())
         synapse_input = torch.mm(activation, w_c)  # chemical synapse input, (batch_size, cell_count)
-        delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
+        delta_state = state.unsqueeze(dim=1).repeat(1, self.n, 1) - state.unsqueeze(dim=2).repeat(1, 1, self.n)
         w_g = self.w_g.abs() * self.mask_g
         gap_input = torch.sum(delta_state * w_g, dim=1)  # gap junction input, (batch_size, cell_count)
         w_p = self.w_p * self.mask_p
