@@ -81,8 +81,8 @@ def chemical_synapse_polarity():
     return excitatory_synapses, inhibitory_synapses
 
 
-def cell_list():
-    """ head motor neurons + vnc motor neurons + sublateral motor neurons + body wall muscles
+def neuron_list():
+    """ head motor neurons + vnc motor neurons + sublateral motor neurons
     https://doi.org/10.1038/s41586-019-1352-7
     """
     # head motor neurons: URA, RME, RMD, RIV, RMH
@@ -91,8 +91,6 @@ def cell_list():
     vnc = vb_motor_neurons() + db_motor_neurons() + vd_motor_neurons() + dd_motor_neurons()
     # sublateral motor neurons: SAB, SMD, SMB, SIB, SIA
     sublateral = sublateral_motor_neurons()
-    # body wall muscles
-    muscles = body_wall_muscles()
     # all cells
-    cells = head + vnc + sublateral + muscles
+    cells = head + vnc + sublateral
     return cells
