@@ -1,5 +1,5 @@
 import torch
-from virtual_nematode.connectomes.forward import neuron_list, body_wall_muscles, chemical_synapse_polarity
+from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity
 from virtual_nematode.networks.snn.forward import Connectome
 from virtual_nematode.trainers.ncp import train_eval_test
 import worm_assets
@@ -8,7 +8,7 @@ import worm_assets
 def train():
     torch.set_default_dtype(torch.float64)
     # connectome
-    neurons = neuron_list()
+    neurons = neuron_list1()
     muscles = body_wall_muscles()
     ex_synapses, in_synapses = chemical_synapse_polarity()
     path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
