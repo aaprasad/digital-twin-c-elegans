@@ -13,6 +13,7 @@ import worm_assets
 
 
 def select_model(ckpt_name):
+    torch.set_default_dtype(torch.float64)
     # connectome
     neurons = neuron_list1()
     muscles = body_wall_muscles()
