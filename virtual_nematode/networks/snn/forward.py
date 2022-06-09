@@ -140,7 +140,7 @@ class SNNCell(torch.nn.Module):
         tau = self.tau.abs()
         state = 1 / (1 + self.freq * tau) * state + self.freq * tau / (1 + self.freq * tau) * total_input
         # cell activation, (batch_size, cell_count)
-        activation = torch.nn.functional.sigmoid(state)
+        activation = torch.sigmoid(state)
         # muscle output, (batch_size, muscle_count)
         action = activation[:, self.mask_output]
         return state, activation, action
