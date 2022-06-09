@@ -7,7 +7,7 @@ import torch
 from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
 from virtual_nematode.networks.snn.forward import Connectome
-from virtual_nematode.testers.forward import tester, single_tester
+from virtual_nematode.testers.forward import tester, single_tester, test_func2
 from virtual_nematode.trainers.ncp import prepare_model
 import worm_assets
 
@@ -45,7 +45,7 @@ def evaluate(start, end):
         ckpt_name = 'model{}.pt'.format(i)
         model = select_model(ckpt_name)
         print(ckpt_name, end=' ')
-        _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
+        _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps, test_func=test_func2)
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
@@ -55,14 +55,14 @@ def test(start, end):
         ckpt_name = 'model{}.pt'.format(i)
         print(ckpt_name, end=' ')
         model = select_model(ckpt_name)
-        tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100, disable=True)
+        tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100, disable=True, test_func=test_func2)
 
 
 def record(env, ckpt_name):
     """ online test once for evaluation and record video """
     model = select_model(ckpt_name)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
-    _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps)
+    _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps, test_func=test_func2)
     torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
