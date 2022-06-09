@@ -4,15 +4,16 @@ import torch
 
 
 class Connectome(object):
-    def __init__(self, cells, muscles, ex_synapses, in_synapses, path):
-        self.cells = cells  # including muscles
+    def __init__(self, neurons, muscles, ex_synapses, in_synapses, path):
+        self.neurons = neurons
         self.muscles = muscles
+        self.cells = neurons + muscles
         self.ex_synapses = ex_synapses
         self.in_synapses = in_synapses
         self.chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
         self.gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
-        self._check(cells)
-        self._slice(cells)
+        self._check(self.cells)
+        self._slice(self.cells)
 
     def _check(self, cells):
         """ check if cells exist
@@ -66,6 +67,17 @@ class Connectome(object):
         mask.loc[:, :] = False
         for pre_cells, post_cells in synapses:
             mask.loc[pre_cells, post_cells] = True
+        mask = mask.to_numpy(dtype=np.bool)
+        mask = torch.from_numpy(mask)
+        return mask
+
+    def proprioception_mask(self, p):
+        """ proprioception input synapse bool mask
+        https://doi.org/10.1016/j.neuron.2012.08.039
+        """
+        mask = pd.DataFrame(index=list(range(p)), columns=self.cells)
+        mask.loc[:, :] = False
+        mask.loc[:, self.neurons] = True
         mask = mask.to_numpy(dtype=np.bool)
         mask = torch.from_numpy(mask)
         return mask
