@@ -7,31 +7,40 @@ import torch
 from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
 from virtual_nematode.networks.snn.forward import Connectome, LinearConnectome
-from virtual_nematode.testers.forward import tester, single_tester, test_func2
+from virtual_nematode.testers.forward import tester, single_tester, test_func1, test_func2
 from virtual_nematode.trainers.ncp import prepare_model
 import worm_assets
 
 
-def select_model(ckpt_name):
-    torch.set_default_dtype(torch.float64)
-    # connectome
-    neurons = neuron_list1()
-    muscles = body_wall_muscles()
-    ex_synapses, in_synapses = chemical_synapse_polarity()
-    path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
-    connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
-    # connectome = LinearConnectome(neurons, muscles)
-    # params
-    freq = 0.04
-    n = len(connectome.cells)
-    p = 24
-    mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask()
-    mask_p = connectome.proprioception_mask(p)
-    kwargs = {
-        'freq': freq, 'n': n, 'p': p,
-        'mask_c': mask_c, 'ex_mask_c': ex_mask_c, 'in_mask_c': in_mask_c, 'mask_g': mask_g,
-        'mask_p': mask_p, 'mask_output': mask_output
-    }
+def select_model(model_name, ckpt_name):
+    if model_name == 'snn_forward':
+        torch.set_default_dtype(torch.float64)
+        # connectome
+        neurons = neuron_list1()
+        muscles = body_wall_muscles()
+        ex_synapses, in_synapses = chemical_synapse_polarity()
+        path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
+        connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
+        # connectome = LinearConnectome(neurons, muscles)
+        # params
+        freq = 0.04
+        n = len(connectome.cells)
+        p = 24
+        mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask()
+        mask_p = connectome.proprioception_mask(p)
+        kwargs = {
+            'freq': freq, 'n': n, 'p': p,
+            'mask_c': mask_c, 'ex_mask_c': ex_mask_c, 'in_mask_c': in_mask_c, 'mask_g': mask_g,
+            'mask_p': mask_p, 'mask_output': mask_output
+        }
+    elif model_name == 'ctrnn':
+        torch.set_default_dtype(torch.float64)
+        kwargs = {
+            'input_size': 24, 'hidden_size': 171, 'output_size': 95, 'feedback': True, 'readout': 'identity',
+            'unfolds': 6, 'delta_t': 0.1, 'tau': 1
+        }
+    else:
+        raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
     # print(torch.all(mask_c == model.cell.mask_c))
     # print(torch.all(mask_g == model.cell.mask_g))
@@ -42,29 +51,47 @@ def select_model(ckpt_name):
     return model
 
 
-def evaluate(start, end):
+def evaluate(model_name, start, end):
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
-        model = select_model(ckpt_name)
+        model = select_model(model_name, ckpt_name)
         print(ckpt_name, end=' ')
-        _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps, test_func=test_func2)
+        if model_name == 'snn_forward':
+            test_func = test_func2
+        elif model_name == 'ctrnn':
+            test_func = test_func1
+        else:
+            raise AssertionError('{} not exist'.format(model_name))
+        _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps, test_func=test_func)
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
-def test(start, end):
+def test(model_name, start, end):
     """ online test multiple trials for testing """
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
         print(ckpt_name, end=' ')
-        model = select_model(ckpt_name)
-        tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100, disable=True, test_func=test_func2)
+        model = select_model(model_name, ckpt_name)
+        if model_name == 'snn_forward':
+            test_func = test_func2
+        elif model_name == 'ctrnn':
+            test_func = test_func1
+        else:
+            raise AssertionError('{} not exist'.format(model_name))
+        tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100, disable=True, test_func=test_func)
 
 
-def record(env, ckpt_name):
+def record(model_name, env, ckpt_name):
     """ online test once for evaluation and record video """
-    model = select_model(ckpt_name)
+    model = select_model(model_name, ckpt_name)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
-    _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps, test_func=test_func2)
+    if model_name == 'snn_forward':
+        test_func = test_func2
+    elif model_name == 'ctrnn':
+        test_func = test_func1
+    else:
+        raise AssertionError('{} not exist'.format(model_name))
+    _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps, test_func=test_func)
     torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
@@ -81,7 +108,6 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.7,
         density=1.2, viscosity=0.1, condim=3, friction='1 1'
     )
-    model_name = 'snn_forward'
-    evaluate(start=0, end=100)
-    # test(start=0, end=100)
-    # record(env, ckpt_name='model.pt')
+    evaluate('snn_forward', start=0, end=100)
+    # test('snn_forward', start=0, end=100)
+    # record('snn_forward', env, ckpt_name='model.pt')
