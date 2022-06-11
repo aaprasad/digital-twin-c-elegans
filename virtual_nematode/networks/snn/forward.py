@@ -48,7 +48,7 @@ class Connectome(object):
     def _slice(self, cells):
         # cells: a list of cell names
         self.chemical = self.chemical.loc[cells, cells]
-        self.gap_junction = self.chemical.loc[cells, cells]
+        self.gap_junction = self.gap_junction.loc[cells, cells]
 
     def _weight(self):
         chemical = self.chemical.replace(np.nan, 0).to_numpy(dtype=np.int32)
