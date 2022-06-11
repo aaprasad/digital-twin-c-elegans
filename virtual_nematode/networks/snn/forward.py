@@ -95,6 +95,45 @@ class Connectome(object):
         return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output
 
 
+class LinearConnectome(object):
+    """ fully connected chemical connectome
+    * fully connected chemical connections, no polarity constraints
+    * no gap junction connection
+    * fully connected proprioception input to all cells
+    """
+    def __init__(self, neurons, muscles):
+        self.neurons = neurons
+        self.muscles = muscles
+        self.cells = neurons + muscles
+        self.chemical = pd.DataFrame(True, index=self.cells, columns=self.cells)
+        self.gap_junction = pd.DataFrame(False, index=self.cells, columns=self.cells)
+
+    def proprioception_mask(self, p):
+        mask = pd.DataFrame(True, index=list(range(p)), columns=self.cells)
+        mask = mask.to_numpy(dtype=np.bool)
+        mask = torch.from_numpy(mask)
+        return mask
+
+    def _polarity_mask(self):
+        mask = pd.DataFrame(False, index=self.cells, columns=self.cells)
+        mask = mask.to_numpy(dtype=np.bool)
+        mask = torch.from_numpy(mask)
+        return mask
+
+    def mask(self):
+        mask_c = torch.from_numpy(self.chemical.to_numpy(dtype=np.bool))
+        mask_g = torch.from_numpy(self.gap_junction.to_numpy(dtype=np.bool))
+        ex_mask_c = self._polarity_mask()
+        in_mask_c = self._polarity_mask()
+        ex_mask_c *= mask_c
+        in_mask_c *= mask_c
+        if torch.any(ex_mask_c == in_mask_c) is True:
+            raise ValueError('There is overlap in excitatory mask and inhibitory mask!')
+        muscles = set(self.muscles)
+        mask_output = torch.tensor([True if cell in muscles else False for cell in self.cells])
+        return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output
+
+
 class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
