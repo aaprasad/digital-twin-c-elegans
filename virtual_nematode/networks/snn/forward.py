@@ -63,8 +63,7 @@ class Connectome(object):
         inhibitory mask: if True, the connection is inhibitory
         synapses: [(pre_cells1, post_cells1), (pre_cells2, post_cells2), ...]
         """
-        mask = self.chemical.copy()
-        mask.loc[:, :] = False
+        mask = pd.DataFrame(False, index=self.cells, columns=self.cells)
         for pre_cells, post_cells in synapses:
             mask.loc[pre_cells, post_cells] = True
         mask = mask.to_numpy(dtype=np.bool)
