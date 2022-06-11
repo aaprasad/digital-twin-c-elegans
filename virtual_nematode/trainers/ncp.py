@@ -193,7 +193,7 @@ def train_eval_test(
     elif loss == 'MSESymmetricMuscleLoss':
         criterion = MSESymmetricMuscleLoss(reduction='mean', sr=sr)
     else:
-        assert ValueError('Invalid loss type {}'.format(loss))
+        raise ValueError('Invalid loss type {}'.format(loss))
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
     # test
