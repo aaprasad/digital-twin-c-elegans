@@ -138,9 +138,9 @@ class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, freq, n, p, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
+    def __init__(self, dt, n, p, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
         super(SNNCell, self).__init__()
-        self.freq = freq  # env dt
+        self.dt = dt  # env dt
         self.n = n  # cell count
         self.p = p  # proprioception size
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0, 0.01))  # cell time constant, (cell_count, )
@@ -176,7 +176,7 @@ class SNNCell(torch.nn.Module):
         total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
         # cell state, (batch_size, cell_count)
         tau = self.tau.abs()
-        state = 1 / (1 + self.freq * tau) * state + self.freq * tau / (1 + self.freq * tau) * total_input
+        state = 1 / (1 + self.dt * tau) * state + self.dt * tau / (1 + self.dt * tau) * total_input
         # cell activation, (batch_size, cell_count)
         activation = torch.sigmoid(state)
         # muscle output, (batch_size, muscle_count)

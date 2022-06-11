@@ -23,13 +23,13 @@ def select_model(model_name, ckpt_name):
         connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
         # connectome = LinearConnectome(neurons, muscles)
         # params
-        freq = 0.04
+        dt = 0.04
         n = len(connectome.cells)
         p = 24
         mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask()
         mask_p = connectome.proprioception_mask(p)
         kwargs = {
-            'freq': freq, 'n': n, 'p': p,
+            'dt': dt, 'n': n, 'p': p,
             'mask_c': mask_c, 'ex_mask_c': ex_mask_c, 'in_mask_c': in_mask_c, 'mask_g': mask_g,
             'mask_p': mask_p, 'mask_output': mask_output
         }
