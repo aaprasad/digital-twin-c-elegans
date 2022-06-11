@@ -6,7 +6,7 @@ import sys
 import torch
 from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
-from virtual_nematode.networks.snn.forward import Connectome
+from virtual_nematode.networks.snn.forward import Connectome, LinearConnectome
 from virtual_nematode.testers.forward import tester, single_tester, test_func2
 from virtual_nematode.trainers.ncp import prepare_model
 import worm_assets
@@ -20,6 +20,7 @@ def select_model(ckpt_name):
     ex_synapses, in_synapses = chemical_synapse_polarity()
     path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
     connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
+    # connectome = LinearConnectome(neurons, muscles)
     # params
     freq = 0.04
     n = len(connectome.cells)
