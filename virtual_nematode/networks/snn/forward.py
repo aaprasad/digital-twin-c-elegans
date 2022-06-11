@@ -75,8 +75,7 @@ class Connectome(object):
         """ proprioception input synapse bool mask
         https://doi.org/10.1016/j.neuron.2012.08.039
         """
-        mask = pd.DataFrame(index=list(range(p)), columns=self.cells)
-        mask.loc[:, :] = False
+        mask = pd.DataFrame(False, index=list(range(p)), columns=self.cells)
         mask.loc[:, self.neurons] = True
         mask = mask.to_numpy(dtype=np.bool)
         mask = torch.from_numpy(mask)
