@@ -155,7 +155,7 @@ class SNNCell(torch.nn.Module):
             )
         else:
             raise ValueError('Invalid activation func type {}'.format(activation_func))
-        self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.05, std=0.005))  # cell time constant, (cell_count, )
+        self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.08, std=0.01))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
         self.mask_c = torch.nn.Parameter(mask_c, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
         self.ex_mask_c = torch.nn.Parameter(ex_mask_c, requires_grad=False)  # excitatory chemical synapse bool mask, (cell_count, cell_count)
