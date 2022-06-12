@@ -138,12 +138,23 @@ class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, dt, steps, n, p, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
+    def __init__(self, dt, steps, n, p, activation_func, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
         super(SNNCell, self).__init__()
         self.dt = dt  # env dt
         self.steps = steps  # ode steps
         self.n = n  # cell count
         self.p = p  # proprioception size
+        if activation_func == 'sigmoid':
+            self.activation_func = torch.nn.Sigmoid()
+        elif activation_func == 'relu':
+            self.activation_func = torch.nn.ReLU()
+        elif activation_func == 'tanh':
+            self.activation_func = torch.nn.Sequential(
+                torch.nn.Tanh(),
+                torch.nn.ReLU()
+            )
+        else:
+            raise ValueError('Invalid activation func type {}'.format(activation_func))
         self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.05, std=0.005))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
         self.mask_c = torch.nn.Parameter(mask_c, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
@@ -185,7 +196,7 @@ class SNNCell(torch.nn.Module):
             # cell state, (batch_size, cell_count)
             state = (1 - dt / tau) * state + dt / tau * total_input
             # cell activation, (batch_size, cell_count)
-            activation = torch.sigmoid(state)
+            activation = self.activation_func(state)
         # muscle output, (batch_size, muscle_count)
         action = activation[:, self.mask_output]
         return state, activation, action
