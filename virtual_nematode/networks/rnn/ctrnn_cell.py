@@ -51,6 +51,11 @@ class CTRNNCell(torch.nn.Module):
             )
         elif readout == 'fully_connected':
             self.readout = torch.nn.Linear(hidden_size, output_size, bias=True)
+        elif readout == 'relu':
+            self.readout = torch.nn.Sequential(
+                Identity(output_size),
+                torch.nn.ReLU()
+            )
         elif readout == 'sigmoid':
             self.readout = torch.nn.Sequential(
                 Identity(output_size),
