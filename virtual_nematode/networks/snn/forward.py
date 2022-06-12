@@ -144,7 +144,7 @@ class SNNCell(torch.nn.Module):
         self.steps = steps  # ode steps
         self.n = n  # cell count
         self.p = p  # proprioception size
-        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0, 0.01))  # cell time constant, (cell_count, )
+        self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.05, std=0.005))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
         self.mask_c = torch.nn.Parameter(mask_c, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
         self.ex_mask_c = torch.nn.Parameter(ex_mask_c, requires_grad=False)  # excitatory chemical synapse bool mask, (cell_count, cell_count)
@@ -174,7 +174,8 @@ class SNNCell(torch.nn.Module):
         # proprioception weight
         w_p = self.w_p * self.mask_p
         # time constant
-        tau = self.tau.abs()
+        dt = self.dt / self.steps
+        tau = torch.clamp(self.tau, min=dt)
         for i in range(self.steps):
             synapse_input = torch.mm(activation, w_c)  # chemical synapse input, (batch_size, cell_count)
             delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
@@ -182,7 +183,7 @@ class SNNCell(torch.nn.Module):
             proprioception_input = torch.mm(proprioception, w_p)  # proprioception input, (batch_size, cell_count)
             total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
             # cell state, (batch_size, cell_count)
-            state = 1 / (1 + self.dt * tau) * state + self.dt * tau / (1 + self.dt * tau) * total_input
+            state = (1 - dt / tau) * state + dt / tau * total_input
             # cell activation, (batch_size, cell_count)
             activation = torch.sigmoid(state)
         # muscle output, (batch_size, muscle_count)
