@@ -51,6 +51,17 @@ class CTRNNCell(torch.nn.Module):
             )
         elif readout == 'fully_connected':
             self.readout = torch.nn.Linear(hidden_size, output_size, bias=True)
+        elif readout == 'sigmoid':
+            self.readout = torch.nn.Sequential(
+                Identity(output_size),
+                torch.nn.Sigmoid()
+            )
+        elif readout == 'tanh':
+            self.readout = torch.nn.Sequential(
+                Identity(output_size),
+                torch.nn.Tanh(),
+                torch.nn.ReLU()
+            )
         else:
             assert ValueError('Invalid readout type {}'.format(readout))
         self.hidden_size = hidden_size
