@@ -213,7 +213,7 @@ class SNN(torch.nn.Module):
         seq_len = proprioceptions.size(1)
         # initial state and activation
         state = torch.zeros((batch_size, self.cell.state_size), device=device)
-        activation = torch.zeros((batch_size, self.cell.state_size), device=device)
+        activation = self.cell.activation_func(state)
         # simulate sequence
         actions = []
         for t in range(seq_len):
@@ -228,6 +228,6 @@ class SNN(torch.nn.Module):
             device = proprioception.device
             batch_size = proprioception.size(0)
             state = torch.zeros((batch_size, self.cell.state_size), device=device)
-            activation = torch.zeros((batch_size, self.cell.state_size), device=device)
+            activation = self.cell.activation_func(state)
         state, activation, action = self.cell.forward(state, activation, proprioception)
         return state, activation, action
