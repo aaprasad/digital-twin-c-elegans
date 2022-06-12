@@ -25,7 +25,7 @@ def train(model_name):
         longer seq: data_name='data320.pt', lengths=[5000, 1000, 1000], batch_size=256, cuda=0, device_ids=[0, 1]
         """
         kwargs = {
-            'data_name': 'data32.pt', 'model_name': model_name, 'lengths': [50000, 10000, 10000], 'batch_size': 128, 'seed': 11,
+            'data_name': 'data32.pt', 'model_name': model_name, 'lengths': [50000, 10000, 10000], 'batch_size': 256, 'seed': 11,
             'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'epochs': 100, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
             # model kwargs
             'dt': dt, 'steps': 5, 'n': n, 'p': p, 'activation_func': 'sigmoid',
