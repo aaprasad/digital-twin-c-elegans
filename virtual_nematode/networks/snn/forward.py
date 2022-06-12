@@ -138,9 +138,10 @@ class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, dt, n, p, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
+    def __init__(self, dt, steps, n, p, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
         super(SNNCell, self).__init__()
         self.dt = dt  # env dt
+        self.steps = steps  # ode steps
         self.n = n  # cell count
         self.p = p  # proprioception size
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0, 0.01))  # cell time constant, (cell_count, )
@@ -165,20 +166,25 @@ class SNNCell(torch.nn.Module):
         activation: cell activation, (batch_size, cell_count)
         proprioception: (batch_size, proprioception_size)
         """
+        # chemical synapse weight
         w_c = self.w_c.abs() * self.ex_mask_c - self.w_c.abs() * self.in_mask_c + self.w_c * (self.mask_c.float() - self.ex_mask_c.float() - self.in_mask_c.float())
-        synapse_input = torch.mm(activation, w_c)  # chemical synapse input, (batch_size, cell_count)
-        delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
+        # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.mask_g
-        gap_input = torch.sum(delta_state * w_g, dim=1)  # gap junction input, (batch_size, cell_count)
+        # proprioception weight
         w_p = self.w_p * self.mask_p
-        proprioception_input = torch.mm(proprioception, w_p)  # proprioception input, (batch_size, cell_count)
-        total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
-        # cell state, (batch_size, cell_count)
+        # time constant
         tau = self.tau.abs()
-        state = 1 / (1 + self.dt * tau) * state + self.dt * tau / (1 + self.dt * tau) * total_input
-        # cell activation, (batch_size, cell_count)
-        activation = torch.sigmoid(state)
+        for i in range(self.steps):
+            synapse_input = torch.mm(activation, w_c)  # chemical synapse input, (batch_size, cell_count)
+            delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
+            gap_input = torch.sum(delta_state * w_g, dim=1)  # gap junction input, (batch_size, cell_count)
+            proprioception_input = torch.mm(proprioception, w_p)  # proprioception input, (batch_size, cell_count)
+            total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
+            # cell state, (batch_size, cell_count)
+            state = 1 / (1 + self.dt * tau) * state + self.dt * tau / (1 + self.dt * tau) * total_input
+            # cell activation, (batch_size, cell_count)
+            activation = torch.sigmoid(state)
         # muscle output, (batch_size, muscle_count)
         action = activation[:, self.mask_output]
         return state, activation, action
