@@ -26,7 +26,7 @@ def train(model_name):
         """
         kwargs = {
             'data_name': 'data32.pt', 'model_name': model_name, 'lengths': [50000, 10000, 10000], 'batch_size': 256, 'seed': 11,
-            'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'epochs': 100, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
+            'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'epochs': 100, 'early_stop': 100, 'comment': '', 'loss': 'MSELoss',
             # model kwargs
             'dt': dt, 'steps': 5, 'n': n, 'p': p, 'activation_func': 'sigmoid',
             'mask_c': mask_c, 'ex_mask_c': ex_mask_c, 'in_mask_c': in_mask_c, 'mask_g': mask_g,
@@ -37,7 +37,7 @@ def train(model_name):
         kwargs = {
             'data_name': 'data32.pt', 'model_name': model_name, 'lengths': [50000, 10000, 10000], 'batch_size': 1024,
             'seed': 11, 'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'weight_decay': 0, 'epochs': 100,
-            'early_stop': 30, 'comment': '', 'loss': 'MSELoss', 'sr': None,
+            'early_stop': 100, 'comment': '', 'loss': 'MSELoss', 'sr': None,
             # model kwargs
             'input_size': 24, 'hidden_size': 171, 'output_size': 95, 'feedback': True, 'readout': 'identity',
             'unfolds': 6, 'delta_t': 0.1, 'tau': 1
