@@ -29,7 +29,7 @@ def select_model(model_name, ckpt_name):
         mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask()
         mask_p = connectome.proprioception_mask(p)
         kwargs = {
-            'dt': dt, 'n': n, 'p': p,
+            'dt': dt, 'steps': 8, 'n': n, 'p': p,
             'mask_c': mask_c, 'ex_mask_c': ex_mask_c, 'in_mask_c': in_mask_c, 'mask_g': mask_g,
             'mask_p': mask_p, 'mask_output': mask_output
         }

@@ -28,7 +28,7 @@ def train(model_name):
             'data_name': 'data32.pt', 'model_name': model_name, 'lengths': [50000, 10000, 10000], 'batch_size': 1024, 'seed': 11,
             'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'epochs': 100, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
             # model kwargs
-            'dt': dt, 'n': n, 'p': p,
+            'dt': dt, 'steps': 8, 'n': n, 'p': p,
             'mask_c': mask_c, 'ex_mask_c': ex_mask_c, 'in_mask_c': in_mask_c, 'mask_g': mask_g,
             'mask_p': mask_p, 'mask_output': mask_output
         }
