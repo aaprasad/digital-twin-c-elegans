@@ -39,17 +39,22 @@ def done_func(index, result, **kwargs):
 if __name__ == '__main__':
     max_episode_steps = 2500
     env = make_swimmer(
-        n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.7,
+        n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
         density=1.2, viscosity=0.1, condim=3, friction='1 1'
-    )
+    )  # reset_noise_scale: 0.7->0.6
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
     # model = SinusoidalMuscle(dt=env.dt, n=25, a=0.02, freq=0.8, psi=0.05)
     # model = ForwardMuscle(dt=env.dt, n=25, a=30 * np.pi / 180, freq=0.8, psi=0.05, kp=1, kv=0)
+    # model = ForwardPIDMuscle(
+    #     dt=env.dt, n=25, a=40 * np.pi / 180, freq=0.8, psi=0.07,
+    #     kp=1, kd=np.array([0.15 + i * 0.002 for i in range(24)])
+    # )
     model = ForwardPIDMuscle(
-        dt=env.dt, n=25, a=40 * np.pi / 180, freq=0.8, psi=0.07,
-        kp=1, kd=np.array([0.15 + i * 0.002 for i in range(24)])
+        dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+        kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
+        kd=0.15
     )
     results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
     print('{} trials: com displacement mean {:.2f} / {} steps, {:.2f} / last 250 steps'.format(
