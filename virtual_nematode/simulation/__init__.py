@@ -12,7 +12,7 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     results = []  # results of all simulations
     if trials > 1:
         seed = None  # ensure that seed is different in each trial
-    # obs_list = [[], []]
+    # angles = []
     for i in range(trials):
         result = []  # results of 1 simulation
         env.seed(seed)
@@ -23,16 +23,19 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
                 env.render()
             action = action_func(model=model, step=step, observation=observation)
             observation, reward, done, info = env.step(action)
-            # for j, index in enumerate([4, 27]):
-            #     obs_list[j].append(observation[index] * 180 / np.pi)
+            # angles.append(observation[4:28])
             result.append(step_func(observation=observation))
             if done:
                 results.append(done_func(index=i, result=result))
                 break
-    # for x, label in zip(obs_list, [4, 27]):
-    #     plt.plot(x, label=str(label))
+    # angles = np.array(angles)
+    # for i in range(6):
+    #     plt.subplot(2, 3, i + 1)
+    #     for j in range(4):
+    #         index = i * 4 + j
+    #         plt.plot(angles[:, index], label=str(index))
+    #     plt.legend()
     # plt.savefig('observation.png')
-    # plt.legend()
     # plt.show()
     return results
 
