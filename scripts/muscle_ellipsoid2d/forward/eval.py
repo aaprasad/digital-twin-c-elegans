@@ -20,8 +20,8 @@ def select_model(model_name, ckpt_name):
         muscles = body_wall_muscles()
         ex_synapses, in_synapses = chemical_synapse_polarity()
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
-        connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
-        # connectome = LinearConnectome(neurons, muscles)
+        # connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
+        connectome = LinearConnectome(neurons, muscles)
         # params
         dt = 0.04
         n = len(connectome.cells)
