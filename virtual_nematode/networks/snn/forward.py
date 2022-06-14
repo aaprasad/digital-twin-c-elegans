@@ -70,7 +70,7 @@ class Connectome(object):
         mask = torch.from_numpy(mask)
         return mask
 
-    def proprioception_mask(self, p):
+    def proprioception_mask(self, p, p_mask=True):
         """ proprioception input synapse bool mask
         https://doi.org/10.1016/j.neuron.2012.08.039
         """
@@ -78,14 +78,19 @@ class Connectome(object):
         mask.loc[:, self.neurons] = True
         mask = mask.to_numpy(dtype=np.bool)
         mask = torch.from_numpy(mask)
+        if p_mask is False:  # no proprioception mask: all cells receive proprioception input
+            mask = torch.full_like(mask, fill_value=True)
         return mask
 
-    def mask(self):
+    def mask(self, polarity_mask=True):
         chemical, gap_junction = self._weight()
         mask_c = chemical.bool()  # chemical synapse bool mask
         mask_g = gap_junction.bool()  # gap junction bool mask
         ex_mask_c = self._polarity_mask(self.ex_synapses)
         in_mask_c = self._polarity_mask(self.in_synapses)
+        if polarity_mask is False:  # no chemical synapse polarity mask: no polarity restraint
+            ex_mask_c = torch.full_like(ex_mask_c, fill_value=False)
+            in_mask_c = torch.full_like(in_mask_c, fill_value=False)
         ex_mask_c *= mask_c  # excitatory chemical synapse bool mask
         in_mask_c *= mask_c  # inhibitory chemical synapse bool mask
         if torch.any(ex_mask_c == in_mask_c) is True:
@@ -108,7 +113,7 @@ class LinearConnectome(object):
         self.chemical = pd.DataFrame(True, index=self.cells, columns=self.cells)
         self.gap_junction = pd.DataFrame(False, index=self.cells, columns=self.cells)
 
-    def proprioception_mask(self, p):
+    def proprioception_mask(self, p, **kwargs):
         mask = pd.DataFrame(True, index=list(range(p)), columns=self.cells)
         mask = mask.to_numpy(dtype=np.bool)
         mask = torch.from_numpy(mask)
@@ -120,7 +125,7 @@ class LinearConnectome(object):
         mask = torch.from_numpy(mask)
         return mask
 
-    def mask(self):
+    def mask(self, **kwargs):
         mask_c = torch.from_numpy(self.chemical.to_numpy(dtype=np.bool))
         mask_g = torch.from_numpy(self.gap_junction.to_numpy(dtype=np.bool))
         ex_mask_c = self._polarity_mask()
