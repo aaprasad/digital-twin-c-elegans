@@ -1,5 +1,6 @@
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 import numpy as np
+# import seaborn as sns
 
 
 def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False):
@@ -13,6 +14,7 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     if trials > 1:
         seed = None  # ensure that seed is different in each trial
     # angles = []
+    # actions = []
     for i in range(trials):
         result = []  # results of 1 simulation
         env.seed(seed)
@@ -24,6 +26,7 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
             action = action_func(model=model, step=step, observation=observation)
             observation, reward, done, info = env.step(action)
             # angles.append(observation[4:28])
+            # actions.append(action)
             result.append(step_func(observation=observation))
             if done:
                 results.append(done_func(index=i, result=result))
@@ -35,7 +38,8 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     #         index = i * 4 + j
     #         plt.plot(angles[:, index], label=str(index))
     #     plt.legend()
-    # plt.savefig('observation.png')
+    # actions = np.array(actions)
+    # sns.heatmap(actions.clip(0, 1).T, cmap='coolwarm')
     # plt.show()
     return results
 
