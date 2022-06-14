@@ -155,7 +155,8 @@ class SNNCell(torch.nn.Module):
             )
         else:
             raise ValueError('Invalid activation func type {}'.format(activation_func))
-        self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.08, std=0.01))  # cell time constant, (cell_count, )
+        # self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.08, std=0.01))
+        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
         self.mask_c = torch.nn.Parameter(mask_c, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
         self.ex_mask_c = torch.nn.Parameter(ex_mask_c, requires_grad=False)  # excitatory chemical synapse bool mask, (cell_count, cell_count)
@@ -187,7 +188,8 @@ class SNNCell(torch.nn.Module):
         proprioception_input = torch.mm(proprioception, w_p)  # proprioception input, (batch_size, cell_count)
         # time constant
         dt = self.dt / self.steps
-        tau = torch.clamp(self.tau, min=dt)
+        # tau = self.tau.clamp(min=dt)
+        tau = self.tau.clamp(0.01, 0.05)
         for i in range(self.steps):
             synapse_input = torch.mm(activation, w_c)  # chemical synapse input, (batch_size, cell_count)
             delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
