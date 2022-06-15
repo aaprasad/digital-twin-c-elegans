@@ -83,6 +83,20 @@ class Connectome(object):
         return mask
 
     def mask(self, polarity_mask=True):
+        """ mask generatation
+        chemical mask
+            mask_ij is True -> w_ij
+            mask_ij is False -> w_ij = 0
+        gap junction mask: symmetric
+            mask_ij is True -> g_ij, g_ji
+            mask_ij is False -> g_ij = g_ji = 0
+        excitatory chemical mask: a sub mask of chemical mask
+            mask_ij is True -> w_ij >= 0
+            mask_ij is False -> w_ij
+        inhibitory chemical mask: a sub mask of chemical mask, no overlap with excitatory chemical mask
+            mask_ij is True -> w_ij <= 0
+            mask_ij is False -> w_ij
+        """
         chemical, gap_junction = self._weight()
         mask_c = chemical.bool()  # chemical synapse bool mask
         mask_g = gap_junction.bool()  # gap junction bool mask
