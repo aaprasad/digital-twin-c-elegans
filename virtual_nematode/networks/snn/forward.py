@@ -107,8 +107,8 @@ class Connectome(object):
             in_mask_c = torch.full_like(in_mask_c, fill_value=False)
         ex_mask_c *= mask_c  # excitatory chemical synapse bool mask
         in_mask_c *= mask_c  # inhibitory chemical synapse bool mask
-        if torch.any(ex_mask_c == in_mask_c) is True:
-            raise ValueError('There is overlap in excitatory mask and inhibitory mask!')
+        if torch.any(ex_mask_c & in_mask_c) is True:
+            raise AssertionError('There is overlap in excitatory mask and inhibitory mask!')
         muscles = set(self.muscles)
         mask_output = torch.tensor([True if cell in muscles else False for cell in self.cells])
         return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output
@@ -146,8 +146,8 @@ class LinearConnectome(object):
         in_mask_c = self._polarity_mask()
         ex_mask_c *= mask_c
         in_mask_c *= mask_c
-        if torch.any(ex_mask_c == in_mask_c) is True:
-            raise ValueError('There is overlap in excitatory mask and inhibitory mask!')
+        if torch.any(ex_mask_c & in_mask_c) is True:
+            raise AssertionError('There is overlap in excitatory mask and inhibitory mask!')
         muscles = set(self.muscles)
         mask_output = torch.tensor([True if cell in muscles else False for cell in self.cells])
         return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output
