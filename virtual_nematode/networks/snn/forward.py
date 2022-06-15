@@ -157,11 +157,12 @@ class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, dt, steps, n, p, activation_func, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
+    def __init__(self, dt, steps, n, m, p, activation_func, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
         super(SNNCell, self).__init__()
         self.dt = dt  # env dt
         self.steps = steps  # ode steps
         self.n = n  # cell count
+        self.m = m  # muscle count
         self.p = p  # proprioception size
         if activation_func == 'sigmoid':
             self.activation_func = torch.nn.Sigmoid()
@@ -186,6 +187,7 @@ class SNNCell(torch.nn.Module):
         self.mask_p = torch.nn.Parameter(mask_p, requires_grad=False)  # proprioception input synapse bool mask, (proprioception_size, cell_count)
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # cell state bias, (cell_count, )
         self.mask_output = torch.nn.Parameter(mask_output, requires_grad=False)  # muscle output mask, (cell_count, )
+        self.w_output = torch.nn.Parameter(torch.zeros(m).uniform_(0, 1))  # muscle activation scaling, (muscle_count, )
 
     @property
     def state_size(self):
@@ -219,7 +221,7 @@ class SNNCell(torch.nn.Module):
             # cell activation, (batch_size, cell_count)
             activation = self.activation_func(state)
         # muscle output, (batch_size, muscle_count)
-        action = activation[:, self.mask_output]
+        action = activation[:, self.mask_output] * self.w_output.clamp(0, 1)
         return state, activation, action
 
 
