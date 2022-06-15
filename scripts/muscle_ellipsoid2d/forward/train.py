@@ -1,3 +1,5 @@
+from matplotlib import pyplot as plt
+import seaborn as sns
 import torch
 from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity
 from virtual_nematode.networks.snn.forward import Connectome, LinearConnectome
@@ -5,10 +7,31 @@ from virtual_nematode.trainers.ncp import train_eval_test
 import worm_assets
 
 
+def plot_mask(mask_c, mask_g, ex_mask_c, in_mask_c, mask_p):
+    plt.subplot(2, 3, 1)
+    plt.title('chemical mask')
+    sns.heatmap(mask_c, cmap='coolwarm', vmin=0, vmax=1)
+    plt.subplot(2, 3, 2)
+    plt.title('ex chemical mask')
+    sns.heatmap(ex_mask_c, cmap='coolwarm', vmin=0, vmax=1)
+    plt.subplot(2, 3, 3)
+    plt.title('proprioception input mask')
+    sns.heatmap(mask_p, cmap='coolwarm', vmin=0, vmax=1)
+    plt.subplot(2, 3, 4)
+    plt.title('gap junction mask')
+    sns.heatmap(mask_g, cmap='coolwarm', vmin=0, vmax=1)
+    plt.subplot(2, 3, 5)
+    plt.title('in chemical mask')
+    sns.heatmap(in_mask_c, cmap='coolwarm', vmin=0, vmax=1)
+    plt.subplot(2, 3, 6)
+    plt.show()
+    exit()
+
+
 def train(model_name):
     if model_name == 'snn_forward':
         torch.set_default_dtype(torch.float64)
-        # connectome
+        """ mask """
         neurons = neuron_list1()
         muscles = body_wall_muscles()
         ex_synapses, in_synapses = chemical_synapse_polarity()
@@ -21,6 +44,9 @@ def train(model_name):
         p = 24
         mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask(polarity_mask=True)
         mask_p = connectome.proprioception_mask(p, p_mask=True)
+        """ plot mask """
+        # print(mask_c.dtype, mask_g.dtype, ex_mask_c.dtype, in_mask_c.dtype, mask_output.dtype, mask_p.dtype)
+        # plot_mask(mask_c, mask_g, ex_mask_c, in_mask_c, mask_p)
         """ trainer kwargs
         longer seq: data_name='data320.pt', lengths=[5000, 1000, 1000], batch_size=256, cuda=0, device_ids=[0, 1]
         """
