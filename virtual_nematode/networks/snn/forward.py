@@ -127,10 +127,13 @@ class LinearConnectome(object):
         self.chemical = pd.DataFrame(True, index=self.cells, columns=self.cells)
         self.gap_junction = pd.DataFrame(False, index=self.cells, columns=self.cells)
 
-    def proprioception_mask(self, p, **kwargs):
-        mask = pd.DataFrame(True, index=list(range(p)), columns=self.cells)
+    def proprioception_mask(self, p, p_mask=True):
+        mask = pd.DataFrame(False, index=list(range(p)), columns=self.cells)
+        mask.loc[:, self.neurons] = True
         mask = mask.to_numpy(dtype=np.bool)
         mask = torch.from_numpy(mask)
+        if p_mask is False:  # no proprioception mask: all cells receive proprioception input
+            mask = torch.full_like(mask, fill_value=True)
         return mask
 
     def _polarity_mask(self):
