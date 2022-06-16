@@ -166,8 +166,6 @@ class SNNCell(torch.nn.Module):
         self.p = p  # proprioception size
         if activation_func == 'sigmoid':
             self.activation_func = torch.nn.Sigmoid()
-        elif activation_func == 'relu':
-            self.activation_func = torch.nn.ReLU()
         elif activation_func == 'tanh':
             self.activation_func = torch.nn.Sequential(
                 torch.nn.Tanh(),
