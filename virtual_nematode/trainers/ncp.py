@@ -185,6 +185,7 @@ def train_eval_test(
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train
     model = prepare_model(model_name, device, device_ids, **kwargs)
+    """
     if model_name == 'snn_forward':
         group1, group2 = [], []
         for name, param in model.named_parameters():
@@ -198,6 +199,8 @@ def train_eval_test(
         )
     else:
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    """
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     if loss == 'MSELoss':
         criterion = torch.nn.MSELoss(reduction='mean')
     elif loss == 'MSESymmetricJointLoss':
