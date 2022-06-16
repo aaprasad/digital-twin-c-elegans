@@ -55,7 +55,7 @@ def train(model_name):
             'data_name': 'data_new_640_64.pt', 'model_name': model_name, 'lengths': [50000, 10000, 10000], 'batch_size': 256, 'seed': 11,
             'cuda': 0, 'device_ids': [0, 1], 'lr': 0.01, 'epochs': 300, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
             # model kwargs
-            'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'activation_func': 'sigmoid',
+            'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'activation_type': 'sigmoid',
             'mask_c': mask_c, 'ex_mask_c': ex_mask_c, 'in_mask_c': in_mask_c, 'mask_g': mask_g,
             'mask_p': mask_p, 'mask_output': mask_output
         }

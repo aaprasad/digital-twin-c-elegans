@@ -160,24 +160,25 @@ class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, dt, steps, n, m, p, activation_func, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
+    def __init__(self, dt, steps, n, m, p, activation_type, mask_c, ex_mask_c, in_mask_c, mask_g, mask_p, mask_output):
         super(SNNCell, self).__init__()
         self.dt = dt  # env dt
         self.steps = steps  # ode steps
         self.n = n  # cell count
         self.m = m  # muscle count
         self.p = p  # proprioception size
-        if activation_func == 'sigmoid':
+        self.activation_type = activation_type
+        if activation_type == 'sigmoid':
             self.activation_func = torch.nn.Sigmoid()
             self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # cell state bias, (cell_count, )
-        elif activation_func == 'tanh':
+        elif activation_type == 'tanh':
             self.activation_func = torch.nn.Sequential(
                 torch.nn.Tanh(),
                 torch.nn.ReLU()
             )
-            self.bias = torch.nn.Parameter(torch.zeros(n), requires_grad=False)  # cell state bias, (cell_count, )
+            self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(0, 1))  # cell state bias, (cell_count, )
         else:
-            raise ValueError('Invalid activation func type {}'.format(activation_func))
+            raise ValueError('Invalid activation func type {}'.format(activation_type))
         # self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.08, std=0.01))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
@@ -217,7 +218,11 @@ class SNNCell(torch.nn.Module):
             synapse_input = torch.mm(activation, w_c)  # chemical synapse input, (batch_size, cell_count)
             delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
             gap_input = torch.sum(delta_state * w_g, dim=1)  # gap junction input, (batch_size, cell_count)
-            total_input = synapse_input + gap_input + proprioception_input + self.bias  # total input, (batch_size, cell_count)
+            if self.activation_type == 'tanh':
+                bias = self.bias.abs()
+            else:
+                bias = self.bias
+            total_input = synapse_input + gap_input + proprioception_input + bias  # total input, (batch_size, cell_count)
             # cell state, (batch_size, cell_count)
             state = (1 - dt / tau) * state + dt / tau * total_input
             # cell activation, (batch_size, cell_count)
