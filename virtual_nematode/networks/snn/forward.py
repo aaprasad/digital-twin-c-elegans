@@ -166,11 +166,13 @@ class SNNCell(torch.nn.Module):
         self.p = p  # proprioception size
         if activation_func == 'sigmoid':
             self.activation_func = torch.nn.Sigmoid()
+            self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # cell state bias, (cell_count, )
         elif activation_func == 'tanh':
             self.activation_func = torch.nn.Sequential(
                 torch.nn.Tanh(),
                 torch.nn.ReLU()
             )
+            self.bias = torch.nn.Parameter(torch.zeros(n), requires_grad=False)  # cell state bias, (cell_count, )
         else:
             raise ValueError('Invalid activation func type {}'.format(activation_func))
         # self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.08, std=0.01))
@@ -183,7 +185,6 @@ class SNNCell(torch.nn.Module):
         self.mask_g = torch.nn.Parameter(mask_g, requires_grad=False)  # gap junction bool mask, (cell_count, cell_count)
         self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # proprioception input synapse weight, (proprioception_size, cell_count)
         self.mask_p = torch.nn.Parameter(mask_p, requires_grad=False)  # proprioception input synapse bool mask, (proprioception_size, cell_count)
-        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # cell state bias, (cell_count, )
         self.mask_output = torch.nn.Parameter(mask_output, requires_grad=False)  # muscle output mask, (cell_count, )
         self.w_output = torch.nn.Parameter(torch.zeros(m).uniform_(0, 1))  # muscle activation scaling, (muscle_count, )
 
@@ -233,7 +234,9 @@ class SNN(torch.nn.Module):
         batch_size = proprioceptions.size(0)
         seq_len = proprioceptions.size(1)
         # initial state and activation
-        state = torch.zeros((batch_size, self.cell.state_size), device=device)
+        state = self.cell.bias.clone().detach()  # (cell_count, )
+        state = state.unsqueeze(dim=0).repeat(batch_size, 1)
+        state = state.to(device=device)
         activation = self.cell.activation_func(state)
         # simulate sequence
         actions = []
@@ -248,7 +251,9 @@ class SNN(torch.nn.Module):
         if state is None or activation is None:
             device = proprioception.device
             batch_size = proprioception.size(0)
-            state = torch.zeros((batch_size, self.cell.state_size), device=device)
+            state = self.cell.bias.clone().detach()  # (cell_count, )
+            state = state.unsqueeze(dim=0).repeat(batch_size, 1)
+            state = state.to(device=device)
             activation = self.cell.activation_func(state)
         state, activation, action = self.cell.forward(state, activation, proprioception)
         return state, activation, action
