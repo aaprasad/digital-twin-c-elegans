@@ -15,6 +15,7 @@ import worm_assets
 
 
 def show_weight(model):
+    plt.figure(figsize=(10, 15))
     # chemical weight
     w_c = (
         model.cell.w_c.abs() * model.cell.ex_mask_c -
