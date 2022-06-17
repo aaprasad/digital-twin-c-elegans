@@ -30,5 +30,5 @@ if __name__ == '__main__':
     # preprocess_dataset(seq_len=320, load_name='data.pt', save_name='data320.pt')
     # preprocess_dataset(seq_len=64, load_name='data_640.pt', save_name='data_640_64.pt')
     # preprocess_dataset(seq_len=128, load_name='data_640.pt', save_name='data_640_128.pt')
-    # preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64.pt')
-    preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64_32bit.pt', float_type=True)
+    preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64.pt')
+    # preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64_32bit.pt', float_type=True)

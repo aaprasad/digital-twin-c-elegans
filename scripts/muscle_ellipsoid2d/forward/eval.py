@@ -68,7 +68,7 @@ def plot_weight(model, ckpt_name):
 
 def select_model(model_name, ckpt_name):
     if model_name == 'snn_forward':
-        # torch.set_default_dtype(torch.float64)
+        torch.set_default_dtype(torch.float64)
         # connectome
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
         # neurons = neuron_list1()
