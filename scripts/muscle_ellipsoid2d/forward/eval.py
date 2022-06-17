@@ -33,6 +33,7 @@ def show_weight(model):
     sns.heatmap(w_c, cmap='coolwarm', vmin=-w_c_max, vmax=w_c_max)
     # proprioception input weight
     w_p = model.cell.w_p * model.cell.mask_p
+    w_p = w_p.clone().detach()
     w_p_max = w_p.abs().max().item()
     plt.subplot(2, 3, 2)
     plt.title('proprioception input weight')
@@ -45,6 +46,7 @@ def show_weight(model):
     # gap junction weight
     w_g = model.cell.w_g.abs()
     w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * model.cell.mask_g
+    w_g = w_g.clone().detach()
     w_g_max = w_g.max().item()
     plt.subplot(2, 3, 4)
     plt.title('gap junction weight')
