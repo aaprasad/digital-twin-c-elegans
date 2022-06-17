@@ -36,12 +36,12 @@ class Connectome(object):
                     raise KeyError('Chemical adjacency columns do not include {}'.format(cell))
             if cell not in self.gap_junction.index:
                 if cell.lower() not in gap_junction_index:
-                    self.gap_junction[cell, :] = np.full_like(self.gap_junction.columns, fill_value=np.nan)
+                    self.gap_junction.loc[cell, :] = np.full_like(self.gap_junction.columns, fill_value=np.nan)
                 else:
                     raise KeyError('Gap junction adjacency rows do not include {}'.format(cell))
             if cell not in self.gap_junction.columns:
                 if cell.lower() not in gap_junction_columns:
-                    self.gap_junction[:, cell] = np.full_like(self.gap_junction.index, fill_value=np.nan)
+                    self.gap_junction.loc[:, cell] = np.full_like(self.gap_junction.index, fill_value=np.nan)
                 else:
                     raise KeyError('Gap junction adjacency columns do not include {}'.format(cell))
 
