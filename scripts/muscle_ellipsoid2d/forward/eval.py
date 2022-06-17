@@ -6,7 +6,7 @@ import seaborn as sns
 from sim import step_func as x_func
 import sys
 import torch
-from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity
+from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity, neuron_list2
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
 from virtual_nematode.networks.snn.forward import Connectome, LinearConnectome
 from virtual_nematode.testers.forward import tester, single_tester, test_func1, test_func2
@@ -70,10 +70,12 @@ def select_model(model_name, ckpt_name):
     if model_name == 'snn_forward':
         torch.set_default_dtype(torch.float64)
         # connectome
-        neurons = neuron_list1()
-        muscles = body_wall_muscles()
-        ex_synapses, in_synapses = chemical_synapse_polarity()
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
+        # neurons = neuron_list1()
+        muscles = body_wall_muscles()
+        neurons = neuron_list2(path, muscles)
+        print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
+        ex_synapses, in_synapses = chemical_synapse_polarity()
         connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
         # connectome = LinearConnectome(neurons, muscles)
         # params
@@ -81,7 +83,7 @@ def select_model(model_name, ckpt_name):
         n = len(connectome.cells)
         m = len(connectome.muscles)
         p = 24
-        mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask(polarity_mask=True)
+        mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask(polarity_mask=False)
         mask_p = connectome.proprioception_mask(p, p_mask=True)
         kwargs = {
             'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'activation_type': 'sigmoid',

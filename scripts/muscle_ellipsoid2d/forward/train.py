@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import seaborn as sns
 import torch
-from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity
+from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity, neuron_list2
 from virtual_nematode.networks.snn.forward import Connectome, LinearConnectome
 from virtual_nematode.trainers.ncp import train_eval_test
 import worm_assets
@@ -32,10 +32,12 @@ def train(model_name):
     if model_name == 'snn_forward':
         torch.set_default_dtype(torch.float64)
         """ mask """
-        neurons = neuron_list1()
-        muscles = body_wall_muscles()
-        ex_synapses, in_synapses = chemical_synapse_polarity()
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
+        # neurons = neuron_list1()
+        muscles = body_wall_muscles()
+        neurons = neuron_list2(path, muscles)
+        print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
+        ex_synapses, in_synapses = chemical_synapse_polarity()
         connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
         # connectome = LinearConnectome(neurons, muscles)
         # params
@@ -43,7 +45,7 @@ def train(model_name):
         n = len(connectome.cells)
         m = len(connectome.muscles)
         p = 24
-        mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask(polarity_mask=True)
+        mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask(polarity_mask=False)
         mask_p = connectome.proprioception_mask(p, p_mask=True)
         """ plot mask """
         # print(mask_c.dtype, mask_g.dtype, ex_mask_c.dtype, in_mask_c.dtype, mask_output.dtype, mask_p.dtype)
