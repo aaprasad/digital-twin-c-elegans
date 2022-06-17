@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 def head_motor_neurons():
     """ head motor neurons
     https://doi.org/10.1038/s41586-019-1352-7
@@ -103,4 +106,13 @@ def neuron_list1():
     https://doi.org/10.1038/s41598-021-92690-2
     """
     cells = ['AVBL', 'AVBR'] + neuron_list()
+    return cells
+
+
+def neuron_list2(path, muscles):
+    """ all neurons """
+    chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
+    gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
+    cells = set(list(chemical.index) + list(chemical.columns) + list(gap_junction.index) + list(gap_junction.columns)) - set(muscles)
+    cells = list(cells)
     return cells
