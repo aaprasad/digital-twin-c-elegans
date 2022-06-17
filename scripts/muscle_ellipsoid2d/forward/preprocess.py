@@ -1,10 +1,11 @@
 import os
 import torch
 from virtual_nematode.data.clamp import ClampDataset
+from virtual_nematode.data.float import FloatDataset
 from virtual_nematode.data.split import SplitDataset
 
 
-def preprocess_dataset(seq_len, load_name, save_name):
+def preprocess_dataset(seq_len, load_name, save_name, float_type=False):
     """
     x: torch.Tensor, (data_size, seq_len, input_size)
     y: torch.Tensor, (data_size, seq_len, action_size)
@@ -19,6 +20,8 @@ def preprocess_dataset(seq_len, load_name, save_name):
         'x range', dataset.tensors[0].min().item(), dataset.tensors[0].max().item(),
         'y range', dataset.tensors[1].min().item(), dataset.tensors[1].max().item()
     )
+    if float_type is True:
+        dataset = FloatDataset(dataset)
     torch.save(dataset, os.path.join('data', save_name))
 
 
@@ -27,4 +30,5 @@ if __name__ == '__main__':
     # preprocess_dataset(seq_len=320, load_name='data.pt', save_name='data320.pt')
     # preprocess_dataset(seq_len=64, load_name='data_640.pt', save_name='data_640_64.pt')
     # preprocess_dataset(seq_len=128, load_name='data_640.pt', save_name='data_640_128.pt')
-    preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64.pt')
+    # preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64.pt')
+    preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64_32bit.pt', float_type=True)
