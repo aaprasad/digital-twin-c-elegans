@@ -15,7 +15,7 @@ import worm_assets
 
 
 def show_weight(model):
-    plt.figure(figsize=(10, 15))
+    plt.figure(figsize=(20, 10))
     # chemical weight
     w_c = (
         model.cell.w_c.abs() * model.cell.ex_mask_c -
@@ -42,7 +42,7 @@ def show_weight(model):
     tau = model.cell.bias.clone().detach()
     plt.subplot(2, 3, 3)
     plt.title('tau')
-    plt.bar(tau)
+    plt.plot(tau)
     # gap junction weight
     w_g = model.cell.w_g.abs()
     w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * model.cell.mask_g
@@ -55,12 +55,12 @@ def show_weight(model):
     w_output = model.cell.w_output.clone().detach()
     plt.subplot(2, 3, 5)
     plt.title('output scaling weight')
-    plt.bar(w_output)
+    plt.plot(w_output)
     # bias
     bias = model.cell.bias.clone().detach()
     plt.subplot(2, 3, 6)
     plt.title('bias')
-    plt.bar(bias)
+    plt.plot(bias)
     plt.savefig('network.png')
 
 
