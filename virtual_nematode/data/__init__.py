@@ -1,6 +1,7 @@
 import virtual_nematode.data.chemotaxis
 import virtual_nematode.data.clamp
 import virtual_nematode.data.concat
+import virtual_nematode.data.float
 import virtual_nematode.data.simulation
 import virtual_nematode.data.split
 import virtual_nematode.data.subsequence
