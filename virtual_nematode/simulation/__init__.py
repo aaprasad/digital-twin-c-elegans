@@ -13,8 +13,7 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     results = []  # results of all simulations
     if trials > 1:
         seed = None  # ensure that seed is different in each trial
-    # angles = []
-    # actions = []
+    # angles, actions = [], []
     for i in range(trials):
         result = []  # results of 1 simulation
         env.seed(seed)
@@ -31,13 +30,11 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
             if done:
                 results.append(done_func(index=i, result=result))
                 break
+    # plt.subplot(1, 2, 1)
     # angles = np.array(angles)
-    # for i in range(6):
-    #     plt.subplot(2, 3, i + 1)
-    #     for j in range(4):
-    #         index = i * 4 + j
-    #         plt.plot(angles[:, index], label=str(index))
-    #     plt.legend()
+    # angles_max = np.max(np.abs(angles))
+    # sns.heatmap(angles.T, cmap='coolwarm', vmin=-angles_max, vmax=angles_max)
+    # plt.subplot(1, 2, 2)
     # actions = np.array(actions)
     # sns.heatmap(actions.clip(0, 1).T, cmap='coolwarm')
     # plt.show()
