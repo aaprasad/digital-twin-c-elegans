@@ -14,7 +14,7 @@ from virtual_nematode.trainers.ncp import prepare_model
 import worm_assets
 
 
-def show_weight(model):
+def plot_weight(model, ckpt_name):
     plt.figure(figsize=(20, 10))
     # chemical weight
     w_c = (
@@ -39,7 +39,8 @@ def show_weight(model):
     plt.title('proprioception input weight')
     sns.heatmap(w_p, cmap='coolwarm', vmin=-w_p_max, vmax=w_p_max)
     # tau
-    tau = model.cell.bias.clone().detach()
+    tau = model.cell.tau.clamp(0.01, 0.05)
+    tau = tau.clone().detach()
     plt.subplot(2, 3, 3)
     plt.title('tau')
     plt.plot(tau)
@@ -52,7 +53,8 @@ def show_weight(model):
     plt.title('gap junction weight')
     sns.heatmap(w_g, cmap='coolwarm', vmin=0, vmax=w_g_max)
     # output scaling weight
-    w_output = model.cell.w_output.clone().detach()
+    w_output = model.cell.w_output.clamp(0, 1)
+    w_output = w_output.clone().detach()
     plt.subplot(2, 3, 5)
     plt.title('output scaling weight')
     plt.plot(w_output)
@@ -61,7 +63,7 @@ def show_weight(model):
     plt.subplot(2, 3, 6)
     plt.title('bias')
     plt.plot(bias)
-    plt.savefig('network.png')
+    plt.savefig(os.path.join(data_path, '{}.png'.format(ckpt_name)))
 
 
 def select_model(model_name, ckpt_name):
@@ -95,7 +97,7 @@ def select_model(model_name, ckpt_name):
     else:
         raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
-    # show_weight(model)
+    plot_weight(model, ckpt_name)
     # print(torch.all(mask_c == model.cell.mask_c))
     # print(torch.all(mask_g == model.cell.mask_g))
     # print(torch.all(ex_mask_c == model.cell.ex_mask_c))
