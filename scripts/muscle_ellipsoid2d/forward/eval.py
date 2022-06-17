@@ -1,6 +1,8 @@
 from data import x_func as data_func
 import gym
+from matplotlib import pyplot as plt
 import os
+import seaborn as sns
 from sim import step_func as x_func
 import sys
 import torch
@@ -10,6 +12,53 @@ from virtual_nematode.networks.snn.forward import Connectome, LinearConnectome
 from virtual_nematode.testers.forward import tester, single_tester, test_func1, test_func2
 from virtual_nematode.trainers.ncp import prepare_model
 import worm_assets
+
+
+def show_weight(model):
+    # chemical weight
+    w_c = (
+        model.cell.w_c.abs() * model.cell.ex_mask_c -
+        model.cell.w_c.abs() * model.cell.in_mask_c +
+        model.cell.w_c * (
+            model.cell.mask_c.float() -
+            model.cell.ex_mask_c.float() -
+            model.cell.in_mask_c.float()
+        )
+    )
+    w_c = w_c.clone().detach()
+    w_c_max = w_c.abs().max().item()
+    plt.subplot(2, 3, 1)
+    plt.title('chemical weight')
+    sns.heatmap(w_c, cmap='coolwarm', vmin=-w_c_max, vmax=w_c_max)
+    # proprioception input weight
+    w_p = model.cell.w_p * model.cell.mask_p
+    w_p_max = w_p.abs().max().item()
+    plt.subplot(2, 3, 2)
+    plt.title('proprioception input weight')
+    sns.heatmap(w_p, cmap='coolwarm', vmin=-w_p_max, vmax=w_p_max)
+    # tau
+    tau = model.cell.bias.clone().detach()
+    plt.subplot(2, 3, 3)
+    plt.title('tau')
+    plt.bar(tau)
+    # gap junction weight
+    w_g = model.cell.w_g.abs()
+    w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * model.cell.mask_g
+    w_g_max = w_g.max().item()
+    plt.subplot(2, 3, 4)
+    plt.title('gap junction weight')
+    sns.heatmap(w_g, cmap='coolwarm', vmin=0, vmax=w_g_max)
+    # output scaling weight
+    w_output = model.cell.w_output.clone().detach()
+    plt.subplot(2, 3, 5)
+    plt.title('output scaling weight')
+    plt.bar(w_output)
+    # bias
+    bias = model.cell.bias.clone().detach()
+    plt.subplot(2, 3, 6)
+    plt.title('bias')
+    plt.bar(bias)
+    plt.savefig('network.png')
 
 
 def select_model(model_name, ckpt_name):
@@ -43,6 +92,7 @@ def select_model(model_name, ckpt_name):
     else:
         raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
+    # show_weight(model)
     # print(torch.all(mask_c == model.cell.mask_c))
     # print(torch.all(mask_g == model.cell.mask_g))
     # print(torch.all(ex_mask_c == model.cell.ex_mask_c))
