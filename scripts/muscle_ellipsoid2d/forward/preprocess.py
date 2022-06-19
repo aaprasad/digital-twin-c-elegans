@@ -1,8 +1,26 @@
+from matplotlib import pyplot as plt
 import os
 import torch
 from virtual_nematode.data.clamp import ClampDataset
 from virtual_nematode.data.float import FloatDataset
 from virtual_nematode.data.split import SplitDataset
+
+
+def plot_data(save_name):
+    path = os.path.join('data', save_name)
+    dataset = torch.load(path, map_location=torch.device('cpu'))
+    x, y = dataset.tensors
+    print(x.shape, y.shape)
+    plt.subplot(1, 2, 1)
+    plt.plot(x[0, :, 0], label='0')
+    plt.plot(x[0, :, 12], label='12')
+    plt.title('observation')
+    plt.subplot(1, 2, 2)
+    plt.plot(y[0, :, 0], label='0')
+    plt.plot(y[0, :, 48], label='48')
+    plt.title('action')
+    plt.legend()
+    plt.savefig(path + '.png')
 
 
 def preprocess_dataset(seq_len, load_name, save_name, float_type=False):
@@ -32,3 +50,4 @@ if __name__ == '__main__':
     # preprocess_dataset(seq_len=128, load_name='data_640.pt', save_name='data_640_128.pt')
     preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64.pt')
     # preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64_32bit.pt', float_type=True)
+    plot_data(save_name='data_new_640_64.pt')
