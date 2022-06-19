@@ -110,9 +110,17 @@ def neuron_list1():
 
 
 def neuron_list2(path, muscles):
-    """ all neurons """
-    chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
+    """ all neurons
+    gap_junction.index and gap_junction.columns contain the same set of cells
+    chemical.index is a subset of gap_junction.index
+    chemical.columns (excluding {'g2L', 'bm', 'g2R', 'g1p'}) is a subset of gap_junction.index
+    since these 4 cells only receive chemical input and don't generate output, they can be discarded
+    """
     gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
-    cells = set(list(chemical.index) + list(chemical.columns) + list(gap_junction.index) + list(gap_junction.columns)) - set(muscles)
-    cells = list(cells)
+    all_cells = list(gap_junction.index)
+    muscles_cells = set(muscles)
+    cells = []
+    for cell in all_cells:
+        if cell not in muscles_cells:
+            cells.append(cell)
     return cells
