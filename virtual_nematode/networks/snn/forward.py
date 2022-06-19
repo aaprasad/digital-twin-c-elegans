@@ -19,31 +19,22 @@ class Connectome(object):
         """ check if cells exist
         cells: a list of cell names
         """
-        chemical_index = set([cell.lower() for cell in self.chemical.index])
-        chemical_columns = set([cell.lower() for cell in self.chemical.columns])
-        gap_junction_index = set([cell.lower() for cell in self.gap_junction.index])
-        gap_junction_columns = set([cell.lower() for cell in self.gap_junction.columns])
+        all_cells = set(
+            list(self.chemical.index) + list(self.chemical.columns) +
+            list(self.gap_junction.index) + list(self.gap_junction.columns)
+        )
+        for cell in cells:
+            if cell not in all_cells:
+                raise AssertionError('Cell {} does not exist!'.format(cell))
         for cell in cells:
             if cell not in self.chemical.index:
-                if cell.lower() not in chemical_index:
-                    self.chemical.loc[cell, :] = np.full_like(self.chemical.columns, fill_value=np.nan)
-                else:
-                    raise KeyError('Chemical adjacency rows do not include {}'.format(cell))
+                self.chemical.loc[cell, :] = np.full_like(self.chemical.columns, fill_value=np.nan)
             if cell not in self.chemical.columns:
-                if cell.lower() not in chemical_columns:
-                    self.chemical.loc[:, cell] = np.full_like(self.chemical.index, fill_value=np.nan)
-                else:
-                    raise KeyError('Chemical adjacency columns do not include {}'.format(cell))
+                self.chemical.loc[:, cell] = np.full_like(self.chemical.index, fill_value=np.nan)
             if cell not in self.gap_junction.index:
-                if cell.lower() not in gap_junction_index:
-                    self.gap_junction.loc[cell, :] = np.full_like(self.gap_junction.columns, fill_value=np.nan)
-                else:
-                    raise KeyError('Gap junction adjacency rows do not include {}'.format(cell))
+                self.gap_junction.loc[cell, :] = np.full_like(self.gap_junction.columns, fill_value=np.nan)
             if cell not in self.gap_junction.columns:
-                if cell.lower() not in gap_junction_columns:
-                    self.gap_junction.loc[:, cell] = np.full_like(self.gap_junction.index, fill_value=np.nan)
-                else:
-                    raise KeyError('Gap junction adjacency columns do not include {}'.format(cell))
+                self.gap_junction.loc[:, cell] = np.full_like(self.gap_junction.index, fill_value=np.nan)
 
     def _slice(self, cells):
         # cells: a list of cell names
