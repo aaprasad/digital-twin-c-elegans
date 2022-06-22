@@ -96,8 +96,8 @@ class Connectome(object):
         if polarity_mask is False:  # no chemical synapse polarity mask: no polarity restraint
             ex_mask_c = torch.full_like(ex_mask_c, fill_value=False)
             in_mask_c = torch.full_like(in_mask_c, fill_value=False)
-        ex_mask_c *= mask_c  # excitatory chemical synapse bool mask
-        in_mask_c *= mask_c  # inhibitory chemical synapse bool mask
+        ex_mask_c = ex_mask_c & mask_c  # excitatory chemical synapse bool mask
+        in_mask_c = in_mask_c & mask_c  # inhibitory chemical synapse bool mask
         if torch.any(ex_mask_c & in_mask_c) is True:
             raise AssertionError('There is overlap in excitatory mask and inhibitory mask!')
         muscles = set(self.muscles)
@@ -138,8 +138,8 @@ class LinearConnectome(object):
         mask_g = torch.from_numpy(self.gap_junction.to_numpy(dtype=np.bool))
         ex_mask_c = self._polarity_mask()
         in_mask_c = self._polarity_mask()
-        ex_mask_c *= mask_c
-        in_mask_c *= mask_c
+        ex_mask_c = ex_mask_c & mask_c
+        in_mask_c = in_mask_c & mask_c
         if torch.any(ex_mask_c & in_mask_c) is True:
             raise AssertionError('There is overlap in excitatory mask and inhibitory mask!')
         muscles = set(self.muscles)
@@ -173,6 +173,8 @@ class SNNCell(torch.nn.Module):
         # self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.08, std=0.01))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
+        # exclude excitatory/inhibitory synapse
+        mask_c = mask_c ^ (ex_mask_c & mask_c) ^ (in_mask_c & mask_c)
         self.mask_c = torch.nn.Parameter(mask_c, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
         self.ex_mask_c = torch.nn.Parameter(ex_mask_c, requires_grad=False)  # excitatory chemical synapse bool mask, (cell_count, cell_count)
         self.in_mask_c = torch.nn.Parameter(in_mask_c, requires_grad=False)  # inhibitory chemical synapse bool mask, (cell_count, cell_count)
@@ -194,7 +196,7 @@ class SNNCell(torch.nn.Module):
         proprioception: (batch_size, proprioception_size)
         """
         # chemical synapse weight
-        w_c = self.w_c.abs() * self.ex_mask_c - self.w_c.abs() * self.in_mask_c + self.w_c * (self.mask_c.float() - self.ex_mask_c.float() - self.in_mask_c.float())
+        w_c = self.w_c.abs() * self.ex_mask_c - self.w_c.abs() * self.in_mask_c + self.w_c * self.mask_c
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.mask_g
