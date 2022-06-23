@@ -62,5 +62,5 @@ if __name__ == '__main__':
     model_name = 'snn_forward'
     model_folder = os.path.join('runs', runs_folder)
     data_path = os.path.join('data', runs_folder)
-    model = select_model(model_folder, 'snn_forward', ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
     plot_model_weight(model, ckpt_name)
