@@ -76,8 +76,17 @@ def plot_action(data_name, ckpt_name):
             plt.plot(action[0:640, index], label='nn')
             plt.title(name[j] + str(i + 1) + '-' + str(index))
         plt.legend()
-        plt.savefig('{}.{:02d}.png'.format(ckpt_path, i + 1))
+        plt.savefig(ckpt_path + '.{:02d}.png'.format(i + 1))
         plt.close(i)
+
+
+def plot_action_heatmap(ckpt_name):
+    ckpt_path = os.path.join(data_path, ckpt_name)
+    action = torch.load(ckpt_path, map_location=torch.device('cpu'))
+    print(action.shape)
+    plt.figure(figsize=(13, 10))
+    sns.heatmap(action[0:320, :].clamp(0, 1).T, cmap='coolwarm')
+    plt.savefig(ckpt_path + '.png')
 
 
 if __name__ == '__main__':
@@ -88,4 +97,5 @@ if __name__ == '__main__':
     data_path = os.path.join('data', runs_folder)
     model = select_model(model_folder, model_name, ckpt_name)
     plot_model_weight(model, ckpt_name)
-    plot_action('data_new_640.pt', ckpt_name)
+    # plot_action('data_new_640.pt', ckpt_name)
+    plot_action_heatmap(ckpt_name)
