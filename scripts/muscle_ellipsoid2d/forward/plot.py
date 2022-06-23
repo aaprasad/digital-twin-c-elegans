@@ -2,6 +2,7 @@ from eval import select_model
 from matplotlib import pyplot as plt
 import os
 import seaborn as sns
+import torch
 
 
 def plot_model_weight(model, ckpt_name):
@@ -56,6 +57,29 @@ def plot_model_weight(model, ckpt_name):
     plt.savefig(os.path.join(data_path, '{}.png'.format(ckpt_name)))
 
 
+def plot_action(data_name, ckpt_name):
+    dataset = torch.load(os.path.join('data', data_name), map_location=torch.device('cpu'))
+    x, y = dataset.tensors
+    print(x.shape, y.shape)
+    ckpt_path = os.path.join(data_path, ckpt_name)
+    action = torch.load(ckpt_path, map_location=torch.device('cpu'))
+    print(action.shape)
+    name = ['dl', 'dr', 'vl', 'vr']
+    for i in range(24):
+        plt.figure(i, figsize=(10, 10))
+        for j, start in enumerate([0, 24, 48, 71]):
+            if name[j] == 'vl' and i == 23:
+                continue
+            plt.subplot(2, 2, j + 1)
+            index = start + i
+            plt.plot(y[0, 0:640, index], label='data')
+            plt.plot(action[0:640, index], label='nn')
+            plt.title(name[j] + str(i + 1) + '-' + str(index))
+        plt.legend()
+        plt.savefig('{}.{:02d}.png'.format(ckpt_path, i + 1))
+        plt.close(i)
+
+
 if __name__ == '__main__':
     runs_folder = ''
     ckpt_name = 'model.pt'
@@ -64,3 +88,4 @@ if __name__ == '__main__':
     data_path = os.path.join('data', runs_folder)
     model = select_model(model_folder, model_name, ckpt_name)
     plot_model_weight(model, ckpt_name)
+    plot_action('data_new_640.pt', ckpt_name)
