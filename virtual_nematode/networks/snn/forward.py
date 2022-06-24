@@ -186,10 +186,6 @@ class SNNCell(torch.nn.Module):
         self.w_output = torch.nn.Parameter(torch.zeros(m).uniform_(0, 1))  # muscle activation scaling, (muscle_count, )
 
     @property
-    def state_size(self):
-        return self.n
-
-    @property
     def init_state(self):
         if self.activation_type == 'tanh':
             return self.bias.abs().clone().detach()  # (cell_count, )
