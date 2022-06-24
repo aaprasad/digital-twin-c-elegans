@@ -105,7 +105,7 @@ class Connectome(object):
         return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output
 
 
-class LinearConnectome(object):
+class DummyConnectome(object):
     """ fully connected chemical connectome
     * fully connected chemical connections, no polarity constraints
     * no gap junction connection

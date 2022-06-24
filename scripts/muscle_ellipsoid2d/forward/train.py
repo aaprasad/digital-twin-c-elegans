@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 import torch
 from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity, neuron_list2
-from virtual_nematode.networks.snn.forward import Connectome, LinearConnectome
+from virtual_nematode.networks.snn.forward import Connectome, DummyConnectome
 from virtual_nematode.trainers.ncp import train_eval_test
 import worm_assets
 
@@ -39,7 +39,7 @@ def train(model_name):
         print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
         ex_synapses, in_synapses = chemical_synapse_polarity()
         connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
-        # connectome = LinearConnectome(neurons, muscles)
+        # connectome = DummyConnectome(neurons, muscles)
         # params
         dt = 0.04
         n = len(connectome.cells)
