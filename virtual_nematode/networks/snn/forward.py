@@ -189,6 +189,13 @@ class SNNCell(torch.nn.Module):
     def state_size(self):
         return self.n
 
+    @property
+    def init_state(self):
+        if self.activation_type == 'tanh':
+            return self.bias.abs().clone().detach()  # (cell_count, )
+        else:
+            return self.bias.clone().detach()  # (cell_count, )
+
     def forward(self, state, activation, proprioception):
         """ forward 1 step
         state: cell state, (batch_size, cell_count)
@@ -236,7 +243,7 @@ class SNN(torch.nn.Module):
         batch_size = proprioceptions.size(0)
         seq_len = proprioceptions.size(1)
         # initial state and activation
-        state = self.cell.bias.clone().detach()  # (cell_count, )
+        state = self.cell.init_state  # (cell_count, )
         state = state.unsqueeze(dim=0).repeat(batch_size, 1)
         state = state.to(device=device)
         activation = self.cell.activation_func(state)
@@ -253,7 +260,7 @@ class SNN(torch.nn.Module):
         if state is None or activation is None:
             device = proprioception.device
             batch_size = proprioception.size(0)
-            state = self.cell.bias.clone().detach()  # (cell_count, )
+            state = self.cell.init_state  # (cell_count, )
             state = state.unsqueeze(dim=0).repeat(batch_size, 1)
             state = state.to(device=device)
             activation = self.cell.activation_func(state)
