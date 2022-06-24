@@ -203,22 +203,22 @@ class SNNCell(torch.nn.Module):
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.mask_g
         # proprioception weight
         w_p = self.w_p * self.mask_p
-        proprioception_input = torch.mm(proprioception, w_p)  # proprioception input, (batch_size, cell_count)
-        # time constant
-        dt = self.dt / self.steps
-        # tau = self.tau.clamp(min=dt)
-        tau = self.tau.clamp(0.01, 0.05)
+        # proprioception input
+        external_input = torch.mm(proprioception, w_p)  # proprioception input, (batch_size, cell_count)
+        # proprioception input + bias
+        if self.activation_type == 'tanh':
+            external_input += self.bias.abs()
+        else:
+            external_input += self.bias
+        # dt / tau
+        dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.05)
         for i in range(self.steps):
             synapse_input = torch.mm(activation, w_c)  # chemical synapse input, (batch_size, cell_count)
             delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
             gap_input = torch.sum(delta_state * w_g, dim=1)  # gap junction input, (batch_size, cell_count)
-            if self.activation_type == 'tanh':
-                bias = self.bias.abs()
-            else:
-                bias = self.bias
-            total_input = synapse_input + gap_input + proprioception_input + bias  # total input, (batch_size, cell_count)
+            total_input = synapse_input + gap_input + external_input  # total input, (batch_size, cell_count)
             # cell state, (batch_size, cell_count)
-            state = (1 - dt / tau) * state + dt / tau * total_input
+            state = (1 - dt_tau) * state + dt_tau * total_input
             # cell activation, (batch_size, cell_count)
             activation = self.activation_func(state)
         # muscle output, (batch_size, muscle_count)
