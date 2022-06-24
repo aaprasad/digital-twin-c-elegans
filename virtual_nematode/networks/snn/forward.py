@@ -196,7 +196,8 @@ class SNNCell(torch.nn.Module):
         proprioception: (batch_size, proprioception_size)
         """
         # chemical synapse weight
-        w_c = self.w_c.abs() * self.ex_mask_c - self.w_c.abs() * self.in_mask_c + self.w_c * self.mask_c
+        w_c = self.w_c.abs()
+        w_c = w_c * self.ex_mask_c - w_c * self.in_mask_c + self.w_c * self.mask_c
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.mask_g
