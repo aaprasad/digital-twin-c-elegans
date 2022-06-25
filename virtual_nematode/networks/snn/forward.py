@@ -28,8 +28,7 @@ class DummyConnectome(object):
         """
         mask = pd.DataFrame(False, index=list(range(self.p)), columns=self.cells)
         mask.loc[:, self.neurons] = True
-        mask = mask.to_numpy(dtype=np.bool)
-        mask = torch.from_numpy(mask)
+        mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         if self.p_mask is False:  # no proprioception mask: all cells receive proprioception input
             mask = torch.full_like(mask, fill_value=True)
         return mask
@@ -41,8 +40,7 @@ class DummyConnectome(object):
 
     def _polarity_mask(self, **kwargs):
         mask = pd.DataFrame(False, index=self.cells, columns=self.cells)
-        mask = mask.to_numpy(dtype=np.bool)
-        mask = torch.from_numpy(mask)
+        mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
 
     def _polarity_masks(self):
@@ -135,8 +133,7 @@ class Connectome(DummyConnectome):
         if self.polarity_mask is True:
             for pre_cells, post_cells in synapses:
                 mask.loc[pre_cells, post_cells] = True
-        mask = mask.to_numpy(dtype=np.bool)
-        mask = torch.from_numpy(mask)
+        mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
 
     def _polarity_masks(self):
