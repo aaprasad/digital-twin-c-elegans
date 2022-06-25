@@ -90,18 +90,18 @@ class Connectome(DummyConnectome):
     def _init(self):
         chemical = pd.read_excel(self.path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
         gap_junction = pd.read_excel(self.path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
-        self._check()
+        self._check(gap_junction)
         chemical = self._add(chemical)
         gap_junction = self._add(gap_junction)
         chemical = self._slice(chemical)
         gap_junction = self._slice(gap_junction)
         return chemical, gap_junction
 
-    def _check(self):
+    def _check(self, gap_junction):
         """ check if cells exist
         cells: a list of cell names
         """
-        all_cells = set(list(self.gap_junction.index))
+        all_cells = set(list(gap_junction.index))
         for cell in self.cells:
             if cell not in all_cells:
                 raise AssertionError('Cell {} does not exist!'.format(cell))
