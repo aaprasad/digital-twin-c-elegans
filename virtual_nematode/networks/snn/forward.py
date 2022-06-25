@@ -23,6 +23,9 @@ class DummyConnectome(object):
         return chemical, gap_junction
 
     def _proprioception_mask(self):
+        """ proprioception input synapse bool mask
+        https://doi.org/10.1016/j.neuron.2012.08.039
+        """
         mask = pd.DataFrame(False, index=list(range(self.p)), columns=self.cells)
         mask.loc[:, self.neurons] = True
         mask = mask.to_numpy(dtype=np.bool)
@@ -31,11 +34,16 @@ class DummyConnectome(object):
             mask = torch.full_like(mask, fill_value=True)
         return mask
 
-    def _polarity_mask(self):
+    def _weight(self):
+        mask_c = torch.from_numpy(self.chemical.to_numpy(dtype=np.bool))
+        mask_g = torch.from_numpy(self.gap_junction.to_numpy(dtype=np.bool))
+        return mask_c, mask_g
+
+    def _polarity_mask(self, **kwargs):
         mask = pd.DataFrame(False, index=self.cells, columns=self.cells)
         mask = mask.to_numpy(dtype=np.bool)
         mask = torch.from_numpy(mask)
-        return mask, mask.clone()
+        return mask
 
     def _polarity_masks(self):
         ex_mask_c = self._polarity_mask()
@@ -43,8 +51,21 @@ class DummyConnectome(object):
         return ex_mask_c, in_mask_c
 
     def mask(self):
-        mask_c = torch.from_numpy(self.chemical.to_numpy(dtype=np.bool))
-        mask_g = torch.from_numpy(self.gap_junction.to_numpy(dtype=np.bool))
+        """ mask generatation
+        chemical mask
+            mask_ij is True -> w_ij
+            mask_ij is False -> w_ij = 0
+        gap junction mask: symmetric
+            mask_ij is True -> g_ij, g_ji
+            mask_ij is False -> g_ij = g_ji = 0
+        excitatory chemical mask: a sub mask of chemical mask
+            mask_ij is True -> w_ij >= 0
+            mask_ij is False -> w_ij
+        inhibitory chemical mask: a sub mask of chemical mask, no overlap with excitatory chemical mask
+            mask_ij is True -> w_ij <= 0
+            mask_ij is False -> w_ij
+        """
+        mask_c, mask_g = self._weight()
         ex_mask_c, in_mask_c = self._polarity_masks()
         ex_mask_c = ex_mask_c & mask_c
         in_mask_c = in_mask_c & mask_c
@@ -56,23 +77,23 @@ class DummyConnectome(object):
         return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output, mask_p
 
 
-class Connectome(object):
+class Connectome(DummyConnectome):
     def __init__(self, neurons, muscles, ex_synapses, in_synapses, path, p, p_mask, polarity_mask):
-        self.neurons = neurons
-        self.muscles = muscles
-        self.cells = neurons + muscles
         self.ex_synapses = ex_synapses
         self.in_synapses = in_synapses
         self.path = path
-        self.p = p
-        self.p_mask = p_mask
         self.polarity_mask = polarity_mask
+        super(Connectome, self).__init__(neurons, muscles, p, p_mask)
 
     def _init(self):
-        self.chemical = pd.read_excel(self.path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
-        self.gap_junction = pd.read_excel(self.path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
+        chemical = pd.read_excel(self.path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
+        gap_junction = pd.read_excel(self.path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
         self._check()
-        self._slice()
+        chemical = self._add(chemical)
+        gap_junction = self._add(gap_junction)
+        chemical = self._slice(chemical)
+        gap_junction = self._slice(gap_junction)
+        return chemical, gap_junction
 
     def _check(self):
         """ check if cells exist
@@ -82,26 +103,25 @@ class Connectome(object):
         for cell in self.cells:
             if cell not in all_cells:
                 raise AssertionError('Cell {} does not exist!'.format(cell))
-        for cell in self.cells:
-            if cell not in self.chemical.index:
-                self.chemical.loc[cell, :] = np.full_like(self.chemical.columns, fill_value=np.nan)
-            if cell not in self.chemical.columns:
-                self.chemical.loc[:, cell] = np.full_like(self.chemical.index, fill_value=np.nan)
-            if cell not in self.gap_junction.index:
-                self.gap_junction.loc[cell, :] = np.full_like(self.gap_junction.columns, fill_value=np.nan)
-            if cell not in self.gap_junction.columns:
-                self.gap_junction.loc[:, cell] = np.full_like(self.gap_junction.index, fill_value=np.nan)
 
-    def _slice(self):
-        self.chemical = self.chemical.loc[self.cells, self.cells]
-        self.gap_junction = self.gap_junction.loc[self.cells, self.cells]
+    def _add(self, adjacency):
+        for cell in self.cells:
+            if cell not in adjacency.index:
+                adjacency.loc[cell, :] = np.full_like(adjacency.columns, fill_value=np.nan)
+            if cell not in adjacency.columns:
+                adjacency.loc[:, cell] = np.full_like(adjacency.index, fill_value=np.nan)
+        return adjacency
+
+    def _slice(self, adjacency):
+        adjacency = adjacency.loc[self.cells, self.cells]
+        return adjacency
 
     def _weight(self):
-        chemical = self.chemical.replace(np.nan, 0).to_numpy(dtype=np.int32)
-        gap_junction = self.gap_junction.replace(np.nan, 0).to_numpy(dtype=np.int32)
-        chemical = torch.from_numpy(chemical)
-        gap_junction = torch.from_numpy(gap_junction)
-        return chemical, gap_junction
+        chemical = self.chemical.replace(np.nan, 0)
+        gap_junction = self.gap_junction.replace(np.nan, 0)
+        mask_c = torch.from_numpy(chemical.to_numpy(dtype=np.bool))
+        mask_g = torch.from_numpy(gap_junction.to_numpy(dtype=np.bool))
+        return mask_c, mask_g
 
     def _polarity_mask(self, synapses):
         """ chemical synaptic polarity mask
@@ -121,46 +141,6 @@ class Connectome(object):
         ex_mask_c = self._polarity_mask(self.ex_synapses)
         in_mask_c = self._polarity_mask(self.in_synapses)
         return ex_mask_c, in_mask_c
-
-    def _proprioception_mask(self):
-        """ proprioception input synapse bool mask
-        https://doi.org/10.1016/j.neuron.2012.08.039
-        """
-        mask = pd.DataFrame(False, index=list(range(self.p)), columns=self.cells)
-        mask.loc[:, self.neurons] = True
-        mask = mask.to_numpy(dtype=np.bool)
-        mask = torch.from_numpy(mask)
-        if self.p_mask is False:  # no proprioception mask: all cells receive proprioception input
-            mask = torch.full_like(mask, fill_value=True)
-        return mask
-
-    def mask(self):
-        """ mask generatation
-        chemical mask
-            mask_ij is True -> w_ij
-            mask_ij is False -> w_ij = 0
-        gap junction mask: symmetric
-            mask_ij is True -> g_ij, g_ji
-            mask_ij is False -> g_ij = g_ji = 0
-        excitatory chemical mask: a sub mask of chemical mask
-            mask_ij is True -> w_ij >= 0
-            mask_ij is False -> w_ij
-        inhibitory chemical mask: a sub mask of chemical mask, no overlap with excitatory chemical mask
-            mask_ij is True -> w_ij <= 0
-            mask_ij is False -> w_ij
-        """
-        chemical, gap_junction = self._weight()
-        mask_c = chemical.bool()  # chemical synapse bool mask
-        mask_g = gap_junction.bool()  # gap junction bool mask
-        ex_mask_c, in_mask_c = self._polarity_masks()
-        ex_mask_c = ex_mask_c & mask_c  # excitatory chemical synapse bool mask
-        in_mask_c = in_mask_c & mask_c  # inhibitory chemical synapse bool mask
-        if torch.any(ex_mask_c & in_mask_c) is True:
-            raise AssertionError('There is overlap in excitatory mask and inhibitory mask!')
-        muscles = set(self.muscles)
-        mask_output = torch.tensor([True if cell in muscles else False for cell in self.cells])
-        mask_p = self._proprioception_mask()
-        return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output, mask_p
 
 
 class SNNCell(torch.nn.Module):
