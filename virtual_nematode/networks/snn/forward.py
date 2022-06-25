@@ -111,19 +111,21 @@ class DummyConnectome(object):
     * no gap junction connection
     * fully connected proprioception input to all cells
     """
-    def __init__(self, neurons, muscles):
+    def __init__(self, neurons, muscles, p, p_mask):
         self.neurons = neurons
         self.muscles = muscles
         self.cells = neurons + muscles
+        self.p = p
+        self.p_mask = p_mask
         self.chemical = pd.DataFrame(True, index=self.cells, columns=self.cells)
         self.gap_junction = pd.DataFrame(False, index=self.cells, columns=self.cells)
 
-    def proprioception_mask(self, p, p_mask=True):
-        mask = pd.DataFrame(False, index=list(range(p)), columns=self.cells)
+    def _proprioception_mask(self):
+        mask = pd.DataFrame(False, index=list(range(self.p)), columns=self.cells)
         mask.loc[:, self.neurons] = True
         mask = mask.to_numpy(dtype=np.bool)
         mask = torch.from_numpy(mask)
-        if p_mask is False:  # no proprioception mask: all cells receive proprioception input
+        if self.p_mask is False:  # no proprioception mask: all cells receive proprioception input
             mask = torch.full_like(mask, fill_value=True)
         return mask
 
@@ -144,7 +146,8 @@ class DummyConnectome(object):
             raise AssertionError('There is overlap in excitatory mask and inhibitory mask!')
         muscles = set(self.muscles)
         mask_output = torch.tensor([True if cell in muscles else False for cell in self.cells])
-        return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output
+        mask_p = self._proprioception_mask()
+        return mask_c, mask_g, ex_mask_c, in_mask_c, mask_output, mask_p
 
 
 class SNNCell(torch.nn.Module):
