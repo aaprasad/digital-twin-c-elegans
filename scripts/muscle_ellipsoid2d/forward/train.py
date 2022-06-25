@@ -25,7 +25,6 @@ def plot_mask(mask_c, mask_g, ex_mask_c, in_mask_c, mask_p):
     sns.heatmap(in_mask_c, cmap='coolwarm', vmin=0, vmax=1)
     plt.subplot(2, 3, 6)
     plt.show()
-    exit()
 
 
 def train(model_name):
