@@ -3,7 +3,7 @@ import pandas as pd
 import torch
 
 
-class Connectome(object):
+class Connectome():
     def __init__(self, neurons, muscles, ex_synapses, in_synapses, path):
         self.neurons = neurons
         self.muscles = muscles
@@ -117,8 +117,12 @@ class DummyConnectome(object):
         self.cells = neurons + muscles
         self.p = p
         self.p_mask = p_mask
-        self.chemical = pd.DataFrame(True, index=self.cells, columns=self.cells)
-        self.gap_junction = pd.DataFrame(False, index=self.cells, columns=self.cells)
+        self.chemical, self.gap_junction = self._init()
+
+    def _init(self):
+        chemical = pd.DataFrame(True, index=self.cells, columns=self.cells)
+        gap_junction = pd.DataFrame(False, index=self.cells, columns=self.cells)
+        return chemical, gap_junction
 
     def _proprioception_mask(self):
         mask = pd.DataFrame(False, index=list(range(self.p)), columns=self.cells)
@@ -133,13 +137,12 @@ class DummyConnectome(object):
         mask = pd.DataFrame(False, index=self.cells, columns=self.cells)
         mask = mask.to_numpy(dtype=np.bool)
         mask = torch.from_numpy(mask)
-        return mask
+        return mask, mask.clone()
 
-    def mask(self, **kwargs):
+    def mask(self):
         mask_c = torch.from_numpy(self.chemical.to_numpy(dtype=np.bool))
         mask_g = torch.from_numpy(self.gap_junction.to_numpy(dtype=np.bool))
-        ex_mask_c = self._polarity_mask()
-        in_mask_c = self._polarity_mask()
+        ex_mask_c, in_mask_c = self._polarity_mask()
         ex_mask_c = ex_mask_c & mask_c
         in_mask_c = in_mask_c & mask_c
         if torch.any(ex_mask_c & in_mask_c) is True:
