@@ -64,6 +64,8 @@ class DummyConnectome(object):
         inhibitory chemical mask: a sub mask of chemical mask, no overlap with excitatory chemical mask
             mask_ij is True -> w_ij <= 0
             mask_ij is False -> w_ij
+        proprioception mask
+            mask_pi is True -> w_pi
         """
         mask_c, mask_g = self._weight()
         ex_mask_c, in_mask_c = self._polarity_masks()
