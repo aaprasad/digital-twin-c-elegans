@@ -31,22 +31,21 @@ def plot_mask(mask_c, mask_g, ex_mask_c, in_mask_c, mask_p):
 def train(model_name):
     if model_name == 'snn_forward':
         torch.set_default_dtype(torch.float64)
-        """ mask """
+        """ connectome """
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
         # neurons = neuron_list1()
         muscles = body_wall_muscles()
         neurons = neuron_list2(path, muscles)
         print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
         ex_synapses, in_synapses = chemical_synapse_polarity()
-        connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path)
-        # connectome = DummyConnectome(neurons, muscles)
-        # params
+        """ mask """
         dt = 0.04
+        p = 24
+        connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path, p, p_mask=True, polarity_mask=False)
+        # connectome = DummyConnectome(neurons, muscles, p, p_mask=True)
+        mask_c, mask_g, ex_mask_c, in_mask_c, mask_output, mask_p = connectome.mask()
         n = len(connectome.cells)
         m = len(connectome.muscles)
-        p = 24
-        mask_c, mask_g, ex_mask_c, in_mask_c, mask_output = connectome.mask(polarity_mask=False)
-        mask_p = connectome.proprioception_mask(p, p_mask=True)
         """ plot mask """
         # print(mask_c.dtype, mask_g.dtype, ex_mask_c.dtype, in_mask_c.dtype, mask_output.dtype, mask_p.dtype)
         # plot_mask(mask_c, mask_g, ex_mask_c, in_mask_c, mask_p)
