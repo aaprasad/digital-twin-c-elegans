@@ -52,7 +52,7 @@ def train(model_name):
         """ trainer kwargs
         longer seq: data_name='data320.pt', lengths=[5000, 1000, 1000], batch_size=256, cuda=0, device_ids=[0, 1]
         """
-        data_name = ['data_5000_640_64_train.pt', 'data_1000_640_64_eval.pt', 'data_1000_640_64_test.pt']
+        data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
         kwargs = {
             'data_name': data_name, 'model_name': model_name, 'batch_size': 256, 'seed': 11,
             'device_ids': [0, 1], 'lr': 0.01, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
