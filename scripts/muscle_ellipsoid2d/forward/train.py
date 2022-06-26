@@ -54,8 +54,8 @@ def train(model_name):
         """
         data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
         kwargs = {
-            'data_name': data_name, 'model_name': model_name, 'batch_size': 256, 'seed': 11,
-            'device_ids': [0, 1, 2, 3], 'lr': 0.01, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
+            'data_name': data_name, 'model_name': model_name, 'batch_size': 128, 'seed': 11,
+            'device_ids': [0, 1, 2, 3], 'lr': 1e-2, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
             # model kwargs
             'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'activation_type': 'sigmoid',
             'w_c_mask': w_c_mask, 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
