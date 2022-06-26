@@ -180,7 +180,10 @@ def train_eval_test(
     """
     torch.manual_seed(seed)
     writer = SummaryWriter(comment=comment)
-    data_path = os.path.join('data', data_name)
+    if type(data_name) is list:
+        data_path = [os.path.join('data', name) for name in data_name]
+    else:
+        data_path = os.path.join('data', data_name)
     train_loader, eval_loader, test_loader = prepare_dataloader(data_path, lengths, batch_size, seed)
     device = torch.device('cuda:{}'.format(cuda) if torch.cuda.is_available() else 'cpu')
     # train

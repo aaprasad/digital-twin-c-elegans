@@ -53,8 +53,13 @@ def train(model_name):
         longer seq: data_name='data320.pt', lengths=[5000, 1000, 1000], batch_size=256, cuda=0, device_ids=[0, 1]
         """
         kwargs = {
-            'data_name': 'data_new_640_64.pt', 'model_name': model_name, 'lengths': [50000, 10000, 10000], 'batch_size': 256, 'seed': 11,
-            'cuda': 0, 'device_ids': [0, 1, 2, 3], 'lr': 0.01, 'epochs': 300, 'early_stop': 30, 'comment': '', 'loss': 'MSELoss',
+            'data_name': [
+                'data_5000_640_64_train.pt',
+                'data_1000_640_64_eval.pt',
+                'data_1000_640_64_test.pt'
+            ],
+            'model_name': model_name, 'batch_size': 256, 'seed': 11,
+            'cuda': 0, 'device_ids': [0, 1, 2, 3], 'lr': 0.01, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
             # model kwargs
             'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'activation_type': 'sigmoid',
             'w_c_mask': w_c_mask, 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
