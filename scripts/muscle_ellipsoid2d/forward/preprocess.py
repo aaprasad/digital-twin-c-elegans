@@ -63,7 +63,9 @@ def preprocess_and_split_dataset(load_name, save_names, lengths, seq_len, seed):
     )
     # split train, eval, test
     train_data, eval_data, test_data = random_split(dataset, lengths, seed)
-    print('train', len(train_data), 'eval', len(eval_data), 'test', len(test_data))
+    print('train', train_data.tensors[0].shape, train_data.tensors[1].shape)
+    print('eval', eval_data.tensors[0].shape, eval_data.tensors[1].shape)
+    print('test', test_data.tensors[0].shape, test_data.tensors[1].shape)
     # split sequence
     train_data = SplitDataset(train_data, seq_len)
     print('split sequence train', train_data.tensors[0].shape, train_data.tensors[1].shape)
