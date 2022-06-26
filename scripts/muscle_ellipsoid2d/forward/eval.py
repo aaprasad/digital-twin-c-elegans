@@ -14,7 +14,7 @@ import worm_assets
 
 def select_model(model_folder, model_name, ckpt_name):
     if model_name == 'snn_forward':
-        torch.set_default_dtype(torch.float64)
+        # torch.set_default_dtype(torch.float64)
         """ connectome: cells and synapse polarity """
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
         muscles = body_wall_muscles()
@@ -38,7 +38,7 @@ def select_model(model_folder, model_name, ckpt_name):
             'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index
         }
     elif model_name == 'ctrnn':
-        torch.set_default_dtype(torch.float64)
+        # torch.set_default_dtype(torch.float64)
         kwargs = {
             'input_size': 24, 'hidden_size': 171, 'output_size': 95, 'feedback': True, 'readout': 'identity',
             'unfolds': 6, 'delta_t': 0.1, 'tau': 1
