@@ -4,6 +4,7 @@ import torch
 from virtual_nematode.data.clamp import ClampDataset
 from virtual_nematode.data.float import FloatDataset
 from virtual_nematode.data.split import SplitDataset
+from virtual_nematode.data.subset import Subset
 
 
 def plot_data(save_name):
@@ -43,11 +44,55 @@ def preprocess_dataset(seq_len, load_name, save_name, float_type=False):
     torch.save(dataset, os.path.join('data', save_name))
 
 
+def preprocess_and_split_dataset(load_name, save_names, lengths, seq_len, seed):
+    # load
+    dataset = torch.load(os.path.join('data', load_name))
+    print('load', dataset[0].shape, dataset[1].shape)
+    # subset
+    dataset = Subset(dataset, sum(lengths))
+    print('subset', dataset[0].shape, dataset[1].shape)
+    # float
+    dataset = FloatDataset(dataset)
+    print('dtype', dataset[0].dtype, dataset[1].dtype)
+    # clamp
+    dataset = ClampDataset(dataset, x_range=None, y_range=[0, 1])
+    print(
+        'clamp',
+        'x range', dataset[0].min().item(), dataset[0].max().item(),
+        'y range', dataset[1].min().item(), dataset[1].max().item()
+    )
+    # split train, eval, test
+    train_data, eval_data, test_data = torch.utils.data.random_split(
+        dataset, lengths, generator=torch.Generator().manual_seed(seed)
+    )
+    print('train', len(train_data), 'eval', len(eval_data), 'test', len(test_data))
+    # split sequence
+    train_data = SplitDataset(train_data, seq_len)
+    print('split sequence train', train_data[0].shape, train_data[1].shape)
+    eval_data = SplitDataset(eval_data, seq_len)
+    print('split sequence eval', eval_data[0].shape, eval_data[1].shape)
+    test_data = SplitDataset(test_data, seq_len)
+    print('split sequence test', test_data[0].shape, test_data[1].shape)
+    # save
+    torch.save(train_data, os.path.join('data', save_names[0]))
+    torch.save(eval_data, os.path.join('data', save_names[1]))
+    torch.save(test_data, os.path.join('data', save_names[2]))
+
+
 if __name__ == '__main__':
     # preprocess_dataset(seq_len=32, load_name='data.pt', save_name='data32.pt')
     # preprocess_dataset(seq_len=320, load_name='data.pt', save_name='data320.pt')
     # preprocess_dataset(seq_len=64, load_name='data_640.pt', save_name='data_640_64.pt')
     # preprocess_dataset(seq_len=128, load_name='data_640.pt', save_name='data_640_128.pt')
-    preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64.pt')
+    # preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64.pt')
     # preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64_32bit.pt', float_type=True)
-    plot_data(save_name='data_new_640_64.pt')
+    # plot_data(save_name='data_new_640_64.pt')
+    preprocess_and_split_dataset(
+        load_name='data_7000_640.pt',
+        save_names=[
+            'data_5000_640_64_train.pt',
+            'data_1000_640_64_eval.pt',
+            'data_1000_640_64_test.pt'
+        ],
+        lengths=[5000, 1000, 1000], seq_len=64, seed=33
+    )
