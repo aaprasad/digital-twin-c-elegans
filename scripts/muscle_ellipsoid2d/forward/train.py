@@ -7,22 +7,22 @@ from virtual_nematode.trainers.ncp import train_eval_test
 import worm_assets
 
 
-def plot_mask(mask_c, mask_g, ex_mask_c, in_mask_c, mask_p):
+def plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask):
     plt.subplot(2, 3, 1)
     plt.title('chemical mask')
-    sns.heatmap(mask_c, cmap='coolwarm', vmin=0, vmax=1)
+    sns.heatmap(w_c_mask, cmap='coolwarm', vmin=0, vmax=1)
     plt.subplot(2, 3, 2)
-    plt.title('ex chemical mask')
-    sns.heatmap(ex_mask_c, cmap='coolwarm', vmin=0, vmax=1)
+    plt.title('gap junction mask')
+    sns.heatmap(w_g_mask, cmap='coolwarm', vmin=0, vmax=1)
     plt.subplot(2, 3, 3)
     plt.title('proprioception input mask')
-    sns.heatmap(mask_p, cmap='coolwarm', vmin=0, vmax=1)
+    sns.heatmap(w_p_mask, cmap='coolwarm', vmin=0, vmax=1)
     plt.subplot(2, 3, 4)
-    plt.title('gap junction mask')
-    sns.heatmap(mask_g, cmap='coolwarm', vmin=0, vmax=1)
+    plt.title('ex chemical mask')
+    sns.heatmap(w_c_ex_mask, cmap='coolwarm', vmin=0, vmax=1)
     plt.subplot(2, 3, 5)
     plt.title('in chemical mask')
-    sns.heatmap(in_mask_c, cmap='coolwarm', vmin=0, vmax=1)
+    sns.heatmap(w_c_in_mask, cmap='coolwarm', vmin=0, vmax=1)
     plt.subplot(2, 3, 6)
     plt.show()
 
@@ -47,8 +47,8 @@ def train(model_name):
         n = len(connectome.cells)
         m = len(connectome.muscles)
         """ plot mask """
-        # print(mask_c.dtype, mask_g.dtype, ex_mask_c.dtype, in_mask_c.dtype, mask_output.dtype, mask_p.dtype)
-        # plot_mask(mask_c, mask_g, ex_mask_c, in_mask_c, mask_p)
+        # print(w_c_mask.dtype, w_g_mask.dtype, w_c_ex_mask.dtype, w_c_in_mask.dtype, w_p_mask.dtype, output_index.dtype)
+        # plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask)
         """ trainer kwargs
         longer seq: data_name='data320.pt', lengths=[5000, 1000, 1000], batch_size=256, cuda=0, device_ids=[0, 1]
         """
