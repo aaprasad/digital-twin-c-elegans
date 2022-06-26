@@ -9,12 +9,12 @@ def plot_model_weight(model, ckpt_name):
     plt.figure(figsize=(20, 10))
     # chemical weight
     w_c = (
-        model.cell.w_c.abs() * model.cell.ex_mask_c -
-        model.cell.w_c.abs() * model.cell.in_mask_c +
-        model.cell.w_c * (
-            model.cell.mask_c.float() -
-            model.cell.ex_mask_c.float() -
-            model.cell.in_mask_c.float()
+            model.cell.w_c.abs() * model.cell.w_c_ex_mask -
+            model.cell.w_c.abs() * model.cell.w_c_in_mask +
+            model.cell.w_c * (
+                    model.cell.w_c_mask.float() -
+                    model.cell.w_c_ex_mask.float() -
+                    model.cell.w_c_in_mask.float()
         )
     )
     w_c = w_c.clone().detach()
@@ -23,7 +23,7 @@ def plot_model_weight(model, ckpt_name):
     plt.title('chemical weight')
     sns.heatmap(w_c, cmap='coolwarm', vmin=-w_c_max, vmax=w_c_max)
     # proprioception input weight
-    w_p = model.cell.w_p * model.cell.mask_p
+    w_p = model.cell.w_p * model.cell.w_p_mask
     w_p = w_p.clone().detach()
     w_p_max = w_p.abs().max().item()
     plt.subplot(2, 3, 2)
@@ -37,7 +37,7 @@ def plot_model_weight(model, ckpt_name):
     plt.plot(tau)
     # gap junction weight
     w_g = model.cell.w_g.abs()
-    w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * model.cell.mask_g
+    w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * model.cell.w_g_mask
     w_g = w_g.clone().detach()
     w_g_max = w_g.max().item()
     plt.subplot(2, 3, 4)

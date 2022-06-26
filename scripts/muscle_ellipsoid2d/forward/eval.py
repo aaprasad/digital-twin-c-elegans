@@ -26,7 +26,7 @@ def select_model(model_folder, model_name, ckpt_name):
         p = 24
         connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path, p, p_mask=True, polarity_mask=False)
         # connectome = DummyConnectome(neurons, muscles, p, p_mask=True)
-        mask_c, mask_g, ex_mask_c, in_mask_c, mask_output, mask_p = connectome.mask()
+        w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index = connectome.mask()
         """ params """
         dt = 0.04
         n = len(connectome.cells)
@@ -34,8 +34,8 @@ def select_model(model_folder, model_name, ckpt_name):
         """ eval kwargs """
         kwargs = {
             'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'activation_type': 'sigmoid',
-            'mask_c': mask_c, 'ex_mask_c': ex_mask_c, 'in_mask_c': in_mask_c, 'mask_g': mask_g,
-            'mask_p': mask_p, 'mask_output': mask_output
+            'w_c_mask': w_c_mask, 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
+            'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index
         }
     elif model_name == 'ctrnn':
         torch.set_default_dtype(torch.float64)
