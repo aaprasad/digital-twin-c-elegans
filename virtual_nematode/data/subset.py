@@ -1,6 +1,16 @@
 import torch
 
 
+class Subset(torch.utils.data.TensorDataset):
+    """ create a subset of a TensorDataset """
+    def __init__(self, dataset, data_size):
+        x, y = dataset.tensors
+        data_size = min(data_size, len(dataset))
+        x = x[0:data_size]
+        y = y[0:data_size]
+        super(Subset, self).__init__(x, y)
+
+
 class RandomSubset(torch.utils.data.TensorDataset):
     """ create a random subset of a TensorDataset """
     def __init__(self, dataset, data_size, seed):
