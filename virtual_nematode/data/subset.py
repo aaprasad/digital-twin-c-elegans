@@ -1,6 +1,20 @@
 import torch
 
 
+def random_split(dataset, lengths, seed):
+    # indices
+    indices = torch.randperm(len(dataset), generator=torch.Generator().manual_seed(seed))
+    train_indices = indices[:lengths[0]]
+    eval_indices = indices[lengths[0]:lengths[0] + lengths[1]]
+    test_indices = indices[lengths[0] + lengths[1]:lengths[0] + lengths[1] + lengths[2]]
+    # split
+    x, y = dataset.tensors
+    train_data = torch.utils.data.TensorDataset(x[train_indices], y[train_indices])
+    eval_data = torch.utils.data.TensorDataset(x[eval_indices], y[eval_indices])
+    test_data = torch.utils.data.TensorDataset(x[test_indices], y[test_indices])
+    return train_data, eval_data, test_data
+
+
 class Subset(torch.utils.data.TensorDataset):
     """ create a subset of a TensorDataset """
     def __init__(self, dataset, data_size):

@@ -4,7 +4,7 @@ import torch
 from virtual_nematode.data.clamp import ClampDataset
 from virtual_nematode.data.float import FloatDataset
 from virtual_nematode.data.split import SplitDataset
-from virtual_nematode.data.subset import Subset
+from virtual_nematode.data.subset import random_split, Subset
 
 
 def plot_data(save_name):
@@ -62,9 +62,7 @@ def preprocess_and_split_dataset(load_name, save_names, lengths, seq_len, seed):
         'y range', dataset.tensors[1].min().item(), dataset.tensors[1].max().item()
     )
     # split train, eval, test
-    train_data, eval_data, test_data = torch.utils.data.random_split(
-        dataset, lengths, generator=torch.Generator().manual_seed(seed)
-    )
+    train_data, eval_data, test_data = random_split(dataset, lengths, seed)
     print('train', len(train_data), 'eval', len(eval_data), 'test', len(test_data))
     # split sequence
     train_data = SplitDataset(train_data, seq_len)
