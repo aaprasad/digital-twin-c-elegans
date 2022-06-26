@@ -53,9 +53,11 @@ def train(model_name):
         longer seq: data_name='data320.pt', lengths=[5000, 1000, 1000], batch_size=256, cuda=0, device_ids=[0, 1]
         """
         data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
+        # device_ids, batch_size, lr = [0, 1], 256, 1e-2
+        device_ids, batch_size, lr = [0, 1, 2, 3], 128, 1e-2
         kwargs = {
-            'data_name': data_name, 'model_name': model_name, 'batch_size': 128, 'seed': 11,
-            'device_ids': [0, 1, 2, 3], 'lr': 1e-2, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
+            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
+            'device_ids': device_ids, 'lr': lr, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
             # model kwargs
             'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'activation_type': 'sigmoid',
             'w_c_mask': w_c_mask, 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
