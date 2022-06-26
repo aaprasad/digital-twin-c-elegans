@@ -47,19 +47,19 @@ def preprocess_dataset(seq_len, load_name, save_name, float_type=False):
 def preprocess_and_split_dataset(load_name, save_names, lengths, seq_len, seed):
     # load
     dataset = torch.load(os.path.join('data', load_name))
-    print('load', dataset[0].shape, dataset[1].shape)
+    print('load', dataset.tensors[0].shape, dataset.tensors[1].shape)
     # subset
     dataset = Subset(dataset, sum(lengths))
-    print('subset', dataset[0].shape, dataset[1].shape)
+    print('subset', dataset.tensors[0].shape, dataset.tensors[1].shape)
     # float
     dataset = FloatDataset(dataset)
-    print('dtype', dataset[0].dtype, dataset[1].dtype)
+    print('dtype', dataset.tensors[0].dtype, dataset.tensors[1].dtype)
     # clamp
     dataset = ClampDataset(dataset, x_range=None, y_range=[0, 1])
     print(
         'clamp',
-        'x range', dataset[0].min().item(), dataset[0].max().item(),
-        'y range', dataset[1].min().item(), dataset[1].max().item()
+        'x range', dataset.tensors[0].min().item(), dataset.tensors[0].max().item(),
+        'y range', dataset.tensors[1].min().item(), dataset.tensors[1].max().item()
     )
     # split train, eval, test
     train_data, eval_data, test_data = torch.utils.data.random_split(
@@ -68,11 +68,11 @@ def preprocess_and_split_dataset(load_name, save_names, lengths, seq_len, seed):
     print('train', len(train_data), 'eval', len(eval_data), 'test', len(test_data))
     # split sequence
     train_data = SplitDataset(train_data, seq_len)
-    print('split sequence train', train_data[0].shape, train_data[1].shape)
+    print('split sequence train', train_data.tensors[0].shape, train_data.tensors[1].shape)
     eval_data = SplitDataset(eval_data, seq_len)
-    print('split sequence eval', eval_data[0].shape, eval_data[1].shape)
+    print('split sequence eval', eval_data.tensors[0].shape, eval_data.tensors[1].shape)
     test_data = SplitDataset(test_data, seq_len)
-    print('split sequence test', test_data[0].shape, test_data[1].shape)
+    print('split sequence test', test_data.tensors[0].shape, test_data.tensors[1].shape)
     # save
     torch.save(train_data, os.path.join('data', save_names[0]))
     torch.save(eval_data, os.path.join('data', save_names[1]))
