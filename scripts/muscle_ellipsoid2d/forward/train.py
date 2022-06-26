@@ -59,7 +59,7 @@ def train(model_name):
                 'data_1000_640_64_test.pt'
             ],
             'model_name': model_name, 'batch_size': 256, 'seed': 11,
-            'cuda': 0, 'device_ids': [0, 1, 2, 3], 'lr': 0.01, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
+            'device_ids': [0, 1], 'lr': 0.01, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
             # model kwargs
             'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'activation_type': 'sigmoid',
             'w_c_mask': w_c_mask, 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
@@ -69,7 +69,7 @@ def train(model_name):
         torch.set_default_dtype(torch.float64)
         kwargs = {
             'data_name': 'data32.pt', 'model_name': model_name, 'lengths': [50000, 10000, 10000], 'batch_size': 1024,
-            'seed': 11, 'cuda': 0, 'device_ids': [0], 'lr': 0.001, 'weight_decay': 0, 'epochs': 100,
+            'seed': 11, 'device_ids': [0], 'lr': 0.001, 'weight_decay': 0, 'epochs': 100,
             'early_stop': 100, 'comment': '', 'loss': 'MSELoss', 'sr': None,
             # model kwargs
             'input_size': 24, 'hidden_size': 171, 'output_size': 95, 'feedback': True, 'readout': 'identity',
