@@ -66,12 +66,12 @@ class DummyConnectome(object):
             mask_pi is True -> w_pi
         """
         w_c_mask, w_g_mask = self._weight()
-        if torch.all(w_g_mask.tril() == w_g_mask.triu().T) is not True:
+        if torch.all(w_g_mask.tril() == w_g_mask.triu().T).item() is not True:
             raise AssertionError('Gap junction mask is not symmetric!')
         w_c_ex_mask, w_c_in_mask = self._polarity_masks()
         w_c_ex_mask = w_c_ex_mask & w_c_mask
         w_c_in_mask = w_c_in_mask & w_c_mask
-        if torch.any(w_c_ex_mask & w_c_in_mask) is True:
+        if torch.any(w_c_ex_mask & w_c_in_mask).item() is True:
             raise AssertionError('There is overlap in excitatory mask and inhibitory mask!')
         muscles = set(self.muscles)
         w_p_mask = self._proprioception_mask()
