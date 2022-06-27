@@ -66,6 +66,8 @@ class DummyConnectome(object):
             mask_pi is True -> w_pi
         """
         w_c_mask, w_g_mask = self._weight()
+        if torch.all(w_g_mask.tril() == w_g_mask.triu().T) is not True:
+            raise AssertionError('Gap junction mask is not symmetric!')
         w_c_ex_mask, w_c_in_mask = self._polarity_masks()
         w_c_ex_mask = w_c_ex_mask & w_c_mask
         w_c_in_mask = w_c_in_mask & w_c_mask
