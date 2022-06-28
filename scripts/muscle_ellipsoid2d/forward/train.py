@@ -60,7 +60,7 @@ def train(model_name):
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
             'device_ids': device_ids, 'lr': lr, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
             # model kwargs
-            'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'k': 0.1, 'activation_type': 'sigmoid',
+            'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p, 'activation_type': 'sigmoid',
             'w_c_mask': w_c_mask, 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
             'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index
         }
