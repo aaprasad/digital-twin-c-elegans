@@ -155,7 +155,7 @@ class SNNCell(torch.nn.Module):
         self.n = n  # cell count
         self.m = m  # muscle count
         self.p = p  # proprioception size
-        self.k = k  # init: w_c in U[-k, k], w_g in U[0, k], w_p in U[-k, k]
+        self.k = k  # init w_g in U[0, k], clamp w_g in [0, k]
         self.activation_type = activation_type
         if activation_type == 'sigmoid':
             self.activation_func = torch.nn.Sigmoid()
@@ -170,7 +170,7 @@ class SNNCell(torch.nn.Module):
             raise ValueError('Invalid activation func type {}'.format(activation_type))
         # self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.08, std=0.01))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # cell time constant, (cell_count, )
-        self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-k, k))  # chemical synapse weight, (cell_count, cell_count)
+        self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
         # exclude excitatory/inhibitory synapse
         w_c_mask = w_c_mask ^ (w_c_ex_mask & w_c_mask) ^ (w_c_in_mask & w_c_mask)
         self.w_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
@@ -178,7 +178,7 @@ class SNNCell(torch.nn.Module):
         self.w_c_in_mask = torch.nn.Parameter(w_c_in_mask, requires_grad=False)  # inhibitory chemical synapse bool mask, (cell_count, cell_count)
         self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, k))  # gap junction weight, (cell_count, cell_count)
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # gap junction bool mask, (cell_count, cell_count)
-        self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-k, k))  # proprioception input synapse weight, (proprioception_size, cell_count)
+        self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # proprioception input synapse weight, (proprioception_size, cell_count)
         self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # proprioception input synapse bool mask, (proprioception_size, cell_count)
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # muscle output mask, (cell_count, )
         self.w_output = torch.nn.Parameter(torch.zeros(m).uniform_(0, 1))  # muscle activation scaling, (muscle_count, )
@@ -200,7 +200,7 @@ class SNNCell(torch.nn.Module):
         w_c = self.w_c.abs()
         w_c = w_c * self.w_c_ex_mask - w_c * self.w_c_in_mask + self.w_c * self.w_c_mask
         # gap junction weight
-        w_g = self.w_g.abs()
+        w_g = self.w_g.abs().clamp(0, self.k)
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # proprioception weight
         w_p = self.w_p * self.w_p_mask
