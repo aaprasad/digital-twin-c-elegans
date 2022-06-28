@@ -47,6 +47,7 @@ def train(model_name):
         n = len(connectome.cells)
         m = len(connectome.muscles)
         """ plot mask """
+        # print('A cell with the most gap junctions', w_g_mask.sum(dim=1).max())
         # print(w_c_mask.dtype, w_g_mask.dtype, w_c_ex_mask.dtype, w_c_in_mask.dtype, w_p_mask.dtype, output_index.dtype)
         # plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask)
         """ trainer kwargs
