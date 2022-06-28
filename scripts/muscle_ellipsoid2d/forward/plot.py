@@ -36,7 +36,7 @@ def plot_model_weight(model, ckpt_name):
     plt.title('tau')
     plt.plot(tau)
     # gap junction weight
-    w_g = model.cell.w_g.abs()
+    w_g = model.cell.w_g.abs().clamp(0, 1)
     w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * model.cell.w_g_mask
     w_g = w_g.clone().detach()
     w_g_max = w_g.max().item()
