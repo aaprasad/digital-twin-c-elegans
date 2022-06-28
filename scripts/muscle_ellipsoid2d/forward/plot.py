@@ -95,6 +95,7 @@ if __name__ == '__main__':
     model_name = 'snn_forward'
     model_folder = os.path.join('runs', runs_folder)
     data_path = os.path.join('data', runs_folder)
+    os.makedirs(data_path, exist_ok=True)
     model = select_model(model_folder, model_name, ckpt_name)
     plot_model_weight(model, ckpt_name)
     # plot_action('data_new_640.pt', ckpt_name)
