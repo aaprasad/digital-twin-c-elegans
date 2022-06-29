@@ -89,6 +89,18 @@ def plot_action_heatmap(ckpt_name):
     plt.savefig(ckpt_path + '.png')
 
 
+def plot_action_transformation():
+    x = torch.arange(-5, 5, 0.1)
+    y = torch.sigmoid(x)
+    y_transform = (y - torch.sigmoid(torch.tensor(-1))) / (torch.sigmoid(torch.tensor(1)) - torch.sigmoid(torch.tensor(-1)))
+    plt.plot(x, y, label='y')
+    plt.plot(x, y_transform, label='y_transform')
+    plt.plot(x, torch.zeros_like(x))
+    plt.plot(x, torch.ones_like(x))
+    plt.legend()
+    plt.show()
+
+
 if __name__ == '__main__':
     runs_folder = ''
     ckpt_name = 'model.pt'
@@ -100,3 +112,4 @@ if __name__ == '__main__':
     plot_model_weight(model, ckpt_name)
     # plot_action('data_new_640.pt', ckpt_name)
     plot_action_heatmap(ckpt_name)
+    # plot_action_transformation()
