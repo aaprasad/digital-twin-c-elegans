@@ -51,7 +51,7 @@ def test_func2(index, env, model, data_func, x_func):
         for i in range(10 ** 6):
             # env.render()
             data = data_func(observation=observation)
-            data = torch.tensor(data, dtype=torch.float64)
+            data = torch.tensor(data, dtype=torch.float32)
             data = data.unsqueeze(dim=0)  # add batch dimension
             state, activation, action = model.step(state, activation, proprioception=data)
             action = action.squeeze(dim=0)  # remove batch dimension
