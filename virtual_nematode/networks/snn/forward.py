@@ -148,25 +148,15 @@ class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, dt, steps, n, m, p, activation_type, w_c_mask, w_c_ex_mask, w_c_in_mask, w_g_mask, w_p_mask, output_index):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_c_ex_mask, w_c_in_mask, w_g_mask, w_p_mask, output_index):
         super(SNNCell, self).__init__()
         self.dt = dt  # env dt
         self.steps = steps  # ode steps
         self.n = n  # cell count
         self.m = m  # muscle count
         self.p = p  # proprioception size
-        self.activation_type = activation_type
-        if activation_type == 'sigmoid':
-            self.activation_func = torch.nn.Sigmoid()
-            self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # cell state bias, (cell_count, )
-        elif activation_type == 'tanh':
-            self.activation_func = torch.nn.Sequential(
-                torch.nn.Tanh(),
-                torch.nn.ReLU()
-            )
-            self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(0, 1))  # cell state bias, (cell_count, )
-        else:
-            raise ValueError('Invalid activation func type {}'.format(activation_type))
+        self.activation_func = torch.nn.Sigmoid()
+        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # cell state bias, (cell_count, )
         # self.tau = torch.nn.Parameter(torch.zeros(n).normal_(mean=0.08, std=0.01))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
@@ -193,10 +183,7 @@ class SNNCell(torch.nn.Module):
 
     @property
     def init_state(self):
-        if self.activation_type == 'tanh':
-            return self.bias.abs().clone().detach()  # (cell_count, )
-        else:
-            return self.bias.clone().detach()  # (cell_count, )
+        return self.bias.clone().detach()  # (cell_count, )
 
     def forward(self, state, activation, proprioception):
         """ forward 1 step
@@ -215,10 +202,7 @@ class SNNCell(torch.nn.Module):
         # proprioception input
         external_input = torch.mm(proprioception, w_p) / self.w_p_n  # proprioception input, (batch_size, cell_count)
         # proprioception input + bias
-        if self.activation_type == 'tanh':
-            external_input += self.bias.abs()
-        else:
-            external_input += self.bias
+        external_input += self.bias
         # dt / tau
         dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.05)
         for i in range(self.steps):
