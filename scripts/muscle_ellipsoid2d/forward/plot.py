@@ -97,6 +97,7 @@ def plot_action_transformation():
     plt.plot(x, y_transform, label='y_transform')
     plt.plot(x, torch.zeros_like(x))
     plt.plot(x, torch.ones_like(x))
+    plt.plot(x, y_transform.clamp(0, 1), label='y_transform_clamp')
     plt.legend()
     plt.show()
 
