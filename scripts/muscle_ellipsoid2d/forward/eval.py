@@ -21,7 +21,7 @@ def select_model(model_folder, model_name, ckpt_name):
         # neurons = neuron_list1()
         neurons = neuron_list2(path, muscles)
         ex_synapses, in_synapses = chemical_synapse_polarity()
-        print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
+        print('{} cells'.format(len(neurons) + len(muscles)), end=' ')
         """ mask """
         p = 24
         connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path, p, p_mask=True, polarity_mask=False)
@@ -52,8 +52,8 @@ def select_model(model_folder, model_name, ckpt_name):
 def evaluate(model_folder, model_name, start, end):
     for i in range(start, end):
         ckpt_name = 'model{}.pt'.format(i)
-        model = select_model(model_folder, model_name, ckpt_name)
         print(ckpt_name, end=' ')
+        model = select_model(model_folder, model_name, ckpt_name)
         if model_name == 'snn_forward':
             test_func = test_func2
         elif model_name == 'ctrnn':
@@ -81,6 +81,7 @@ def test(model_folder, model_name, start, end):
 
 def record(model_folder, model_name, env, ckpt_name):
     """ online test once for evaluation and record video """
+    print(ckpt_name, end=' ')
     model = select_model(model_folder, model_name, ckpt_name)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
     if model_name == 'snn_forward':
