@@ -59,7 +59,7 @@ def plot_model_weight(model, ckpt_name):
     plt.subplot(2, 3, 6)
     plt.title('bias')
     plt.plot(bias)
-    plt.savefig(os.path.join(data_path, '{}.png'.format(ckpt_name)))
+    plt.savefig(os.path.join(data_path, '{}.weight.png'.format(ckpt_name)))
 
 
 def plot_action(data_name, ckpt_name):
@@ -81,7 +81,7 @@ def plot_action(data_name, ckpt_name):
             plt.plot(action[0:640, index], label='nn')
             plt.title(name[j] + str(i + 1) + '-' + str(index))
         plt.legend()
-        plt.savefig(ckpt_path + '.{:02d}.png'.format(i + 1))
+        plt.savefig(ckpt_path + '.{:02d}.action.png'.format(i + 1))
         plt.close(i)
 
 
@@ -91,7 +91,7 @@ def plot_action_heatmap(ckpt_name):
     print(action.shape)
     plt.figure(figsize=(13, 10))
     sns.heatmap(action[0:320, :].clamp(0, 1).T, cmap='coolwarm')
-    plt.savefig(ckpt_path + '.png')
+    plt.savefig(ckpt_path + '.action.png')
 
 
 def plot_action_transformation():
