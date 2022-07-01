@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
-from virtual_nematode.models.muscle import ForwardPIDMuscle
+from virtual_nematode.models.muscle import ReversePIDMuscle
 from virtual_nematode.simulation import simulate
 
 
