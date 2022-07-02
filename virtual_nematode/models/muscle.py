@@ -67,6 +67,17 @@ class ForwardPIDMuscle(object):
         return action
 
 
+class ReversePIDMuscle(ForwardPIDMuscle):
+    def _reverse(self, step, reverse):
+        if reverse is True:
+            self.phi = 2 * self.omega * step * self.dt - self.phi
+
+    def step(self, step, q, **kwargs):
+        self._reverse(step, reverse=kwargs.get('reverse'))
+        action = super(ReversePIDMuscle, self).step(step, q, **kwargs)
+        return action
+
+
 class WeathervaneMuscle(object):
     def __init__(self, dt, n, a, freq, psi, kp, kv):
         self.dt = dt  # real time per step

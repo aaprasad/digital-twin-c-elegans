@@ -7,7 +7,11 @@ from virtual_nematode.simulation import simulate
 
 def action_func(model, step, observation, **kwargs):
     q = observation[4:28]
-    action = model.step(step, q=q)
+    if step in [500, 1000, 1500, 2000]:
+        reverse = True
+    else:
+        reverse = False
+    action = model.step(step, q=q, reverse=reverse)
     return action
 
 
@@ -36,7 +40,7 @@ if __name__ == '__main__':
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
     print(env.observation_space)
-    model = ForwardPIDMuscle(
+    model = ReversePIDMuscle(
         dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
