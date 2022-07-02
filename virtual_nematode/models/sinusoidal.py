@@ -15,7 +15,10 @@ class Sinusoidal(object):
         self.a = a  # max control value
         self.omega = 2 * np.pi * freq
         self.psi = psi  # body wavelength (rad)
-        self.phi = -2 * np.pi * self.psi * np.arange(0, self.n - 1) - np.pi
+        self.phi = 2 * np.pi * self.psi * np.arange(0, self.n - 1)
+
+    def reset(self):
+        pass
 
     def step(self, step, **kwargs):
         """ get next step's angles as control signal """
