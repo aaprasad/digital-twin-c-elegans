@@ -180,7 +180,7 @@ class SNNCell(torch.nn.Module):
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # proprioception input synapse amount, (cell_count, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # muscle output mask, (cell_count, )
         self.w_output = torch.nn.Parameter(torch.zeros(m).uniform_(0, 1))  # muscle activation scaling, (muscle_count, )
-        self.output_range = torch.nn.Parameter(torch.sigmoid(torch.tensor([-1, 1])), requires_grad=False)  # hypothetical output range
+        # self.output_range = torch.nn.Parameter(torch.sigmoid(torch.tensor([-1, 1])), requires_grad=False)  # hypothetical output range
 
     @property
     def init_state(self):
@@ -216,10 +216,13 @@ class SNNCell(torch.nn.Module):
             # cell activation, (batch_size, cell_count)
             activation = self.activation_func(state)
         # muscle output, (batch_size, muscle_count)
+        """
         action = activation[:, self.output_index]
         action = (action - self.output_range[0]) / (self.output_range[1] - self.output_range[0])
         action = action.clamp(0, 1)
         action = action * self.w_output.clamp(0, 1)
+        """
+        action = activation[:, self.output_index] * self.w_output.clamp(0, 1)
         return state, activation, action
 
 
