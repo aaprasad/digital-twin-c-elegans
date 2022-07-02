@@ -33,9 +33,9 @@ class DummyConnectome(object):
             mask = torch.full_like(mask, fill_value=True)
         return mask
 
-    def _weight(self):
-        w_c_mask = torch.from_numpy(self.chemical.to_numpy(dtype=np.bool))
-        w_g_mask = torch.from_numpy(self.gap_junction.to_numpy(dtype=np.bool))
+    def _weight(self, chemical, gap_junction):
+        w_c_mask = torch.from_numpy(chemical.to_numpy(dtype=np.bool))
+        w_g_mask = torch.from_numpy(gap_junction.to_numpy(dtype=np.bool))
         return w_c_mask, w_g_mask
 
     def _polarity_mask(self, **kwargs):
@@ -65,7 +65,7 @@ class DummyConnectome(object):
         proprioception mask
             mask_pi is True -> w_pi
         """
-        w_c_mask, w_g_mask = self._weight()
+        w_c_mask, w_g_mask = self._weight(self.chemical, self.gap_junction)
         if torch.all(w_g_mask.tril() == w_g_mask.triu().T).item() is not True:
             raise AssertionError('Gap junction mask is not symmetric!')
         w_c_ex_mask, w_c_in_mask = self._polarity_masks()
@@ -118,11 +118,10 @@ class Connectome(DummyConnectome):
         adjacency = adjacency.loc[self.cells, self.cells]
         return adjacency
 
-    def _weight(self):
-        chemical = self.chemical.replace(np.nan, 0)
-        gap_junction = self.gap_junction.replace(np.nan, 0)
-        w_c_mask = torch.from_numpy(chemical.to_numpy(dtype=np.bool))
-        w_g_mask = torch.from_numpy(gap_junction.to_numpy(dtype=np.bool))
+    def _weight(self, chemical, gap_junction):
+        chemical = chemical.replace(np.nan, 0)
+        gap_junction = gap_junction.replace(np.nan, 0)
+        w_c_mask, w_g_mask = super(Connectome, self)._weight(chemical, gap_junction)
         return w_c_mask, w_g_mask
 
     def _polarity_mask(self, synapses):
