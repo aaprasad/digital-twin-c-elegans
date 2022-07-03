@@ -99,8 +99,8 @@ def plot_state_range(ckpt_name):
     state = torch.load(ckpt_path, map_location=torch.device('cpu'))
     print(state.shape)
     plt.figure(figsize=(10, 10))
-    plt.plot(torch.max(state, dim=0), label='max')
-    plt.plot(torch.min(state, dim=0), label='min')
+    plt.plot(state.max(dim=0).values, label='max')
+    plt.plot(state.min(dim=0).values, label='min')
     plt.legend()
     plt.savefig(ckpt_path + '.png')
 
