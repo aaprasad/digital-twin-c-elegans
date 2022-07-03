@@ -94,6 +94,17 @@ def plot_action_heatmap(ckpt_name):
     plt.savefig(ckpt_path + '.action.png')
 
 
+def plot_state_range(ckpt_name):
+    ckpt_path = os.path.join(data_path, ckpt_name[0:-3] + '.state.pt')
+    state = torch.load(ckpt_path, map_location=torch.device('cpu'))
+    print(state.shape)
+    plt.figure(figsize=(10, 10))
+    plt.plot(state.max(dim=0), label='max')
+    plt.plot(state.min(dim=0), label='min')
+    plt.legend()
+    plt.savefig(ckpt_path + '.png')
+
+
 def plot_action_transformation():
     x = torch.arange(-5, 5, 0.1)
     y = torch.sigmoid(x)
@@ -118,4 +129,5 @@ if __name__ == '__main__':
     plot_model_weight(model, ckpt_name)
     # plot_action('data_new_640.pt', ckpt_name)
     plot_action_heatmap(ckpt_name)
+    plot_state_range(ckpt_name)
     # plot_action_transformation()
