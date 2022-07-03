@@ -17,7 +17,7 @@ def y_func(action, **kwargs):
 
 
 def y_func1(state, **kwargs):
-    return state.tolist()
+    return state.squeeze(dim=0).tolist()
 
 
 def select_model(model_folder, model_name, ckpt_name):
