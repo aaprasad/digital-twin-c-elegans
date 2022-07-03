@@ -16,6 +16,10 @@ def y_func(action, **kwargs):
     return action.tolist()
 
 
+def y_func1(state, **kwargs):
+    return state.tolist()
+
+
 def select_model(model_folder, model_name, ckpt_name):
     if model_name == 'snn_forward':
         # torch.set_default_dtype(torch.float64)
@@ -65,7 +69,7 @@ def evaluate(model_folder, model_name, start, end):
         else:
             raise AssertionError('{} not exist'.format(model_name))
         _, y = single_tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, test_func=test_func)
-        torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
+        torch.save(y, os.path.join(data_path, 'model{}.pt'.format(i)))  # action sequence
 
 
 def test(model_folder, model_name, start, end):
