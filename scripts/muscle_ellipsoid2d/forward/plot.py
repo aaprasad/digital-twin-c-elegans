@@ -97,6 +97,7 @@ def plot_action_heatmap(ckpt_name):
 def plot_state_range(ckpt_name):
     ckpt_path = os.path.join(data_path, ckpt_name[0:-3] + '.state.pt')
     state = torch.load(ckpt_path, map_location=torch.device('cpu'))
+    # state = state.squeeze(dim=1)
     print(state.shape)
     plt.figure(figsize=(10, 10))
     plt.plot(state.max(dim=0).values, label='max')
