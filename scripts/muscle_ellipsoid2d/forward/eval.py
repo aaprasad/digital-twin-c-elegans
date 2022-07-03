@@ -12,6 +12,10 @@ from virtual_nematode.trainers.ncp import prepare_model
 import worm_assets
 
 
+def y_func(action, **kwargs):
+    return action.tolist()
+
+
 def select_model(model_folder, model_name, ckpt_name):
     if model_name == 'snn_forward':
         # torch.set_default_dtype(torch.float64)
@@ -60,7 +64,7 @@ def evaluate(model_folder, model_name, start, end):
             test_func = test_func1
         else:
             raise AssertionError('{} not exist'.format(model_name))
-        _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps, test_func=test_func)
+        _, y = single_tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, test_func=test_func)
         torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 
@@ -76,7 +80,7 @@ def test(model_folder, model_name, start, end):
             test_func = test_func1
         else:
             raise AssertionError('{} not exist'.format(model_name))
-        tester(env, model, data_func, x_func, seed, max_episode_steps, model_folder, model_name, data_size=100, disable=True, test_func=test_func)
+        tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, model_folder, model_name, data_size=100, disable=True, test_func=test_func)
 
 
 def record(model_folder, model_name, env, ckpt_name):
@@ -90,7 +94,7 @@ def record(model_folder, model_name, env, ckpt_name):
         test_func = test_func1
     else:
         raise AssertionError('{} not exist'.format(model_name))
-    _, y = single_tester(env, model, data_func, x_func, seed, max_episode_steps, test_func=test_func)
+    _, y = single_tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, test_func=test_func)
     torch.save(y, os.path.join(data_path, ckpt_name))  # action sequence
 
 

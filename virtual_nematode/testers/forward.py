@@ -5,7 +5,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 
-def test_func1(index, env, model, data_func, x_func):
+def test_func1(index, env, model, data_func, x_func, y_func):
     """ run a forward locomotion simulation steered by a neural network """
     if type(env) is list:  # env is a list, take the one according to item index
         env = env[index]
@@ -27,7 +27,7 @@ def test_func1(index, env, model, data_func, x_func):
             action = action.numpy()
             observation, reward, done, info = env.step(action)
             x.append(x_func(observation=observation))
-            y.append(action.tolist())
+            y.append(y_func(action=action))
             if done:
                 break
     env.close()
@@ -36,7 +36,7 @@ def test_func1(index, env, model, data_func, x_func):
     return x, y
 
 
-def test_func2(index, env, model, data_func, x_func):
+def test_func2(index, env, model, data_func, x_func, y_func):
     """ run a forward locomotion simulation steered by a neural network """
     if type(env) is list:  # env is a list, take the one according to item index
         env = env[index]
@@ -58,7 +58,7 @@ def test_func2(index, env, model, data_func, x_func):
             action = action.numpy()
             observation, reward, done, info = env.step(action)
             x.append(x_func(observation=observation))
-            y.append(action.tolist())
+            y.append(y_func(action=action))
             if done:
                 break
     env.close()
@@ -68,7 +68,7 @@ def test_func2(index, env, model, data_func, x_func):
 
 
 def tester(
-    env, model, data_func, x_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
+    env, model, data_func, x_func, y_func, seed=42, max_episode_steps=2500, model_folder=None, model_name='fully_connected',
     data_size=100, disable=False, test_func=test_func1
 ):
     """ online test for at least 100 trials with torch multiprocessing """
@@ -79,7 +79,7 @@ def tester(
     result = SimulationDataset(
         data_size, max_episode_steps, 2, action_size, seed, test_func, disable,
         # func kwargs
-        env=env, model=model, data_func=data_func, x_func=x_func
+        env=env, model=model, data_func=data_func, x_func=x_func, y_func=y_func
     )
     if disable is False:
         print('result', len(result), result[0][0].size(), result[0][1].size())
@@ -95,12 +95,12 @@ def tester(
     return x, y  # center of mass, action
 
 
-def single_tester(env, model, data_func, x_func, seed=42, max_episode_steps=2500, test_func=test_func1):
+def single_tester(env, model, data_func, x_func, y_func, seed=42, max_episode_steps=2500, test_func=test_func1):
     """ online test for a single trial and record video """
     np.random.seed(seed)
     torch.manual_seed(seed)
     index = 0
-    x, y = test_func(index, env, model, data_func, x_func)
+    x, y = test_func(index, env, model, data_func, x_func, y_func)
     displacement = torch.linalg.norm(x[-1, :] - x[0, :], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
     return x, y  # center of mass, action
