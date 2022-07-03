@@ -70,6 +70,7 @@ def evaluate(model_folder, model_name, start, end):
             raise AssertionError('{} not exist'.format(model_name))
         _, y = single_tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, test_func=test_func)
         torch.save(y, os.path.join(data_path, 'model{}.pt'.format(i)))  # action sequence
+        # torch.save(y, os.path.join(data_path, 'model{}.state.pt'.format(i)))
 
 
 def test(model_folder, model_name, start, end):
