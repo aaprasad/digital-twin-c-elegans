@@ -218,7 +218,7 @@ class SNNCell(torch.nn.Module):
         action = activation[:, self.output_index]
         # action = (action - self.output_range[0]) / (self.output_range[1] - self.output_range[0])
         # action = action.clamp(0, 1)
-        action = action * self.w_output.clamp(0, 1)
+        # action = action * self.w_output.clamp(0, 1)
         return state, activation, action
 
 
