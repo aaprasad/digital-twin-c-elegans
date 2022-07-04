@@ -61,8 +61,8 @@ def train(model_name):
             'device_ids': device_ids, 'lr': lr, 'epochs': 300, 'early_stop': 30, 'loss': 'MSELoss',
             # model kwargs
             'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p,
-            'w_c_mask': w_c_mask, 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
-            'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index
+            'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index,
+            # 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask
         }
     elif model_name == 'ctrnn':
         # torch.set_default_dtype(torch.float64)

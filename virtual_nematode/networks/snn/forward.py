@@ -147,7 +147,10 @@ class SNNCell(torch.nn.Module):
     """ neuronal network model
     https://doi.org/10.1038/s41598-021-92690-2
     """
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_c_ex_mask, w_c_in_mask, w_g_mask, w_p_mask, output_index):
+    def __init__(
+        self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index,
+        # w_c_ex_mask, w_c_in_mask
+    ):
         super(SNNCell, self).__init__()
         self.dt = dt  # env dt
         self.steps = steps  # ode steps
@@ -160,10 +163,10 @@ class SNNCell(torch.nn.Module):
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # cell time constant, (cell_count, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # chemical synapse weight, (cell_count, cell_count)
         # exclude excitatory/inhibitory synapse
-        w_c_mask = w_c_mask ^ (w_c_ex_mask & w_c_mask) ^ (w_c_in_mask & w_c_mask)
+        # w_c_mask = w_c_mask ^ (w_c_ex_mask & w_c_mask) ^ (w_c_in_mask & w_c_mask)
         self.w_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # chemical synapse bool mask, (cell_count, cell_count)
-        self.w_c_ex_mask = torch.nn.Parameter(w_c_ex_mask, requires_grad=False)  # excitatory chemical synapse bool mask, (cell_count, cell_count)
-        self.w_c_in_mask = torch.nn.Parameter(w_c_in_mask, requires_grad=False)  # inhibitory chemical synapse bool mask, (cell_count, cell_count)
+        # self.w_c_ex_mask = torch.nn.Parameter(w_c_ex_mask, requires_grad=False)  # excitatory chemical synapse bool mask, (cell_count, cell_count)
+        # self.w_c_in_mask = torch.nn.Parameter(w_c_in_mask, requires_grad=False)  # inhibitory chemical synapse bool mask, (cell_count, cell_count)
         w_c_n = w_c_mask.sum(dim=0)
         w_c_n[w_c_n == 0] = 1
         self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # input chemical synapse amount, (cell_count, )
@@ -192,8 +195,9 @@ class SNNCell(torch.nn.Module):
         proprioception: (batch_size, proprioception_size)
         """
         # chemical synapse weight
-        w_c = self.w_c.abs()
-        w_c = w_c * self.w_c_ex_mask - w_c * self.w_c_in_mask + self.w_c * self.w_c_mask
+        # w_c = self.w_c.abs()
+        # w_c = w_c * self.w_c_ex_mask - w_c * self.w_c_in_mask + self.w_c * self.w_c_mask
+        w_c = self.w_c * self.w_c_mask
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
