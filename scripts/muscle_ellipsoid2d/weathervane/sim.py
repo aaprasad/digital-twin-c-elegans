@@ -65,3 +65,4 @@ if __name__ == '__main__':
     result = simulate(env, model, action_func, step_func, done_func, seed, trials=1, render=False)  # (batch_size, max_episode_steps, 1)
     result = np.array(result)
     print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(result.shape[0], result.mean(), result[:, 0].mean()))
+    # 100 trials: chemotaxis index mean 0.66, start concentration mean 0.37
