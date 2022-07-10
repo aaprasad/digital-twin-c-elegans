@@ -32,7 +32,7 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
     return env
 
 
-def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_noise_scale, max_episode_steps, position_func, camera_name):
+def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_noise_scale, max_episode_steps, position_func):
     """ create chemotaxis swimmer env """
     def func():
         x, y = distance * np.cos(angle), distance * np.sin(angle)
@@ -42,9 +42,7 @@ def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_no
         env = gym.wrappers.ClipAction(env)
         env = SensorObservation(env)
         env = DistributionObservation(env, dt=env.dt, f=fick, source=[x, y], position_func=position_func)
-        if camera_name is not None:
-            env = Recorder(env, camera_name=camera_name)
-            env = gym.wrappers.Monitor(env, directory='video/swimmer_weathervane', force=True)
+        env = Recorder(env, camera_name=None)
         return env
     if return_func is False:
         return func()
