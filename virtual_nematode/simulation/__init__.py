@@ -11,12 +11,11 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     **kwargs: configure mathematical model
     """
     results = []  # results of all simulations
-    if trials > 1:
-        seed = None  # ensure that seed is different in each trial
     # angles, actions = [], []
     for i in range(trials):
         result = []  # results of 1 simulation
-        env.seed(seed)
+        seed = seed + i if seed is not None else None
+        env.seed(seed + i)
         observation = env.reset()
         model.reset()
         for step in range(10 ** 6):
