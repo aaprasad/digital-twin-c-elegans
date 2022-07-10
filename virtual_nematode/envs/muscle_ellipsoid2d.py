@@ -8,7 +8,6 @@ from gym_worm.envs.mujoco.position import position
 from gym_worm.wrappers.distribution_observation import DistributionObservation
 from gym_worm.wrappers.recorder import Recorder
 from gym_worm.wrappers.sensor_observation import SensorObservation
-import numpy as np
 from virtual_nematode.envs.swimmer import fick
 
 
@@ -32,10 +31,10 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
     return env
 
 
-def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_noise_scale, max_episode_steps, position_func):
+def make_chemotaxis_swimmer(return_func, source, xml_str_base, reset_noise_scale, max_episode_steps, position_func):
     """ create chemotaxis swimmer env """
     def func():
-        x, y = distance * np.cos(angle), distance * np.sin(angle)
+        x, y = source
         xml_str = chemotaxis(copy.deepcopy(xml_str_base), x, y)
         # with open('swimmer.xml', 'w') as f:
         #     f.write(xml_str.decode('utf-8'))
@@ -46,7 +45,7 @@ def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_no
         env = gym.wrappers.TimeLimit(env, max_episode_steps)
         env = gym.wrappers.ClipAction(env)
         env = SensorObservation(env)
-        env = DistributionObservation(env, dt=env.dt, f=fick, source=[x, y], position_func=position_func)
+        env = DistributionObservation(env, dt=env.dt, f=fick, source=source, position_func=position_func)
         env = Recorder(env, camera_name=None)
         return env
     if return_func is False:
@@ -56,7 +55,7 @@ def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_no
 
 
 def make_chemotaxis_swimmers(
-    seed, trials, distance, position_func, n_bodies, joint_range, max_episode_steps, reset_noise_scale, density,
+    sources, position_func, n_bodies, joint_range, max_episode_steps, reset_noise_scale, density,
     viscosity, condim, friction, return_func=False
 ):
     """ create a list of chemotaxis swimmer envs """
@@ -66,10 +65,8 @@ def make_chemotaxis_swimmers(
     # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorfrc')
     xml_str = position(xml_str)
     xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
-    np.random.seed(seed)
     envs = []
-    for _ in range(trials):
-        angle = np.random.uniform(0, 2 * np.pi)
-        env = make_chemotaxis_swimmer(return_func, angle, xml_str, distance, reset_noise_scale, max_episode_steps, position_func)
+    for source in sources:
+        env = make_chemotaxis_swimmer(return_func, source, xml_str, reset_noise_scale, max_episode_steps, position_func)
         envs.append(env)
     return envs
