@@ -14,8 +14,7 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     # angles, actions = [], []
     for i in range(trials):
         result = []  # results of 1 simulation
-        seed = seed + i if seed is not None else None
-        env.seed(seed + i)
+        env.seed(seed=seed + i if seed is not None else None)
         observation = env.reset()
         model.reset()
         for step in range(10 ** 6):
