@@ -48,6 +48,10 @@ def done_func(result, index=None, **kwargs):
 
 
 if __name__ == '__main__':
+    """ 100 trials
+    k_w = 1, seed = 3: chemotaxis index mean 0.66, start concentration mean 0.37
+    k_w = 0, seed = 3: chemotaxis index mean 0.14, start concentration mean 0.37
+    """
     seed = 3  # None
     # distance = 3 * sigma
     env = make_swimmer_weathervane(
@@ -65,4 +69,3 @@ if __name__ == '__main__':
     result = simulate(env, model, action_func, step_func, done_func, seed, trials=1, render=False)  # (batch_size, max_episode_steps, 1)
     result = np.array(result)
     print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(result.shape[0], result.mean(), result[:, 0].mean()))
-    # 100 trials: chemotaxis index mean 0.66, start concentration mean 0.37
