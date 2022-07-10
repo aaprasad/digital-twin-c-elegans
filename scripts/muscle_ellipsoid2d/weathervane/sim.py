@@ -26,8 +26,9 @@ def action_func(model, step, observation, **kwargs):
     """
     q = observation[4:28]
     # q_vel = observation[32:56]
-    # g_p, g_w = observation[64], observation[65]
-    action = model.step(step, q=q)
+    # g_p = observation[64]
+    g_w = observation[65]
+    action = model.step(step, q=q, g_w=g_w)
     return action
 
 
@@ -70,7 +71,7 @@ if __name__ == '__main__':
     print(env.action_space, env.observation_space)
     print(env.source)
     model = WeathervanePIDMuscle(
-        dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+        k_w=1, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )

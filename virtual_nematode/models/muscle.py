@@ -83,8 +83,15 @@ class ReversePIDMuscle(ForwardPIDMuscle):
 
 
 class WeathervanePIDMuscle(ForwardPIDMuscle):
-    def __init__(self, **kwargs):
+    def __init__(self, k_w, **kwargs):
         super(WeathervanePIDMuscle, self).__init__(**kwargs)
+        self.k_w = k_w
+
+    def step(self, step, q, **kwargs):
+        g_w = kwargs.get('g_w')
+        q_target = self.a * np.sin(self.omega * step * self.dt + self.phi) - self.k_w * g_w
+        action = self._action(q, q_target)
+        return action
 
 
 class WeathervaneMuscle(object):
