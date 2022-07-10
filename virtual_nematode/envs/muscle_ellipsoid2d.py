@@ -37,7 +37,12 @@ def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_no
     def func():
         x, y = distance * np.cos(angle), distance * np.sin(angle)
         xml_str = chemotaxis(copy.deepcopy(xml_str_base), x, y)
-        env = gym.make('Swimmer-v3-v0', xml_str=xml_str.decode('utf-8'), reset_noise_scale=reset_noise_scale, exclude_current_positions_from_observation=False)
+        # with open('swimmer.xml', 'w') as f:
+        #     f.write(xml_str.decode('utf-8'))
+        env = gym.make(
+            'Worm-v0', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+            reset_noise_scale=reset_noise_scale
+        )
         env = gym.wrappers.TimeLimit(env, max_episode_steps)
         env = gym.wrappers.ClipAction(env)
         env = SensorObservation(env)
@@ -51,20 +56,20 @@ def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_no
 
 
 def make_chemotaxis_swimmers(
-    seed, trials, distance, position_func, n_bodies=12, joint_range='-100 100', max_episode_steps=1000,
-    reset_noise_scale=0.1, camera_name=None, return_func=False
+    seed, trials, distance, position_func, n_bodies, joint_range, max_episode_steps, reset_noise_scale, density,
+    viscosity, condim, friction, return_func=False
 ):
     """ create a list of chemotaxis swimmer envs """
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
+    # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorpos')
+    # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorvel')
+    # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorfrc')
+    xml_str = position(xml_str)
+    xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
     np.random.seed(seed)
-    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density=4000, viscosity=0.1, condim=3, friction='0.04 0.4')
-    xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorpos')
-    xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorvel')
-    xml_str_base = actuator(xml_str, n_bodies, sensor_type='actuatorfrc')
-    xml_str_base = position(xml_str_base)
-    xml_str_base = camera(xml_str_base)
     envs = []
     for _ in range(trials):
         angle = np.random.uniform(0, 2 * np.pi)
-        env = make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_noise_scale, max_episode_steps, position_func, camera_name)
+        env = make_chemotaxis_swimmer(return_func, angle, xml_str, distance, reset_noise_scale, max_episode_steps, position_func)
         envs.append(env)
     return envs
