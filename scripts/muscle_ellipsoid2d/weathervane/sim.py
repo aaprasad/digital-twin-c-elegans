@@ -8,7 +8,7 @@ observation space: Box(-inf, inf, (62,), float64)
 """
 
 import numpy as np
-from virtual_nematode.envs.muscle_ellipsoid2d import make_chemotaxis_swimmers
+from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
 from virtual_nematode.models.muscle import WeathervanePIDMuscle
 from virtual_nematode.simulation import simulate
 
@@ -47,26 +47,12 @@ def done_func(result, index=None, **kwargs):
     return result
 
 
-def get_sources(seed):
-    np.random.seed(seed)
-    distance = 10
-    sources = []
-    for _ in range(1):
-        angle = np.random.uniform(0, 2 * np.pi)
-        x, y = distance * np.cos(angle), distance * np.sin(angle)
-        sources.append((x, y))
-    return sources
-
-
 if __name__ == '__main__':
     seed = 11
-    sources = get_sources(seed)
-    env = make_chemotaxis_swimmers(
-        sources=sources, position_func=position_func, n_bodies=25, joint_range='-90 90',
-        max_episode_steps=2500, reset_noise_scale=0.6, density=1.2, viscosity=0.1, condim=3, friction='1 1',
-        return_func=False,
+    env = make_swimmer_weathervane(
+        n_bodies=25, joint_range='-90 90', max_episode_steps=2500, reset_noise_scale=0.6, distance=10,
+        position_func=position_func, density=1.2, viscosity=0.1, condim=3, friction='1 1', source=(0, 0)
     )
-    env = env[0]
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space, env.observation_space)
     print(env.source)

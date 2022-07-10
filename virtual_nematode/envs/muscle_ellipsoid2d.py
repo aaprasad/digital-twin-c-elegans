@@ -31,6 +31,31 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
     return env
 
 
+def make_swimmer_weathervane(
+    n_bodies, joint_range, max_episode_steps, reset_noise_scale, distance, position_func, density, viscosity, condim,
+    friction, source=(0, 0)
+):
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
+    # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorpos')
+    # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorvel')
+    # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorfrc')
+    xml_str = position(xml_str)
+    xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
+    xml_str = chemotaxis(xml_str, x=source[0], y=source[1])
+    # with open('swimmer.xml', 'w') as f:
+    #     f.write(xml_str.decode('utf-8'))
+    env = gym.make(
+        'Worm-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+        reset_noise_scale=reset_noise_scale, distance=distance
+    )
+    env = gym.wrappers.TimeLimit(env, max_episode_steps)
+    env = gym.wrappers.ClipAction(env)
+    env = SensorObservation(env)
+    env = DistributionObservation(env, dt=env.dt, f=fick, source=source, position_func=position_func)
+    env = Recorder(env, camera_name=None)
+    return env
+
+
 def make_chemotaxis_swimmer(return_func, source, xml_str_base, reset_noise_scale, max_episode_steps, position_func):
     """ create chemotaxis swimmer env """
     def func():
