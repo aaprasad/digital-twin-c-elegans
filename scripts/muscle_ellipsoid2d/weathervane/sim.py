@@ -48,7 +48,7 @@ def done_func(result, index=None, **kwargs):
 
 
 if __name__ == '__main__':
-    seed = 3
+    seed = 3  # None
     # distance = 3 * sigma
     env = make_swimmer_weathervane(
         n_bodies=25, joint_range='-90 90', max_episode_steps=2500, reset_noise_scale=0.6, distance=15,
