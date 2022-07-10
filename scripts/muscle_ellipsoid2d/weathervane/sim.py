@@ -1,12 +1,21 @@
+"""
+action space: Box(0.0, 1.0, (95,), float32)
+observation space: Box(-inf, inf, (62,), float64)
+    [0:56]: Ellipsoid2d-v0 observation space
+    [56:59]: x-, y- and z-coordinates of the robot's center of mass (length, m)
+    [59:62]: x-, y- and z-coordinates of the front tip (length, m)
+    [62:66]: distribution related observation
+"""
+
 import numpy as np
 from virtual_nematode.envs.muscle_ellipsoid2d import make_chemotaxis_swimmers
-from virtual_nematode.models.muscle import WeathervaneMuscle
+from virtual_nematode.models.muscle import WeathervanePIDMuscle
 from virtual_nematode.simulation import simulate
 
 
 def position_func(observation, **kwargs):
     """ 2D center of mass and position of the first body segment """
-    com, position = observation[341:343], observation[344:346]
+    com, position = observation[56:58], observation[59:61]
     return com, position
 
 
@@ -16,15 +25,15 @@ def action_func(model, step, observation, **kwargs):
     return: action
     """
     q = observation[4:28]
-    q_vel = observation[32:56]
-    g_p, g_w = observation[349], observation[350]
-    action = model.step(step, q, q_vel, g_w)
+    # q_vel = observation[32:56]
+    # g_p, g_w = observation[64], observation[65]
+    action = model.step(step, q=q)
     return action
 
 
 def step_func(observation, **kwargs):
     """ accumulate concentrations along the path """
-    concentration = [observation[347]]  # (1, )
+    concentration = [observation[62]]  # (1, )
     return concentration
 
 
@@ -37,18 +46,34 @@ def done_func(result, index=None, **kwargs):
     return result
 
 
+def get_sources(seed):
+    np.random.seed(seed)
+    distance = 10
+    sources = []
+    for _ in range(1):
+        angle = np.random.uniform(0, 2 * np.pi)
+        x, y = distance * np.cos(angle), distance * np.sin(angle)
+        sources.append((x, y))
+    return sources
+
+
 if __name__ == '__main__':
     seed = 11
-    trials = 1
-    camera_name = None  # set camera_name = 'track' or 'fixedcam', to record video
+    sources = get_sources(seed)
     env = make_chemotaxis_swimmers(
-        seed=seed, trials=1, distance=10, position_func=position_func, n_bodies=25, joint_range='-40 40',
-        max_episode_steps=3500, reset_noise_scale=0., camera_name=camera_name, return_func=False
+        sources=sources, position_func=position_func, n_bodies=25, joint_range='-90 90',
+        max_episode_steps=2500, reset_noise_scale=0.6, density=1.2, viscosity=0.1, condim=3, friction='1 1',
+        return_func=False,
     )
     env = env[0]
+    # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space, env.observation_space)
     print(env.source)
-    model = WeathervaneMuscle(dt=env.dt, n=25, a=30 * np.pi / 180, freq=0.8, psi=0.05, kp=1, kv=0)
-    result = simulate(env, model, action_func, step_func, done_func, seed, trials=trials, render=False)  # (batch_size, max_episode_steps, 1)
+    model = WeathervanePIDMuscle(
+        dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+        kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
+        kd=0.15
+    )
+    result = simulate(env, model, action_func, step_func, done_func, seed, trials=1, render=False)  # (batch_size, max_episode_steps, 1)
     result = np.array(result)
     print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(result.shape[0], result.mean(), result[:, 0].mean()))
