@@ -49,8 +49,9 @@ def done_func(result, index=None, **kwargs):
 
 if __name__ == '__main__':
     seed = 11
+    # distance = 3 * sigma
     env = make_swimmer_weathervane(
-        n_bodies=25, joint_range='-90 90', max_episode_steps=2500, reset_noise_scale=0.6, distance=10,
+        n_bodies=25, joint_range='-90 90', max_episode_steps=2500, reset_noise_scale=0.6, distance=15,
         position_func=position_func, density=1.2, viscosity=0.1, condim=3, friction='1 1', source=(0, 0)
     )
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
