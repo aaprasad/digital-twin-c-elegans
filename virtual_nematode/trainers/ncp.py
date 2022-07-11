@@ -14,7 +14,7 @@ from virtual_nematode.networks.snn.weathervane import SNNCell as SNNCellW
 from virtual_nematode.trainers.loss import MSESymmetricJointLoss, MSESymmetricMuscleLoss
 
 
-def prepare_model(model_name, device=None, device_ids=None, model_path=None, **kwargs):
+def prepare_model(model_name, device=None, device_ids=None, model_path=None, strict=True, **kwargs):
     """ init model
     seed torch rng before initializing model
     device: main torch device
@@ -40,7 +40,7 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, **k
     if device is None:
         device = torch.device('cpu')
     if model_path is not None:
-        model.load_state_dict(torch.load(model_path, map_location=device))
+        model.load_state_dict(torch.load(model_path, map_location=device), strict=strict)
     if type(device_ids) is list and len(device_ids) >= 2:
         model = torch.nn.DataParallel(model, device_ids=device_ids)
     model = model.to(device)
