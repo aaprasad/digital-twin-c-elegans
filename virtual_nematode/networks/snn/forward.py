@@ -188,7 +188,7 @@ class SNNCell(torch.nn.Module):
     def init_state(self):
         return self.bias.clone().detach()  # (cell_count, )
 
-    def forward(self, state, activation, proprioception):
+    def forward(self, state, activation, stimuli):
         """ forward 1 step
         state: cell state, (batch_size, cell_count)
         activation: cell activation, (batch_size, cell_count)
@@ -204,7 +204,7 @@ class SNNCell(torch.nn.Module):
         # proprioception weight
         w_p = self.w_p * self.w_p_mask
         # proprioception input
-        external_input = torch.mm(proprioception, w_p) / self.w_p_n  # proprioception input, (batch_size, cell_count)
+        external_input = torch.mm(stimuli, w_p) / self.w_p_n  # proprioception input, (batch_size, cell_count)
         # proprioception input + bias
         external_input += self.bias
         # dt / tau
@@ -233,10 +233,10 @@ class SNN(torch.nn.Module):
         super(SNN, self).__init__()
         self.cell = cell
 
-    def forward(self, proprioceptions):
-        device = proprioceptions.device
-        batch_size = proprioceptions.size(0)
-        seq_len = proprioceptions.size(1)
+    def forward(self, stimuli):
+        device = stimuli.device
+        batch_size = stimuli.size(0)
+        seq_len = stimuli.size(1)
         # initial state and activation
         state = self.cell.init_state  # (cell_count, )
         state = state.unsqueeze(dim=0).repeat(batch_size, 1)
@@ -245,19 +245,19 @@ class SNN(torch.nn.Module):
         # simulate sequence
         actions = []
         for t in range(seq_len):
-            p = proprioceptions[:, t]
-            state, activation, action = self.cell.forward(state, activation, p)
+            s = stimuli[:, t]
+            state, activation, action = self.cell.forward(state, activation, s)
             actions.append(action)  # action, (batch_size, muscle_count)
         actions = torch.stack(actions, dim=1)  # action sequence, (batch_size, seq_len, muscle_count)
         return actions
 
-    def step(self, state, activation, proprioception):
+    def step(self, state, activation, stimuli):
         if state is None or activation is None:
-            device = proprioception.device
-            batch_size = proprioception.size(0)
+            device = stimuli.device
+            batch_size = stimuli.size(0)
             state = self.cell.init_state  # (cell_count, )
             state = state.unsqueeze(dim=0).repeat(batch_size, 1)
             state = state.to(device=device)
             activation = self.cell.activation_func(state)
-        state, activation, action = self.cell.forward(state, activation, proprioception)
+        state, activation, action = self.cell.forward(state, activation, stimuli)
         return state, activation, action

@@ -53,7 +53,7 @@ def test_func2(index, env, model, data_func, x_func, y_func):
             data = data_func(observation=observation)
             data = torch.tensor(data, dtype=torch.float32)
             data = data.unsqueeze(dim=0)  # add batch dimension
-            state, activation, action = model.step(state, activation, proprioception=data)
+            state, activation, action = model.step(state, activation, data)
             action = action.squeeze(dim=0)  # remove batch dimension
             action = action.numpy()
             observation, reward, done, info = env.step(action)
