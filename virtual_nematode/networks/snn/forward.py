@@ -188,11 +188,21 @@ class SNNCell(torch.nn.Module):
     def init_state(self):
         return self.bias.clone().detach()  # (cell_count, )
 
+    def _external_input(self, stimuli):
+        """ external input
+        stimuli: (batch_size, proprioception_size)
+        """
+        # proprioception weight
+        w_p = self.w_p * self.w_p_mask
+        # proprioception input
+        external_input = torch.mm(stimuli, w_p) / self.w_p_n  # proprioception input, (batch_size, cell_count)
+        return external_input
+
     def forward(self, state, activation, stimuli):
         """ forward 1 step
         state: cell state, (batch_size, cell_count)
         activation: cell activation, (batch_size, cell_count)
-        proprioception: (batch_size, proprioception_size)
+        stimuli: (batch_size, stimuli_size)
         """
         # chemical synapse weight
         # w_c = self.w_c.abs()
@@ -201,12 +211,8 @@ class SNNCell(torch.nn.Module):
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
-        # proprioception weight
-        w_p = self.w_p * self.w_p_mask
-        # proprioception input
-        external_input = torch.mm(stimuli, w_p) / self.w_p_n  # proprioception input, (batch_size, cell_count)
         # proprioception input + bias
-        external_input += self.bias
+        external_input = self._external_input(stimuli) + self.bias
         # dt / tau
         dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.05)
         for i in range(self.steps):
