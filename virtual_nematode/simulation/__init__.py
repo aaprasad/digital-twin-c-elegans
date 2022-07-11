@@ -12,6 +12,7 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     """
     results = []  # results of all simulations
     # angles, actions = [], []
+    # distributions = []
     for i in range(trials):
         result = []  # results of 1 simulation
         env.seed(seed=seed + i if seed is not None else None)
@@ -24,6 +25,7 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
             observation, reward, done, info = env.step(action)
             # angles.append(observation[4:28])
             # actions.append(action)
+            # distributions.append(observation[62:66])
             result.append(step_func(observation=observation))
             if done:
                 results.append(done_func(index=i, result=result))
@@ -35,6 +37,16 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
     # plt.subplot(1, 2, 2)
     # actions = np.array(actions)
     # sns.heatmap(actions.clip(0, 1).T, cmap='coolwarm')
+    # plt.show()
+
+    # distributions = np.array(distributions)
+    # plt.plot(distributions[:, 0], label='concentration')
+    # plt.plot(distributions[:, 1], label='gradient')
+    # plt.plot(distributions[:, 2], label='g_p')
+    # plt.plot(distributions[:, 3], label='g_w')
+    # plt.xlabel('t')
+    # plt.ylabel('value')
+    # plt.legend()
     # plt.show()
     return results
 
