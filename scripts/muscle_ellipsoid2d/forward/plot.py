@@ -20,7 +20,7 @@ def plot_model_weight(model, ckpt_name):
     w_c = model.cell.w_c * model.cell.w_c_mask
     w_c = w_c.clone().detach()
     print('w_c: min {}, max {}, mean {}, std {}'.format(w_c.min().item(), w_c.max().item(), w_c.mean().item(), w_c.std().item()))
-    w_c_max = w_c.abs().max().item()
+    w_c_max = w_c.std().item()  # w_c.abs().max().item()
     plt.subplot(2, 3, 1)
     plt.title('Chemical Synapse Weight')
     plt.xlabel('Cell ID')
@@ -30,7 +30,7 @@ def plot_model_weight(model, ckpt_name):
     w_p = model.cell.w_p * model.cell.w_p_mask
     w_p = w_p.clone().detach()
     print('w_p: min {}, max {}, mean {}, std {}'.format(w_p.min().item(), w_p.max().item(), w_p.mean().item(), w_p.std().item()))
-    w_p_max = w_p.abs().max().item()
+    w_p_max = w_p.std().item()  # w_p.abs().max().item()
     plt.subplot(2, 3, 2)
     plt.title('Proprioception Input Weight')
     plt.xlabel('Joint ID')
@@ -48,7 +48,7 @@ def plot_model_weight(model, ckpt_name):
     w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * model.cell.w_g_mask
     w_g = w_g.clone().detach()
     print('w_g: min {}, max {}, mean {}, std {}'.format(w_g.min().item(), w_g.max().item(), w_g.mean().item(), w_g.std().item()))
-    w_g_max = w_g.max().item()
+    w_g_max = w_g.std().item()  # w_g.max().item()
     plt.subplot(2, 3, 4)
     plt.title('Gap Junction Weight')
     plt.xlabel('Cell ID')
