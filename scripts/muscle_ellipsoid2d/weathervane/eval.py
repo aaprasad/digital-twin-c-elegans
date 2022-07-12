@@ -1,0 +1,75 @@
+from data import x_func as data_func
+from data import y_func
+import gym
+import os
+from sim import position_func
+from sim import step_func as x_func
+import sys
+import torch
+from virtual_nematode.connectomes.forward import body_wall_muscles, neuron_list2
+from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
+from virtual_nematode.networks.snn.weathervane import Connectome
+from virtual_nematode.testers.weathervane import single_tester, tester
+from virtual_nematode.trainers.ncp import prepare_model
+import worm_assets
+
+
+def select_model(model_folder, model_name, ckpt_name):
+    if model_name == 'snn_weathervane':
+        """ connectome """
+        path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
+        muscles = body_wall_muscles()
+        neurons = neuron_list2(path, muscles)
+        sensory_neurons = ['ASEL', 'ASER']
+        print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
+        p = 24
+        gradient_size = 1
+        connectome = Connectome(
+            sensory_neurons, gradient_size, gradient_mask=False, neurons=neurons, muscles=muscles, ex_synapses=[],
+            in_synapses=[], path=path, p=p, p_mask=True, polarity_mask=False
+        )
+        (w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index), w_gradient_mask = connectome.mask()
+        """ params """
+        dt = 0.04
+        n = len(connectome.cells)
+        m = len(connectome.muscles)
+        """ trainer kwargs """
+        kwargs = {
+            'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p,
+            'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index,
+            # 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask
+            'gradient_size': gradient_size, 'w_gradient_mask': w_gradient_mask,
+        }
+    else:
+        raise AssertionError('{} not exist'.format(model_name))
+    model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
+    return model
+
+
+def test(model_folder, model_name, ckpt_name):
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
+
+
+def record(model_folder, model_name, env, ckpt_name):
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
+    x, y = single_tester(env, model, data_func, x_func, y_func, seed, max_episode_steps)
+    torch.save((x, y), os.path.join(data_path, ckpt_name))  # concentration, action sequence
+
+
+if __name__ == '__main__':
+    runs_folder = sys.argv[1]
+    model_folder = os.path.join('runs', runs_folder)
+    seed = 42
+    max_episode_steps = 2500
+    data_path = os.path.join('data', runs_folder)
+    os.makedirs(data_path, exist_ok=True)
+    env = make_swimmer_weathervane(
+        n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6, distance=15,
+        position_func=position_func, density=1.2, viscosity=0.1, condim=3, friction='1 1', source=(0, 0)
+    )
+    test(model_folder, 'snn_weathervane', ckpt_name='model.pt')
+    # record(model_folder, 'snn_weathervane', env, ckpt_name='model.pt')
