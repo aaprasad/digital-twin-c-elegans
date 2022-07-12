@@ -135,7 +135,7 @@ def plot_state_range(ckpt_name):
     # mean
     plt.figure(figsize=(10, 10))
     plt.title('Stats about Cell State Time Sequence')
-    plt.plot(state.mean(dim=0).values, label='Mean')
+    plt.plot(state.mean(dim=0), label='Mean')
     plt.legend()
     plt.xlabel('Cell ID')
     plt.ylabel('value')
