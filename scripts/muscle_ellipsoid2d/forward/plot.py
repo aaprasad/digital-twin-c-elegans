@@ -54,11 +54,13 @@ def plot_model_weight(model, ckpt_name):
     plt.ylabel('Cell ID')
     sns.heatmap(w_g, cmap='coolwarm', vmin=0, vmax=w_g_max)
     # output scaling weight
+    """
     w_output = model.cell.w_output.clamp(0, 1)
     w_output = w_output.clone().detach()
     plt.subplot(2, 3, 5)
     plt.title('output scaling weight')
     plt.plot(w_output)
+    """
     # bias
     bias = model.cell.bias.clone().detach()
     print('bias: min {}, max {}, mean {}, std {}'.format(bias.min().item(), bias.max().item(), bias.mean().item(), bias.std().item()))
