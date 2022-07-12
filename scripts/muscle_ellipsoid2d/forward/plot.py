@@ -91,6 +91,8 @@ def plot_action_heatmap(ckpt_name):
     print(action.shape)
     plt.figure(figsize=(13, 10))
     sns.heatmap(action[0:320, :].clamp(0, 1).T, cmap='coolwarm')
+    plt.xlabel('t (step)')
+    plt.ylabel('Muscle ID')
     plt.savefig(ckpt_path + '.action.png')
 
 
