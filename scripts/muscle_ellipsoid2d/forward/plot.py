@@ -23,9 +23,9 @@ def plot_model_weight(model, ckpt_name):
     w_c_max = w_c.std().item()  # w_c.abs().max().item()
     plt.subplot(2, 3, 1)
     plt.title('Chemical Synapse Weight')
+    sns.heatmap(w_c, cmap='coolwarm', vmin=-w_c_max, vmax=w_c_max)
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
-    sns.heatmap(w_c, cmap='coolwarm', vmin=-w_c_max, vmax=w_c_max)
     # proprioception input weight
     w_p = model.cell.w_p * model.cell.w_p_mask
     w_p = w_p.clone().detach()
@@ -33,9 +33,9 @@ def plot_model_weight(model, ckpt_name):
     w_p_max = w_p.std().item()  # w_p.abs().max().item()
     plt.subplot(2, 3, 2)
     plt.title('Proprioception Input Weight')
+    sns.heatmap(w_p, cmap='coolwarm', vmin=-w_p_max, vmax=w_p_max)
     plt.xlabel('Joint ID')
     plt.ylabel('Cell ID')
-    sns.heatmap(w_p, cmap='coolwarm', vmin=-w_p_max, vmax=w_p_max)
     # tau
     tau = model.cell.tau.clamp(0.01, 0.05)
     tau = tau.clone().detach()
@@ -51,9 +51,9 @@ def plot_model_weight(model, ckpt_name):
     w_g_max = w_g.std().item()  # w_g.max().item()
     plt.subplot(2, 3, 4)
     plt.title('Gap Junction Weight')
+    sns.heatmap(w_g, cmap='coolwarm', vmin=-w_g_max, vmax=w_g_max)
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
-    sns.heatmap(w_g, cmap='coolwarm', vmin=-w_g_max, vmax=w_g_max)
     # output scaling weight
     """
     w_output = model.cell.w_output.clamp(0, 1)
@@ -67,9 +67,9 @@ def plot_model_weight(model, ckpt_name):
     print('bias: min {}, max {}, mean {}, std {}'.format(bias.min().item(), bias.max().item(), bias.mean().item(), bias.std().item()))
     plt.subplot(2, 3, 6)
     plt.title('Bias')
+    plt.plot(bias)
     plt.xlabel('Cell ID')
     plt.ylabel('Bias')
-    plt.plot(bias)
     plt.savefig(os.path.join(data_path, '{}.weight.png'.format(ckpt_name)))
 
 
