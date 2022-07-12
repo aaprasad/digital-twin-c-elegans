@@ -113,11 +113,34 @@ def plot_state_range(ckpt_name):
     state = torch.load(ckpt_path, map_location=torch.device('cpu'))
     # state = state.squeeze(dim=1)
     print(state.shape)
+    # max and min
     plt.figure(figsize=(10, 10))
-    plt.plot(state.max(dim=0).values, label='max')
-    plt.plot(state.min(dim=0).values, label='min')
+    plt.title('Stats about Cell State Time Sequence')
+    plt.plot(state.max(dim=0).values, label='Max')
+    plt.plot(state.min(dim=0).values, label='Min')
     plt.legend()
-    plt.savefig(ckpt_path + '.png')
+    plt.xlabel('Cell ID')
+    plt.ylabel('value')
+    plt.savefig(ckpt_path + '1.png')
+    plt.close()
+    # median
+    plt.figure(figsize=(10, 10))
+    plt.title('Stats about Cell State Time Sequence')
+    plt.plot(state.median(dim=0).values, label='Median')
+    plt.legend()
+    plt.xlabel('Cell ID')
+    plt.ylabel('value')
+    plt.savefig(ckpt_path + '2.png')
+    plt.close()
+    # mean
+    plt.figure(figsize=(10, 10))
+    plt.title('Stats about Cell State Time Sequence')
+    plt.plot(state.mean(dim=0).values, label='Mean')
+    plt.legend()
+    plt.xlabel('Cell ID')
+    plt.ylabel('value')
+    plt.savefig(ckpt_path + '3.png')
+    plt.close()
 
 
 def plot_action_transformation():
