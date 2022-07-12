@@ -34,8 +34,8 @@ def plot_model_weight(model, ckpt_name):
     plt.subplot(2, 3, 2)
     plt.title('Proprioception Input Weight')
     sns.heatmap(w_p, cmap='coolwarm', vmin=-w_p_max, vmax=w_p_max)
-    plt.xlabel('Joint ID')
-    plt.ylabel('Cell ID')
+    plt.xlabel('Cell ID')
+    plt.ylabel('Joint ID')
     # tau
     tau = model.cell.tau.clamp(0.01, 0.05)
     tau = tau.clone().detach()
