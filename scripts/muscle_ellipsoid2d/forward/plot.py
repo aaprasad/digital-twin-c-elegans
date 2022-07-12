@@ -8,15 +8,16 @@ import torch
 def plot_model_weight(model, ckpt_name):
     plt.figure(figsize=(20, 10))
     # chemical weight
-    w_c = (
-            model.cell.w_c.abs() * model.cell.w_c_ex_mask -
-            model.cell.w_c.abs() * model.cell.w_c_in_mask +
-            model.cell.w_c * (
-                    model.cell.w_c_mask.float() -
-                    model.cell.w_c_ex_mask.float() -
-                    model.cell.w_c_in_mask.float()
-        )
-    )
+    # w_c = (
+    #         model.cell.w_c.abs() * model.cell.w_c_ex_mask -
+    #         model.cell.w_c.abs() * model.cell.w_c_in_mask +
+    #         model.cell.w_c * (
+    #                 model.cell.w_c_mask.float() -
+    #                 model.cell.w_c_ex_mask.float() -
+    #                 model.cell.w_c_in_mask.float()
+    #     )
+    # )
+    w_c = model.cell.w_c * model.cell.w_c_mask
     w_c = w_c.clone().detach()
     print('w_c: min {}, max {}, mean {}, std {}'.format(w_c.min().item(), w_c.max().item(), w_c.mean().item(), w_c.std().item()))
     w_c_max = w_c.abs().max().item()
