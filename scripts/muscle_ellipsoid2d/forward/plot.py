@@ -53,7 +53,7 @@ def plot_model_weight(model, ckpt_name):
     plt.title('Gap Junction Weight')
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
-    sns.heatmap(w_g, cmap='coolwarm', vmin=0, vmax=w_g_max)
+    sns.heatmap(w_g, cmap='coolwarm', vmin=-w_g_max, vmax=w_g_max)
     # output scaling weight
     """
     w_output = model.cell.w_output.clamp(0, 1)
