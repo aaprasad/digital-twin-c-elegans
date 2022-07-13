@@ -178,12 +178,26 @@ def weight_analysis(model, ckpt_name):
     w_p = model.cell.w_p * model.cell.w_p_mask
     w_p = w_p.clone().detach()
     w_p_mask = model.cell.w_p_mask.clone().detach()
-    # analysis
-    chemical_input = torch.sum(w_c ** 2, dim=0) / torch.sum(w_c_mask, dim=0)
-    chemical_output = torch.sum(w_c ** 2, dim=1) / torch.sum(w_c_mask, dim=1)
-    chemical = (torch.sum(w_c ** 2, dim=0) + torch.sum(w_c ** 2, dim=1)) / (torch.sum(w_c_mask, dim=0) + torch.sum(w_c_mask, dim=1))
-    gap = torch.sum(w_g ** 2, dim=0) / torch.sum(w_g_mask, dim=0)
-    proprioception_input = torch.sum(w_p ** 2, dim=0) / torch.sum(w_p_mask, dim=0)
+    # analysis: chemical input
+    chemical_input_number = torch.sum(w_c_mask, dim=0)
+    chemical_input_number[chemical_input_number == 0] = 1
+    chemical_input = torch.sum(w_c ** 2, dim=0) / chemical_input_number
+    # analysis: chemical output
+    chemical_output_number = torch.sum(w_c_mask, dim=1)
+    chemical_output_number[chemical_output_number == 0] = 1
+    chemical_output = torch.sum(w_c ** 2, dim=1) / chemical_output_number
+    # analysis: chemical
+    chemical_number = torch.sum(w_c_mask, dim=0) + torch.sum(w_c_mask, dim=1)
+    chemical_number[chemical_number == 0] = 1
+    chemical = (torch.sum(w_c ** 2, dim=0) + torch.sum(w_c ** 2, dim=1)) / chemical_number
+    # analysis: gap junction
+    gap_number = torch.sum(w_g_mask, dim=0)
+    gap_number[gap_number == 0] = 1
+    gap = torch.sum(w_g ** 2, dim=0) / gap_number
+    # analysis: proprioception input
+    proprioception_input_number = torch.sum(w_p_mask, dim=0)
+    proprioception_input_number[proprioception_input_number == 0] = 1
+    proprioception_input = torch.sum(w_p ** 2, dim=0) / proprioception_input_number
     # csv
     with open(os.path.join(data_path, '{}.weight_analysis.csv'.format(ckpt_name)), 'w') as f:
         writer = csv.writer(f)
