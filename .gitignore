@@ -11,8 +11,9 @@ checkpoint/
 video/
 # test code
 test/
-# photo
+# files
 *.png
+*.csv
 # pip
 build/
 *.egg-info/
