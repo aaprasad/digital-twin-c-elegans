@@ -1,8 +1,11 @@
+import csv
 from eval import select_model
 from matplotlib import pyplot as plt
 import os
 import seaborn as sns
 import torch
+from virtual_nematode.connectomes.forward import neuron_list2, body_wall_muscles
+import worm_assets
 
 
 def plot_model_weight(model, ckpt_name):
@@ -156,6 +159,39 @@ def plot_action_transformation():
     plt.show()
 
 
+def weight_analysis(model, ckpt_name):
+    # cells
+    path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
+    muscles = body_wall_muscles()
+    neurons = neuron_list2(path, muscles)
+    cells = neurons + muscles
+    # chemical synapse weight
+    w_c = model.cell.w_c * model.cell.w_c_mask
+    w_c = w_c.clone().detach()
+    w_c_mask = model.cell.w_c_mask.clone().detach()
+    # gap junction weight
+    w_g = model.cell.w_g.abs()
+    w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * model.cell.w_g_mask
+    w_g = w_g.clone().detach()
+    w_g_mask = model.cell.w_g_mask.clone().detach()
+    # proprioception input weight
+    w_p = model.cell.w_p * model.cell.w_p_mask
+    w_p = w_p.clone().detach()
+    w_p_mask = model.cell.w_p_mask.clone().detach()
+    # analysis
+    chemical_input = torch.sum(w_c ** 2, dim=0) / torch.sum(w_c_mask, dim=0)
+    chemical_output = torch.sum(w_c ** 2, dim=1) / torch.sum(w_c_mask, dim=1)
+    chemical = (torch.sum(w_c ** 2, dim=0) + torch.sum(w_c ** 2, dim=1)) / (torch.sum(w_c_mask, dim=0) + torch.sum(w_c_mask, dim=1))
+    gap = torch.sum(w_g ** 2, dim=0) / torch.sum(w_g_mask, dim=0)
+    proprioception_input = torch.sum(w_p ** 2, dim=0) / torch.sum(w_p_mask, dim=0)
+    # csv
+    with open(os.path.join(data_path, '{}.weight_analysis.csv'.format(ckpt_name)), 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(('Cell ID', 'Cell Name', 'Chemical Input', 'Chemical Output', 'Chemical', 'Gap Junction', 'Proprioception Input'))
+        for i, name in enumerate(cells):
+            writer.writerow((i, name, chemical_input[i].item(), chemical_output[i].item(), chemical[i].item(), gap[i].item(), proprioception_input[i].item()))
+
+
 if __name__ == '__main__':
     runs_folder = ''
     ckpt_name = 'model.pt'
@@ -169,3 +205,4 @@ if __name__ == '__main__':
     plot_action_heatmap(ckpt_name)
     plot_state_range(ckpt_name)
     # plot_action_transformation()
+    weight_analysis(model, ckpt_name)
