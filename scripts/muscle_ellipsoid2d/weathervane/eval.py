@@ -72,4 +72,5 @@ if __name__ == '__main__':
         position_func=position_func, density=1.2, viscosity=0.1, condim=3, friction='1 1', source=(0, 0)
     )
     test(model_folder, 'snn_weathervane', ckpt_name='model.pt')
+    # seed = 43
     # record(model_folder, 'snn_weathervane', env, ckpt_name='model.pt')
