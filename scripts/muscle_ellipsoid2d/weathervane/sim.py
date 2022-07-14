@@ -7,6 +7,7 @@ observation space: Box(-inf, inf, (62,), float64)
     [62:66]: distribution related observation
 """
 
+import gym
 import numpy as np
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
 from virtual_nematode.models.muscle import WeathervanePIDMuscle
