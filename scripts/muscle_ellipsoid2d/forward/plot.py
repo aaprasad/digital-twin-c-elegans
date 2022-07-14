@@ -206,6 +206,21 @@ def weight_analysis(model, ckpt_name):
             writer.writerow((i, name, chemical_input[i].item(), chemical_output[i].item(), chemical[i].item(), gap[i].item(), proprioception_input[i].item()))
 
 
+def bias(model, ckpt_name):
+    # cells
+    path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
+    muscles = body_wall_muscles()
+    neurons = neuron_list2(path, muscles)
+    cells = neurons + muscles
+    # bias
+    bias = model.cell.bias.clone().detach()
+    with open(os.path.join(data_path, '{}.bias.csv'.format(ckpt_name)), 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(('Cell ID', 'Cell Name', 'Bias'))
+        for i, name in enumerate(cells):
+            writer.writerow((i, name, bias[i].item()))
+
+
 if __name__ == '__main__':
     runs_folder = ''
     ckpt_name = 'model.pt'
@@ -220,3 +235,4 @@ if __name__ == '__main__':
     plot_state_range(ckpt_name)
     # plot_action_transformation()
     weight_analysis(model, ckpt_name)
+    bias(model, ckpt_name)
