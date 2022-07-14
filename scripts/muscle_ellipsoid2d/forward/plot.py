@@ -112,10 +112,16 @@ def plot_action_heatmap(ckpt_name):
 
 
 def plot_state_range(ckpt_name):
+    # state
     ckpt_path = os.path.join(data_path, ckpt_name[0:-3] + '.state.pt')
     state = torch.load(ckpt_path, map_location=torch.device('cpu'))
     # state = state.squeeze(dim=1)
     print(state.shape)
+    # cells
+    path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
+    muscles = body_wall_muscles()
+    neurons = neuron_list2(path, muscles)
+    cells = neurons + muscles
     # max and min
     plt.figure(figsize=(10, 10))
     plt.title('Stats about Cell State Time Sequence')
@@ -138,12 +144,19 @@ def plot_state_range(ckpt_name):
     # mean
     plt.figure(figsize=(10, 10))
     plt.title('Stats about Cell State Time Sequence')
-    plt.plot(state.mean(dim=0), label='Mean')
+    state_mean = state.mean(dim=0)
+    plt.plot(state_mean, label='Mean')
     plt.legend()
     plt.xlabel('Cell ID')
     plt.ylabel('value')
     plt.savefig(ckpt_path + '3.png')
     plt.close()
+    # csv: mean
+    with open(os.path.join(data_path, '{}.cell_state_mean.csv'.format(ckpt_name)), 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(('Cell ID', 'Cell Name', 'Cell State Mean'))
+        for i, name in enumerate(cells):
+            writer.writerow((i, name, state_mean[i].item()))
 
 
 def plot_action_transformation():
