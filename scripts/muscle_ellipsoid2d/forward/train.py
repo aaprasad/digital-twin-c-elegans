@@ -48,14 +48,11 @@ def train(model_name):
             neurons=neurons, muscles=muscles, sensory_neurons=sensory, p=p, p_mask=True
         )
         w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index = connectome.mask()
+        # plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask)
         """ params """
         dt = 0.04
         n = len(connectome.cells)
         m = len(connectome.muscles)
-        """ plot mask """
-        # print('A cell with the most gap junctions', w_g_mask.sum(dim=1).max())
-        # print(w_c_mask.dtype, w_g_mask.dtype, w_c_ex_mask.dtype, w_c_in_mask.dtype, w_p_mask.dtype, output_index.dtype)
-        # plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask)
         """ trainer kwargs
         longer seq: data_name='data320.pt', lengths=[5000, 1000, 1000], batch_size=256, cuda=0, device_ids=[0, 1]
         """
