@@ -6,7 +6,7 @@ from sim import position_func
 from sim import step_func as x_func
 import sys
 import torch
-from virtual_nematode.connectomes.forward import body_wall_muscles, neuron_list2
+from virtual_nematode.connectomes.forward import body_wall_muscles, neuron_list2, sensory_neurons
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
 from virtual_nematode.networks.snn.weathervane import Connectome
 from virtual_nematode.testers.weathervane import single_tester, tester
@@ -20,13 +20,15 @@ def select_model(model_folder, model_name, ckpt_name):
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
         muscles = body_wall_muscles()
         neurons = neuron_list2(path, muscles)
-        sensory_neurons = ['ASEL', 'ASER']
+        # sensory = ['ASEL', 'ASER']
+        sensory = sensory_neurons(path)
         print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
         p = 24
         gradient_size = 1
         connectome = Connectome(
-            sensory_neurons, gradient_size, gradient_mask=False, neurons=neurons, muscles=muscles, ex_synapses=[],
-            in_synapses=[], path=path, p=p, p_mask=True, polarity_mask=False
+            gradient_size, gradient_mask=True,
+            path=path, ex_synapses=[], in_synapses=[], polarity_mask=False,
+            neurons=neurons, muscles=muscles, sensory_neurons=sensory, p=p, p_mask=True
         )
         (w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index), w_gradient_mask = connectome.mask()
         """ params """

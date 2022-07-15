@@ -6,15 +6,14 @@ from virtual_nematode.networks.snn.forward import SNNCell as _SNNCell
 
 
 class Connectome(_Connectome):
-    def __init__(self, sensory_neurons, gradient_size, gradient_mask, **kwargs):
+    def __init__(self, gradient_size, gradient_mask, **kwargs):
         super(Connectome, self).__init__(**kwargs)
         self.gradient_size = gradient_size
         self.gradient_mask = gradient_mask
-        self.sensory_neurons = sensory_neurons
 
     def _gradient_mask(self):
         mask = pd.DataFrame(False, index=list(range(self.gradient_size)), columns=self.cells)
-        if self.gradient_mask is True:  # only sensory neurons receive gradient input
+        if self.gradient_mask is True:  # sensory neurons receive gradient input
             mask.loc[:, self.sensory_neurons] = True
         else:  # all neurons receive gradient input
             mask.loc[:, self.neurons] = True
