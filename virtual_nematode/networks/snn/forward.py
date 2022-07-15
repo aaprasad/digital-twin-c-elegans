@@ -9,9 +9,10 @@ class DummyConnectome(object):
     * no gap junction connection
     * fully connected proprioception input to all cells
     """
-    def __init__(self, neurons, muscles, p, p_mask):
+    def __init__(self, neurons, muscles, sensory_neurons, p, p_mask):
         self.neurons = neurons
         self.muscles = muscles
+        self.sensory_neurons = sensory_neurons
         self.cells = neurons + muscles
         self.p = p
         self.p_mask = p_mask
@@ -27,10 +28,11 @@ class DummyConnectome(object):
         https://doi.org/10.1016/j.neuron.2012.08.039
         """
         mask = pd.DataFrame(False, index=list(range(self.p)), columns=self.cells)
-        mask.loc[:, self.neurons] = True
+        if self.p_mask is True:  # sensory neurons receive proprioception input
+            mask.loc[:, self.sensory_neurons] = True
+        else:  # all neurons receive proprioception input
+            mask.loc[:, self.neurons] = True
         mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
-        if self.p_mask is False:  # no proprioception mask: all cells receive proprioception input
-            mask = torch.full_like(mask, fill_value=True)
         return mask
 
     def _weight(self, chemical, gap_junction):
@@ -80,12 +82,12 @@ class DummyConnectome(object):
 
 
 class Connectome(DummyConnectome):
-    def __init__(self, neurons, muscles, ex_synapses, in_synapses, path, p, p_mask, polarity_mask):
+    def __init__(self, path, ex_synapses, in_synapses, polarity_mask, **kwargs):
+        self.path = path
         self.ex_synapses = ex_synapses
         self.in_synapses = in_synapses
-        self.path = path
         self.polarity_mask = polarity_mask
-        super(Connectome, self).__init__(neurons, muscles, p, p_mask)
+        super(Connectome, self).__init__(**kwargs)
 
     def _init(self):
         chemical = pd.read_excel(self.path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]

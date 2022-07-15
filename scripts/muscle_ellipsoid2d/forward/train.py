@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import seaborn as sns
 import torch
-from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity, neuron_list2
+from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity, neuron_list2, sensory_neurons
 from virtual_nematode.networks.snn.forward import Connectome, DummyConnectome
 from virtual_nematode.trainers.ncp import train_eval_test
 import worm_assets
@@ -41,12 +41,16 @@ def train(model_name):
         muscles = body_wall_muscles()
         # neurons = neuron_list1()
         neurons = neuron_list2(path, muscles)
-        ex_synapses, in_synapses = chemical_synapse_polarity()
+        sensory = sensory_neurons(path)
+        # ex_synapses, in_synapses = chemical_synapse_polarity()
         print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
         """ mask """
         p = 24
-        # connectome = DummyConnectome(neurons, muscles, p, p_mask=True)
-        connectome = Connectome(neurons, muscles, ex_synapses, in_synapses, path, p, p_mask=True, polarity_mask=False)
+        # connectome = DummyConnectome(neurons, muscles, sensory, p, p_mask=True)
+        connectome = Connectome(
+            path, ex_synapses=[], in_synapses=[], polarity_mask=False,
+            neurons=neurons, muscles=muscles, sensory_neurons=sensory, p=p, p_mask=True
+        )
         w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index = connectome.mask()
         """ params """
         dt = 0.04
