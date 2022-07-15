@@ -124,3 +124,12 @@ def neuron_list2(path, muscles):
         if cell not in muscles_cells:
             cells.append(cell)
     return cells
+
+
+def sensory_neurons(path):
+    """ all sensory neurons
+    https://doi.org/10.1038/s41586-019-1352-7
+    """
+    gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
+    cells = list(gap_junction.iloc[57:140, :].index)
+    return cells
