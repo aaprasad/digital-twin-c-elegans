@@ -1,11 +1,12 @@
 .idea/
 __pycache__/
-# trainning logs
+# logs
 log/
-runs*/
-# checkpoints
+runs/
 checkpoint/
 *.pt
+# ipynb
+*.ipynb
 .ipynb_checkpoints/
 # video recordings
 video/
