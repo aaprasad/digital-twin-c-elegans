@@ -1,8 +1,7 @@
 from matplotlib import pyplot as plt
 import seaborn as sns
-import torch
-from virtual_nematode.connectomes.forward import neuron_list1, body_wall_muscles, chemical_synapse_polarity, neuron_list2, sensory_neurons
-from virtual_nematode.networks.snn.forward import Connectome, DummyConnectome
+from virtual_nematode.connectomes.forward import body_wall_muscles, chemical_synapse_polarity, neuron_list2, sensory_neurons
+from virtual_nematode.networks.snn.forward import Connectome
 from virtual_nematode.trainers.ncp import train_eval_test
 import worm_assets
 
@@ -35,18 +34,15 @@ def plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask):
 
 def train(model_name):
     if model_name == 'snn_forward':
-        # torch.set_default_dtype(torch.float64)
         """ connectome: cells and synapse polarity """
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
         muscles = body_wall_muscles()
-        # neurons = neuron_list1()
         neurons = neuron_list2(path, muscles)
         sensory = sensory_neurons(path)
         # ex_synapses, in_synapses = chemical_synapse_polarity()
         print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
         """ mask """
         p = 24
-        # connectome = DummyConnectome(neurons, muscles, sensory, p, p_mask=True)
         connectome = Connectome(
             path, ex_synapses=[], in_synapses=[], polarity_mask=False,
             neurons=neurons, muscles=muscles, sensory_neurons=sensory, p=p, p_mask=True
@@ -75,7 +71,6 @@ def train(model_name):
             # 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask
         }
     elif model_name == 'ctrnn':
-        # torch.set_default_dtype(torch.float64)
         kwargs = {
             'data_name': 'data32.pt', 'model_name': model_name, 'lengths': [50000, 10000, 10000], 'batch_size': 1024,
             'seed': 11, 'device_ids': [0], 'lr': 0.001, 'weight_decay': 0, 'epochs': 100,
