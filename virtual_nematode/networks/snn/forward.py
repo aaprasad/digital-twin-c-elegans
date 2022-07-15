@@ -23,16 +23,24 @@ class DummyConnectome(object):
         gap_junction = pd.DataFrame(False, index=self.cells, columns=self.cells)
         return chemical, gap_junction
 
+    def _external_input_mask(self, dim, flag):
+        """ external input bool mask
+        dim: dimension of the external input
+        flag: if True, sensory neurons receive external input; else, all neurons receive external input
+        """
+        mask = pd.DataFrame(False, index=list(range(dim)), columns=self.cells)
+        if flag is True:
+            mask.loc[:, self.sensory_neurons] = True
+        else:
+            mask.loc[:, self.neurons] = True
+        mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
+        return mask
+
     def _proprioception_mask(self):
         """ proprioception input synapse bool mask
         https://doi.org/10.1016/j.neuron.2012.08.039
         """
-        mask = pd.DataFrame(False, index=list(range(self.p)), columns=self.cells)
-        if self.p_mask is True:  # sensory neurons receive proprioception input
-            mask.loc[:, self.sensory_neurons] = True
-        else:  # all neurons receive proprioception input
-            mask.loc[:, self.neurons] = True
-        mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
+        mask = self._external_input_mask(dim=self.p, flag=self.p_mask)
         return mask
 
     def _weight(self, chemical, gap_junction):

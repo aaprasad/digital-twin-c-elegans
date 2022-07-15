@@ -12,12 +12,7 @@ class Connectome(_Connectome):
         self.gradient_mask = gradient_mask
 
     def _gradient_mask(self):
-        mask = pd.DataFrame(False, index=list(range(self.gradient_size)), columns=self.cells)
-        if self.gradient_mask is True:  # sensory neurons receive gradient input
-            mask.loc[:, self.sensory_neurons] = True
-        else:  # all neurons receive gradient input
-            mask.loc[:, self.neurons] = True
-        mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
+        mask = self._external_input_mask(dim=self.gradient_size, flag=self.gradient_mask)
         return mask
 
     def mask(self):
