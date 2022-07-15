@@ -40,7 +40,7 @@ def train(model_name):
         neurons = neuron_list2(path, muscles)
         sensory = sensory_neurons(path)
         # ex_synapses, in_synapses = chemical_synapse_polarity()
-        print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
+        print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
         """ mask """
         p = 24
         connectome = Connectome(
