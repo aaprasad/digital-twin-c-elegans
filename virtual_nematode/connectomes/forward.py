@@ -111,6 +111,7 @@ def neuron_list1():
 
 def neuron_list2(path, muscles):
     """ all neurons
+    https://doi.org/10.1038/s41586-019-1352-7
     gap_junction.index and gap_junction.columns contain the same set of cells
     chemical.index is a subset of gap_junction.index
     chemical.columns (excluding {'g2L', 'bm', 'g2R', 'g1p'}) is a subset of gap_junction.index
