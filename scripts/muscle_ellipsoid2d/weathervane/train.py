@@ -12,7 +12,7 @@ def train(model_name):
         neurons = neuron_list2(path, muscles)
         # sensory = ['ASEL', 'ASER']
         sensory = sensory_neurons(path)
-        print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
+        print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
         p = 24
         gradient_size = 1
         connectome = Connectome(
