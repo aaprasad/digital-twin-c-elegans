@@ -247,8 +247,8 @@ class SNNCell(torch.nn.Module):
 class SigmoidNorm(torch.nn.Module):
     def __init__(self, min_val, max_val):
         super(SigmoidNorm, self).__init__()
-        self.min_val = min_val
-        self.max_val = max_val
+        self.min_val = torch.sigmoid(torch.tensor(min_val)).item()
+        self.max_val = torch.sigmoid(torch.tensor(max_val)).item()
 
     def forward(self, input):
         output = (torch.sigmoid(input) - self.min_val) / (self.max_val - self.min_val)
@@ -266,7 +266,7 @@ class SNNCell1(torch.nn.Module):
         self.p = p
         self.state_func = torch.nn.Hardtanh(min_val=-3, max_val=3)
         self.activation_func = torch.nn.Hardsigmoid()
-        # self.activation_func = SigmoidNorm(min_val=torch.sigmoid(torch.tensor(-3)).item(), max_val=torch.sigmoid(torch.tensor(3)).item())
+        # self.activation_func = SigmoidNorm(min_val=-3, max_val=3)
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-3, 3))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))
