@@ -83,4 +83,4 @@ def train(model_name):
 
 
 if __name__ == '__main__':
-    train('snn_forward')
+    train('snn1_forward')  # 'snn_forward'
