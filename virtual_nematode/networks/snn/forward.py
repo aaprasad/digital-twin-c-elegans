@@ -280,9 +280,9 @@ class SNNCell1(torch.nn.Module):
 
     @property
     def init_state(self):
-        bias = self.bias.clone().detach()
-        bias = torch.zeros_like(bias)
-        state = self.state_func(bias)
+        # bias = self.bias.clone().detach()
+        # state = self.state_func(bias)
+        state = torch.zeros(self.n)
         return state
 
     def _external_input(self, stimuli):
