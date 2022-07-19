@@ -264,10 +264,10 @@ class SNNCell1(torch.nn.Module):
         self.n = n
         self.m = m
         self.p = p
-        self.state_func = torch.nn.Hardtanh(min_val=-3, max_val=3)
-        self.activation_func = torch.nn.Hardsigmoid()
-        # self.state_func = torch.nn.Tanh()
-        # self.activation_func = SigmoidNorm(min_val=-1, max_val=1)
+        # self.state_func = torch.nn.Hardtanh(min_val=-3, max_val=3)
+        # self.activation_func = torch.nn.Hardsigmoid()
+        self.state_func = torch.nn.Tanh()
+        self.activation_func = SigmoidNorm(min_val=-1, max_val=1)
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-3, 3))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))
@@ -281,7 +281,7 @@ class SNNCell1(torch.nn.Module):
     @property
     def init_state(self):
         bias = self.bias.clone().detach()
-        # bias = torch.zeros_like(bias)
+        bias = torch.zeros_like(bias)
         state = self.state_func(bias)
         return state
 
