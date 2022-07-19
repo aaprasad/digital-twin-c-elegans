@@ -281,6 +281,7 @@ class SNNCell1(torch.nn.Module):
     @property
     def init_state(self):
         bias = self.bias.clone().detach()
+        # bias = torch.zeros_like(bias)
         state = self.state_func(bias)
         return state
 
