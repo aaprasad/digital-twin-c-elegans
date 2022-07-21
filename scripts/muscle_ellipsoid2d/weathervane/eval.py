@@ -65,7 +65,7 @@ def record(model_folder, model_name, env, ckpt_name):
 if __name__ == '__main__':
     runs_folder = sys.argv[1]
     model_folder = os.path.join('runs', runs_folder)
-    seed = 42
+    seed = 43
     max_episode_steps = 2500
     data_path = os.path.join('data', runs_folder)
     os.makedirs(data_path, exist_ok=True)
@@ -74,5 +74,4 @@ if __name__ == '__main__':
         position_func=position_func, density=1.2, viscosity=0.1, condim=3, friction='1 1', source=(0, 0)
     )
     test(model_folder, 'snn_weathervane', ckpt_name='model.pt')
-    # seed = 43
     # record(model_folder, 'snn_weathervane', env, ckpt_name='model.pt')
