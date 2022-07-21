@@ -54,7 +54,7 @@ class ForwardPIDMuscle(object):
         u = self.kp * error + self.kd * (error - self.last_error) / self.dt  # + self.kp_direction * theta_error
         dorsal = (u <= 0.) * np.abs(u)
         ventral = (u >= 0.) * u
-        ventral[23] *= 2
+        # ventral[23] *= 2
         action = np.concatenate((dorsal, dorsal, ventral[0:23], ventral), axis=0)
         self.last_error = error
         return action
