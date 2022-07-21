@@ -59,7 +59,7 @@ def train(model_name):
         data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
         # device_ids, batch_size, lr = [0, 1], 256, 1e-2
         # device_ids, batch_size, lr = [0, 1, 2, 3], 128, 5e-2
-        device_ids, batch_size, lr = [0, 1, 2, 3], 128, 1e-2
+        device_ids, batch_size, lr = [0, 1, 2, 3], 128, 5e-3
         kwargs = {
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
             'device_ids': device_ids, 'lr': lr, 'epochs': 300, 'early_stop': 300, 'loss': 'MSELoss',
