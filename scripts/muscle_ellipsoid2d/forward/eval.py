@@ -21,7 +21,7 @@ def y_func1(state, **kwargs):
 
 
 def select_model(model_folder, model_name, ckpt_name):
-    if model_name == 'snn_forward':
+    if model_name == 'snn_forward' or model_name == 'snn1_forward':
         """ connectome: cells and synapse polarity """
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
         muscles = body_wall_muscles()
@@ -62,7 +62,7 @@ def evaluate(model_folder, model_name, start, end):
         ckpt_name = 'model{}.pt'.format(i)
         print(ckpt_name, end=' ')
         model = select_model(model_folder, model_name, ckpt_name)
-        if model_name == 'snn_forward':
+        if model_name == 'snn_forward' or model_name == 'snn1_forward':
             test_func = test_func2
         elif model_name == 'ctrnn':
             test_func = test_func1
@@ -79,7 +79,7 @@ def test(model_folder, model_name, start, end):
         ckpt_name = 'model{}.pt'.format(i)
         print(ckpt_name, end=' ')
         model = select_model(model_folder, model_name, ckpt_name)
-        if model_name == 'snn_forward':
+        if model_name == 'snn_forward' or model_name == 'snn1_forward':
             test_func = test_func2
         elif model_name == 'ctrnn':
             test_func = test_func1
@@ -93,7 +93,7 @@ def record(model_folder, model_name, env, ckpt_name):
     print(ckpt_name, end=' ')
     model = select_model(model_folder, model_name, ckpt_name)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
-    if model_name == 'snn_forward':
+    if model_name == 'snn_forward' or model_name == 'snn1_forward':
         test_func = test_func2
     elif model_name == 'ctrnn':
         test_func = test_func1
@@ -116,6 +116,6 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
         density=1.2, viscosity=0.1, condim=3, friction='1 1'
     )
-    # evaluate(model_folder, 'snn_forward', start=0, end=100)
-    test(model_folder, 'snn_forward', start=0, end=100)
-    # record(model_folder, 'snn_forward', env, ckpt_name='model.pt')
+    # evaluate(model_folder, 'snn1_forward', start=0, end=100)
+    test(model_folder, 'snn1_forward', start=0, end=100)
+    # record(model_folder, 'snn1_forward', env, ckpt_name='model.pt')
