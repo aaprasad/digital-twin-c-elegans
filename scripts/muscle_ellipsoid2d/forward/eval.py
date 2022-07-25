@@ -96,6 +96,6 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
         density=1.2, viscosity=0.1, condim=3, friction='1 1'
     )
-    # evaluate(model_folder, 'snn1_forward', start=0, end=100)
-    test(model_folder, 'snn1_forward', ckpt_name='model.pt')
-    # record(model_folder, 'snn1_forward', env, ckpt_name='model.pt')
+    # evaluate(model_folder, 'snn2_forward', start=0, end=100)
+    test(model_folder, 'snn2_forward', ckpt_name='model.pt')
+    # record(model_folder, 'snn2_forward', env, ckpt_name='model.pt')
