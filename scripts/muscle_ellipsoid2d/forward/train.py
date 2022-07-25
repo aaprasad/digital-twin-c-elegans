@@ -61,7 +61,7 @@ def train(model_name):
         device_ids, batch_size, lr = [0, 1, 2, 3], 128, 5e-2
         kwargs = {
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
-            'device_ids': device_ids, 'lr': lr, 'epochs': 1000, 'early_stop': 1000, 'loss': 'MSELoss',
+            'device_ids': device_ids, 'lr': lr, 'epochs': 300, 'early_stop': 300, 'loss': 'MSELoss',
             # model kwargs
             'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p,
             'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index,
