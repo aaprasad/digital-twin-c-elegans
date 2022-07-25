@@ -33,7 +33,7 @@ def plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask):
 
 
 def train(model_name):
-    if model_name == 'snn_forward' or model_name == 'snn1_forward':
+    if model_name == 'snn_forward' or model_name == 'snn1_forward' or model_name == 'snn2_forward':
         """ connectome: cells and synapse polarity """
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
         muscles = body_wall_muscles()
@@ -82,4 +82,4 @@ def train(model_name):
 
 
 if __name__ == '__main__':
-    train('snn1_forward')  # 'snn_forward'
+    train('snn2_forward')  # 'snn_forward'
