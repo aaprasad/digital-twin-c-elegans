@@ -233,9 +233,8 @@ class SNNCell(torch.nn.Module):
             delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
             gap_input = torch.sum(delta_state * w_g, dim=1) / self.w_g_n  # gap junction input, (batch_size, cell_count)
             total_input = synapse_input + gap_input + external_input  # total input, (batch_size, cell_count)
-            # cell state, (batch_size, cell_count)
+            # cell state and activation, (batch_size, cell_count)
             state = (1 - dt_tau) * state + dt_tau * total_input
-            # cell activation, (batch_size, cell_count)
             activation = self.activation_func(state)
             # activation = (activation - self.output_range[0]) / (self.output_range[1] - self.output_range[0])
             # activation = activation.clamp(0, 1)
@@ -314,10 +313,9 @@ class SNNCell1(torch.nn.Module):
             gap_input = torch.sum(delta_state * w_g, dim=1)
             # total input
             total_input = synapse_input + gap_input + external_input
-            # cell state
+            # cell state and activation
             state = (1 - dt_tau) * state + dt_tau * total_input
             state = self.state_func(state)
-            # cell activation
             activation = self.activation_func(state)
         # muscle output
         action = activation[:, self.output_index]
