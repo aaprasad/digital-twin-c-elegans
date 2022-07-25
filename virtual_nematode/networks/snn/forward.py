@@ -196,7 +196,10 @@ class SNNCell(torch.nn.Module):
 
     @property
     def init_state(self):
-        return self.bias.clone().detach()  # (cell_count, )
+        """ initial state and activation """
+        state = self.bias.clone().detach()  # (cell_count, )
+        activation = self.activation_func(state)  # (cell_count, )
+        return state, activation
 
     def _external_input(self, stimuli):
         """ external input
@@ -280,10 +283,12 @@ class SNNCell1(torch.nn.Module):
 
     @property
     def init_state(self):
+        """ initial state and activation """
         # bias = self.bias.clone().detach()
         # state = self.state_func(bias)
-        state = torch.zeros(self.n)
-        return state
+        state = torch.zeros(self.n)  # (cell_count, )
+        activation = self.activation_func(state)  # (cell_count, )
+        return state, activation
 
     def _external_input(self, stimuli):
         # proprioception input
@@ -324,15 +329,21 @@ class SNN(torch.nn.Module):
         super(SNN, self).__init__()
         self.cell = cell
 
+    def init_state(self, batch_size, device):
+        """ initial state and activation """
+        state, activation = self.cell.init_state  # (cell_count, )
+        state = state.unsqueeze(dim=0).repeat(batch_size, 1)
+        state = state.to(device=device)
+        activation = activation.unsqueeze(dim=0).repeat(batch_size, 1)
+        activation = activation.to(device=device)
+        return state, activation
+
     def forward(self, stimuli):
         device = stimuli.device
         batch_size = stimuli.size(0)
         seq_len = stimuli.size(1)
         # initial state and activation
-        state = self.cell.init_state  # (cell_count, )
-        state = state.unsqueeze(dim=0).repeat(batch_size, 1)
-        state = state.to(device=device)
-        activation = self.cell.activation_func(state)
+        state, activation = self.init_state(batch_size, device)
         # simulate sequence
         actions = []
         for t in range(seq_len):
@@ -346,9 +357,6 @@ class SNN(torch.nn.Module):
         if state is None or activation is None:
             device = stimuli.device
             batch_size = stimuli.size(0)
-            state = self.cell.init_state  # (cell_count, )
-            state = state.unsqueeze(dim=0).repeat(batch_size, 1)
-            state = state.to(device=device)
-            activation = self.cell.activation_func(state)
+            state, activation = self.init_state(batch_size, device)
         state, activation, action = self.cell.forward(state, activation, stimuli)
         return state, activation, action
