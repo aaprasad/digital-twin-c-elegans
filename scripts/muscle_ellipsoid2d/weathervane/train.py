@@ -10,7 +10,6 @@ def train(model_name):
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
         muscles = body_wall_muscles()
         neurons = neuron_list2(path, muscles)
-        # sensory = ['ASEL', 'ASER']
         sensory = sensory_neurons(path)
         print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
         p = 24
@@ -36,7 +35,7 @@ def train(model_name):
             # model kwargs
             'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p,
             'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index,
-            # 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask
+            # 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
             'gradient_size': gradient_size, 'w_gradient_mask': w_gradient_mask,
             'model_path': model_path, 'strict': strict
         }
