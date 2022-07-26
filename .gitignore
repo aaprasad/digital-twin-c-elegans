@@ -3,16 +3,13 @@ __pycache__/
 # logs
 log/
 runs/
-checkpoint/
+video/
 *.pt
 # ipynb
 *.ipynb
 .ipynb_checkpoints/
-# video recordings
-video/
-# test code
-test/
 # files
+test/
 *.png
 *.csv
 # pip
