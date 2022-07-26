@@ -3,6 +3,7 @@ __pycache__/
 # logs
 log/
 runs/
+checkpoint/
 video/
 *.pt
 # ipynb
