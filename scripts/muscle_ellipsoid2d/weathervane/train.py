@@ -5,7 +5,7 @@ import worm_assets
 
 
 def train(model_name):
-    if model_name == 'snn_weathervane':
+    if model_name in ['snn_weathervane', 'snn2_weathervane']:
         """ connectome """
         path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
         muscles = body_wall_muscles()
@@ -46,4 +46,4 @@ def train(model_name):
 
 
 if __name__ == '__main__':
-    train('snn_weathervane')
+    train('snn2_weathervane')
