@@ -11,6 +11,7 @@ from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
 from virtual_nematode.networks.rnn.rnn import RNNCell
 from virtual_nematode.networks.snn.forward import SNNCell, SNN, SNNCell1, SNNCell2
 from virtual_nematode.networks.snn.weathervane import SNNCell as SNNCellW
+from virtual_nematode.networks.snn.weathervane import SNNCell2 as SNNCellW2
 from virtual_nematode.trainers.loss import MSESymmetricJointLoss, MSESymmetricMuscleLoss
 
 
@@ -39,6 +40,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = snn2_forward(**kwargs)
     elif model_name == 'snn_weathervane':
         model = snn_weathervane(**kwargs)
+    elif model_name == 'snn2_weathervane':
+        model = snn2_weathervane(**kwargs)
     else:
         raise AssertionError('{} not exist'.format(model_name))
     if device is None:
@@ -130,6 +133,12 @@ def snn2_forward(**kwargs):
 
 def snn_weathervane(**kwargs):
     cell = SNNCellW(**kwargs)
+    model = SNN(cell)
+    return model
+
+
+def snn2_weathervane(**kwargs):
+    cell = SNNCellW2(**kwargs)
     model = SNN(cell)
     return model
 
