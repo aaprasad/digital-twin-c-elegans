@@ -27,8 +27,8 @@ def train(model_name):
         """ trainer kwargs """
         data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
         device_ids, batch_size, lr = [0, 1, 2, 3], 128, 5e-2
-        # strict, model_path = False, '/home/imc/disk1/virtual-nematode/scripts/muscle_ellipsoid2d/forward/runs/Jul05_22-30-02_h-10-176-50-34/model125.pt'
         strict, model_path = True, None
+        # strict, model_path = False, '/home/imc/disk1/virtual-nematode/scripts/muscle_ellipsoid2d/forward/runs/Jul25_12-07-58_h-10-176-50-34/model119.pt'
         kwargs = {
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
             'device_ids': device_ids, 'lr': lr, 'epochs': 300, 'early_stop': 300, 'loss': 'MSELoss',
