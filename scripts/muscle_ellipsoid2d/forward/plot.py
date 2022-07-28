@@ -65,8 +65,10 @@ def chemical_weight_polarity(runs_folder, ckpt_name, model_name):
     w_c = w_c.clone().detach()
     print('w_c', w_c.shape)
     print('w_c: min {}, max {}, mean {}, std {}'.format(w_c.min().item(), w_c.max().item(), w_c.mean().item(), w_c.std().item()))
-    print('< 0: ', torch.sum(w_c < 0).item())
-    print('> 0: ', torch.sum(w_c > 0).item())
+    inhibitory = torch.sum(w_c < 0).item()
+    excitatory = torch.sum(w_c > 0).item()
+    print('< 0: ', inhibitory, inhibitory / (inhibitory + excitatory))
+    print('> 0: ', excitatory, excitatory / (inhibitory + excitatory))
     print('= 0: ', torch.sum(w_c == 0).item())
 
 
