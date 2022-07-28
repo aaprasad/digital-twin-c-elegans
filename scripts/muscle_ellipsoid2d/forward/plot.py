@@ -59,6 +59,17 @@ def plot_model_weight(runs_folder, ckpt_name, model_name):
     plt.ylabel('Bias')
 
 
+def chemical_weight_polarity(runs_folder, ckpt_name, model_name):
+    model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
+    w_c = model.cell.w_c * model.cell.w_c_mask
+    w_c = w_c.clone().detach()
+    print('w_c', w_c.shape)
+    print('w_c: min {}, max {}, mean {}, std {}'.format(w_c.min().item(), w_c.max().item(), w_c.mean().item(), w_c.std().item()))
+    print('< 0: ', torch.sum(w_c < 0).item())
+    print('> 0: ', torch.sum(w_c > 0).item())
+    print('= 0: ', torch.sum(w_c == 0).item())
+
+
 def plot_action_heatmap(runs_folder, ckpt_name):
     _, action = torch.load(os.path.join('data', runs_folder, ckpt_name), map_location=torch.device('cpu'))
     print(action.shape)
