@@ -169,7 +169,7 @@ def weight_analysis(runs_folder, ckpt_name, model_name, remove_muscle_flag=True)
             writer.writerow((i, name, chemical_input[i].item(), chemical_output[i].item(), chemical[i].item(), gap[i].item(), proprioception_input[i].item()))
 
 
-def bias(runs_folder, ckpt_name, model_name, remove_muscle_flag):
+def bias(runs_folder, ckpt_name, model_name, remove_muscle_flag=True):
     model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
     # cells
     path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
