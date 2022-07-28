@@ -118,8 +118,9 @@ def plot_state_range(runs_folder, ckpt_name):
             writer.writerow((i, name, state_mean[i].item()))
 
 
-def weight_analysis(runs_folder, ckpt_name, model_name):
+def weight_analysis(runs_folder, ckpt_name, model_name, remove_muscle_flag=True):
     model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
+    muscles = body_wall_muscles()
     # cells
     path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
     muscles = body_wall_muscles()
@@ -163,10 +164,12 @@ def weight_analysis(runs_folder, ckpt_name, model_name):
         writer = csv.writer(f)
         writer.writerow(('Cell ID', 'Cell Name', 'Chemical Input', 'Chemical Output', 'Chemical', 'Gap Junction', 'Proprioception Input'))
         for i, name in enumerate(cells):
+            if remove_muscle_flag is True and name in muscles:
+                continue
             writer.writerow((i, name, chemical_input[i].item(), chemical_output[i].item(), chemical[i].item(), gap[i].item(), proprioception_input[i].item()))
 
 
-def bias(runs_folder, ckpt_name, model_name):
+def bias(runs_folder, ckpt_name, model_name, remove_muscle_flag):
     model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
     # cells
     path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
@@ -179,4 +182,6 @@ def bias(runs_folder, ckpt_name, model_name):
         writer = csv.writer(f)
         writer.writerow(('Cell ID', 'Cell Name', 'Bias'))
         for i, name in enumerate(cells):
+            if remove_muscle_flag is True and name in muscles:
+                continue
             writer.writerow((i, name, bias[i].item()))
