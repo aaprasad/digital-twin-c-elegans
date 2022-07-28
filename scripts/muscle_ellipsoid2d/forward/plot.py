@@ -60,7 +60,7 @@ def plot_model_weight(runs_folder, ckpt_name, model_name):
 
 
 def plot_action_heatmap(runs_folder, ckpt_name):
-    action = torch.load(os.path.join('data', runs_folder, ckpt_name), map_location=torch.device('cpu'))
+    _, action = torch.load(os.path.join('data', runs_folder, ckpt_name), map_location=torch.device('cpu'))
     print(action.shape)
     # plot
     plt.figure(figsize=(13, 10))
