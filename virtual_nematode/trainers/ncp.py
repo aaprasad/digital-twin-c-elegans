@@ -249,7 +249,9 @@ def train_eval_test(
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
     # test
-    model = prepare_model(model_name, device, device_ids, model_path, **kwargs)
+    kwargs.pop('model_path')
+    kwargs.pop('strict')
+    model = prepare_model(model_name, device, device_ids, model_path, strict=True, **kwargs)
     mse = test(model, device, test_loader, criterion)
     # hparams and results
     writer.add_hparams(
