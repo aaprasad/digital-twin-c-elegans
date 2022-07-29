@@ -211,3 +211,9 @@ def bias(runs_folder, ckpt_name, model_name, remove_muscle_flag=True):
             if remove_muscle_flag is True and name in muscles:
                 continue
             writer.writerow((i, name, bias[i].item()))
+
+
+if __name__ == '__main__':
+    runs_folder = 'Jul25_12-07-58_h-10-176-50-34'
+    ckpt_name = 'model119.pt'
+    model_name = 'snn2_forward'
