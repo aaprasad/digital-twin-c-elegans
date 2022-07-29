@@ -72,6 +72,19 @@ def chemical_weight_polarity(runs_folder, ckpt_name, model_name):
     print('= 0: ', torch.sum(w_c == 0).item())
 
 
+def chemical_weight_density(runs_folder, ckpt_name, model_name):
+    model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
+    w_c = model.cell.w_c * model.cell.w_c_mask
+    w_c = w_c.clone().detach()
+    print('w_c', w_c.shape)
+    w_c = w_c[w_c != 0]  # remove no connection
+    print('w_c', w_c.shape)
+    w_c = w_c ** 2
+    w_c = w_c[w_c < 10]
+    print('w_c', w_c.shape)
+    plt.hist(w_c, bins=10, range=None, density=True)
+
+
 def plot_action_heatmap(runs_folder, ckpt_name):
     _, action = torch.load(os.path.join('data', runs_folder, ckpt_name), map_location=torch.device('cpu'))
     print(action.shape)
