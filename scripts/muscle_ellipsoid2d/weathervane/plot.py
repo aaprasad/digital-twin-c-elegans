@@ -12,18 +12,13 @@ def weathervane_coefficient():
         0.80, 0.80, 0.80, 0.81, 0.81
     ]
     y_start = [0.37] * len(y)
-
+    # plot
     plt.plot(x, y, label='chemotaxis index mean')
     plt.plot(x, y_start, label='start concentration mean')
     plt.axvline(x=1.1, ls='-')
     plt.legend()
     plt.xlabel('k_w')
     plt.ylabel('chemotaxis index mean')
-    plt.savefig('weathervane_coeffcient.png')
     print(x[10], y[10])
     print(x[11], y[11])
     print(x[12], y[12])
-
-
-if __name__ == '__main__':
-    weathervane_coefficient()
