@@ -5,10 +5,18 @@ import os
 import seaborn as sns
 import torch
 from virtual_nematode.connectomes.cells import body_wall_muscles, cell_list
+from virtual_nematode.connectomes.forward import get_kwargs
 import worm_assets
 
 
-def plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask):
+def plot_mask(**kwargs):
+    # masks
+    w_c_mask = kwargs.get('w_c_mask')
+    w_g_mask = kwargs.get('w_g_mask')
+    w_c_ex_mask = kwargs.get('w_c_ex_mask')
+    w_c_in_mask = kwargs.get('w_c_in_mask')
+    w_p_mask = kwargs.get('w_p_mask')
+    # plot
     plt.subplot(2, 3, 1)
     plt.title('Chemical Synapse Mask')
     sns.heatmap(w_c_mask, cmap='coolwarm', vmin=-1, vmax=1)
@@ -238,3 +246,4 @@ if __name__ == '__main__':
     runs_folder = 'Jul25_12-07-58_h-10-176-50-34'
     ckpt_name = 'model119.pt'
     model_name = 'snn2_forward'
+    kwargs = get_kwargs(path=worm_assets.connectome_path())
