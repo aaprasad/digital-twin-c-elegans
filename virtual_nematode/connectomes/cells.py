@@ -134,3 +134,13 @@ def sensory_neurons(path):
     gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
     cells = list(gap_junction.iloc[57:140, :].index)
     return cells
+
+
+def cell_list(path):
+    """ all cells
+    374 neurons + 95 body wall muscles -> 469 cells
+    """
+    muscles = body_wall_muscles()
+    neurons = neuron_list2(path, muscles)
+    cells = neurons + muscles
+    return cells

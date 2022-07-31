@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import os
 import seaborn as sns
 import torch
-from virtual_nematode.connectomes.cells import neuron_list2, body_wall_muscles
+from virtual_nematode.connectomes.cells import body_wall_muscles, cell_list
 import worm_assets
 
 
@@ -103,10 +103,7 @@ def plot_state_range(runs_folder, ckpt_name):
     # state = state.squeeze(dim=1)
     print(state.shape)
     # cells
-    path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
-    muscles = body_wall_muscles()
-    neurons = neuron_list2(path, muscles)
-    cells = neurons + muscles
+    cells = cell_list(path=worm_assets.connectome_path())
     # max and min
     plt.figure(figsize=(10, 10))
     plt.title('Stats about Cell State Time Sequence')
@@ -146,12 +143,9 @@ def plot_state_range(runs_folder, ckpt_name):
 
 def weight_analysis(runs_folder, ckpt_name, model_name, remove_muscle_flag=True):
     model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
-    muscles = body_wall_muscles()
     # cells
-    path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
     muscles = body_wall_muscles()
-    neurons = neuron_list2(path, muscles)
-    cells = neurons + muscles
+    cells = cell_list(path=worm_assets.connectome_path())
     # chemical synapse weight
     w_c = model.cell.w_c * model.cell.w_c_mask
     w_c = w_c.clone().detach()
@@ -198,10 +192,8 @@ def weight_analysis(runs_folder, ckpt_name, model_name, remove_muscle_flag=True)
 def bias(runs_folder, ckpt_name, model_name, remove_muscle_flag=True):
     model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
     # cells
-    path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
     muscles = body_wall_muscles()
-    neurons = neuron_list2(path, muscles)
-    cells = neurons + muscles
+    cells = cell_list(path=worm_assets.connectome_path())
     # bias
     bias = model.cell.bias.clone().detach()
     with open(os.path.join('data', runs_folder, '{}.bias.csv'.format(ckpt_name)), 'w') as f:
