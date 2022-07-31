@@ -5,15 +5,15 @@ from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, 
 
 
 class Connectome(object):
-    def __init__(self, path, ex_synapses, in_synapses, polarity_mask, neurons, muscles, sensory_neurons, p, p_mask):
+    def __init__(self, path, neurons, muscles, ex_synapses, in_synapses, polarity_mask, sensory_neurons, p, p_mask):
         self.path = path
+        self.neurons = neurons
+        self.muscles = muscles
+        self.cells = neurons + muscles
         self.ex_synapses = ex_synapses
         self.in_synapses = in_synapses
         self.polarity_mask = polarity_mask
-        self.neurons = neurons
-        self.muscles = muscles
         self.sensory_neurons = sensory_neurons
-        self.cells = neurons + muscles
         self.p = p
         self.p_mask = p_mask
         self.chemical, self.gap_junction = self._init()
@@ -133,8 +133,8 @@ def get_kwargs(path):
     print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
     p = 24
     connectome = Connectome(
-        path, ex_synapses=[], in_synapses=[], polarity_mask=False,
-        neurons=neurons, muscles=muscles, sensory_neurons=sensory, p=p, p_mask=True
+        path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[], polarity_mask=False,
+        sensory_neurons=sensory, p=p, p_mask=True
     )
     w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index = connectome.mask()
     return {
