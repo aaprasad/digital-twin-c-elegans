@@ -155,12 +155,11 @@ class Connectome(DummyConnectome):
 
 
 def get_kwargs(path):
-    """ connectome: cells and synapse polarity """
+    """ connectome masks and params """
     muscles = body_wall_muscles()
     neurons = neuron_list2(path, muscles)
     sensory = sensory_neurons(path)
     print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
-    """ mask """
     p = 24
     connectome = Connectome(
         path, ex_synapses=[], in_synapses=[], polarity_mask=False,
