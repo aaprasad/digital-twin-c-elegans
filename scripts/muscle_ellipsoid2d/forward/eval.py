@@ -4,7 +4,7 @@ import os
 from sim import step_func as x_func
 import sys
 import torch
-from virtual_nematode.connectomes.forward import body_wall_muscles, chemical_synapse_polarity, neuron_list2, sensory_neurons
+from virtual_nematode.connectomes.cells import body_wall_muscles, chemical_synapse_polarity, neuron_list2, sensory_neurons
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
 from virtual_nematode.networks.snn.forward import Connectome
 from virtual_nematode.testers.forward import tester, single_tester, test_func1, test_func2

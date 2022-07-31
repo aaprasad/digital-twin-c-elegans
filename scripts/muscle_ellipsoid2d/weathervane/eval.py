@@ -6,7 +6,7 @@ from sim import position_func
 from sim import step_func as x_func
 import sys
 import torch
-from virtual_nematode.connectomes.forward import body_wall_muscles, neuron_list2, sensory_neurons
+from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, sensory_neurons
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
 from virtual_nematode.networks.snn.weathervane import Connectome
 from virtual_nematode.testers.weathervane import single_tester, tester

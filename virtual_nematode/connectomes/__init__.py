@@ -1,1 +1,1 @@
-import virtual_nematode.connectomes.forward
+import virtual_nematode.connectomes.cells

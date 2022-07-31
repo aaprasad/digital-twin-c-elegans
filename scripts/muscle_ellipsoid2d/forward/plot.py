@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import os
 import seaborn as sns
 import torch
-from virtual_nematode.connectomes.forward import neuron_list2, body_wall_muscles
+from virtual_nematode.connectomes.cells import neuron_list2, body_wall_muscles
 import worm_assets
 
 

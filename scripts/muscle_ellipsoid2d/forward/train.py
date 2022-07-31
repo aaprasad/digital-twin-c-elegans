@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 import seaborn as sns
-from virtual_nematode.connectomes.forward import body_wall_muscles, chemical_synapse_polarity, neuron_list2, sensory_neurons
+from virtual_nematode.connectomes.cells import body_wall_muscles, chemical_synapse_polarity, neuron_list2, sensory_neurons
 from virtual_nematode.networks.snn.forward import Connectome
 from virtual_nematode.trainers.ncp import train_eval_test
 import worm_assets
