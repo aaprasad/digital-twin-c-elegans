@@ -17,6 +17,7 @@ def plot_mask(**kwargs):
     w_c_in_mask = kwargs.get('w_c_in_mask')
     w_p_mask = kwargs.get('w_p_mask')
     # plot
+    plt.figure(figsize=(20, 10))
     plt.subplot(2, 3, 1)
     plt.title('Chemical Synapse Mask')
     sns.heatmap(w_c_mask, cmap='coolwarm', vmin=-1, vmax=1)
