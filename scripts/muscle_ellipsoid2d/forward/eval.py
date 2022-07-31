@@ -4,12 +4,10 @@ import os
 from sim import step_func as x_func
 import sys
 import torch
-from virtual_nematode.connectomes.cells import body_wall_muscles, chemical_synapse_polarity, neuron_list2, sensory_neurons
+from virtual_nematode.connectomes.forward import get_kwargs
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
-from virtual_nematode.networks.snn.forward import Connectome
-from virtual_nematode.testers.forward import tester, single_tester, test_func1, test_func2
+from virtual_nematode.testers.forward import tester, single_tester, test_func2
 from virtual_nematode.trainers.ncp import prepare_model
-import worm_assets
 
 
 def y_func(action, **kwargs):
@@ -22,30 +20,7 @@ def y_func1(state, **kwargs):
 
 def select_model(model_folder, model_name, ckpt_name):
     if model_name in ['snn_forward', 'snn1_forward', 'snn2_forward']:
-        """ connectome: cells and synapse polarity """
-        path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
-        muscles = body_wall_muscles()
-        neurons = neuron_list2(path, muscles)
-        sensory = sensory_neurons(path)
-        # ex_synapses, in_synapses = chemical_synapse_polarity()
-        print('{} cells'.format(len(neurons) + len(muscles)), end=' ')
-        """ mask """
-        p = 24
-        connectome = Connectome(
-            path, ex_synapses=[], in_synapses=[], polarity_mask=False,
-            neurons=neurons, muscles=muscles, sensory_neurons=sensory, p=p, p_mask=True
-        )
-        w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index = connectome.mask()
-        """ params """
-        dt = 0.04
-        n = len(connectome.cells)
-        m = len(connectome.muscles)
-        """ eval kwargs """
-        kwargs = {
-            'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p,
-            'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index,
-            # 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask
-        }
+        kwargs = {'dt': 0.04, 'steps': 5, **get_kwargs()}
     elif model_name == 'ctrnn':
         kwargs = {
             'input_size': 24, 'hidden_size': 171, 'output_size': 95, 'feedback': True, 'readout': 'identity',

@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import torch
+from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, sensory_neurons
+import worm_assets
 
 
 class DummyConnectome(object):
@@ -151,3 +153,24 @@ class Connectome(DummyConnectome):
         w_c_ex_mask = self._polarity_mask(self.ex_synapses)
         w_c_in_mask = self._polarity_mask(self.in_synapses)
         return w_c_ex_mask, w_c_in_mask
+
+
+def get_kwargs():
+    """ connectome: cells and synapse polarity """
+    path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
+    muscles = body_wall_muscles()
+    neurons = neuron_list2(path, muscles)
+    sensory = sensory_neurons(path)
+    print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
+    """ mask """
+    p = 24
+    connectome = Connectome(
+        path, ex_synapses=[], in_synapses=[], polarity_mask=False,
+        neurons=neurons, muscles=muscles, sensory_neurons=sensory, p=p, p_mask=True
+    )
+    w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index = connectome.mask()
+    return {
+        'n': len(connectome.cells), 'm': len(connectome.muscles), 'p': p,
+        'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index,
+        # 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask
+    }
