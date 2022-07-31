@@ -1,25 +1,6 @@
-import numpy as np
-import pandas as pd
 import torch
-from virtual_nematode.networks.snn.forward import Connectome as _Connectome
 from virtual_nematode.networks.snn.forward import SNNCell as _SNNCell
 from virtual_nematode.networks.snn.forward import SNNCell2 as _SNNCell2
-
-
-class Connectome(_Connectome):
-    def __init__(self, gradient_size, gradient_mask, **kwargs):
-        super(Connectome, self).__init__(**kwargs)
-        self.gradient_size = gradient_size
-        self.gradient_mask = gradient_mask
-
-    def _gradient_mask(self):
-        mask = self._external_input_mask(dim=self.gradient_size, flag=self.gradient_mask)
-        return mask
-
-    def mask(self):
-        masks = super(Connectome, self).mask()
-        w_gradient_mask = self._gradient_mask()
-        return masks, w_gradient_mask
 
 
 class SNNCell(_SNNCell):
