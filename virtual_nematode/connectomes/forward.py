@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import torch
 from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, sensory_neurons
-import worm_assets
 
 
 class DummyConnectome(object):
@@ -155,9 +154,8 @@ class Connectome(DummyConnectome):
         return w_c_ex_mask, w_c_in_mask
 
 
-def get_kwargs():
+def get_kwargs(path):
     """ connectome: cells and synapse polarity """
-    path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
     muscles = body_wall_muscles()
     neurons = neuron_list2(path, muscles)
     sensory = sensory_neurons(path)

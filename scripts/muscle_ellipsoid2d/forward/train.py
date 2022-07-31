@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 from virtual_nematode.connectomes.forward import get_kwargs
 from virtual_nematode.trainers.ncp import train_eval_test
+import worm_assets
 
 
 def plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask):
@@ -38,7 +39,7 @@ def train(model_name):
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
             'device_ids': device_ids, 'lr': lr, 'epochs': 300, 'early_stop': 300, 'loss': 'MSELoss',
             # model kwargs
-            'dt': 0.04, 'steps': 5, **get_kwargs()
+            'dt': 0.04, 'steps': 5, **get_kwargs(path=worm_assets.connectome_path())
         }
     elif model_name == 'ctrnn':
         kwargs = {

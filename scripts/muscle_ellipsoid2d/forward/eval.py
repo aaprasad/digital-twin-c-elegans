@@ -8,6 +8,7 @@ from virtual_nematode.connectomes.forward import get_kwargs
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
 from virtual_nematode.testers.forward import tester, single_tester, test_func2
 from virtual_nematode.trainers.ncp import prepare_model
+import worm_assets
 
 
 def y_func(action, **kwargs):
@@ -20,7 +21,7 @@ def y_func1(state, **kwargs):
 
 def select_model(model_folder, model_name, ckpt_name):
     if model_name in ['snn_forward', 'snn1_forward', 'snn2_forward']:
-        kwargs = {'dt': 0.04, 'steps': 5, **get_kwargs()}
+        kwargs = {'dt': 0.04, 'steps': 5, **get_kwargs(path=worm_assets.connectome_path())}
     elif model_name == 'ctrnn':
         kwargs = {
             'input_size': 24, 'hidden_size': 171, 'output_size': 95, 'feedback': True, 'readout': 'identity',
