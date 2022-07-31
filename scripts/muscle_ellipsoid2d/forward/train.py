@@ -1,34 +1,6 @@
-from matplotlib import pyplot as plt
-import seaborn as sns
 from virtual_nematode.connectomes.forward import get_kwargs
 from virtual_nematode.trainers.ncp import train_eval_test
 import worm_assets
-
-
-def plot_mask(w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask):
-    plt.subplot(2, 3, 1)
-    plt.title('Chemical Synapse Mask')
-    sns.heatmap(w_c_mask, cmap='coolwarm', vmin=-1, vmax=1)
-    plt.xlabel('Cell ID')
-    plt.ylabel('Cell ID')
-    plt.subplot(2, 3, 2)
-    plt.title('Gap Junction Mask')
-    sns.heatmap(w_g_mask, cmap='coolwarm', vmin=-1, vmax=1)
-    plt.xlabel('Cell ID')
-    plt.ylabel('Cell ID')
-    plt.subplot(2, 3, 3)
-    plt.title('Proprioception Input Mask')
-    sns.heatmap(w_p_mask, cmap='coolwarm', vmin=-1, vmax=1)
-    plt.xlabel('Cell ID')
-    plt.ylabel('Joint ID')
-    # plt.subplot(2, 3, 4)
-    # plt.title('ex chemical mask')
-    # sns.heatmap(w_c_ex_mask, cmap='coolwarm', vmin=0, vmax=1)
-    # plt.subplot(2, 3, 5)
-    # plt.title('in chemical mask')
-    # sns.heatmap(w_c_in_mask, cmap='coolwarm', vmin=0, vmax=1)
-    # plt.subplot(2, 3, 6)
-    plt.show()
 
 
 def train(model_name):
