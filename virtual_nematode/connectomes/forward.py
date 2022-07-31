@@ -58,14 +58,14 @@ class Connectome(object):
 
     def _polarity_mask(self, synapses):
         """ chemical synaptic polarity mask
+        synapses: [(pre1, post1), (pre2, post2), ...]
         excitatory mask: if True, the connection is excitatory
         inhibitory mask: if True, the connection is inhibitory
-        synapses: [(pre_cells1, post_cells1), (pre_cells2, post_cells2), ...]
         """
         mask = pd.DataFrame(False, index=self.cells, columns=self.cells)
         if self.polarity_mask is True:
-            for pre_cells, post_cells in synapses:
-                mask.loc[pre_cells, post_cells] = True
+            for pre, post in synapses:
+                mask.loc[pre, post] = True
         mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
 
