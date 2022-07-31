@@ -6,9 +6,8 @@ from sim import position_func
 from sim import step_func as x_func
 import sys
 import torch
-from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, sensory_neurons
+from virtual_nematode.connectomes.weathervane import get_kwargs
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
-from virtual_nematode.networks.snn.weathervane import Connectome
 from virtual_nematode.testers.weathervane import single_tester, tester
 from virtual_nematode.trainers.ncp import prepare_model
 import worm_assets
@@ -16,31 +15,7 @@ import worm_assets
 
 def select_model(model_folder, model_name, ckpt_name):
     if model_name in ['snn_weathervane', 'snn2_weathervane']:
-        """ connectome """
-        path = worm_assets.connectome_path(filename='SI 5 Connectome adjacency matrices, corrected July 2020.xlsx')
-        muscles = body_wall_muscles()
-        neurons = neuron_list2(path, muscles)
-        sensory = sensory_neurons(path)
-        print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
-        p = 24
-        gradient_size = 1
-        connectome = Connectome(
-            gradient_size, gradient_mask=True,
-            path=path, ex_synapses=[], in_synapses=[], polarity_mask=False,
-            neurons=neurons, muscles=muscles, sensory_neurons=sensory, p=p, p_mask=True
-        )
-        (w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index), w_gradient_mask = connectome.mask()
-        """ params """
-        dt = 0.04
-        n = len(connectome.cells)
-        m = len(connectome.muscles)
-        """ trainer kwargs """
-        kwargs = {
-            'dt': dt, 'steps': 5, 'n': n, 'm': m, 'p': p,
-            'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index,
-            # 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
-            'gradient_size': gradient_size, 'w_gradient_mask': w_gradient_mask,
-        }
+        kwargs = {'dt': 0.04, 'steps': 5, **get_kwargs(path=worm_assets.connectome_path())}
     else:
         raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)
