@@ -232,7 +232,7 @@ class SNNCell2(torch.nn.Module):
 
 
 class SNNCell3(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index):
         super(SNNCell3, self).__init__()
         self.dt = dt
         self.steps = steps
@@ -244,9 +244,14 @@ class SNNCell3(torch.nn.Module):
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-3, 3))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))
+        w_c_ex_mask &= w_c_mask  # a subset of chemical synapse bool mask
+        w_c_in_mask &= w_c_mask  # a subset of chemical synapse bool mask
+        w_c_mask = w_c_mask ^ w_c_ex_mask ^ w_c_in_mask  # excludes excitatory/inhibitory
         self.w_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)
         self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)
+        self.w_c_ex_mask = torch.nn.Parameter(w_c_ex_mask, requires_grad=False)
+        self.w_c_in_mask = torch.nn.Parameter(w_c_in_mask, requires_grad=False)
         self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))
         self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)
@@ -267,7 +272,8 @@ class SNNCell3(torch.nn.Module):
 
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
-        w_c = self.w_c * self.w_c_mask
+        w_c_abs = self.w_c.abs()
+        w_c = self.w_c * self.w_c_mask + w_c_abs * self.w_c_ex_mask - w_c_abs * self.w_c_in_mask
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
