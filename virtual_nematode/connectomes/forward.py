@@ -111,16 +111,20 @@ class Connectome(object):
         proprioception mask
             mask_pi is True -> w_pi
         """
+        # chemical synapses and gap junctions
         w_c_mask, w_g_mask = self._weight(self.chemical, self.gap_junction)
         if torch.all(w_g_mask.tril() == w_g_mask.triu().T).item() is not True:
             raise AssertionError('Gap junction mask is not symmetric!')
+        # chemical synapse polarity
         w_c_ex_mask, w_c_in_mask = self._polarity_masks()
-        w_c_ex_mask = w_c_ex_mask & w_c_mask
-        w_c_in_mask = w_c_in_mask & w_c_mask
+        w_c_ex_mask &= w_c_mask
+        w_c_in_mask &= w_c_mask
         if torch.any(w_c_ex_mask & w_c_in_mask).item() is True:
-            raise AssertionError('There is overlap in excitatory mask and inhibitory mask!')
-        muscles = set(self.muscles)
+            raise AssertionError('There is overlap between excitatory mask and inhibitory mask!')
+        # proprioception input
         w_p_mask = self._proprioception_mask()
+        # output
+        muscles = set(self.muscles)
         output_index = torch.tensor([True if cell in muscles else False for cell in self.cells])
         return w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index
 
