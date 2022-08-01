@@ -43,7 +43,11 @@ def plot_mask(**kwargs):
     sns.heatmap(w_c_in_mask, cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
-    # plt.subplot(2, 3, 6)
+    plt.subplot(2, 3, 6)
+    plt.title('Complete Chemical Mask')
+    sns.heatmap(w_c_mask | w_c_ex_mask | w_c_in_mask, cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Cell ID')
 
 
 def plot_model_weight(runs_folder, ckpt_name, model_name):
