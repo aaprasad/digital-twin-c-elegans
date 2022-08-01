@@ -233,6 +233,11 @@ class SNNCell2(torch.nn.Module):
 
 class SNNCell3(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index):
+        """ SNN with chemical synapses and gap junctions, including chemical synapse polarity restriction
+        w_c_mask: chemical mask with no polarity restriction, already excluded excitatory/inhibitory chemical mask
+        w_c_ex_mask: excitatory chemical mask
+        w_c_in_mask: inhibitory chemical mask, no overlap with excitatory chemical mask
+        """
         super(SNNCell3, self).__init__()
         self.dt = dt
         self.steps = steps
@@ -244,9 +249,6 @@ class SNNCell3(torch.nn.Module):
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-3, 3))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))
-        w_c_ex_mask &= w_c_mask  # a subset of chemical synapse bool mask
-        w_c_in_mask &= w_c_mask  # a subset of chemical synapse bool mask
-        w_c_mask = w_c_mask ^ w_c_ex_mask ^ w_c_in_mask  # excludes excitatory/inhibitory
         self.w_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)
         self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)

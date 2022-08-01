@@ -121,6 +121,8 @@ class Connectome(object):
         w_c_in_mask &= w_c_mask
         if torch.any(w_c_ex_mask & w_c_in_mask).item() is True:
             raise AssertionError('There is overlap between excitatory mask and inhibitory mask!')
+        # chemical synapses exclude excitatory/inhibitory chemical synapses
+        w_c_mask = w_c_mask ^ w_c_ex_mask ^ w_c_in_mask
         # proprioception input
         w_p_mask = self._proprioception_mask()
         # output
