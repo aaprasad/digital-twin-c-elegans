@@ -28,4 +28,4 @@ def train(model_name):
 
 
 if __name__ == '__main__':
-    train('snn_forward2')
+    train('snn_forward3')
