@@ -20,7 +20,7 @@ def y_func1(state, **kwargs):
 
 
 def select_model(model_folder, model_name, ckpt_name):
-    if model_name in ['snn_forward', 'snn_forward1', 'snn_forward2']:
+    if model_name in ['snn_forward', 'snn_forward1', 'snn_forward2', 'snn_forward3']:
         kwargs = {'dt': 0.04, 'steps': 5, **get_kwargs(path=worm_assets.connectome_path())}
     elif model_name == 'ctrnn':
         kwargs = {
