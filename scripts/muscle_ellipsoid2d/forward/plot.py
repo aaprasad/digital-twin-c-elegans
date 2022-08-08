@@ -13,14 +13,12 @@ def plot_mask(**kwargs):
     # masks
     w_c_mask = kwargs.get('w_c_mask')
     w_g_mask = kwargs.get('w_g_mask')
-    w_c_ex_mask = kwargs.get('w_c_ex_mask')
-    w_c_in_mask = kwargs.get('w_c_in_mask')
     w_p_mask = kwargs.get('w_p_mask')
     # plot
     plt.figure(figsize=(20, 10))
     plt.subplot(2, 3, 1)
     plt.title('Chemical Synapse Mask')
-    sns.heatmap(w_c_mask | w_c_ex_mask | w_c_in_mask, cmap='coolwarm', vmin=-1, vmax=1)
+    sns.heatmap(w_c_mask[0] | w_c_mask[1] | w_c_mask[2], cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
     plt.subplot(2, 3, 2)
@@ -35,17 +33,17 @@ def plot_mask(**kwargs):
     plt.ylabel('Joint ID')
     plt.subplot(2, 3, 4)
     plt.title('Exc/Inh Chemical Synapse Mask')
-    sns.heatmap(w_c_mask, cmap='coolwarm', vmin=-1, vmax=1)
+    sns.heatmap(w_c_mask[0], cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
     plt.subplot(2, 3, 5)
     plt.title('Excitatory Chemical Synapse Mask')
-    sns.heatmap(w_c_ex_mask, cmap='coolwarm', vmin=-1, vmax=1)
+    sns.heatmap(w_c_mask[1], cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
     plt.subplot(2, 3, 6)
     plt.title('Inhibitory Chemical Synapse Mask')
-    sns.heatmap(w_c_in_mask, cmap='coolwarm', vmin=-1, vmax=1)
+    sns.heatmap(w_c_mask[2], cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
 
@@ -250,5 +248,5 @@ def bias(runs_folder, ckpt_name, model_name, remove_muscle_flag=True):
 if __name__ == '__main__':
     runs_folder = 'Jul25_12-07-58_h-10-176-50-34'
     ckpt_name = 'model119.pt'
-    model_name = 'snn2_forward'
+    model_name = 'snn_forward'
     kwargs = get_kwargs(path=worm_assets.connectome_path())
