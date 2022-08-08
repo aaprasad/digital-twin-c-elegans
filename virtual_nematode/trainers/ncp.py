@@ -11,7 +11,7 @@ from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
 from virtual_nematode.networks.rnn.rnn import RNNCell
 from virtual_nematode.networks.snn.forward import SNNCell, SNN, SNNCell1, SNNCell2
 from virtual_nematode.networks.snn.weathervane import SNNCell as SNNCellW
-from virtual_nematode.networks.snn.weathervane import SNNCell2 as SNNCellW2
+from virtual_nematode.networks.snn.weathervane import SNNCell1 as SNNCellW1
 from virtual_nematode.trainers.loss import MSESymmetricJointLoss, MSESymmetricMuscleLoss
 
 
@@ -138,7 +138,7 @@ def snn_weathervane(**kwargs):
 
 
 def snn2_weathervane(**kwargs):
-    cell = SNNCellW2(**kwargs)
+    cell = SNNCellW1(**kwargs)
     model = SNN(cell)
     return model
 
