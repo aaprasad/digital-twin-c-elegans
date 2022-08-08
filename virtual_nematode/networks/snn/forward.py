@@ -273,7 +273,7 @@ class SNNCell3(torch.nn.Module):
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
         w_c_abs = self.w_c.abs()
-        w_c = self.w_c * self.w_c_mask + w_c_abs * self.w_c_ex_mask - w_c_abs * self.w_c_in_mask
+        w_c = self.w_c * self.w_c_mask[0] + w_c_abs * self.w_c_mask[1] - w_c_abs * self.w_c_mask[2]
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
