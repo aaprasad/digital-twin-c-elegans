@@ -14,7 +14,7 @@ import worm_assets
 
 
 def select_model(model_folder, model_name, ckpt_name):
-    if model_name in ['snn_weathervane', 'snn2_weathervane']:
+    if model_name in ['snn_weathervane', 'snn_weathervane1']:
         kwargs = {'dt': 0.04, 'steps': 5, **get_kwargs(path=worm_assets.connectome_path())}
     else:
         raise AssertionError('{} not exist'.format(model_name))
@@ -47,5 +47,5 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6, distance=15,
         position_func=position_func, density=1.2, viscosity=0.1, condim=3, friction='1 1', source=(0, 0)
     )
-    test(model_folder, 'snn2_weathervane', ckpt_name='model.pt')
-    # record(model_folder, 'snn2_weathervane', env, ckpt_name='model.pt')
+    test(model_folder, 'snn_weathervane1', ckpt_name='model.pt')
+    # record(model_folder, 'snn_weathervane1', env, ckpt_name='model.pt')

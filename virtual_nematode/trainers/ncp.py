@@ -34,14 +34,14 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = ctrnn_2_stage(**kwargs)
     elif model_name == 'snn_forward':
         model = snn_forward(**kwargs)
-    elif model_name == 'snn1_forward':
-        model = snn1_forward(**kwargs)
-    elif model_name == 'snn2_forward':
-        model = snn2_forward(**kwargs)
+    elif model_name == 'snn_forward1':
+        model = snn_forward1(**kwargs)
+    elif model_name == 'snn_forward2':
+        model = snn_forward2(**kwargs)
     elif model_name == 'snn_weathervane':
         model = snn_weathervane(**kwargs)
-    elif model_name == 'snn2_weathervane':
-        model = snn2_weathervane(**kwargs)
+    elif model_name == 'snn_weathervane1':
+        model = snn_weathervane1(**kwargs)
     else:
         raise AssertionError('{} not exist'.format(model_name))
     if device is None:
@@ -119,13 +119,13 @@ def snn_forward(**kwargs):
     return model
 
 
-def snn1_forward(**kwargs):
+def snn_forward1(**kwargs):
     cell = SNNCell1(**kwargs)
     model = SNN(cell)
     return model
 
 
-def snn2_forward(**kwargs):
+def snn_forward2(**kwargs):
     cell = SNNCell2(**kwargs)
     model = SNN(cell)
     return model
@@ -137,7 +137,7 @@ def snn_weathervane(**kwargs):
     return model
 
 
-def snn2_weathervane(**kwargs):
+def snn_weathervane1(**kwargs):
     cell = SNNCellW1(**kwargs)
     model = SNN(cell)
     return model
