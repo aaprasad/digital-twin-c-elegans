@@ -232,31 +232,29 @@ class SNNCell2(torch.nn.Module):
 
 
 class SNNCell3(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index):
         """ SNN with chemical synapses and gap junctions, including chemical synapse polarity restriction
-        w_c_mask: chemical mask with no polarity restriction, already excluded excitatory/inhibitory chemical mask
-        w_c_ex_mask: excitatory chemical mask
-        w_c_in_mask: inhibitory chemical mask, no overlap with excitatory chemical mask
+        w_c_mask[0]: chemical mask with no polarity restriction, already excluded excitatory/inhibitory chemical mask
+        w_c_mask[1]: excitatory chemical mask
+        w_c_mask[2]: inhibitory chemical mask, no overlap with excitatory chemical mask
         """
         super(SNNCell3, self).__init__()
-        self.dt = dt
-        self.steps = steps
-        self.n = n
-        self.m = m
-        self.p = p
+        self.dt = dt  # env dt
+        self.steps = steps  # ode steps
+        self.n = n  # cell count
+        self.m = m  # muscle count
+        self.p = p  # proprioception size
+        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-3, 3))  # (n, )
+        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # (n, )
+        self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # (n, n)
+        self.w_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # (3, n, n), bool
+        self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))  # (n, n)
+        self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
+        self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
+        self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (p, n), bool
+        self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         self.state_func = torch.nn.Tanh()
         self.activation_func = torch.nn.Sigmoid()
-        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-3, 3))
-        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))
-        self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))
-        self.w_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)
-        self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))
-        self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)
-        self.w_c_ex_mask = torch.nn.Parameter(w_c_ex_mask, requires_grad=False)
-        self.w_c_in_mask = torch.nn.Parameter(w_c_in_mask, requires_grad=False)
-        self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))
-        self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)
-        self.output_index = torch.nn.Parameter(output_index, requires_grad=False)
 
     @property
     def init_state(self):
