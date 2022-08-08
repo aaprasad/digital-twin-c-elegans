@@ -31,10 +31,9 @@ def get_kwargs(path):
         path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[], polarity_mask=False,
         sensory_neurons=sensory, p=p, p_mask=True
     )
-    (w_c_mask, w_g_mask, w_c_ex_mask, w_c_in_mask, w_p_mask, output_index), w_gradient_mask = connectome.mask()
+    (w_c_mask, w_g_mask, w_p_mask, output_index), w_gradient_mask = connectome.mask()
     return {
         'n': len(connectome.cells), 'm': len(connectome.muscles), 'p': p,
         'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index,
-        # 'w_c_ex_mask': w_c_ex_mask, 'w_c_in_mask': w_c_in_mask,
         'gradient_size': gradient_size, 'w_gradient_mask': w_gradient_mask,
     }
