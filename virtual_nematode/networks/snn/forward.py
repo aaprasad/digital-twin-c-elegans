@@ -251,7 +251,7 @@ class SNNCell3(torch.nn.Module):
         self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))  # (n, n)
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
         self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
-        self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (p, n), bool
+        self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (3, p, n), bool
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         self.state_func = torch.nn.Tanh()
         self.activation_func = torch.nn.Sigmoid()
@@ -266,7 +266,8 @@ class SNNCell3(torch.nn.Module):
 
     def _external_input(self, stimuli):
         # proprioception input
-        w_p = self.w_p * self.w_p_mask
+        w_p_abs = self.w_p.abs()
+        w_p = self.w_p * self.w_p_mask[0] + w_p_abs * self.w_p_mask[1] - w_p_abs * self.w_p_mask[2]
         external_input = torch.mm(stimuli, w_p)
         return external_input
 
