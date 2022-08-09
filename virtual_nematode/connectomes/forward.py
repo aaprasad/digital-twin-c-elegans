@@ -64,11 +64,6 @@ class Connectome(object):
         mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
 
-    def _polarity_masks(self):
-        w_c_ex_mask = self._polarity_mask(self.ex_synapses)
-        w_c_in_mask = self._polarity_mask(self.in_synapses)
-        return w_c_ex_mask, w_c_in_mask
-
     def _external_input_mask(self, dim, flag):
         """ external input bool mask
         dim: dimension of the external input
@@ -111,7 +106,8 @@ class Connectome(object):
         if torch.all(w_g_mask.tril() == w_g_mask.triu().T).item() is not True:
             raise AssertionError('Gap junction mask is not symmetric!')
         # chemical synapse polarity: subsets of chemical synapse mask, and no overlap between them
-        w_c_ex_mask, w_c_in_mask = self._polarity_masks()
+        w_c_ex_mask = self._polarity_mask(self.ex_synapses)
+        w_c_in_mask = self._polarity_mask(self.in_synapses)
         w_c_ex_mask &= w_c_mask
         w_c_in_mask &= w_c_mask
         if torch.any(w_c_ex_mask & w_c_in_mask).item() is True:
