@@ -14,7 +14,7 @@ def train(model_name):
             'dt': 0.04, 'steps': 5,
             **get_kwargs(
                 path=worm_assets.connectome_path(),
-                polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
+                polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')  # 'NT+R method prediction.xls'
             )
         }
     elif model_name == 'ctrnn':
