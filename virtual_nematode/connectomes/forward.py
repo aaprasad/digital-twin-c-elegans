@@ -29,13 +29,10 @@ class Connectome(object):
         return chemical, gap_junction
 
     def _check(self, gap_junction):
-        """ check if cells exist
-        cells: a list of cell names
-        """
-        all_cells = set(list(gap_junction.index))
-        for cell in self.cells:
-            if cell not in all_cells:
-                raise AssertionError('Cell {} does not exist!'.format(cell))
+        """ check if all the cells are included in the connectome """
+        connectome_cells = set(list(gap_junction.index))
+        cells = set(self.cells)
+        assert cells.issubset(connectome_cells) is True
 
     def _add(self, adjacency):
         for cell in self.cells:
