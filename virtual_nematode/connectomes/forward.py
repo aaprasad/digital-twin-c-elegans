@@ -17,7 +17,7 @@ class Connectome(object):
         self.chemical, self.gap_junction = self._init()
 
     def _check_synapses(self, synapses):
-        """ check if the cells from synapses exist, and no duplicates """
+        """ check if the cells from synapses exist, and make sure no duplicate synapses """
         synapse_cells = set([pre for pre, _ in synapses] + [post for _, post in synapses])
         assert synapse_cells.issubset(set(self.cells))
         assert len(synapses) == len(set(synapses))
