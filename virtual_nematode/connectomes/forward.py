@@ -9,12 +9,23 @@ class Connectome(object):
         self.path = path
         self.neurons = neurons
         self.muscles = muscles
-        self.cells = neurons + muscles
-        self.ex_synapses = ex_synapses
-        self.in_synapses = in_synapses
-        self.sensory_neurons = sensory_neurons
+        self.cells = neurons + muscles  # cells to simulate
+        self.ex_synapses = self._check_synapses(ex_synapses)
+        self.in_synapses = self._check_synapses(in_synapses)
+        self.sensory_neurons = self._check_cells(sensory_neurons)
         self.p = p
         self.chemical, self.gap_junction = self._init()
+
+    def _check_synapses(self, synapses):
+        """ check if the cells from synapses exist """
+        synapse_cells = set([pre for pre, _ in synapses] + [post for _, post in synapses])
+        assert synapse_cells.issubset(set(self.cells))
+        return synapses
+
+    def _check_cells(self, cells):
+        """ check if the cells exist """
+        assert set(cells).issubset(set(self.cells))
+        return cells
 
     def _init(self):
         chemical = pd.read_excel(self.path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
@@ -29,8 +40,7 @@ class Connectome(object):
     def _check(self, gap_junction):
         """ check if all the cells are included in the connectome """
         connectome_cells = set(list(gap_junction.index))
-        cells = set(self.cells)
-        assert cells.issubset(connectome_cells) is True
+        assert set(self.cells).issubset(connectome_cells)
 
     def _add(self, adjacency):
         for cell in self.cells:
