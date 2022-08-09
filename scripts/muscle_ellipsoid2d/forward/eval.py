@@ -21,7 +21,13 @@ def y_func1(state, **kwargs):
 
 def select_model(model_folder, model_name, ckpt_name):
     if model_name in ['snn_forward', 'snn_forward1', 'snn_forward2', 'snn_forward3']:
-        kwargs = {'dt': 0.04, 'steps': 5, **get_kwargs(path=worm_assets.connectome_path())}
+        kwargs = {
+            'dt': 0.04, 'steps': 5,
+            **get_kwargs(
+                path=worm_assets.connectome_path(),
+                polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
+            )
+        }
     elif model_name == 'ctrnn':
         kwargs = {
             'input_size': 24, 'hidden_size': 171, 'output_size': 95, 'feedback': True, 'readout': 'identity',

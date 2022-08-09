@@ -11,7 +11,11 @@ def train(model_name):
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
             'device_ids': device_ids, 'lr': lr, 'epochs': 300, 'early_stop': 300, 'loss': 'MSELoss',
             # model kwargs
-            'dt': 0.04, 'steps': 5, **get_kwargs(path=worm_assets.connectome_path())
+            'dt': 0.04, 'steps': 5,
+            **get_kwargs(
+                path=worm_assets.connectome_path(),
+                polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
+            )
         }
     elif model_name == 'ctrnn':
         kwargs = {

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import torch
 from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, sensory_neurons
+from virtual_nematode.connectomes.polarity import chemical_polarities
 
 
 class Connectome(object):
@@ -131,12 +132,14 @@ class Connectome(object):
         return w_c_mask, w_g_mask, w_p_mask, output_index
 
 
-def get_kwargs(path):
+def get_kwargs(path, polarity_path):
     """ connectome masks and params """
     muscles = body_wall_muscles()
     neurons = neuron_list2(path, muscles)
     sensory = sensory_neurons(path)
     print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
+    ex_synapses, in_synapses = chemical_polarities(polarity_path)
+    print('{} excitatory synapses, {} inhibitory synapses'.format(len(ex_synapses), len(in_synapses)))
     p = 24
     connectome = Connectome(
         path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[],
