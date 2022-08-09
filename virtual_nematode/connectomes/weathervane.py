@@ -1,5 +1,6 @@
 from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, sensory_neurons
 from virtual_nematode.connectomes.forward import Connectome as _Connectome
+from virtual_nematode.connectomes.polarity import chemical_polarities
 
 
 class Connectome(_Connectome):
@@ -17,17 +18,19 @@ class Connectome(_Connectome):
         return masks, w_gradient_mask
 
 
-def get_kwargs(path):
+def get_kwargs(path, polarity_path):
     """ connectome masks and params """
     muscles = body_wall_muscles()
     neurons = neuron_list2(path, muscles)
     sensory = sensory_neurons(path)
     print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
+    ex_synapses, in_synapses = chemical_polarities(polarity_path)
+    print('{} excitatory synapses, {} inhibitory synapses'.format(len(ex_synapses), len(in_synapses)))
     p = 24
     gradient_size = 1
     connectome = Connectome(
-        gradient_size=gradient_size, gradient_mask=True,
-        path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[],
+        gradient_size=gradient_size,
+        path=path, neurons=neurons, muscles=muscles, ex_synapses=ex_synapses, in_synapses=in_synapses,
         sensory_neurons=sensory, p=p
     )
     (w_c_mask, w_g_mask, w_p_mask, output_index), w_gradient_mask = connectome.mask()

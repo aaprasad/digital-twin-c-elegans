@@ -15,7 +15,13 @@ import worm_assets
 
 def select_model(model_folder, model_name, ckpt_name):
     if model_name in ['snn_weathervane', 'snn_weathervane1']:
-        kwargs = {'dt': 0.04, 'steps': 5, **get_kwargs(path=worm_assets.connectome_path())}
+        kwargs = {
+            'dt': 0.04, 'steps': 5,
+            **get_kwargs(
+                path=worm_assets.connectome_path(),
+                polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
+            )
+        }
     else:
         raise AssertionError('{} not exist'.format(model_name))
     model = prepare_model(model_name, model_path=os.path.join(model_folder, ckpt_name), **kwargs)

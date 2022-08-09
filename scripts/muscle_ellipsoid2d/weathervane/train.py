@@ -14,7 +14,11 @@ def train(model_name):
             'device_ids': device_ids, 'lr': lr, 'epochs': 300, 'early_stop': 300, 'loss': 'MSELoss',
             # model kwargs
             'model_path': model_path, 'strict': strict,
-            'dt': 0.04, 'steps': 5, **get_kwargs(path=worm_assets.connectome_path())
+            'dt': 0.04, 'steps': 5,
+            **get_kwargs(
+                path=worm_assets.connectome_path(),
+                polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
+            )
         }
     else:
         raise AssertionError('{} not exist'.format(model_name))
