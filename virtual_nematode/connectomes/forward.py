@@ -5,14 +5,13 @@ from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, 
 
 
 class Connectome(object):
-    def __init__(self, path, neurons, muscles, ex_synapses, in_synapses, polarity_mask, sensory_neurons, p, p_mask):
+    def __init__(self, path, neurons, muscles, ex_synapses, in_synapses, sensory_neurons, p, p_mask):
         self.path = path
         self.neurons = neurons
         self.muscles = muscles
         self.cells = neurons + muscles
         self.ex_synapses = ex_synapses
         self.in_synapses = in_synapses
-        self.polarity_mask = polarity_mask
         self.sensory_neurons = sensory_neurons
         self.p = p
         self.p_mask = p_mask
@@ -60,9 +59,8 @@ class Connectome(object):
         inhibitory mask: if True, the connection is inhibitory
         """
         mask = pd.DataFrame(False, index=self.cells, columns=self.cells)
-        if self.polarity_mask is True:
-            for pre, post in synapses:
-                mask.loc[pre, post] = True
+        for pre, post in synapses:
+            mask.loc[pre, post] = True
         mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
 
@@ -138,7 +136,7 @@ def get_kwargs(path):
     print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
     p = 24
     connectome = Connectome(
-        path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[], polarity_mask=False,
+        path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[],
         sensory_neurons=sensory, p=p, p_mask=True
     )
     w_c_mask, w_g_mask, w_p_mask, output_index = connectome.mask()

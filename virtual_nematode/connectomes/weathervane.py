@@ -28,7 +28,7 @@ def get_kwargs(path):
     gradient_size = 1
     connectome = Connectome(
         gradient_size=gradient_size, gradient_mask=True,
-        path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[], polarity_mask=False,
+        path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[],
         sensory_neurons=sensory, p=p, p_mask=True
     )
     (w_c_mask, w_g_mask, w_p_mask, output_index), w_gradient_mask = connectome.mask()
