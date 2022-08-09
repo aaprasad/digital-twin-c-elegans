@@ -43,28 +43,42 @@ def body_wall_muscles():
 
 
 def vb_motor_neurons():
-    """ ventral b-type motor neurons
+    """ ventral B-type motor neurons
     https://doi.org/10.1038/s41586-019-1352-7
     """
     return ['VB{:02d}'.format(i) for i in range(1, 12)]
 
 
 def db_motor_neurons():
-    """ dorsal b-type motor neurons
+    """ dorsal B-type motor neurons
     https://doi.org/10.1038/s41586-019-1352-7
     """
     return ['DB{:02d}'.format(i) for i in range(1, 8)]
 
 
+def va_motor_neurons():
+    """ ventral A-type motor neurons
+    https://doi.org/10.1038/s41586-019-1352-7
+    """
+    return ['VA{:02d}'.format(i) for i in range(1, 13)]
+
+
+def da_motor_neurons():
+    """ dorsal A-type motor neurons
+    https://doi.org/10.1038/s41586-019-1352-7
+    """
+    return ['DA{:02d}'.format(i) for i in range(1, 10)]
+
+
 def vd_motor_neurons():
-    """ ventral d-type motor neurons
+    """ ventral D-type motor neurons
     https://doi.org/10.1038/s41586-019-1352-7
     """
     return ['VD{:02d}'.format(i) for i in range(1, 14)]
 
 
 def dd_motor_neurons():
-    """ dorsal d-type motor neurons
+    """ dorsal D-type motor neurons
     https://doi.org/10.1038/s41586-019-1352-7
     """
     return ['DD{:02d}'.format(i) for i in range(1, 7)]
@@ -129,4 +143,15 @@ def cell_list(path):
     muscles = body_wall_muscles()
     neurons = neuron_list2(path, muscles)
     cells = neurons + muscles
+    return cells
+
+
+def proprioception_neurons():
+    """ proprioception
+    head motor neurons
+    ventral cord motor neurons: B-type and A-type motor neurons
+    """
+    head = head_motor_neurons()
+    vnc = db_motor_neurons() + vb_motor_neurons() + da_motor_neurons() + va_motor_neurons()
+    cells = head + vnc
     return cells
