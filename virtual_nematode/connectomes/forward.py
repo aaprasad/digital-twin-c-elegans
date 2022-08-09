@@ -142,7 +142,7 @@ def get_kwargs(path, polarity_path):
     print('{} excitatory synapses, {} inhibitory synapses'.format(len(ex_synapses), len(in_synapses)))
     p = 24
     connectome = Connectome(
-        path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[],
+        path=path, neurons=neurons, muscles=muscles, ex_synapses=ex_synapses, in_synapses=in_synapses,
         sensory_neurons=sensory, p=p
     )
     w_c_mask, w_g_mask, w_p_mask, output_index = connectome.mask()
