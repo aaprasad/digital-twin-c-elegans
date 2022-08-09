@@ -5,7 +5,7 @@ from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, 
 
 
 class Connectome(object):
-    def __init__(self, path, neurons, muscles, ex_synapses, in_synapses, sensory_neurons, p, p_mask):
+    def __init__(self, path, neurons, muscles, ex_synapses, in_synapses, sensory_neurons, p):
         self.path = path
         self.neurons = neurons
         self.muscles = muscles
@@ -14,7 +14,6 @@ class Connectome(object):
         self.in_synapses = in_synapses
         self.sensory_neurons = sensory_neurons
         self.p = p
-        self.p_mask = p_mask
         self.chemical, self.gap_junction = self._init()
 
     def _init(self):
@@ -64,16 +63,13 @@ class Connectome(object):
         mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
 
-    def _external_input_mask(self, dim, flag):
+    def _external_input_mask(self, dim):
         """ external input bool mask
         dim: dimension of the external input
         flag: if True, sensory neurons receive external input; else, all neurons receive external input
         """
         mask = pd.DataFrame(False, index=list(range(dim)), columns=self.cells)
-        if flag is True:
-            mask.loc[:, self.sensory_neurons] = True
-        else:
-            mask.loc[:, self.neurons] = True
+        mask.loc[:, self.sensory_neurons] = True
         mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
 
@@ -81,7 +77,7 @@ class Connectome(object):
         """ proprioception input synapse bool mask
         https://doi.org/10.1016/j.neuron.2012.08.039
         """
-        mask = self._external_input_mask(dim=self.p, flag=self.p_mask)
+        mask = self._external_input_mask(dim=self.p)
         return mask
 
     def mask(self):
@@ -133,7 +129,7 @@ def get_kwargs(path):
     p = 24
     connectome = Connectome(
         path=path, neurons=neurons, muscles=muscles, ex_synapses=[], in_synapses=[],
-        sensory_neurons=sensory, p=p, p_mask=True
+        sensory_neurons=sensory, p=p
     )
     w_c_mask, w_g_mask, w_p_mask, output_index = connectome.mask()
     return {
