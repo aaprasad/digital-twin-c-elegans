@@ -150,8 +150,10 @@ def proprioception_neurons():
     """ proprioception
     head motor neurons
     ventral cord motor neurons: B-type and A-type motor neurons
+    sublateral motor neurons
     """
     head = head_motor_neurons()
     vnc = db_motor_neurons() + vb_motor_neurons() + da_motor_neurons() + va_motor_neurons()
-    cells = head + vnc
+    sublateral = sublateral_motor_neurons()
+    cells = head + vnc + sublateral
     return cells
