@@ -157,3 +157,12 @@ def proprioception_neurons():
     sublateral = sublateral_motor_neurons()
     cells = head + vnc + sublateral
     return cells
+
+
+def motor_neurons(path):
+    """ all motor neurons
+    https://doi.org/10.1038/s41586-019-1352-7
+    """
+    gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
+    cells = list(gap_junction.iloc[221:329, :].index)
+    return cells
