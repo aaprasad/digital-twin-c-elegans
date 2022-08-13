@@ -1,3 +1,4 @@
+import math
 import torch
 
 
@@ -308,12 +309,12 @@ class SNNCell4(torch.nn.Module):
         self.m = m  # muscle count
         self.p = p  # proprioception size
         self.tau = torch.nn.Parameter(torch.empty(n).uniform_(0.01, 0.05))  # (n, )
-        self.bias = torch.nn.Parameter(torch.empty(n).uniform_(-3, 3))  # (n, )
-        self.w_c = torch.nn.Parameter(torch.empty((n, n)).uniform_(-1, 1))  # (n, n)
+        self.bias = torch.nn.Parameter(torch.empty(n).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))  # (n, )
+        self.w_c = torch.nn.Parameter(torch.empty((n, n)).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))  # (n, n)
         self.w_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # (3, n, n), bool
-        self.w_g = torch.nn.Parameter(torch.empty((n, n)).uniform_(0, 1))  # (n, n)
+        self.w_g = torch.nn.Parameter(torch.empty((n, n)).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))  # (n, n)
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
-        self.w_p = torch.nn.Parameter(torch.empty((p, n)).uniform_(-1, 1))  # (p, n)
+        self.w_p = torch.nn.Parameter(torch.empty((p, n)).uniform_(-1 / math.sqrt(p), 1 / math.sqrt(p)))  # (p, n)
         self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (3, p, n), bool
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         self.state_func = torch.nn.Tanh()
