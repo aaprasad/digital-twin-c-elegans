@@ -165,15 +165,17 @@ def get_kwargs(path, polarity_path):
     # connectome
     muscles = body_wall_muscles()
     neurons = neuron_list2(path, muscles)
-    print('{} neurons, {} muscles, {} cells in total'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
+    print('{} neurons, {} muscles, {} cells'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
     ex_synapses, in_synapses = chemical_polarities(polarity_path)
-    print('{} excitatory synapses, {} inhibitory synapses'.format(len(ex_synapses), len(in_synapses)))
+    print('{} excitatory, {} inhibitory synapses'.format(len(ex_synapses), len(in_synapses)))
     connectome = Connectome(path=path, neurons=neurons, muscles=muscles, ex_synapses=ex_synapses, in_synapses=in_synapses)
     w_c_mask, w_g_mask, output_index = connectome.mask()
     # proprioception input
     p = 24
     input_neurons = proprioception_neurons()  # motor_neurons(path)
+    print('{} proprioception neurons'.format(len(input_neurons)))
     p_ex_synapses, p_in_synapses = proprioception_polarities(dim=p)
+    print('{} excitatory, {} inhibitory proprioception synapses'.format(len(p_ex_synapses), len(p_in_synapses)))
     proprioception = ExternalInput(
         neurons=neurons, muscles=muscles, dim=p, input_neurons=input_neurons,
         ex_synapses=p_ex_synapses, in_synapses=p_in_synapses
