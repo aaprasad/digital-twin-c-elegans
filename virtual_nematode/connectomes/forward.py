@@ -173,7 +173,7 @@ def get_kwargs(path, polarity_path):
     # proprioception input
     p = 24
     input_neurons = proprioception_neurons()  # motor_neurons(path)
-    p_ex_synapses, p_in_synapses = [], []  # proprioception_polarities(dim=p)
+    p_ex_synapses, p_in_synapses = proprioception_polarities(dim=p)
     proprioception = ExternalInput(
         neurons=neurons, muscles=muscles, dim=p, input_neurons=input_neurons,
         ex_synapses=p_ex_synapses, in_synapses=p_in_synapses
