@@ -4,7 +4,7 @@ import worm_assets
 
 
 def train(model_name):
-    if model_name in ['snn_forward', 'snn_forward1', 'snn_forward2', 'snn_forward3']:
+    if model_name.startswith('snn_forward'):
         data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
         device_ids, batch_size, lr = [0, 1, 2, 3], 128, 5e-2
         kwargs = {
@@ -32,4 +32,4 @@ def train(model_name):
 
 
 if __name__ == '__main__':
-    train('snn_forward3')
+    train('snn_forward4')

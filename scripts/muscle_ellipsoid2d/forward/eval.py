@@ -20,7 +20,7 @@ def y_func1(state, **kwargs):
 
 
 def select_model(model_folder, model_name, ckpt_name):
-    if model_name in ['snn_forward', 'snn_forward1', 'snn_forward2', 'snn_forward3']:
+    if model_name.startswith('snn_forward'):
         kwargs = {
             'dt': 0.04, 'steps': 5,
             **get_kwargs(
@@ -78,6 +78,6 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
         density=1.2, viscosity=0.1, condim=3, friction='1 1'
     )
-    # evaluate(model_folder, 'snn_forward3', start=0, end=100)
-    test(model_folder, 'snn_forward3', ckpt_name='model.pt')
-    # record(model_folder, 'snn_forward3', env, ckpt_name='model.pt')
+    # evaluate(model_folder, 'snn_forward4', start=0, end=100)
+    test(model_folder, 'snn_forward4', ckpt_name='model.pt')
+    # record(model_folder, 'snn_forward4', env, ckpt_name='model.pt')
