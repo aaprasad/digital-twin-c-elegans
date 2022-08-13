@@ -317,15 +317,13 @@ class SNNCell4(torch.nn.Module):
         self.w_p = torch.nn.Parameter(torch.empty((p, n)).uniform_(-1 / math.sqrt(p), 1 / math.sqrt(p)))  # (p, n)
         self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (3, p, n), bool
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
-        self.state_func = torch.nn.Tanh()
         self.activation_func = torch.nn.Sigmoid()
 
     @property
     def init_state(self):
         """ initial state and activation """
-        value = torch.zeros(self.n)
-        state = self.state_func(value)  # (cell_count, )
-        activation = self.activation_func(value)  # (cell_count, )
+        state = self.bias.clone().detach()  # (n, )
+        activation = self.activation_func(state)  # (n, )
         return state, activation
 
     def _external_input(self, stimuli):
@@ -355,9 +353,8 @@ class SNNCell4(torch.nn.Module):
             # total input
             total_input = synapse_input + gap_input + external_input
             # cell state and activation
-            value = (1 - dt_tau) * state + dt_tau * total_input
-            state = self.state_func(value)
-            activation = self.activation_func(value)
+            state = (1 - dt_tau) * state + dt_tau * total_input
+            activation = self.activation_func(state)
         # muscle output
         action = activation[:, self.output_index]
         return state, activation, action
