@@ -39,10 +39,10 @@ def proprioception_polarities(dim):
     """
     db = db_motor_neurons()
     vb = vb_motor_neurons()
-    da = da_motor_neurons()
-    va = va_motor_neurons()
+    # da = da_motor_neurons()
+    # va = va_motor_neurons()
     # dd = dd_motor_neurons()
     # vd = vd_motor_neurons()
-    ex_synapses = _proprioception_polarities(dim, vb + va)
-    in_synapses = _proprioception_polarities(dim, db + da)
+    ex_synapses = _proprioception_polarities(dim, vb)
+    in_synapses = _proprioception_polarities(dim, db)
     return ex_synapses, in_synapses
