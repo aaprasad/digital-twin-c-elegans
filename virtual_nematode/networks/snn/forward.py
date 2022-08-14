@@ -329,17 +329,22 @@ class SNNCell4(torch.nn.Module):
 
     def _external_input(self, stimuli):
         # proprioception input
-        w_p_abs = self.w_p.abs()
-        w_p = self.w_p * self.w_p_mask[0] + w_p_abs * self.w_p_mask[1] - w_p_abs * self.w_p_mask[2]
+        # w_p_abs = self.w_p.abs()
+        # w_p = self.w_p * self.w_p_mask[0] + w_p_abs * self.w_p_mask[1] - w_p_abs * self.w_p_mask[2]
+        w_p_square = self.w_p.square()
+        w_p = self.w_p.sign() * w_p_square * self.w_p_mask[0] + w_p_square * self.w_p_mask[1] - w_p_square * self.w_p_mask[2]
         external_input = torch.mm(stimuli, w_p)
         return external_input
 
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
-        w_c_abs = self.w_c.abs()
-        w_c = self.w_c * self.w_c_mask[0] + w_c_abs * self.w_c_mask[1] - w_c_abs * self.w_c_mask[2]
+        # w_c_abs = self.w_c.abs()
+        # w_c = self.w_c * self.w_c_mask[0] + w_c_abs * self.w_c_mask[1] - w_c_abs * self.w_c_mask[2]
+        w_c_square = self.w_c.square()
+        w_c = self.w_c.sign() * w_c_square * self.w_c_mask[0] + w_c_square * self.w_c_mask[1] - w_c_square * self.w_c_mask[2]
         # gap junction weight
-        w_g = self.w_g.abs()
+        # w_g = self.w_g.abs()
+        w_g = self.w_g.square()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # external input + bias
         external_input = self._external_input(stimuli) + self.bias
