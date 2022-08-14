@@ -317,7 +317,7 @@ class SNNCell4(torch.nn.Module):
         self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
         self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (3, p, n), bool
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
-        self.delta_state_func = torch.nn.Tanh()
+        # self.delta_state_func = torch.nn.Tanh()
         self.activation_func = torch.nn.Sigmoid()
 
     @property
@@ -354,8 +354,10 @@ class SNNCell4(torch.nn.Module):
             # chemical synapse input
             synapse_input = torch.mm(activation, w_c)
             # gap junction input, (batch_size, cell_count)
-            delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
-            delta_state = self.delta_state_func(delta_state)
+            state_tanh = state.tanh()
+            delta_state = state_tanh.unsqueeze(dim=2).repeat(1, 1, self.n) - state_tanh.unsqueeze(dim=1).repeat(1, self.n, 1)
+            # delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
+            # delta_state = self.delta_state_func(delta_state)
             gap_input = torch.sum(delta_state * w_g, dim=1)
             # total input
             total_input = synapse_input + gap_input + external_input
