@@ -363,7 +363,8 @@ class SNNCell4(torch.nn.Module):
             # total input
             total_input = synapse_input + gap_input + external_input
             # cell state and activation
-            state = (1 - dt_tau) * state + dt_tau * total_input
+            # state = (1 - dt_tau) * state + dt_tau * total_input
+            state = (1 - dt_tau) * state_tanh + dt_tau * total_input
             activation = self.activation_func(state)
         # muscle output
         action = activation[:, self.output_index]
