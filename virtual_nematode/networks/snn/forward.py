@@ -308,20 +308,20 @@ class SNNCell4(torch.nn.Module):
         self.n = n  # cell count
         self.m = m  # muscle count
         self.p = p  # proprioception size
-        # self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-3, 3))  # (n, )
-        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))
+        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-3, 3))  # (n, )
+        # self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # (n, )
-        # self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # (n, n)
-        self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))
+        self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # (n, n)
+        # self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))
         self.w_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # (3, n, n), bool
-        # self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))  # (n, n)
-        self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1 / math.sqrt(n)))
+        self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))  # (n, n)
+        # self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1 / math.sqrt(n)))
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
-        # self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
-        self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1 / math.sqrt(p), 1 / math.sqrt(p)))
+        self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
+        # self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1 / math.sqrt(p), 1 / math.sqrt(p)))
         self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (3, p, n), bool
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
-        self.delta_state_func = torch.nn.Tanh()
+        # self.delta_state_func = torch.nn.Tanh()
         self.activation_func = torch.nn.Sigmoid()
 
     @property
@@ -359,10 +359,10 @@ class SNNCell4(torch.nn.Module):
             # chemical synapse input
             synapse_input = torch.mm(activation, w_c)
             # gap junction input, (batch_size, cell_count)
-            # state_tanh = state.tanh()
-            # delta_state = state_tanh.unsqueeze(dim=2).repeat(1, 1, self.n) - state_tanh.unsqueeze(dim=1).repeat(1, self.n, 1)
-            delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
-            delta_state = self.delta_state_func(delta_state)
+            state_tanh = state.tanh()
+            delta_state = state_tanh.unsqueeze(dim=2).repeat(1, 1, self.n) - state_tanh.unsqueeze(dim=1).repeat(1, self.n, 1)
+            # delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
+            # delta_state = self.delta_state_func(delta_state)
             gap_input = torch.sum(delta_state * w_g, dim=1)
             # total input
             total_input = synapse_input + gap_input + external_input
