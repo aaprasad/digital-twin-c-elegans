@@ -354,16 +354,16 @@ class SNNCell4(torch.nn.Module):
             # chemical synapse input
             synapse_input = torch.mm(activation, w_c)
             # gap junction input, (batch_size, cell_count)
-            state_tanh = state.tanh()
-            delta_state = state_tanh.unsqueeze(dim=2).repeat(1, 1, self.n) - state_tanh.unsqueeze(dim=1).repeat(1, self.n, 1)
-            # delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
+            # state_tanh = state.tanh()
+            # delta_state = state_tanh.unsqueeze(dim=2).repeat(1, 1, self.n) - state_tanh.unsqueeze(dim=1).repeat(1, self.n, 1)
+            delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
             # delta_state = self.delta_state_func(delta_state)
             gap_input = torch.sum(delta_state * w_g, dim=1)
             # total input
             total_input = synapse_input + gap_input + external_input
             # cell state and activation
-            # state = (1 - dt_tau) * state + dt_tau * total_input
-            state = (1 - dt_tau) * state_tanh + dt_tau * total_input
+            state = (1 - dt_tau) * state + dt_tau * total_input
+            # state = (1 - dt_tau) * state_tanh + dt_tau * total_input
             activation = self.activation_func(state)
         # muscle output
         action = activation[:, self.output_index]
