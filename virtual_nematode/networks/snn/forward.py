@@ -308,6 +308,15 @@ class SNNCell4(torch.nn.Module):
         self.n = n  # cell count
         self.m = m  # muscle count
         self.p = p  # proprioception size
+        w_c_n = w_c_mask.sum(dim=[0, 1])
+        w_c_n[w_c_n == 0] = 1
+        w_g_n = w_g_mask.sum(dim=0)
+        w_g_n[w_g_n == 0] = 1
+        w_p_n = w_p_mask.sum(dim=[0, 1])
+        w_p_n[w_p_n == 0] = 1
+        self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
+        self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
+        self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
         # self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # (n, )
@@ -336,7 +345,7 @@ class SNNCell4(torch.nn.Module):
         # proprioception input
         w_p_abs = self.w_p.abs()
         w_p = self.w_p * self.w_p_mask[0] + w_p_abs * self.w_p_mask[1] - w_p_abs * self.w_p_mask[2]
-        external_input = torch.mm(stimuli, w_p)
+        external_input = torch.mm(stimuli, w_p) / self.w_p_n
         return external_input
 
     def forward(self, state, activation, stimuli):
@@ -352,13 +361,13 @@ class SNNCell4(torch.nn.Module):
         dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.05)
         for i in range(self.steps):
             # chemical synapse input
-            synapse_input = torch.mm(activation, w_c)
+            synapse_input = torch.mm(activation, w_c) / self.w_c_n
             # gap junction input, (batch_size, cell_count)
             # state_tanh = state.tanh()
             # delta_state = state_tanh.unsqueeze(dim=2).repeat(1, 1, self.n) - state_tanh.unsqueeze(dim=1).repeat(1, self.n, 1)
             delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
             # delta_state = self.delta_state_func(delta_state)
-            gap_input = torch.sum(delta_state * w_g, dim=1)
+            gap_input = torch.sum(delta_state * w_g, dim=1) / self.w_g_n
             # total input
             total_input = synapse_input + gap_input + external_input
             # cell state and activation
