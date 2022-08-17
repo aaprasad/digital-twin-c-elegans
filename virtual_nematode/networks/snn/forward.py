@@ -308,7 +308,7 @@ class SNNCell4(torch.nn.Module):
         self.n = n  # cell count
         self.m = m  # muscle count
         self.p = p  # proprioception size
-        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-3, 3))  # (n, )
+        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
         # self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # (n, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # (n, n)
