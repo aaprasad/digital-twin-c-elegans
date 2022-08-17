@@ -327,8 +327,8 @@ class SNNCell4(torch.nn.Module):
     @property
     def init_state(self):
         """ initial state and activation """
-        # state = self.bias.clone().detach()  # (n, )
-        state = torch.zeros(self.n)
+        state = self.bias.clone().detach()  # (n, )
+        # state = torch.zeros(self.n)
         activation = self.activation_func(state)  # (n, )
         return state, activation
 
