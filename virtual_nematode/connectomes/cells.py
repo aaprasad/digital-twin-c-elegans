@@ -149,13 +149,13 @@ def cell_list(path):
 def proprioception_neurons():
     """ proprioception
     head motor neurons
-    ventral cord motor neurons: B-type and A-type motor neurons
     sublateral motor neurons
+    ventral cord motor neurons: B-type and A-type motor neurons
     """
     head = head_motor_neurons()
+    sublateral = sublateral_motor_neurons()
     vnc = db_motor_neurons() + vb_motor_neurons()  # + da_motor_neurons() + va_motor_neurons()
-    # sublateral = sublateral_motor_neurons()
-    cells = head + vnc  # + sublateral
+    cells = head + sublateral + vnc
     return cells
 
 
