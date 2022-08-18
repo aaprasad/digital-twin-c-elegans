@@ -317,9 +317,7 @@ class SNNCell4(torch.nn.Module):
         self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
         self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
-        bias = torch.zeros(n).uniform_(-1, 1)
-        bias[output_index] = -1
-        self.bias = torch.nn.Parameter(bias)  # (n, )
+        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
         # self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1 / math.sqrt(n), 1 / math.sqrt(n)))
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # (n, )
         self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # (n, n)
