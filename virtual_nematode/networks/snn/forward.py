@@ -332,6 +332,7 @@ class SNNCell4(torch.nn.Module):
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         # self.delta_state_func = torch.nn.Tanh()
         self.activation_func = torch.nn.Sigmoid()
+        self.action_scaling = torch.sigmoid(torch.tensor([-1, 1])).tolist()
 
     @property
     def init_state(self):
@@ -376,6 +377,7 @@ class SNNCell4(torch.nn.Module):
             activation = self.activation_func(state)
         # muscle output
         action = activation[:, self.output_index]
+        action = (action - self.action_scaling[0]) / (self.action_scaling[1] - self.action_scaling[0])
         return state, activation, action
 
 
