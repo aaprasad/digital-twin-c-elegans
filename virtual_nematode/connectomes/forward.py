@@ -1,16 +1,15 @@
 import numpy as np
 import pandas as pd
 import torch
-from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, proprioception_neurons, motor_neurons
+from virtual_nematode.connectomes.cells import body_wall_muscles, cell_list, proprioception_neurons, motor_neurons
 from virtual_nematode.connectomes.polarity import chemical_polarities, proprioception_polarities
 
 
 class Connectome(object):
-    def __init__(self, path, neurons, muscles, ex_synapses, in_synapses):
+    def __init__(self, path, cells, muscles, ex_synapses, in_synapses):
         self.path = path
-        self.neurons = neurons
+        self.cells = cells
         self.muscles = muscles
-        self.cells = neurons + muscles  # cells to simulate
         self.chemical, self.gap_junction = self._init()
         self.ex_synapses = self._check_synapses(ex_synapses)
         self.in_synapses = self._check_synapses(in_synapses)
@@ -107,10 +106,8 @@ class Connectome(object):
 
 
 class ExternalInput(object):
-    def __init__(self, neurons, muscles, dim, input_neurons, ex_synapses, in_synapses):
-        self.neurons = neurons
-        self.muscles = muscles
-        self.cells = neurons + muscles  # cells to simulate
+    def __init__(self, cells, dim, input_neurons, ex_synapses, in_synapses):
+        self.cells = cells
         self.dim = dim  # input dimension
         self.input_neurons = self._check_cells(input_neurons)
         self.ex_synapses = self._check_synapses(ex_synapses)
@@ -163,12 +160,12 @@ class ExternalInput(object):
 def get_kwargs(path, polarity_path):
     """ connectome masks and params """
     # connectome
+    cells = cell_list(path)
     muscles = body_wall_muscles()
-    neurons = neuron_list2(path, muscles)
-    print('{} neurons, {} muscles, {} cells'.format(len(neurons), len(muscles), len(neurons) + len(muscles)))
+    print('{} cells, {} muscles'.format(len(cells), len(muscles)))
     ex_synapses, in_synapses = chemical_polarities(polarity_path)
     print('{} excitatory, {} inhibitory synapses'.format(len(ex_synapses), len(in_synapses)))
-    connectome = Connectome(path=path, neurons=neurons, muscles=muscles, ex_synapses=ex_synapses, in_synapses=in_synapses)
+    connectome = Connectome(path=path, cells=cells, muscles=muscles, ex_synapses=ex_synapses, in_synapses=in_synapses)
     w_c_mask, w_g_mask, output_index = connectome.mask()
     # proprioception input
     p = 24
@@ -177,7 +174,7 @@ def get_kwargs(path, polarity_path):
     p_ex_synapses, p_in_synapses = [], []  # proprioception_polarities(dim=p)
     print('{} excitatory, {} inhibitory proprioception synapses'.format(len(p_ex_synapses), len(p_in_synapses)))
     proprioception = ExternalInput(
-        neurons=neurons, muscles=muscles, dim=p, input_neurons=input_neurons,
+        cells=cells, dim=p, input_neurons=input_neurons,
         ex_synapses=p_ex_synapses, in_synapses=p_in_synapses
     )
     w_p_mask = proprioception.mask()
