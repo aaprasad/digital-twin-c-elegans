@@ -380,6 +380,7 @@ class SNNCell4(torch.nn.Module):
         # muscle output
         action = activation[:, self.output_index]
         action = (action - self.action_scaling[0]) / (self.action_scaling[1] - self.action_scaling[0])
+        action = action.clamp(0, 1)
         return state, activation, action
 
 
