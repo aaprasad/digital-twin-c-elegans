@@ -358,7 +358,7 @@ class SNNCell4(torch.nn.Module):
         # external input + bias
         external_input = self._external_input(stimuli) + self.bias
         # dt / tau
-        dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.05)
+        dt_tau = self.dt / self.steps / self.tau.abs()
         for i in range(self.steps):
             # chemical synapse input
             synapse_input = torch.mm(activation, w_c) / self.w_c_n
