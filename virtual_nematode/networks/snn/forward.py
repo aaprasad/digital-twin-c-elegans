@@ -159,8 +159,9 @@ class SNNCell2(torch.nn.Module):
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
+        self.state_func = torch.nn.Hardtanh(-1, 1)
         self.activation_func = torch.nn.Sigmoid()
-        self.action_scaling = torch.sigmoid(torch.tensor([-1, 1])).tolist()
+        self.activation_scaling = torch.sigmoid(torch.tensor([-1, 1])).tolist()
 
     @property
     def init_state(self):
@@ -197,11 +198,11 @@ class SNNCell2(torch.nn.Module):
             total_input = synapse_input + gap_input + external_input
             # cell state and activation
             state = (1 - dt_tau) * state + dt_tau * total_input
+            state = self.state_func(state)
             activation = self.activation_func(state)
+            activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         # muscle output
         action = activation[:, self.output_index]
-        action = (action - self.action_scaling[0]) / (self.action_scaling[1] - self.action_scaling[0])
-        action = action.clamp(0, 1)
         return state, activation, action
 
 
