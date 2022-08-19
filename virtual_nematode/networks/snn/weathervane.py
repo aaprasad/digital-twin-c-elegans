@@ -6,7 +6,7 @@ from virtual_nematode.networks.snn.forward import SNNCell1 as _SNNCell1
 class SNNCell(_SNNCell):
     def __init__(self, gradient_size, w_gradient_mask, **kwargs):
         super(SNNCell, self).__init__(**kwargs)
-        self.gradient_size = gradient_size
+        self.gradient_size = gradient_size  # gradient input size
         self.w_gradient = torch.nn.Parameter(torch.zeros((gradient_size, self.n)).uniform_(-1, 1))  # (gradient_size, n)
         self.w_gradient_mask = torch.nn.Parameter(w_gradient_mask, requires_grad=False)  # (gradient_size, n), bool
 
