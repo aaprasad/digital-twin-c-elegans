@@ -166,9 +166,11 @@ class SNNCell2(torch.nn.Module):
     @property
     def init_state(self):
         """ initial state and activation """
-        state = self.bias.clone().detach()  # (n, )
-        activation = self.activation_func(state)  # (n, )
-        return state, activation
+        state = self.bias.clone().detach()
+        state = self.state_func(state)
+        activation = self.activation_func(state)
+        activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
+        return state, activation  # (n, ), (n, )
 
     def _external_input(self, stimuli):
         """ proprioception input """
