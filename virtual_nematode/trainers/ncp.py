@@ -9,7 +9,7 @@ from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
 from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
 from virtual_nematode.networks.rnn.rnn import RNNCell
-from virtual_nematode.networks.snn.forward import SNNCell, SNN, SNNCell1, SNNCell2, SNNCell3, SNNCell4
+from virtual_nematode.networks.snn.forward import SNNCell, SNN, SNNCell1, SNNCell2
 from virtual_nematode.networks.snn.weathervane import SNNCell as SNNCellW
 from virtual_nematode.networks.snn.weathervane import SNNCell1 as SNNCellW1
 from virtual_nematode.trainers.loss import MSESymmetricJointLoss, MSESymmetricMuscleLoss
@@ -38,10 +38,6 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = snn_forward1(**kwargs)
     elif model_name == 'snn_forward2':
         model = snn_forward2(**kwargs)
-    elif model_name == 'snn_forward3':
-        model = snn_forward3(**kwargs)
-    elif model_name == 'snn_forward4':
-        model = snn_forward4(**kwargs)
     elif model_name == 'snn_weathervane':
         model = snn_weathervane(**kwargs)
     elif model_name == 'snn_weathervane1':
@@ -131,18 +127,6 @@ def snn_forward1(**kwargs):
 
 def snn_forward2(**kwargs):
     cell = SNNCell2(**kwargs)
-    model = SNN(cell)
-    return model
-
-
-def snn_forward3(**kwargs):
-    cell = SNNCell3(**kwargs)
-    model = SNN(cell)
-    return model
-
-
-def snn_forward4(**kwargs):
-    cell = SNNCell4(**kwargs)
     model = SNN(cell)
     return model
 
