@@ -2,18 +2,6 @@ import math
 import torch
 
 
-class SigmoidNorm(torch.nn.Module):
-    def __init__(self, min_val, max_val):
-        super(SigmoidNorm, self).__init__()
-        self.min_val = torch.sigmoid(torch.tensor(min_val)).item()
-        self.max_val = torch.sigmoid(torch.tensor(max_val)).item()
-
-    def forward(self, input):
-        output = (torch.sigmoid(input) - self.min_val) / (self.max_val - self.min_val)
-        output = torch.nn.functional.hardtanh(output, 0, 1)
-        return output
-
-
 class SNNCell4(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index):
         super(SNNCell4, self).__init__()
