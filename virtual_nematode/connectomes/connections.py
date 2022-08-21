@@ -52,10 +52,14 @@ def proprioception_polarities(dim):
     return ex_synapses, in_synapses
 
 
-def proprioception_connections(dim):
+def _full_connections(pre_list, post_list):
     synapses = []
-    cells = proprioception_neurons()
-    for pre in range(dim):
-        for post in cells:
+    for pre in pre_list:
+        for post in post_list:
             synapses.append((pre, post))
+    return synapses
+
+
+def proprioception_connections(dim):
+    synapses = _full_connections(pre_list=list(range(dim)), post_list=proprioception_neurons())
     return synapses, [], []
