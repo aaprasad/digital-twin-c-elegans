@@ -1,6 +1,6 @@
 from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, sensory_neurons
 from virtual_nematode.connectomes.forward import Connectome as _Connectome
-from virtual_nematode.connectomes.polarity import chemical_polarities
+from virtual_nematode.connectomes.connections import chemical_polarities
 
 
 class Connectome(_Connectome):

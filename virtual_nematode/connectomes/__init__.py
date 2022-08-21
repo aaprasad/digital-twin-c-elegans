@@ -1,4 +1,4 @@
 import virtual_nematode.connectomes.cells
 import virtual_nematode.connectomes.forward
-import virtual_nematode.connectomes.polarity
+import virtual_nematode.connectomes.connections
 import virtual_nematode.connectomes.weathervane
