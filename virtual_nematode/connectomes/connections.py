@@ -1,10 +1,9 @@
+import numpy as np
 import pandas as pd
 from virtual_nematode.connectomes.cells import (
-    db_motor_neurons, vb_motor_neurons,
-    da_motor_neurons, va_motor_neurons,
-    dd_motor_neurons, vd_motor_neurons,
-    proprioception_neurons,
     head_motor_neurons, sublateral_motor_neurons,
+    db_motor_neurons, vb_motor_neurons,
+    body_wall_muscles
 )
 
 
@@ -61,5 +60,42 @@ def _full_connections(pre_list, post_list):
 
 
 def proprioception_connections(dim):
-    synapses = _full_connections(pre_list=list(range(dim)), post_list=proprioception_neurons())
+    hmn = head_motor_neurons()
+    smn = sublateral_motor_neurons()
+    vcmn = db_motor_neurons() + vb_motor_neurons()  # B-type motor neurons
+    cells = hmn + smn + vcmn
+    synapses = _full_connections(pre_list=list(range(dim)), post_list=cells)
     return synapses, [], []
+
+
+def _to_coo(df, pre_list, post_list):
+    synapses = []
+    for pre in pre_list:
+        for post in post_list:
+            if df.loc[pre, post] is not np.nan:
+                synapses.append((pre, post))
+    return synapses
+
+
+def _forward_proprioceptive_feedback(synapses):
+    p_synapses = []
+    for motor_neuron, muscle in synapses:
+        p = int(muscle[5:]) - 1  # muscle's corresponding joint id #0~23
+        p -= 1  # feedback
+        p_synapses.append((p, motor_neuron))
+    return p_synapses
+
+
+def proprioception_connections1(path, dim_muhead):
+    hmn_synapses = _full_connections(pre_list=list(range(dim_muhead)), post_list=head_motor_neurons())
+    smn_synapses = _full_connections(pre_list=list(range(dim_muhead)), post_list=sublateral_motor_neurons())
+    chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
+    muscles = body_wall_muscles()
+    ex_synapses = _forward_proprioceptive_feedback(
+        synapses=_to_coo(chemical, pre_list=vb_motor_neurons(), post_list=muscles)
+    )
+    in_synapses = _forward_proprioceptive_feedback(
+        synapses=_to_coo(chemical, pre_list=db_motor_neurons(), post_list=muscles)
+    )
+    synapses = hmn_synapses + smn_synapses + ex_synapses + in_synapses
+    return synapses, ex_synapses, in_synapses

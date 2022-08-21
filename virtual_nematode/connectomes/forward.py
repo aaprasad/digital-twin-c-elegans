@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import torch
 from virtual_nematode.connectomes.cells import body_wall_muscles, cell_list, proprioception_neurons, motor_neurons
-from virtual_nematode.connectomes.connections import chemical_polarities, proprioception_connections
+from virtual_nematode.connectomes.connections import chemical_polarities, proprioception_connections, proprioception_connections1
 
 
 class Connectome(object):
@@ -159,7 +159,8 @@ def get_kwargs(path, polarity_path):
     w_c_mask, w_g_mask, output_index = connectome.mask()
     # proprioception input
     p = 24
-    p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections(dim=p)
+    # p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections(dim=p)
+    p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections1(path=path, dim_muhead=7)
     print('{} ex/in, {} excitatory, {} inhibitory proprioception synapses'.format(len(p_synapses), len(p_ex_synapses), len(p_in_synapses)))
     proprioception = ExternalInput(cells=cells, dim=p, synapses=p_synapses, ex_synapses=p_ex_synapses, in_synapses=p_in_synapses)
     w_p_mask = proprioception.mask()
