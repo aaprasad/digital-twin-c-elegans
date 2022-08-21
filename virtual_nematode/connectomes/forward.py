@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import torch
-from virtual_nematode.connectomes.cells import body_wall_muscles, cell_list, proprioception_neurons, motor_neurons
+from virtual_nematode.connectomes.cells import body_wall_muscles, cell_list
 from virtual_nematode.connectomes.connections import chemical_polarities, proprioception_connections, proprioception_connections1
 
 
