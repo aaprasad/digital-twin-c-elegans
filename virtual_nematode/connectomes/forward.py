@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import torch
 from virtual_nematode.connectomes.cells import body_wall_muscles, cell_list, proprioception_neurons, motor_neurons
-from virtual_nematode.connectomes.connections import chemical_polarities, proprioception_polarities
+from virtual_nematode.connectomes.connections import chemical_polarities, proprioception_connections
 
 
 class Connectome(object):
@@ -106,17 +106,12 @@ class Connectome(object):
 
 
 class ExternalInput(object):
-    def __init__(self, cells, dim, input_neurons, ex_synapses, in_synapses):
+    def __init__(self, cells, dim, synapses, ex_synapses, in_synapses):
         self.cells = cells
         self.dim = dim  # input dimension
-        self.input_neurons = self._check_cells(input_neurons)
+        self.synapses = self._check_synapses(synapses)
         self.ex_synapses = self._check_synapses(ex_synapses)
         self.in_synapses = self._check_synapses(in_synapses)
-
-    def _check_cells(self, cells):
-        """ check if the cells exist """
-        assert set(cells).issubset(set(self.cells))
-        return cells
 
     def _check_synapses(self, synapses):
         """ check if related cells in the synapses exist """
@@ -126,9 +121,10 @@ class ExternalInput(object):
         assert post_cells.issubset(set(self.cells))
         return synapses
 
-    def _polarity_mask(self, synapses):
+    def _mask(self, synapses):
         """ polarity mask
         synapses: [(pre1, post1), (pre2, post2), ...]
+        mask: if True, the connection is ex/in
         excitatory mask: if True, the connection is excitatory
         inhibitory mask: if True, the connection is inhibitory
         """
@@ -138,16 +134,10 @@ class ExternalInput(object):
         mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
 
-    def _mask(self):
-        mask = pd.DataFrame(False, index=list(range(self.dim)), columns=self.cells)
-        mask.loc[:, self.input_neurons] = True
-        mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
-        return mask
-
     def mask(self):
-        mask = self._mask()
-        ex_mask = self._polarity_mask(self.ex_synapses)
-        in_mask = self._polarity_mask(self.in_synapses)
+        mask = self._mask(self.synapses)
+        ex_mask = self._mask(self.ex_synapses)
+        in_mask = self._mask(self.in_synapses)
         ex_mask &= mask
         in_mask &= mask
         if torch.any(ex_mask & in_mask).item() is True:
@@ -169,14 +159,9 @@ def get_kwargs(path, polarity_path):
     w_c_mask, w_g_mask, output_index = connectome.mask()
     # proprioception input
     p = 24
-    input_neurons = proprioception_neurons()  # motor_neurons(path)
-    print('{} proprioception neurons'.format(len(input_neurons)))
-    p_ex_synapses, p_in_synapses = [], []  # proprioception_polarities(dim=p)
-    print('{} excitatory, {} inhibitory proprioception synapses'.format(len(p_ex_synapses), len(p_in_synapses)))
-    proprioception = ExternalInput(
-        cells=cells, dim=p, input_neurons=input_neurons,
-        ex_synapses=p_ex_synapses, in_synapses=p_in_synapses
-    )
+    p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections(dim=p)
+    print('{} ex/in, {} excitatory, {} inhibitory proprioception synapses'.format(len(p_synapses), len(p_ex_synapses), len(p_in_synapses)))
+    proprioception = ExternalInput(cells=cells, dim=p, synapses=p_synapses, ex_synapses=p_ex_synapses, in_synapses=p_in_synapses)
     w_p_mask = proprioception.mask()
     return {
         'n': len(connectome.cells), 'm': len(connectome.muscles), 'p': p,

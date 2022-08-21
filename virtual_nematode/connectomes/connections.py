@@ -1,7 +1,11 @@
 import pandas as pd
-from virtual_nematode.connectomes.cells import db_motor_neurons, vb_motor_neurons
-from virtual_nematode.connectomes.cells import da_motor_neurons, va_motor_neurons
-from virtual_nematode.connectomes.cells import dd_motor_neurons, vd_motor_neurons
+from virtual_nematode.connectomes.cells import (
+    db_motor_neurons, vb_motor_neurons,
+    da_motor_neurons, va_motor_neurons,
+    dd_motor_neurons, vd_motor_neurons,
+    proprioception_neurons,
+    head_motor_neurons, sublateral_motor_neurons,
+)
 
 
 def _chemical_polarities(df):
@@ -46,3 +50,12 @@ def proprioception_polarities(dim):
     ex_synapses = _proprioception_polarities(dim, vb)
     in_synapses = _proprioception_polarities(dim, db)
     return ex_synapses, in_synapses
+
+
+def proprioception_connections(dim):
+    synapses = []
+    cells = proprioception_neurons()
+    for pre in range(dim):
+        for post in cells:
+            synapses.append((pre, post))
+    return synapses, [], []
