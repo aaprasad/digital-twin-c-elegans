@@ -255,4 +255,7 @@ if __name__ == '__main__':
     runs_folder = 'Jul25_12-07-58_h-10-176-50-34'
     ckpt_name = 'model119.pt'
     model_name = 'snn_forward'
-    kwargs = get_kwargs(path=worm_assets.connectome_path())
+    kwargs = get_kwargs(
+        path=worm_assets.connectome_path(),
+        polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
+    )
