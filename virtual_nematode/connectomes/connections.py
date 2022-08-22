@@ -81,8 +81,7 @@ def _forward_proprioceptive_feedback(synapses):
     p_synapses = []
     for motor_neuron, muscle in synapses:
         p = int(muscle[5:]) - 1  # muscle's corresponding joint id #0~23
-        p -= 1  # feedback
-        p_synapses.append((p, motor_neuron))
+        p_synapses.append((p - 1, motor_neuron))  # feedback
     return p_synapses
 
 
@@ -98,4 +97,7 @@ def proprioception_connections1(path, dim_muhead):
         synapses=_to_coo(chemical, pre_list=db_motor_neurons(), post_list=muscles)
     )
     synapses = hmn_synapses + smn_synapses + ex_synapses + in_synapses
+    synapses = list(set(synapses))
+    ex_synapses = list(set(ex_synapses))
+    in_synapses = list(set(in_synapses))
     return synapses, ex_synapses, in_synapses
