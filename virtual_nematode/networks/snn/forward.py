@@ -133,9 +133,9 @@ class SNNCell1(torch.nn.Module):
         return state, activation, action
 
 
-class SNNCell2(torch.nn.Module):
+class SNNCell3(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index):
-        super(SNNCell2, self).__init__()
+        super(SNNCell3, self).__init__()
         self.dt = dt
         self.steps = steps
         self.n = n
