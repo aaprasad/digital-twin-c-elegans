@@ -39,28 +39,24 @@ def select_model(model_folder, model_name, ckpt_name):
     return model
 
 
-def evaluate(model_folder, model_name, ckpt_name):
-    print(ckpt_name)
-    model = select_model(model_folder, model_name, ckpt_name)
-    x, y = single_tester(env, model, data_func, x_func, y_func1, seed, max_episode_steps, test_func=test_func2)
-    torch.save((x, y), os.path.join(data_path, ckpt_name))  # action sequence
-
-
 def test(model_folder, model_name, ckpt_name):
-    """ online test multiple trials for testing """
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
     tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, model_folder, model_name, data_size=100, test_func=test_func2)
 
 
-def record(model_folder, model_name, env, ckpt_name):
-    """ online test once for evaluation and record video """
+def single_test(env, model_folder, model_name, ckpt_name, save_folder):
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
-    video_folder = os.path.join('video', runs_folder, ckpt_name)
-    env = gym.wrappers.Monitor(env, directory=video_folder, force=True)
     x, y = single_tester(env, model, data_func, x_func, y_func1, seed, max_episode_steps, test_func=test_func2)
-    torch.save((x, y), os.path.join(video_folder, ckpt_name))  # action sequence
+    os.makedirs(save_folder, exist_ok=True)
+    torch.save((x, y), os.path.join(save_folder, ckpt_name))
+
+
+def record(env, model_folder, model_name, ckpt_name):
+    save_folder = os.path.join('video', runs_folder, ckpt_name)
+    env = gym.wrappers.Monitor(env, directory=save_folder, force=True)
+    single_test(env, model_folder, model_name, ckpt_name, save_folder)
 
 
 if __name__ == '__main__':
@@ -70,12 +66,10 @@ if __name__ == '__main__':
         raise ValueError('Invalid runs folder {}'.format(runs_folder))
     seed = 42
     max_episode_steps = 2500
-    data_path = os.path.join('data', runs_folder)
-    os.makedirs(data_path, exist_ok=True)
     env = make_swimmer(
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
         density=1.2, viscosity=0.1, condim=3, friction='1 1'
     )
-    # evaluate(model_folder, 'snn_forward3', ckpt_name='model.pt')
     test(model_folder, 'snn_forward3', ckpt_name='model.pt')
-    # record(model_folder, 'snn_forward3', env, ckpt_name='model.pt')
+    # single_test(env, model_folder, 'snn_forward3', ckpt_name='model.pt', save_folder=os.path.join('data', runs_folder))
+    # record(env, model_folder, 'snn_forward3', ckpt_name='model.pt')
