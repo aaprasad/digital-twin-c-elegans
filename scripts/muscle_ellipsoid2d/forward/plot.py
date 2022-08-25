@@ -135,22 +135,26 @@ def plot_output(runs_folder, ckpt_name, steps):
     x, y = torch.load(os.path.join('data', runs_folder, ckpt_name), map_location=torch.device('cpu'))
     print(y.shape)
     n = 469
+    state = y[:, 0:n]
+    activation = y[:, n:n+n]
+    action = y[:, n+n:]
     # plot
     plt.figure()
     plt.title('State')
-    sns.heatmap(y[0:steps, 0:n].clamp(0, 1).T, cmap='coolwarm', vmin=-1, vmax=1)
+    sns.heatmap(state[0:steps, :].clamp(0, 1).T, cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('t (step)')
     plt.ylabel('Cell ID')
     plt.figure()
     plt.title('Activation')
-    sns.heatmap(y[0:steps, n:n+n].clamp(0, 1).T, cmap='coolwarm', vmin=-1, vmax=1)
+    sns.heatmap(activation[0:steps, :].clamp(0, 1).T, cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('t (step)')
     plt.ylabel('Cell ID')
     plt.figure()
     plt.title('Action')
-    sns.heatmap(y[0:steps, n+n:].clamp(0, 1).T, cmap='coolwarm', vmin=-1, vmax=1)
+    sns.heatmap(action[0:steps, :].clamp(0, 1).T, cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('t (step)')
     plt.ylabel('Muscle ID')
+    return state, activation, action
 
 
 def plot_state_range(runs_folder, ckpt_name):
