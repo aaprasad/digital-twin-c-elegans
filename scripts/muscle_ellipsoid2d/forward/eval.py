@@ -12,10 +12,12 @@ import worm_assets
 
 
 def y_func(action, **kwargs):
+    """ stats: action """
     return action.tolist()
 
 
 def y_func1(state, activation, action, **kwargs):
+    """ stats: state, activation, action """
     return state.squeeze(dim=0).tolist() + activation.squeeze(dim=0).tolist() + action.tolist()
 
 
