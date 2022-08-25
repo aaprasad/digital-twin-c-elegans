@@ -58,7 +58,7 @@ def test_func2(index, env, model, data_func, x_func, y_func):
             action = action.numpy()
             observation, reward, done, info = env.step(action)
             x.append(x_func(observation=observation))
-            y.append(y_func(action=action, state=state))
+            y.append(y_func(state=state, activation=activation, action=action))
             if done:
                 break
     env.close()
