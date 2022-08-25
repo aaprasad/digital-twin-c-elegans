@@ -54,7 +54,7 @@ def plot_mask(**kwargs):
     plt.ylabel('Joint ID')
 
 
-def plot_model_weight(runs_folder, ckpt_name, model_name):
+def plot_weight(runs_folder, ckpt_name, model_name):
     model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
     # plot
     plt.figure(figsize=(20, 10))
