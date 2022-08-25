@@ -1,5 +1,5 @@
 import csv
-from eval import select_model
+from online_test import select_model
 from matplotlib import pyplot as plt
 import os
 import seaborn as sns
