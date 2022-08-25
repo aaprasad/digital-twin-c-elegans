@@ -131,13 +131,24 @@ def chemical_weight_density(runs_folder, ckpt_name, model_name):
     plt.hist(w_c, bins=10, range=None, density=True)
 
 
-def plot_action_heatmap(runs_folder, ckpt_name):
-    _, action = torch.load(os.path.join('data', runs_folder, ckpt_name), map_location=torch.device('cpu'))
-    print(action.shape)
+def plot_output(runs_folder, ckpt_name, steps):
+    x, y = torch.load(os.path.join('data', runs_folder, ckpt_name), map_location=torch.device('cpu'))
+    print(y.shape)
+    n = 469
     # plot
-    plt.figure(figsize=(13, 10))
-    sns.heatmap(action[0:320, :].clamp(0, 1).T, cmap='coolwarm')
-    plt.title('Muscle Action')
+    plt.figure()
+    plt.title('State')
+    sns.heatmap(y[0:steps, 0:n].clamp(0, 1).T, cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('t (step)')
+    plt.ylabel('Cell ID')
+    plt.figure()
+    plt.title('Activation')
+    sns.heatmap(y[0:steps, n:n+n].clamp(0, 1).T, cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('t (step)')
+    plt.ylabel('Cell ID')
+    plt.figure()
+    plt.title('Action')
+    sns.heatmap(y[0:steps, n+n:].clamp(0, 1).T, cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('t (step)')
     plt.ylabel('Muscle ID')
 
