@@ -44,9 +44,9 @@ def evaluate(model_folder, model_name, start, end):
         ckpt_name = 'model{}.pt'.format(i)
         print(ckpt_name, end=' ')
         model = select_model(model_folder, model_name, ckpt_name)
-        _, y = single_tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, test_func=test_func2)
-        torch.save(y, os.path.join(data_path, 'model{}.pt'.format(i)))  # action sequence
-        # torch.save(y, os.path.join(data_path, 'model{}.state.pt'.format(i)))
+        x, y = single_tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, test_func=test_func2)
+        torch.save((x, y), os.path.join(data_path, 'model{}.pt'.format(i)))  # action sequence
+        # torch.save((x, y), os.path.join(data_path, 'model{}.state.pt'.format(i)))
 
 
 def test(model_folder, model_name, ckpt_name):
