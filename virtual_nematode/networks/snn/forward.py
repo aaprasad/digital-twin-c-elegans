@@ -294,9 +294,10 @@ class SNNCell4(torch.nn.Module):
         w_g_n = w_g_mask.sum(dim=0)
         w_g_n[w_g_n == 0] = 1
         self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
-        self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
+        self.w_p_ventral = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
+        self.w_p_dorsal = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
         self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (3, p, n), bool
-        w_p_n = w_p_mask.sum(dim=[0, 1])
+        w_p_n = w_p_mask[0].sum(dim=0) * 2 + w_p_mask[1].sum(dim=0) + w_p_mask[2].sum(dim=0)
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
@@ -315,9 +316,13 @@ class SNNCell4(torch.nn.Module):
 
     def _external_input(self, stimuli):
         """ proprioception input """
-        w_p_abs = self.w_p.abs()
-        w_p = self.w_p * self.w_p_mask[0] + w_p_abs * self.w_p_mask[1] - w_p_abs * self.w_p_mask[2]
-        external_input = torch.mm(stimuli, w_p) / self.w_p_n
+        stimuli_ventral = stimuli.clone().detach()
+        stimuli_ventral[stimuli_ventral < 0] = 0
+        stimuli_dorsal = -stimuli.clone().detach()
+        stimuli_dorsal[stimuli_dorsal < 0] = 0
+        w_p_ventral = self.w_p_ventral * self.w_p_mask[0] + self.w_p_ventral.abs() * self.w_p_mask[1]
+        w_p_dorsal = self.w_p_dorsal * self.w_p_mask[0] + self.w_p_dorsal.abs() * self.w_p_mask[2]
+        external_input = (torch.mm(stimuli_ventral, w_p_ventral) + torch.mm(stimuli_dorsal, w_p_dorsal)) / self.w_p_n
         return external_input
 
     def forward(self, state, activation, stimuli):
