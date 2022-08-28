@@ -3,6 +3,7 @@ import pandas as pd
 from virtual_nematode.connectomes.cells import (
     head_motor_neurons, sublateral_motor_neurons,
     db_motor_neurons, vb_motor_neurons,
+    neuron_list3,
     motor_neurons, body_wall_muscles
 )
 
@@ -104,6 +105,7 @@ def proprioception_connections1(path, dim_muhead):
 
 
 def proprioception_connections2(path, dim):
-    cells = motor_neurons(path)
+    # cells = motor_neurons(path)
+    cells = neuron_list3(path)
     synapses = _full_connections(pre_list=list(range(dim)), post_list=cells)
     return synapses, [], []
