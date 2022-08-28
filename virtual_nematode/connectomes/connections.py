@@ -60,11 +60,16 @@ def _full_connections(pre_list, post_list):
     return synapses
 
 
-def proprioception_connections(dim):
-    hmn = head_motor_neurons()
-    smn = sublateral_motor_neurons()
-    vcmn = db_motor_neurons() + vb_motor_neurons()  # B-type motor neurons
-    cells = hmn + smn + vcmn
+def proprioception_connections(path, dim):
+    """ hmn + smn + B-type motor neurons """
+    # hmn = head_motor_neurons()
+    # smn = sublateral_motor_neurons()
+    # vcmn = db_motor_neurons() + vb_motor_neurons()
+    # cells = hmn + smn + vcmn
+    """ all motor neurons """
+    # cells = motor_neurons(path)
+    """ all neurons """
+    cells = neuron_list3(path)
     synapses = _full_connections(pre_list=list(range(dim)), post_list=cells)
     return synapses, [], []
 
@@ -102,10 +107,3 @@ def proprioception_connections1(path, dim_muhead):
     ex_synapses = list(set(ex_synapses))
     in_synapses = list(set(in_synapses))
     return synapses, ex_synapses, in_synapses
-
-
-def proprioception_connections2(path, dim):
-    # cells = motor_neurons(path)
-    cells = neuron_list3(path)
-    synapses = _full_connections(pre_list=list(range(dim)), post_list=cells)
-    return synapses, [], []
