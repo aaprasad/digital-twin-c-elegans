@@ -1,41 +1,29 @@
-from virtual_nematode.connectomes.cells import body_wall_muscles, neuron_list2, sensory_neurons
-from virtual_nematode.connectomes.forward import Connectome as _Connectome
-from virtual_nematode.connectomes.connections import chemical_polarities
+import torch
+from virtual_nematode.connectomes.cells import cell_list
+from virtual_nematode.connectomes.forward import get_kwargs as _get_kwargs
 
 
-class Connectome(_Connectome):
-    def __init__(self, gradient_size, **kwargs):
-        super(Connectome, self).__init__(**kwargs)
-        self.gradient_size = gradient_size
+class SensoryInput(object):
+    def __init__(self, cells, sensory):
+        self.cells = cells
+        self.sensory = self._check(sensory)
 
-    def _gradient_mask(self):
-        mask = self._external_input_mask(dim=self.gradient_size)
-        return mask
+    def _check(self, cells):
+        """ check if the cells exist """
+        assert set(cells).issubset(set(self.cells))
+        return cells
 
     def mask(self):
-        masks = super(Connectome, self).mask()
-        w_gradient_mask = self._gradient_mask()
-        return masks, w_gradient_mask
+        mask = torch.tensor([self.cells.index(cell) for cell in self.sensory])
+        return mask
 
 
 def get_kwargs(path, polarity_path):
     """ connectome masks and params """
-    muscles = body_wall_muscles()
-    neurons = neuron_list2(path, muscles)
-    sensory = sensory_neurons(path)
-    print('{} neurons, {} muscles, {} sensory, {} cells in total'.format(len(neurons), len(muscles), len(sensory), len(neurons) + len(muscles)))
-    ex_synapses, in_synapses = chemical_polarities(polarity_path)
-    print('{} excitatory synapses, {} inhibitory synapses'.format(len(ex_synapses), len(in_synapses)))
-    p = 24
-    gradient_size = 1
-    connectome = Connectome(
-        gradient_size=gradient_size,
-        path=path, neurons=neurons, muscles=muscles, ex_synapses=ex_synapses, in_synapses=in_synapses,
-        sensory_neurons=sensory, p=p
-    )
-    (w_c_mask, w_g_mask, w_p_mask, output_index), w_gradient_mask = connectome.mask()
+    cells = cell_list(path)
+    sensory = ['ASEL', 'ASER']
+    w_s_mask = SensoryInput(cells=cells, sensory=sensory)
     return {
-        'n': len(connectome.cells), 'm': len(connectome.muscles), 'p': p,
-        'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index,
-        'gradient_size': gradient_size, 'w_gradient_mask': w_gradient_mask,
+        's': len(sensory), 'w_s_mask': w_s_mask,
+        **_get_kwargs(path=path, polarity_path=polarity_path)
     }
