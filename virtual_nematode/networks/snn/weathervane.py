@@ -1,6 +1,7 @@
 import torch
 from virtual_nematode.networks.snn.forward import SNNCell as _SNNCell
 from virtual_nematode.networks.snn.forward import SNNCell1 as _SNNCell1
+from virtual_nematode.networks.snn.forward import SNNCell3 as _SNNCell3
 
 
 class SNNCell(_SNNCell):
@@ -38,4 +39,26 @@ class SNNCell1(_SNNCell1):
         # gradient input
         w_gradient = self.w_gradient * self.w_gradient_mask
         external_input += torch.mm(stimuli[:, self.p:self.p+self.gradient_size], w_gradient) / self.w_gradient_n
+        return external_input
+
+
+class SNNCell3(_SNNCell3):
+    def __init__(self, s, w_s_mask, **kwargs):
+        super(SNNCell3, self).__init__(**kwargs)
+        self.s = s  # sensory size
+        self.w_s = torch.nn.Parameter(torch.zeros(s).uniform_(-1, 1))  # (s, )
+        self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (s, ), long
+
+    def _external_input(self, stimuli):
+        # proprioception input
+        external_input = super(SNNCell3, self)._external_input(stimuli[:, 0:self.p])
+        # sensory input
+        gradient = stimuli[:, self.p:self.p+self.s]  # (batch_size, 1)
+        sensory_input = torch.cat(
+            (
+                gradient.clamp(min=0),  # ASEL
+                -gradient  # ASER
+            ), dim=1
+        )  # (batch_size, s)
+        external_input[:, self.w_s_mask] += sensory_input * self.w_s.abs()
         return external_input
