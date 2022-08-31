@@ -50,6 +50,10 @@ class SNNCell3(_SNNCell3):
         self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (s, ), long
 
     def _external_input(self, stimuli):
+        """ receive proprioception input and sensory input
+        https://doi.org/10.1038/nature06927
+        https://doi.org/10.1038/s41598-018-35157-1
+        """
         # proprioception input
         external_input = super(SNNCell3, self)._external_input(stimuli[:, 0:self.p])
         # sensory input
