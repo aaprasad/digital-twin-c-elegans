@@ -107,3 +107,32 @@ def proprioception_connections1(path, dim_muhead):
     ex_synapses = list(set(ex_synapses))
     in_synapses = list(set(in_synapses))
     return synapses, ex_synapses, in_synapses
+
+
+def _proprioceptive_feedback2(synapses, dim, feedback_length):
+    p_synapses = []
+    for motor_neuron, muscle in synapses:
+        joint = int(muscle[5:]) - 1  # muscle's corresponding joint id #0~23
+        for i in range(0, feedback_length):
+            p = joint - i
+            if 0 <= p < dim:
+                p_synapses.append((p, motor_neuron))  # feedback
+    return p_synapses
+
+
+def proprioception_connections2(path, dim, dim_muhead):
+    hmn_synapses = _full_connections(pre_list=list(range(dim_muhead)), post_list=head_motor_neurons())
+    smn_synapses = _full_connections(pre_list=list(range(dim)), post_list=sublateral_motor_neurons())
+    chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
+    muscles = body_wall_muscles()
+    vb_synapses = _proprioceptive_feedback2(
+        synapses=_to_coo(chemical, pre_list=vb_motor_neurons(), post_list=muscles),
+        dim=dim, feedback_length=6
+    )
+    db_synapses = _proprioceptive_feedback2(
+        synapses=_to_coo(chemical, pre_list=db_motor_neurons(), post_list=muscles),
+        dim=dim, feedback_length=6
+    )
+    synapses = hmn_synapses + smn_synapses + vb_synapses + db_synapses
+    synapses = list(set(synapses))
+    return synapses, [], []
