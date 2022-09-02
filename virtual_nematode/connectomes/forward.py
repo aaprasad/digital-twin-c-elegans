@@ -6,7 +6,8 @@ from virtual_nematode.connectomes.connections import (
     chemical_polarities,
     proprioception_connections,
     proprioception_connections1,
-    proprioception_connections2
+    proprioception_connections2,
+    proprioception_connections3
 )
 
 
@@ -166,7 +167,8 @@ def get_kwargs(path, polarity_path):
     p = 24
     # p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections(path=path, dim=p)
     # p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections1(path=path, dim_muhead=7)
-    p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections2(path=path, dim=p, dim_muhead=7)
+    # p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections2(path=path, dim=p, dim_muhead=7)
+    p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections3(path=path, dim=p, dim_muhead=7)
     print('{} total, {} excitatory, {} inhibitory proprioception synapses'.format(len(p_synapses), len(p_ex_synapses), len(p_in_synapses)))
     proprioception = ExternalInput(cells=cells, dim=p, synapses=p_synapses, ex_synapses=p_ex_synapses, in_synapses=p_in_synapses)
     w_p_mask = proprioception.mask()

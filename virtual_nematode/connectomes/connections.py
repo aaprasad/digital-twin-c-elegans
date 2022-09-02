@@ -3,6 +3,7 @@ import pandas as pd
 from virtual_nematode.connectomes.cells import (
     head_motor_neurons, sublateral_motor_neurons,
     db_motor_neurons, vb_motor_neurons,
+    da_motor_neurons, va_motor_neurons,
     neuron_list3,
     motor_neurons, body_wall_muscles
 )
@@ -134,5 +135,42 @@ def proprioception_connections2(path, dim, dim_muhead):
         dim=dim, feedback_length=6
     )
     synapses = hmn_synapses + smn_synapses + vb_synapses + db_synapses
+    synapses = list(set(synapses))
+    return synapses, [], []
+
+
+def _backward_proprioceptive_feedback(synapses, dim, feedback_length):
+    p_synapses = []
+    for motor_neuron, muscle in synapses:
+        joint = int(muscle[5:]) - 1  # muscle's corresponding joint id #0~23
+        for i in range(0, feedback_length):
+            p = joint + i
+            if 0 <= p < dim:
+                p_synapses.append((p, motor_neuron))  # feedback
+    return p_synapses
+
+
+def proprioception_connections3(path, dim, dim_muhead):
+    hmn_synapses = _full_connections(pre_list=list(range(dim_muhead)), post_list=head_motor_neurons())
+    smn_synapses = _full_connections(pre_list=list(range(dim)), post_list=sublateral_motor_neurons())
+    chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
+    muscles = body_wall_muscles()
+    vb_synapses = _forward_proprioceptive_feedback2(
+        synapses=_to_coo(chemical, pre_list=vb_motor_neurons(), post_list=muscles),
+        dim=dim, feedback_length=6
+    )
+    db_synapses = _forward_proprioceptive_feedback2(
+        synapses=_to_coo(chemical, pre_list=db_motor_neurons(), post_list=muscles),
+        dim=dim, feedback_length=6
+    )
+    va_synapses = _backward_proprioceptive_feedback(
+        synapses=_to_coo(chemical, pre_list=va_motor_neurons(), post_list=muscles),
+        dim=dim, feedback_length=6
+    )
+    da_synapses = _backward_proprioceptive_feedback(
+        synapses=_to_coo(chemical, pre_list=da_motor_neurons(), post_list=muscles),
+        dim=dim, feedback_length=6
+    )
+    synapses = hmn_synapses + smn_synapses + vb_synapses + db_synapses + va_synapses + da_synapses
     synapses = list(set(synapses))
     return synapses, [], []
