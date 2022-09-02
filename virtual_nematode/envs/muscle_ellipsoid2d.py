@@ -21,7 +21,7 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
     # with open('swimmer.xml', 'w') as f:
     #     f.write(xml_str.decode('utf-8'))
     env = gym.make(
-        'Worm-v0', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+        'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
         reset_noise_scale=reset_noise_scale
     )
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
@@ -45,7 +45,7 @@ def make_swimmer_weathervane(
     # with open('swimmer.xml', 'w') as f:
     #     f.write(xml_str.decode('utf-8'))
     env = gym.make(
-        'Worm-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+        'Swimmer-v3-v2', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
         reset_noise_scale=reset_noise_scale, distance=distance
     )
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
@@ -64,7 +64,7 @@ def make_chemotaxis_swimmer(return_func, source, xml_str_base, reset_noise_scale
         # with open('swimmer.xml', 'w') as f:
         #     f.write(xml_str.decode('utf-8'))
         env = gym.make(
-            'Worm-v0', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+            'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
             reset_noise_scale=reset_noise_scale
         )
         env = gym.wrappers.TimeLimit(env, max_episode_steps)
