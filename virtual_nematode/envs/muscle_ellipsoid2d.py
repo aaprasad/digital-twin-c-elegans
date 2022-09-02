@@ -1,4 +1,3 @@
-import copy
 import gym
 from gym_worm.envs.mujoco.chemotaxis import chemotaxis
 from gym_worm.envs.mujoco.sensor import actuator
