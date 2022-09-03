@@ -83,7 +83,7 @@ def plot_weight(runs_folder, ckpt_name, model_name):
     # proprioception input weight
     w_p = model.cell.w_p
     w_p_mask = model.cell.w_p_mask
-    w_p = w_p * w_p_mask
+    w_p = w_p * w_p_mask[0] + w_p.abs() * w_p_mask[1] - w_p.abs() * w_p_mask[2]
     print('w_p: min {}, max {}, mean {}, std {}'.format(w_p.min().item(), w_p.max().item(), w_p.mean().item(), w_p.std().item()))
     w_p_max = w_p.std().item()  # w_p.abs().max().item()
     plt.subplot(2, 3, 3)
