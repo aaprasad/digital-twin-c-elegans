@@ -58,8 +58,9 @@ def plot_weight(runs_folder, ckpt_name, model_name):
     model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
     # plot
     plt.figure(figsize=(20, 10))
-    w_c = model.cell.w_c * model.cell.w_c_mask
-    w_c = w_c.clone().detach()
+    w_c = model.cell.w_c.clone().detach()
+    w_c_mask = model.cell.w_c_mask.clone().detach()
+    w_c = w_c * w_c_mask
     print('w_c: min {}, max {}, mean {}, std {}'.format(w_c.min().item(), w_c.max().item(), w_c.mean().item(), w_c.std().item()))
     w_c_max = w_c.std().item()  # w_c.abs().max().item()
     plt.subplot(2, 3, 1)
@@ -68,9 +69,10 @@ def plot_weight(runs_folder, ckpt_name, model_name):
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
     # gap junction weight
-    w_g = model.cell.w_g.abs()
-    w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * model.cell.w_g_mask
-    w_g = w_g.clone().detach()
+    w_g = model.cell.w_g.clone().detach()
+    w_g_mask = model.cell.w_g_mask.clone().detach()
+    w_g = w_g.abs()
+    w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * w_g_mask
     print('w_g: min {}, max {}, mean {}, std {}'.format(w_g.min().item(), w_g.max().item(), w_g.mean().item(), w_g.std().item()))
     w_g_max = w_g.std().item()  # w_g.max().item()
     plt.subplot(2, 3, 2)
@@ -79,8 +81,9 @@ def plot_weight(runs_folder, ckpt_name, model_name):
     plt.xlabel('Cell ID')
     plt.ylabel('Cell ID')
     # proprioception input weight
-    w_p = model.cell.w_p * model.cell.w_p_mask
-    w_p = w_p.clone().detach()
+    w_p = model.cell.w_p
+    w_p_mask = model.cell.w_p_mask
+    w_p = w_p * w_p_mask
     print('w_p: min {}, max {}, mean {}, std {}'.format(w_p.min().item(), w_p.max().item(), w_p.mean().item(), w_p.std().item()))
     w_p_max = w_p.std().item()  # w_p.abs().max().item()
     plt.subplot(2, 3, 3)
@@ -89,8 +92,8 @@ def plot_weight(runs_folder, ckpt_name, model_name):
     plt.xlabel('Cell ID')
     plt.ylabel('Joint ID')
     # tau
-    tau = model.cell.tau.clamp(0.01, 0.05)
-    tau = tau.clone().detach()
+    tau = model.cell.tau.clone().detach()
+    tau = tau.clamp(0.01, 0.05)
     print('tau: min {}, max {}, mean {}, std {}'.format(tau.min().item(), tau.max().item(), tau.mean().item(), tau.std().item()))
     plt.subplot(2, 3, 4)
     plt.title('tau')
