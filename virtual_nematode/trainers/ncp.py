@@ -207,7 +207,7 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
         # eval
         mse = test(model, device, eval_loader, criterion)
         writer.add_scalar('MSE/eval', mse, e)
-        # state dict
+        # module and optimizer state dict
         if type(model) is torch.nn.DataParallel:  # unwrap DataParallel to get module and save state dict
             state_dict = model.module.state_dict()
         else:
