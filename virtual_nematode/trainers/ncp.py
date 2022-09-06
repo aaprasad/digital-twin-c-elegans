@@ -212,8 +212,8 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
             state_dict = model.module.state_dict()
         else:
             state_dict = model.state_dict()
-        # save
         torch.save(state_dict, '{}{}.pt'.format(model_path[0:-3], e))
+        torch.save(optimizer.state_dict(), '{}{}.optim.pt'.format(model_path[0:-3], e))
         # eval best
         if mse < mse_best:
             torch.save(state_dict, model_path)
