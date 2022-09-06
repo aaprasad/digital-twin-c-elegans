@@ -68,9 +68,9 @@ def proprioception_connections(path, dim):
     # vcmn = db_motor_neurons() + vb_motor_neurons()
     # cells = hmn + smn + vcmn
     """ all motor neurons """
-    # cells = motor_neurons(path)
+    cells = motor_neurons(path)
     """ all neurons """
-    cells = neuron_list3(path)
+    # cells = neuron_list3(path)
     synapses = _full_connections(pre_list=list(range(dim)), post_list=cells)
     return synapses, [], []
 
