@@ -2,7 +2,7 @@ import os
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from virtual_nematode.data.utils import prepare_dataloader
+from virtual_nematode.data.utils import prepare_dataloader, prepare_test_dataloader
 from virtual_nematode.networks.ncp.ltc_cell import LTCCell
 from virtual_nematode.networks.ncp.rnn_cell_fused import RNNCell2Stage
 from virtual_nematode.networks.ncp.rnn_sequence import RNNSequence
@@ -226,11 +226,11 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
 
 
 def train_eval_test(
-    data_name='ncp.pt', model_name='fully_connected', lengths=None, batch_size=2048, seed=42, device_ids=None,
+    data_name, model_name='fully_connected', batch_size=2048, seed=42, device_ids=None,
     lr=0.001, weight_decay=0, epochs=200, early_stop=30, comment='', loss='MSELoss', sr=None, **kwargs
 ):
     """ offline train, eval and test
-    lengths: [train_size, eval_size, test_size]
+    data_name: ['train.pt', 'eval.pt', 'test.pt']
     seed: reproducibility on splitting dataset
     units: total amount of neurons (excluding input neurons)
     output_dim: amount of neurons that also act as output
@@ -239,29 +239,10 @@ def train_eval_test(
     """
     torch.manual_seed(seed)
     writer = SummaryWriter(comment=comment)
-    if type(data_name) is list:
-        data_path = [os.path.join('data', name) for name in data_name]
-    else:
-        data_path = os.path.join('data', data_name)
-    train_loader, eval_loader, test_loader = prepare_dataloader(data_path, lengths, batch_size, seed)
+    data_path = [os.path.join('data', name) for name in data_name]
+    train_loader, eval_loader, test_loader = prepare_dataloader(data_path, batch_size)
     device = torch.device('cuda:{}'.format(device_ids[0]) if torch.cuda.is_available() else 'cpu')
-    # train
     model = prepare_model(model_name, device, device_ids, **kwargs)
-    """
-    if model_name == 'snn_forward':
-        group1, group2 = [], []
-        for name, param in model.named_parameters():
-            if name.endswith('.tau') is False:
-                group1.append(param)
-            else:
-                group2.append(param)
-        optimizer = torch.optim.Adam(
-            [{'params': group1}, {'params': group2, 'lr': 0.001}],
-            lr=lr, weight_decay=weight_decay
-        )
-    else:
-        optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-    """
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     if loss == 'MSELoss':
         criterion = torch.nn.MSELoss(reduction='mean')
@@ -273,17 +254,14 @@ def train_eval_test(
         raise ValueError('Invalid loss type {}'.format(loss))
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
-    # test
-    kwargs.pop('model_path')
-    kwargs.pop('strict')
+
+
+def offline_test(data_name, model_name, model_folder, ckpt_name, batch_size, device_ids, **kwargs):
+    data_path = os.path.join('data', data_name)
+    test_loader = prepare_test_dataloader(data_path, batch_size)
+    device = torch.device('cuda:{}'.format(device_ids) if torch.cuda.is_available() else 'cpu')
+    model_path = os.path.join(model_folder, ckpt_name)
     model = prepare_model(model_name, device, device_ids, model_path, strict=True, **kwargs)
+    criterion = torch.nn.MSELoss(reduction='mean')
     mse = test(model, device, test_loader, criterion)
-    # hparams and results
-    writer.add_hparams(
-        {
-            'lengths': str(lengths), 'batch_size': batch_size, 'seed': seed,
-            'device_ids': str(device_ids), 'model_name': model_name, 'lr': lr
-        },
-        {'hparam/MSE/test': mse}
-    )
-    writer.close()
+    print(mse)
