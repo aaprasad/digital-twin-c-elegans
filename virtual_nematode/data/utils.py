@@ -53,3 +53,11 @@ def prepare_dataloader(data_path, batch_size):
     test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False, **kwargs)
     print('dataset', [len(train_loader.dataset), len(eval_loader.dataset), len(test_loader.dataset)])
     return train_loader, eval_loader, test_loader
+
+
+def prepare_test_dataloader(data_path, batch_size):
+    test_data = torch.load(data_path)
+    kwargs = {'drop_last': False, 'num_workers': multiprocessing.cpu_count(), 'pin_memory': True}
+    test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False, **kwargs)
+    print('dataset', len(test_loader.dataset))
+    return test_loader
