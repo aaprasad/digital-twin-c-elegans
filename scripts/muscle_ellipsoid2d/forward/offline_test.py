@@ -16,4 +16,6 @@ if __name__ == '__main__':
             polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
         )
     }
-    offline_test(data_name, 'snn_forward3', model_folder, ckpt_name='model.pt', batch_size=128, device_ids=0, **kwargs)
+    model_name, ckpt_name = 'snn_forward3', 'model.pt'
+    print(ckpt_name)
+    offline_test(data_name, model_name, model_folder, ckpt_name, batch_size=128, device_ids=0, **kwargs)
