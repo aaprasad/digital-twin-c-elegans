@@ -42,19 +42,11 @@ def preprocess_and_split_dataset(load_name, save_names, lengths, seq_len, seed):
     torch.save(test_data, os.path.join('data', save_names[2]))
 
 
-def prepare_dataloader(data_path, lengths, batch_size, seed):
-    """ load data and prepare data loaders
-    lengths: [train_size, eval_size, test_size]
-    """
-    if type(data_path) is list:
-        train_data = torch.load(data_path[0])
-        eval_data = torch.load(data_path[1])
-        test_data = torch.load(data_path[2])
-    else:
-        dataset = torch.load(data_path)
-        train_data, eval_data, test_data = torch.utils.data.random_split(
-            dataset, lengths, generator=torch.Generator().manual_seed(seed)
-        )
+def prepare_dataloader(data_path, batch_size):
+    """ load data and prepare data loaders """
+    train_data = torch.load(data_path[0])
+    eval_data = torch.load(data_path[1])
+    test_data = torch.load(data_path[2])
     kwargs = {'drop_last': False, 'num_workers': multiprocessing.cpu_count(), 'pin_memory': True}
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, **kwargs)
     eval_loader = torch.utils.data.DataLoader(eval_data, batch_size=batch_size, shuffle=False, **kwargs)
