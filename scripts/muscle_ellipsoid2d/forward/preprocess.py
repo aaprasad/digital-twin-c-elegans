@@ -1,57 +1,7 @@
-from matplotlib import pyplot as plt
-import os
-import torch
-from virtual_nematode.data.clamp import ClampDataset
-from virtual_nematode.data.float import FloatDataset
-from virtual_nematode.data.split import SplitDataset
 from virtual_nematode.data.utils import preprocess_and_split_dataset
 
 
-def plot_data(save_name):
-    path = os.path.join('data', save_name)
-    dataset = torch.load(path, map_location=torch.device('cpu'))
-    x, y = dataset.tensors
-    print(x.shape, y.shape)
-    plt.subplot(1, 2, 1)
-    plt.plot(x[0, :, 0], label='0')
-    plt.plot(x[0, :, 12], label='12')
-    plt.title('observation')
-    plt.subplot(1, 2, 2)
-    plt.plot(y[0, :, 0], label='0')
-    plt.plot(y[0, :, 48], label='48')
-    plt.title('action')
-    plt.legend()
-    plt.savefig(path + '.png')
-
-
-def preprocess_dataset(seq_len, load_name, save_name, float_type=False):
-    """
-    x: torch.Tensor, (data_size, seq_len, input_size)
-    y: torch.Tensor, (data_size, seq_len, action_size)
-    """
-    dataset = torch.load(os.path.join('data', load_name))
-    print('load dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
-    dataset = SplitDataset(dataset, seq_len=seq_len)
-    print('split dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size())
-    dataset = ClampDataset(dataset, x_range=None, y_range=[0, 1])
-    print(
-        'clamp dataset', len(dataset), dataset[0][0].size(), dataset[0][1].size(),
-        'x range', dataset.tensors[0].min().item(), dataset.tensors[0].max().item(),
-        'y range', dataset.tensors[1].min().item(), dataset.tensors[1].max().item()
-    )
-    if float_type is True:
-        dataset = FloatDataset(dataset)
-    torch.save(dataset, os.path.join('data', save_name))
-
-
 if __name__ == '__main__':
-    # preprocess_dataset(seq_len=32, load_name='data.pt', save_name='data32.pt')
-    # preprocess_dataset(seq_len=320, load_name='data.pt', save_name='data320.pt')
-    # preprocess_dataset(seq_len=64, load_name='data_640.pt', save_name='data_640_64.pt')
-    # preprocess_dataset(seq_len=128, load_name='data_640.pt', save_name='data_640_128.pt')
-    # preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64.pt')
-    # preprocess_dataset(seq_len=64, load_name='data_new_640.pt', save_name='data_new_640_64_32bit.pt', float_type=True)
-    # plot_data(save_name='data_new_640_64.pt')
     preprocess_and_split_dataset(
         load_name='data_7000_640.pt',
         save_names=[
