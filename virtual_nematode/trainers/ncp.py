@@ -227,7 +227,7 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
 
 def train_eval_test(
     data_name, model_name='fully_connected', batch_size=2048, seed=42, device_ids=None,
-    lr=0.001, weight_decay=0, epochs=200, early_stop=30, comment='', loss='MSELoss', sr=None, **kwargs
+    lr=0.001, weight_decay=0, epochs=200, early_stop=30, comment='', **kwargs
 ):
     """ offline train, eval and test
     data_name: ['train.pt', 'eval.pt', 'test.pt']
@@ -244,14 +244,7 @@ def train_eval_test(
     device = torch.device('cuda:{}'.format(device_ids[0]) if torch.cuda.is_available() else 'cpu')
     model = prepare_model(model_name, device, device_ids, **kwargs)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-    if loss == 'MSELoss':
-        criterion = torch.nn.MSELoss(reduction='mean')
-    elif loss == 'MSESymmetricJointLoss':
-        criterion = MSESymmetricJointLoss(reduction='mean', sr=sr)
-    elif loss == 'MSESymmetricMuscleLoss':
-        criterion = MSESymmetricMuscleLoss(reduction='mean', sr=sr)
-    else:
-        raise ValueError('Invalid loss type {}'.format(loss))
+    criterion = torch.nn.MSELoss(reduction='mean')
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
 
