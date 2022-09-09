@@ -13,7 +13,6 @@ from virtual_nematode.networks.snn.forward import SNNCell, SNN, SNNCell1, SNNCel
 from virtual_nematode.networks.snn.weathervane import SNNCell as SNNCellW
 from virtual_nematode.networks.snn.weathervane import SNNCell1 as SNNCellW1
 from virtual_nematode.networks.snn.weathervane import SNNCell3 as SNNCellW3
-from virtual_nematode.trainers.loss import MSESymmetricJointLoss, MSESymmetricMuscleLoss
 
 
 def prepare_model(model_name, device=None, device_ids=None, model_path=None, strict=True, **kwargs):
