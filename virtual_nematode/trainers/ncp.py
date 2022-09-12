@@ -226,7 +226,7 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
 
 def train_eval_test(
     data_name, model_name='fully_connected', batch_size=2048, seed=42, device_ids=None,
-    lr=0.001, weight_decay=0, epochs=200, early_stop=30, comment='', **kwargs
+    lr=0.001, weight_decay=0, epochs=200, early_stop=30, **kwargs
 ):
     """ offline train, eval and test
     data_name: ['train.pt', 'eval.pt', 'test.pt']
@@ -237,7 +237,7 @@ def train_eval_test(
     **kwargs: neural network model args
     """
     torch.manual_seed(seed)
-    writer = SummaryWriter(comment=comment)
+    writer = SummaryWriter()
     data_path = [os.path.join('data', name) for name in data_name]
     train_loader, eval_loader, test_loader = prepare_dataloader(data_path, batch_size)
     device = torch.device('cuda:{}'.format(device_ids[0]) if torch.cuda.is_available() else 'cpu')

@@ -9,7 +9,7 @@ def train(model_name):
         device_ids, batch_size, lr, epochs = [0, 1, 2, 3], 128, 5e-2, 1000
         kwargs = {
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
-            'device_ids': device_ids, 'lr': lr, 'epochs': epochs, 'early_stop': epochs,
+            'device_ids': device_ids, 'lr': lr, 'weight_decay': 0, 'epochs': epochs, 'early_stop': epochs,
             # model kwargs
             'dt': 0.04, 'steps': 5,
             **get_kwargs(
