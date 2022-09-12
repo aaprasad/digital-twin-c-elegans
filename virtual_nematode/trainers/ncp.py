@@ -224,7 +224,10 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
             break
 
 
-def train_eval_test(data_name, model_name, batch_size, seed, device_ids, lr, weight_decay, epochs, early_stop, **kwargs):
+def train_eval_test(
+    data_name, model_name, batch_size, seed, device_ids, lr, weight_decay, epochs, early_stop,
+    model_path=None, strict=True, optimizer_path=None, **kwargs
+):
     """ offline train, eval and test
     data_name: ['train.pt', 'eval.pt', 'test.pt']
     seed: reproducibility on splitting dataset
@@ -238,8 +241,10 @@ def train_eval_test(data_name, model_name, batch_size, seed, device_ids, lr, wei
     data_path = [os.path.join('data', name) for name in data_name]
     train_loader, eval_loader, test_loader = prepare_dataloader(data_path, batch_size)
     device = torch.device('cuda:{}'.format(device_ids[0]) if torch.cuda.is_available() else 'cpu')
-    model = prepare_model(model_name, device, device_ids, **kwargs)
+    model = prepare_model(model_name, device, device_ids, model_path, strict, **kwargs)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    if optimizer_path is not None:
+        optimizer.load_state_dict(torch.load(optimizer_path, map_location=device))
     criterion = torch.nn.MSELoss(reduction='mean')
     model_path = os.path.join(writer.log_dir, 'model.pt')
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
