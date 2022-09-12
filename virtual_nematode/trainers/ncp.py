@@ -224,10 +224,7 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
             break
 
 
-def train_eval_test(
-    data_name, model_name='fully_connected', batch_size=2048, seed=42, device_ids=None,
-    lr=0.001, weight_decay=0, epochs=200, early_stop=30, **kwargs
-):
+def train_eval_test(data_name, model_name, batch_size, seed, device_ids, lr, weight_decay, epochs, early_stop, **kwargs):
     """ offline train, eval and test
     data_name: ['train.pt', 'eval.pt', 'test.pt']
     seed: reproducibility on splitting dataset
