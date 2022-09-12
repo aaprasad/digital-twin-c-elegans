@@ -10,13 +10,10 @@ def train(model_name):
         kwargs = {
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
             'device_ids': device_ids, 'lr': lr, 'weight_decay': 0, 'epochs': epochs, 'early_stop': epochs,
-            """ model path """
             # 'model_path': '/home/imc/disk1/virtual-nematode/scripts/muscle_ellipsoid2d/forward/runs/Sep06_10-08-29_h-10-176-50-34/model999.pt',
             # 'strict': True,
             # 'optimizer_path': '/home/imc/disk1/virtual-nematode/scripts/muscle_ellipsoid2d/forward/runs/Sep06_10-08-29_h-10-176-50-34/model999.optim.pt',
-            """ model kwargs """
-            'dt': 0.04, 'steps': 5,
-            **get_kwargs(
+            'dt': 0.04, 'steps': 5, **get_kwargs(
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')  # 'NT+R method prediction.xls'
             )
