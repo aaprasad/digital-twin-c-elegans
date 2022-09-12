@@ -6,7 +6,7 @@ import worm_assets
 def train(model_name):
     if model_name.startswith('snn_forward'):
         data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
-        device_ids, batch_size, lr, epochs = [0, 1, 2, 3], 128, 5e-2, 1000
+        device_ids, batch_size, lr, epochs = [0, 1, 2, 3], 128, 5e-2, 10000
         kwargs = {
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
             'device_ids': device_ids, 'lr': lr, 'weight_decay': 0, 'epochs': epochs, 'early_stop': epochs,
