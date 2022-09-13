@@ -8,7 +8,8 @@ import worm_assets
 if __name__ == '__main__':
     runs_folder = sys.argv[1]
     model_folder = os.path.join('runs', runs_folder)
-    data_name = 'data_7000_1000_640_64_test.pt'
+    data_name = 'data_7000_1000_640_64_eval.pt'
+    # data_name = 'data_7000_1000_640_64_test.pt'
     kwargs = {
         'dt': 0.04, 'steps': 5,
         **get_kwargs(
