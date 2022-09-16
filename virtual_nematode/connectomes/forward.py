@@ -159,7 +159,7 @@ def get_kwargs(path, polarity_path):
     cells = cell_list(path)
     muscles = body_wall_muscles()
     print('{} cells, {} muscles'.format(len(cells), len(muscles)))
-    ex_synapses, in_synapses = chemical_polarities(polarity_path)
+    ex_synapses, in_synapses = [], []  # chemical_polarities(polarity_path)
     print('{} excitatory, {} inhibitory synapses'.format(len(ex_synapses), len(in_synapses)))
     connectome = Connectome(path=path, cells=cells, muscles=muscles, ex_synapses=ex_synapses, in_synapses=in_synapses)
     w_c_mask, w_g_mask, output_index = connectome.mask()
