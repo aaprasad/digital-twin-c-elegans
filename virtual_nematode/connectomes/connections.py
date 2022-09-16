@@ -151,8 +151,8 @@ def _backward_proprioceptive_feedback(synapses, dim, feedback_length):
 
 
 def proprioception_connections3(path, dim, dim_muhead):
-    hmn_synapses = _full_connections(pre_list=list(range(dim_muhead)), post_list=head_motor_neurons())
-    smn_synapses = _full_connections(pre_list=list(range(dim_muhead)), post_list=sublateral_motor_neurons())
+    hmn_synapses = _full_connections(pre_list=list(range(dim)), post_list=head_motor_neurons())
+    smn_synapses = _full_connections(pre_list=list(range(dim)), post_list=sublateral_motor_neurons())
     chemical = pd.read_excel(path, sheet_name='hermaphrodite chemical', header=2, index_col=2).iloc[:300, 2:456]
     muscles = body_wall_muscles()
     vb_synapses = _forward_proprioceptive_feedback2(
