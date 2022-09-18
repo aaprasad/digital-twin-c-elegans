@@ -4,11 +4,10 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 ## prerequisites
 * python==3.8
 * pytorch==1.8.0
-* tensorboard==2.4.1
-* gym==0.22.0
+* tensorboard
+* install `gym-worm` and its dependencies
 
 ## installation
-* install `gym-worm`
 * install the project in editable mode from local project path `pip install -e .`
 
 ## mathematical models of locomotion
