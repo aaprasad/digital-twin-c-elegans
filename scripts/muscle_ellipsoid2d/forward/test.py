@@ -66,7 +66,7 @@ def record_trapped_experiment(model_folder, model_name, ckpt_name, body_index):
     reset_noise_scale = 0.
     """
     print(body_index)
-    save_folder = os.path.join('video', runs_folder, ckpt_name)
+    save_folder = os.path.join('video', runs_folder, ckpt_name, '-'.join([str(i) for i in body_index]))
     env = make_swimmer_trapped(
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.,
         density=1.2, viscosity=0.1, condim=3, friction='1 1', body_index=body_index
