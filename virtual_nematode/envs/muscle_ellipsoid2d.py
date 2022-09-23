@@ -4,7 +4,9 @@ from gym_worm.envs.mujoco.sensor import actuator
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.muscle_ellipsoid2d_v0 import swimmer
 from gym_worm.envs.mujoco.position import position
+from gym_worm.envs.mujoco.trapped import trapped
 from gym_worm.wrappers.distribution_observation import DistributionObservation
+from gym_worm.wrappers.muscle_action import get_action_index, PartialAction
 from gym_worm.wrappers.recorder import Recorder
 from gym_worm.wrappers.sensor_observation import SensorObservation
 from virtual_nematode.envs.swimmer import fick
@@ -24,6 +26,28 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
         reset_noise_scale=reset_noise_scale
     )
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
+    env = gym.wrappers.ClipAction(env)
+    env = SensorObservation(env)
+    env = Recorder(env, camera_name=None)
+    return env
+
+
+def make_swimmer_trapped(
+    n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction, body_index
+):
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
+    muscle_index = body_index[0:-1]
+    xml_str = trapped(xml_str, muscle_index, body_index)
+    xml_str = position(xml_str)
+    xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
+    # with open('swimmer.xml', 'w') as f:
+    #     f.write(xml_str.decode('utf-8'))
+    env = gym.make(
+        'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+        reset_noise_scale=reset_noise_scale
+    )
+    env = gym.wrappers.TimeLimit(env, max_episode_steps)
+    env = PartialAction(env, action_index=get_action_index(muscle_index))
     env = gym.wrappers.ClipAction(env)
     env = SensorObservation(env)
     env = Recorder(env, camera_name=None)
