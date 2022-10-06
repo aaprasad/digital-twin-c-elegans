@@ -1,7 +1,8 @@
 from data import x_func as data_func
 import gym
+from matplotlib import pyplot as plt
 import os
-from plot import plot_and_save_proprioception_mask
+import seaborn as sns
 from sim import step_func as x_func
 import sys
 import torch
@@ -54,6 +55,14 @@ def single_test(env, model_folder, model_name, ckpt_name, save_folder):
     x, y = single_tester(env, model, data_func, x_func, y_func1, seed, max_episode_steps, test_func=test_func2)
     os.makedirs(save_folder, exist_ok=True)
     torch.save((x, y), os.path.join(save_folder, ckpt_name))
+
+
+def plot_and_save_proprioception_mask(mask, path):
+    plt.title('Exc/Inh Proprioception Input Mask')
+    sns.heatmap(mask[0], cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Joint ID')
+    plt.savefig(path)
 
 
 def single_test_with_masked_input(env, model_folder, model_name, ckpt_name, save_folder, trapped_dims):

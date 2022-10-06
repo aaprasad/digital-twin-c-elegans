@@ -54,14 +54,6 @@ def plot_mask(**kwargs):
     plt.ylabel('Joint ID')
 
 
-def plot_and_save_proprioception_mask(mask, path):
-    plt.title('Exc/Inh Proprioception Input Mask')
-    sns.heatmap(mask[0], cmap='coolwarm', vmin=-1, vmax=1)
-    plt.xlabel('Cell ID')
-    plt.ylabel('Joint ID')
-    plt.savefig(path)
-
-
 def plot_weight(runs_folder, ckpt_name, model_name):
     model = select_model(os.path.join('runs', runs_folder), model_name, ckpt_name)
     # plot
