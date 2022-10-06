@@ -1,6 +1,7 @@
 from data import x_func as data_func
 import gym
 import os
+from plot import plot_and_save_proprioception_mask
 from sim import step_func as x_func
 import sys
 import torch
@@ -70,6 +71,7 @@ def single_test_with_masked_input(env, model_folder, model_name, ckpt_name, save
     w_p_n[w_p_n == 0] = 1
     model.cell.w_p_mask.data = w_p_mask
     model.cell.w_p_n.data = w_p_n
+    plot_and_save_proprioception_mask(model.cell.w_p_mask.data, path=os.path.join(save_folder, 'proprioception_mask.png'))
     # testing
     x, y = single_tester(env, model, data_func, x_func, y_func1, seed, max_episode_steps, test_func=test_func2)
     os.makedirs(save_folder, exist_ok=True)
