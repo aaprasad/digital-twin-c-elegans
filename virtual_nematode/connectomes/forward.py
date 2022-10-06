@@ -112,12 +112,13 @@ class Connectome(object):
 
 
 class ExternalInput(object):
-    def __init__(self, cells, dim, synapses, ex_synapses, in_synapses):
+    def __init__(self, cells, dim, synapses, ex_synapses, in_synapses, trapped_dims=None):
         self.cells = cells
         self.dim = dim  # input dimension
         self.synapses = self._check_synapses(synapses)
         self.ex_synapses = self._check_synapses(ex_synapses)
         self.in_synapses = self._check_synapses(in_synapses)
+        self.trapped_dims = trapped_dims  # list of trapped input dimensions within [0, 1, ..., 23]
 
     def _check_synapses(self, synapses):
         """ check if related cells in the synapses exist """
@@ -137,6 +138,8 @@ class ExternalInput(object):
         mask = pd.DataFrame(False, index=list(range(self.dim)), columns=self.cells)
         for pre, post in synapses:
             mask.loc[pre, post] = True
+        if self.trapped_dims is not None:  # mask out the trapped input dims
+            mask.loc[self.trapped_dims, :] = False
         mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
 
@@ -153,7 +156,7 @@ class ExternalInput(object):
         return mask
 
 
-def get_kwargs(path, polarity_path):
+def get_kwargs(path, polarity_path, trapped_dims=None):
     """ connectome masks and params """
     # connectome
     cells = cell_list(path)
@@ -170,7 +173,10 @@ def get_kwargs(path, polarity_path):
     # p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections2(path=path, dim=p, dim_muhead=7)
     p_synapses, p_ex_synapses, p_in_synapses = proprioception_connections3(path=path, dim=p, dim_muhead=7)
     print('{} total, {} excitatory, {} inhibitory proprioception synapses'.format(len(p_synapses), len(p_ex_synapses), len(p_in_synapses)))
-    proprioception = ExternalInput(cells=cells, dim=p, synapses=p_synapses, ex_synapses=p_ex_synapses, in_synapses=p_in_synapses)
+    proprioception = ExternalInput(
+        cells=cells, dim=p, synapses=p_synapses, ex_synapses=p_ex_synapses, in_synapses=p_in_synapses,
+        trapped_dims=trapped_dims
+    )
     w_p_mask = proprioception.mask()
     return {
         'n': len(connectome.cells), 'm': len(connectome.muscles), 'p': p,
