@@ -33,10 +33,14 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
 
 
 def make_swimmer_trapped(
-    n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction, body_index
+    n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction, body_index,
+    muscle_index
 ):
+    """ swimmer with trapped body segments
+    body_index: list of body index within [1, 2, ..., 25]
+    muscle_index: list of muscle index within [1, 2, ..., 24]
+    """
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
-    muscle_index = body_index[0:-1]
     xml_str = trapped(xml_str, muscle_index, body_index)
     xml_str = position(xml_str)
     xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
