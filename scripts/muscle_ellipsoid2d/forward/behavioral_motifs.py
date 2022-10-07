@@ -37,16 +37,16 @@ def forward_crawl(env, render):
     np.savez(os.path.join(folder, 'data.npz'), **data)
 
 
-def process_data(path):
+def process_data(path, start, end):
     data = np.load(path)
     plt.figure()
     plt.title('Joint Angle')
-    sns.heatmap(data['observation'][:, 4:28], cmap='coolwarm', vmin=-1, vmax=1)
+    sns.heatmap(data['observation'][start:end, 4:28], cmap='coolwarm', vmin=-1, vmax=1)
     plt.xlabel('Time (steps)')
     plt.ylabel('Joint ID')
     plt.figure()
     plt.title('Muscle Action')
-    sns.heatmap(data['action'][:, :], cmap='coolwarm', vmin=0, vmax=1)
+    sns.heatmap(data['action'][start:end, :], cmap='coolwarm', vmin=0, vmax=1)
     plt.xlabel('Time (steps)')
     plt.ylabel('Muscle ID')
 
