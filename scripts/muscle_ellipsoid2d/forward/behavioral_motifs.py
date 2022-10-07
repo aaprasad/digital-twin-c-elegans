@@ -63,6 +63,10 @@ def shallow_type_II_turn():
 
 
 def gradual_turn(env, render):
+    def action_func(model, step, observation):
+        g_w = 0.05 if step >= 1250 else 0.
+        action = model.step(step, q=observation[4:28], g_w=g_w)
+        return action
     folder = os.path.join('video', 'gradual_turn')
     env = gym.wrappers.Monitor(env, directory=folder, force=True)
     model = WeathervanePIDMuscle(
@@ -70,7 +74,7 @@ def gradual_turn(env, render):
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )
-    data = simulate(env, model, seed=None, render=render)
+    data = simulate(env, model, action_func, seed=None, render=render)
     np.savez(os.path.join(folder, 'data.npz'), **data)
 
 
@@ -80,9 +84,10 @@ def omega_turn():
 
 if __name__ == '__main__':
     env = make_swimmer(
-        n_bodies=25, joint_range='-90 90', max_episode_steps=1000, reset_noise_scale=0.,
+        n_bodies=25, joint_range='-90 90', max_episode_steps=2500, reset_noise_scale=0.,
         density=1.2, viscosity=0.1, condim=3, friction='1 1'
     )
     print(env.action_space)
     print(env.observation_space)
-    forward_crawl(env, render=False)
+    # forward_crawl(env, render=False)
+    gradual_turn(env, render=False)
