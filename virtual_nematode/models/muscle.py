@@ -94,6 +94,23 @@ class WeathervanePIDMuscle(ForwardPIDMuscle):
         return action
 
 
+class ShallowTurn(ForwardPIDMuscle):
+    def __init__(self, k_w, sigma, **kwargs):
+        super(ShallowTurn, self).__init__(**kwargs)
+        self.k_w = k_w
+        self.sigma = sigma
+
+    def step(self, step, q, **kwargs):
+        start_step = kwargs.get('start_step')
+        n = np.arange(0, self.n - 1)
+        # bias = np.exp(-(n - self.omega * (step - start_step) * self.dt) ** 2 / (2 * self.sigma ** 2))
+        speed = 2 * np.pi * self.psi / (self.omega * self.dt)
+        bias = 0.5 * np.exp(-(n - (step - start_step) / speed / 5) ** 2 / (2 * self.sigma ** 2))
+        q_target = self.a * np.sin(self.omega * step * self.dt + self.phi) - self.k_w * bias
+        action = self._action(q, q_target)
+        return action
+
+
 class WeathervaneMuscle(object):
     def __init__(self, dt, n, a, freq, psi, kp, kv):
         self.dt = dt  # real time per step

@@ -4,7 +4,7 @@ import numpy as np
 import os
 import seaborn as sns
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
-from virtual_nematode.models.muscle import ForwardPIDMuscle, WeathervanePIDMuscle
+from virtual_nematode.models.muscle import ForwardPIDMuscle, WeathervanePIDMuscle, ShallowTurn
 
 
 def simulate(env, model, action_func, seed=None, render=False):
@@ -54,12 +54,19 @@ def forward_crawl(env, render):
     np.savez(os.path.join(folder, 'data.npz'), **data)
 
 
-def shallow_type_I_turn():
-    pass
-
-
-def shallow_type_II_turn():
-    pass
+def shallow_turn(env, render):
+    def action_func(model, step, observation):
+        action = model.step(step, q=observation[4:28], start_step=1250)
+        return action
+    folder = os.path.join('video', 'shallow_turn')
+    env = gym.wrappers.Monitor(env, directory=folder, force=True)
+    model = ShallowTurn(
+        k_w=0.5, sigma=1., dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+        kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
+        kd=0.15
+    )
+    data = simulate(env, model, action_func, seed=None, render=render)
+    np.savez(os.path.join(folder, 'data.npz'), **data)
 
 
 def gradual_turn(env, render):
@@ -90,4 +97,5 @@ if __name__ == '__main__':
     print(env.action_space)
     print(env.observation_space)
     # forward_crawl(env, render=False)
-    gradual_turn(env, render=False)
+    shallow_turn(env, render=False)
+    # gradual_turn(env, render=False)
