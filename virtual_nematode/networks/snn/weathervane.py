@@ -46,7 +46,7 @@ class SNNCell3(_SNNCell3):
     def __init__(self, s, w_s_mask, **kwargs):
         super(SNNCell3, self).__init__(**kwargs)
         self.s = s  # sensory size
-        self.w_s = torch.nn.Parameter(torch.zeros(s).uniform_(-1, 1))  # (s, )
+        self.w_s = torch.nn.Parameter(torch.zeros(s).uniform_(0, 1))  # (s, )
         self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (s, ), long
 
     def _external_input(self, stimuli):
@@ -57,7 +57,7 @@ class SNNCell3(_SNNCell3):
         # proprioception input
         external_input = super(SNNCell3, self)._external_input(stimuli[:, 0:self.p])
         # sensory input
-        gradient = stimuli[:, self.p:self.p+self.s]  # (batch_size, 1)
+        gradient = stimuli[:, self.p:self.p+1]  # (batch_size, 1)
         sensory_input = torch.cat(
             (
                 gradient.clamp(min=0),  # ASEL
