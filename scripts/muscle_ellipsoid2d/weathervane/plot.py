@@ -1,4 +1,7 @@
 from matplotlib import pyplot as plt
+import seaborn as sns
+from virtual_nematode.connectomes.weathervane import get_kwargs
+import worm_assets
 
 
 def weathervane_coefficient():
@@ -22,3 +25,58 @@ def weathervane_coefficient():
     print(x[10], y[10])
     print(x[11], y[11])
     print(x[12], y[12])
+
+
+def plot_mask(**kwargs):
+    # masks
+    w_c_mask = kwargs.get('w_c_mask')
+    w_g_mask = kwargs.get('w_g_mask')
+    w_p_mask = kwargs.get('w_p_mask')
+    # chemical
+    plt.figure()
+    plt.title('Exc/Inh Chemical Synapse Mask {}'.format(w_c_mask[0].sum().item()))
+    sns.heatmap(w_c_mask[0], cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Cell ID')
+    plt.figure()
+    plt.title('Excitatory Chemical Synapse Mask {}'.format(w_c_mask[1].sum().item()))
+    sns.heatmap(w_c_mask[1], cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Cell ID')
+    plt.figure()
+    plt.title('Inhibitory Chemical Synapse Mask {}'.format(w_c_mask[2].sum().item()))
+    sns.heatmap(w_c_mask[2], cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Cell ID')
+    # gap junction
+    plt.figure()
+    plt.title('Gap Junction Mask {}'.format(w_g_mask.sum().item()))
+    sns.heatmap(w_g_mask, cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Cell ID')
+    # proprioception
+    plt.figure()
+    plt.title('Exc/Inh Proprioception Input Mask')
+    sns.heatmap(w_p_mask[0], cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Joint ID')
+    plt.figure()
+    plt.title('Excitatory Proprioception Input Mask')
+    sns.heatmap(w_p_mask[1], cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Joint ID')
+    plt.figure()
+    plt.title('Inhibitory Proprioception Input Mask')
+    sns.heatmap(w_p_mask[2], cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Joint ID')
+
+
+if __name__ == '__main__':
+    runs_folder = 'Jul25_12-07-58_h-10-176-50-34'
+    ckpt_name = 'model119.pt'
+    model_name = 'snn_weathervane'
+    kwargs = get_kwargs(
+        path=worm_assets.connectome_path(),
+        polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
+    )
