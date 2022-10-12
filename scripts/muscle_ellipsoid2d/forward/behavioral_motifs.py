@@ -89,6 +89,10 @@ def omega_turn():
     pass
 
 
+def backward():
+    pass
+
+
 if __name__ == '__main__':
     env = make_swimmer(
         n_bodies=25, joint_range='-90 90', max_episode_steps=2500, reset_noise_scale=0.,
