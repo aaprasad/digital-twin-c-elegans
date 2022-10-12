@@ -34,12 +34,12 @@ def test(model_folder, model_name, ckpt_name):
     tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, model_folder, model_name, data_size=100)
 
 
-def record(model_folder, model_name, env, ckpt_name):
+def record(env, model_folder, model_name, ckpt_name):
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
     env = gym.wrappers.Monitor(env, directory=os.path.join('video', runs_folder, ckpt_name), force=True)
     x, y = single_tester(env, model, data_func, x_func, y_func, seed, max_episode_steps)
-    torch.save((x, y), os.path.join(data_path, ckpt_name))  # concentration, action sequence
+    torch.save((x, y), os.path.join(data_path, ckpt_name))  # x_func's return, y_func's return (action)
 
 
 if __name__ == '__main__':
@@ -54,4 +54,4 @@ if __name__ == '__main__':
         position_func=position_func, density=1.2, viscosity=0.1, condim=3, friction='1 1', source=(0, 0)
     )
     test(model_folder, 'snn_weathervane3', ckpt_name='model.pt')
-    # record(model_folder, 'snn_weathervane3', env, ckpt_name='model.pt')
+    # record(env, model_folder, 'snn_weathervane3', ckpt_name='model.pt')
