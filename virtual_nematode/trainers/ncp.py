@@ -258,4 +258,4 @@ def offline_test(data_name, model_name, model_folder, ckpt_name, batch_size, dev
     model = prepare_model(model_name, device, device_ids, model_path, strict=True, **kwargs)
     criterion = torch.nn.MSELoss(reduction='mean')
     mse = test(model, device, test_loader, criterion)
-    print(mse)
+    print('{:.4e}'.format(mse))
