@@ -7,7 +7,9 @@ import worm_assets
 
 if __name__ == '__main__':
     runs_folder = sys.argv[1]
+    ckpt_name = sys.argv[2]
     model_folder = os.path.join('runs', runs_folder)
+    print(model_folder, ckpt_name)
     data_name = 'data_7000_1000_640_64_eval.pt'
     # data_name = 'data_7000_1000_640_64_test.pt'
     kwargs = {
@@ -17,6 +19,4 @@ if __name__ == '__main__':
             polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
         )
     }
-    model_name, ckpt_name = 'snn_forward3', 'model.pt'
-    print(ckpt_name)
-    offline_test(data_name, model_name, model_folder, ckpt_name, batch_size=128, device_ids=0, **kwargs)
+    offline_test(data_name, 'snn_forward3', model_folder, ckpt_name, batch_size=128, device_ids=0, **kwargs)
