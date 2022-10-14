@@ -205,7 +205,7 @@ def test_none_reduction(model, device, loader, criterion):
             output = model(data)
             loss = criterion(output, target)
             if mse is None:
-                mse = torch.zero_like(loss).sum(dim=0)
+                mse = torch.zeros_like(loss).sum(dim=0)
             mse += loss.sum(dim=0)
     mse /= len(loader.dataset)
     return mse
