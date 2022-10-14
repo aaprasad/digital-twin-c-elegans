@@ -7,7 +7,7 @@ import worm_assets
 
 if __name__ == '__main__':
     runs_folder = sys.argv[1]
-    ckpt_name = sys.argv[2]
+    ckpt_name = sys.argv[2]  # 'model.pt'
     model_folder = os.path.join('runs', runs_folder)
     print(model_folder, ckpt_name)
     data_name = 'data_7000_1000_640_64_eval.pt'
