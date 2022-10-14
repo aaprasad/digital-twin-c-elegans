@@ -275,4 +275,5 @@ def offline_test(data_name, model_name, model_folder, ckpt_name, batch_size, dev
     # mse = test(model, device, test_loader, criterion)
     criterion = torch.nn.MSELoss(reduction='none')
     mse = test_none_reduction(model, device, test_loader, criterion)
+    mse = mse.to(torch.device('cpu'))
     return mse
