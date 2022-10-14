@@ -210,9 +210,7 @@ class SNNCell3(torch.nn.Module):
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # (n, )
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
         w_c = torch.zeros((n, n)).uniform_(-1, 1)
-        excitatory = w_c_mask.sum() * 0.8 - w_c_mask[1].sum()
-        p = excitatory / w_c_mask[0].sum()
-        polarity = torch.zeros((n, n)).bernoulli_(p)
+        polarity = torch.zeros((n, n)).bernoulli_(p=(w_c_mask.sum() * 0.8 - w_c_mask[1].sum()) / w_c_mask[0].sum())
         polarity[polarity == 0.] = -1.
         w_c = w_c.abs() * polarity
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
