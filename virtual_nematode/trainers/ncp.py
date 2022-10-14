@@ -265,7 +265,7 @@ def train_eval_test(
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
 
 
-def offline_test(data_name, model_name, model_folder, ckpt_name, batch_size, device_ids, save_name, **kwargs):
+def offline_test(data_name, model_name, model_folder, ckpt_name, save_name, batch_size, device_ids, **kwargs):
     data_path = os.path.join('data', data_name)
     test_loader = prepare_test_dataloader(data_path, batch_size)
     device = torch.device('cuda:{}'.format(device_ids) if torch.cuda.is_available() else 'cpu')
