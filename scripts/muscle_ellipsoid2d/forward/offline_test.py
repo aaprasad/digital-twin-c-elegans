@@ -23,6 +23,6 @@ if __name__ == '__main__':
     mse = offline_test(data_name, 'snn_forward3', model_folder, ckpt_name, batch_size=128, device_ids=0, **kwargs)
     # print('{:.4e}'.format(mse))
     print('{:.4e}'.format(mse.mean().item()))
-    save_path = os.path.join('data', model_folder, ckpt_name)
+    save_path = os.path.join('data', runs_folder, ckpt_name)
     os.makedirs(save_path, exist_ok=True)
     torch.save(mse, os.path.join(save_path, 'eval_loss.pt'))
