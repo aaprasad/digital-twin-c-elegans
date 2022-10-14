@@ -1,6 +1,7 @@
 import csv
 from test import select_model
 from matplotlib import pyplot as plt
+import numpy as np
 import os
 import seaborn as sns
 import torch
@@ -267,6 +268,28 @@ def bias(runs_folder, ckpt_name, model_name, remove_muscle_flag=True):
             if remove_muscle_flag is True and name in muscles:
                 continue
             writer.writerow((i, name, bias[i].item()))
+
+
+def plot_loss(path):
+    # plot loss by muscle
+    data = torch.load(path)
+    mse = data.mean(dim=0)
+    mse_mean = data.mean()
+    plt.plot(mse[0:24], label='DL')
+    plt.plot(mse[24:48], label='DR')
+    plt.plot(mse[48:71], label='VL')
+    plt.plot(mse[71:95], label='VR')
+    plt.hlines(mse_mean, 0, 23, label='mean', linestyle='dashed', color='purple')
+    plt.legend()
+    plt.xlabel('Joint ID')
+    plt.ylabel('MSE')
+    plt.title('MSE by Muscle')
+    # muscle with loss higher than average
+    index = np.arange(24)
+    print('DL', index[mse[0:24] > mse_mean])
+    print('DR', index[mse[24:48] > mse_mean])
+    print('VL', index[0:23][mse[48:71] > mse_mean])
+    print('VR', index[mse[71:95] > mse_mean])
 
 
 if __name__ == '__main__':
