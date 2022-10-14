@@ -196,6 +196,21 @@ def test(model, device, loader, criterion):
     return mse
 
 
+def test_none_reduction(model, device, loader, criterion):
+    model.eval()
+    mse = None
+    with torch.no_grad():
+        for data, target in loader:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            loss = criterion(output, target)
+            if mse is None:
+                mse = torch.zero_like(loss).sum(dim=0)
+            mse += loss.sum(dim=0)
+    mse /= len(loader.dataset)
+    return mse
+
+
 def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path):
     """ offline train and eval """
     mse_best, e_best = 100., 0
@@ -250,12 +265,16 @@ def train_eval_test(
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
 
 
-def offline_test(data_name, model_name, model_folder, ckpt_name, batch_size, device_ids, **kwargs):
+def offline_test(data_name, model_name, model_folder, ckpt_name, batch_size, device_ids, save_name, **kwargs):
     data_path = os.path.join('data', data_name)
     test_loader = prepare_test_dataloader(data_path, batch_size)
     device = torch.device('cuda:{}'.format(device_ids) if torch.cuda.is_available() else 'cpu')
     model_path = os.path.join(model_folder, ckpt_name)
     model = prepare_model(model_name, device, device_ids, model_path, strict=True, **kwargs)
-    criterion = torch.nn.MSELoss(reduction='mean')
-    mse = test(model, device, test_loader, criterion)
-    print('{:.4e}'.format(mse))
+    # criterion = torch.nn.MSELoss(reduction='mean')
+    # mse = test(model, device, test_loader, criterion)
+    # print('{:.4e}'.format(mse))
+    criterion = torch.nn.MSELoss(reduction='none')
+    mse = test_none_reduction(model, device, test_loader, criterion)
+    print('{:.4e}'.format(mse.mean().item()))
+    torch.save(mse, os.path.join('data', model_folder, ckpt_name, save_name))
