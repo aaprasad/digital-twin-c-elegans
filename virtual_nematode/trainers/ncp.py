@@ -265,7 +265,7 @@ def train_eval_test(
     train_eval(model, device, writer, train_loader, eval_loader, optimizer, epochs, early_stop, criterion, model_path)
 
 
-def offline_test(data_name, model_name, model_folder, ckpt_name, save_name, batch_size, device_ids, **kwargs):
+def offline_test(data_name, model_name, model_folder, ckpt_name, batch_size, device_ids, **kwargs):
     data_path = os.path.join('data', data_name)
     test_loader = prepare_test_dataloader(data_path, batch_size)
     device = torch.device('cuda:{}'.format(device_ids) if torch.cuda.is_available() else 'cpu')
@@ -273,8 +273,6 @@ def offline_test(data_name, model_name, model_folder, ckpt_name, save_name, batc
     model = prepare_model(model_name, device, device_ids, model_path, strict=True, **kwargs)
     # criterion = torch.nn.MSELoss(reduction='mean')
     # mse = test(model, device, test_loader, criterion)
-    # print('{:.4e}'.format(mse))
     criterion = torch.nn.MSELoss(reduction='none')
     mse = test_none_reduction(model, device, test_loader, criterion)
-    print('{:.4e}'.format(mse.mean().item()))
-    torch.save(mse, os.path.join('data', model_folder, ckpt_name, save_name))
+    return mse
