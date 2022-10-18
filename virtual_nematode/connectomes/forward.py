@@ -177,7 +177,8 @@ def get_kwargs(path, polarity_path, trapped_dims=None):
         cells=cells, dim=p, synapses=p_synapses, ex_synapses=p_ex_synapses, in_synapses=p_in_synapses,
         trapped_dims=trapped_dims
     )
-    w_p_mask = proprioception.mask()
+    w_p_mask = proprioception.mask()  # (3, p, n)
+    w_p_mask = w_p_mask[0]  # (p, n)
     return {
         'n': len(connectome.cells), 'm': len(connectome.muscles), 'p': p,
         'w_c_mask': w_c_mask, 'w_g_mask': w_g_mask, 'w_p_mask': w_p_mask, 'output_index': output_index
