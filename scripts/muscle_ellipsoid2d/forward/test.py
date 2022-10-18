@@ -24,7 +24,7 @@ def y_func1(state, activation, action, **kwargs):
 
 
 def select_model(model_folder, model_name, ckpt_name):
-    if model_name.startswith('snn_forward'):
+    if model_name.startswith('snn_forward') or model_name.startswith('li_current'):
         kwargs = {
             'dt': 0.04, 'steps': 5,
             **get_kwargs(
@@ -144,8 +144,8 @@ if __name__ == '__main__':
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
         density=1.2, viscosity=0.1, condim=3, friction='1 1'
     )
-    test(model_folder, 'snn_forward3', ckpt_name)
-    # single_test(env, model_folder, 'snn_forward3', ckpt_name, save_folder=os.path.join('data', runs_folder))
-    # record(env, model_folder, 'snn_forward3', ckpt_name)
-    # record_trapped_experiment(model_folder, 'snn_forward3', ckpt_name, body_index=[10, 11, 12, 13, 14, 15, 16])
-    # record_trapped_experiment_with_masked_input(model_folder, 'snn_forward3', ckpt_name, body_index=[10, 11, 12, 13, 14, 15, 16])
+    test(model_folder, 'li_current', ckpt_name)
+    # single_test(env, model_folder, 'li_current', ckpt_name, save_folder=os.path.join('data', runs_folder))
+    # record(env, model_folder, 'li_current', ckpt_name)
+    # record_trapped_experiment(model_folder, 'li_current', ckpt_name, body_index=[10, 11, 12, 13, 14, 15, 16])
+    # record_trapped_experiment_with_masked_input(model_folder, 'li_current', ckpt_name, body_index=[10, 11, 12, 13, 14, 15, 16])
