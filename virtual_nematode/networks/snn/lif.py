@@ -48,8 +48,8 @@ class LeakyIntegratorCurrentBased(torch.nn.Module):
         polarity[polarity == 0.] = -1.
         w_c = w_c.abs() * polarity
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
-        """ chemical synapse init """
         # self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(-1, 1))  # (n, n)
+        """"""
         self.w_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # (3, n, n), bool
         w_c_n = w_c_mask.sum(dim=[0, 1])
         w_c_n[w_c_n == 0] = 1
