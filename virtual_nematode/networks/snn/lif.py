@@ -40,7 +40,7 @@ class LeakyIntegratorCurrentBased(torch.nn.Module):
         self.n = n
         self.m = m
         self.p = p
-        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.05))  # (n, )
+        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
         """ chemical synapse init with dedicated excitatory/inhibitory ratio """
         w_c = torch.zeros((n, n)).uniform_(-1, 1)
@@ -95,7 +95,7 @@ class LeakyIntegratorCurrentBased(torch.nn.Module):
         # external input + bias
         external_input = self._external_input(stimuli) + self.bias
         # dt / tau
-        dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.05)
+        dt_tau = self.dt / self.steps / self.tau.clamp(min=0.01)
         for i in range(self.steps):
             # chemical synapse input
             synapse_input = torch.mm(activation, w_c) / self.w_c_n
