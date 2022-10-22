@@ -61,7 +61,7 @@ def shallow_turn(env, render):
     folder = os.path.join('video', 'shallow_turn')
     env = gym.wrappers.Monitor(env, directory=folder, force=True)
     model = ShallowTurn(
-        k_w=0.5, sigma=1., dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+        k_w=0.2, sigma=1., dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )
