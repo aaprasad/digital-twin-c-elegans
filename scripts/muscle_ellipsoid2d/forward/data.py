@@ -17,8 +17,8 @@ def y_func(action, **kwargs):
 
 if __name__ == '__main__':
     input_size = 24  # joint angles
-    data_size = 7000  # 7000, 14000
-    max_episode_steps = 640
+    data_size = 3500  # 7000, 3500, 1750
+    max_episode_steps = 1280  # 640, 1280, 2560
     reset_noise_scale = 0.6  # reset_noise_scale: 0.7->0.6
     seed = 7
     env = make_swimmer(
@@ -39,4 +39,4 @@ if __name__ == '__main__':
     )
     dataset = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed)
     os.makedirs('data', exist_ok=True)
-    torch.save(dataset, 'data/data_7000_640.pt')  # 'data_7000_640.pt', 'data_14000_640.pt'
+    torch.save(dataset, 'data/data_3500_1280.pt')  # 'data_7000_640.pt', 'data_3500_1280.pt'
