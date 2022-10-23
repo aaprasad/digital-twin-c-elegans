@@ -39,4 +39,4 @@ if __name__ == '__main__':
     )
     dataset = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed)
     os.makedirs('data', exist_ok=True)
-    torch.save(dataset, 'data/data_3500_1280.pt')  # 'data_7000_640.pt', 'data_3500_1280.pt'
+    torch.save(dataset, 'data/data_3500_1280.pt')  # 'data_7000_640.pt', 'data_3500_1280.pt', 'data_1750_2560.pt'
