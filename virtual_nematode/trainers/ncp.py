@@ -248,6 +248,18 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
             break
 
 
+def split_parameters(named_parameters, suffix):
+    selected_named_parameters = list(filter(lambda p: any([p[0].endswith(s) for s in suffix]), named_parameters))
+    selected_names = [p[0] for p in selected_named_parameters]
+    print('selected names', selected_names)
+    selected_parameters = [p[1] for p in selected_named_parameters]
+    other_named_parameters = list(filter(lambda p: p[0] not in selected_names, named_parameters))
+    other_names = [p[0] for p in other_named_parameters]
+    print('other names', other_names)
+    other_parameters = [p[1] for p in other_named_parameters]
+    return selected_parameters, other_parameters
+
+
 def train_eval_test(
     data_name, model_name, batch_size, seed, device_ids, lr, weight_decay, epochs, early_stop,
     model_path=None, strict=True, optimizer_path=None, **kwargs
@@ -267,6 +279,16 @@ def train_eval_test(
     device = torch.device('cuda:{}'.format(device_ids[0]) if torch.cuda.is_available() else 'cpu')
     model = prepare_model(model_name, device, device_ids, model_path, strict, **kwargs)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    """
+    selected_parameters, other_parameters = split_parameters(model.named_parameters(), suffix=['w_c', 'w_g', 'w_p'])
+    optimizer = torch.optim.Adam(
+        [
+            {'params': selected_parameters, 'weight_decay': weight_decay},
+            {'params': other_parameters}
+        ],
+        lr=lr, weight_decay=0
+    )
+    """
     if optimizer_path is not None:
         optimizer.load_state_dict(torch.load(optimizer_path, map_location=device))
     criterion = torch.nn.MSELoss(reduction='mean')
