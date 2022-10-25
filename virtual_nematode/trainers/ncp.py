@@ -10,7 +10,7 @@ from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
 from virtual_nematode.networks.rnn.rnn import RNNCell
 from virtual_nematode.networks.snn.forward import SNNCell, SNN, SNNCell1, SNNCell2, SNNCell3, SNNCell4
-from virtual_nematode.networks.snn.lif import LeakyIntegratorCurrentBased
+from virtual_nematode.networks.snn.lif import LeakyIntegratorCurrentBased, LeakyIntegratorConductanceBased
 from virtual_nematode.networks.snn.weathervane import SNNCell as SNNCellW
 from virtual_nematode.networks.snn.weathervane import SNNCell1 as SNNCellW1
 from virtual_nematode.networks.snn.weathervane import SNNCell3 as SNNCellW3
@@ -45,6 +45,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = snn_forward4(**kwargs)
     elif model_name == 'li_current':
         model = li_current(**kwargs)
+    elif model_name == 'li_conductance':
+        model = li_conductance(**kwargs)
     elif model_name == 'snn_weathervane':
         model = snn_weathervane(**kwargs)
     elif model_name == 'snn_weathervane1':
@@ -154,6 +156,12 @@ def snn_forward4(**kwargs):
 
 def li_current(**kwargs):
     cell = LeakyIntegratorCurrentBased(**kwargs)
+    model = SNN(cell)
+    return model
+
+
+def li_conductance(**kwargs):
+    cell = LeakyIntegratorConductanceBased(**kwargs)
     model = SNN(cell)
     return model
 
