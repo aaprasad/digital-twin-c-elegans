@@ -76,8 +76,7 @@ class LeakyIntegratorCurrentBased(torch.nn.Module):
     def init_state(self):
         """ initial state and activation """
         bias = self.bias.clone().detach()
-        state = bias.clamp(-1, 1)
-        state = self.state_func(state)
+        state = self.state_func(bias)
         activation = self.activation_func(state)
         activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         return state, activation  # (n, ), (n, )
@@ -96,7 +95,7 @@ class LeakyIntegratorCurrentBased(torch.nn.Module):
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # external input + bias
-        external_input = self._external_input(stimuli) + self.bias.clamp(-1, 1)
+        external_input = self._external_input(stimuli) + self.bias
         # dt / tau
         dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
         for i in range(self.steps):
