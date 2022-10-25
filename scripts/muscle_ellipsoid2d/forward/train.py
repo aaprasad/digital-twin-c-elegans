@@ -4,7 +4,7 @@ import worm_assets
 
 
 def train(model_name):
-    if model_name.startswith('snn_forward') or model_name.startswith('li_current'):
+    if model_name.startswith('snn_forward') or model_name.startswith('li'):
         data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
         # data_name = ['data_3500_2500_1280_64_train.pt', 'data_3500_500_1280_64_eval.pt', 'data_3500_500_1280_64_test.pt']
         device_ids, batch_size, lr, epochs = [0, 1, 2, 3], 128, 5e-2, 1000
@@ -35,4 +35,5 @@ def train(model_name):
 
 if __name__ == '__main__':
     # train('snn_forward3')
-    train('li_current')
+    # train('li_current')
+    train('li_conductance')
