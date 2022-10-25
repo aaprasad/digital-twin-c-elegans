@@ -63,7 +63,7 @@ class LeakyIntegratorCurrentBased(torch.nn.Module):
         w_g_n[w_g_n == 0] = 1
         self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
         self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
-        self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (p, n), bool
+        self.w_p_mask = torch.nn.Parameter(w_p_mask[0], requires_grad=False)  # (p, n), bool
         w_p_n = w_p_mask.sum(dim=0)
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
@@ -147,7 +147,7 @@ class LeakyIntegratorConductanceBased(torch.nn.Module):
         w_g_n[w_g_n == 0] = 1
         self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
         self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
-        self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (p, n), bool
+        self.w_p_mask = torch.nn.Parameter(w_p_mask[0], requires_grad=False)  # (p, n), bool
         w_p_n = w_p_mask.sum(dim=0)
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
