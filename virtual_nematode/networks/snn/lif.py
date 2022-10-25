@@ -180,7 +180,7 @@ class LeakyIntegratorConductanceBased(torch.nn.Module):
         for i in range(self.steps):
             # chemical synapse input
             post_synaptic_state = state.unsqueeze(dim=1).repeat(1, self.n, 1)
-            synapse_input = torch.mm(activation, post_synaptic_state * w_c) / self.w_c_n
+            synapse_input = torch.mm(activation, (self.e_c - post_synaptic_state) * w_c) / self.w_c_n
             # gap junction input
             pre_synaptic_state = state.unsqueeze(dim=2).repeat(1, 1, self.n)
             delta_state = pre_synaptic_state - post_synaptic_state
