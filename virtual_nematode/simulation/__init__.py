@@ -23,11 +23,11 @@ def simulate(env, model, action_func, x_func, seed=None, trials=1, render=False)
             observations.append(x_func(observation=observation))
             actions.append(action)
             if done:
-                observations, actions = np.array(observations), np.array(actions)
+                observations, actions = np.array(observations, dtype=np.float32), np.array(actions, dtype=np.float32)
                 x.append(observations)
                 y.append(actions)
                 break
-    x, y = np.array(x), np.array(y)
+    x, y = np.array(x, dtype=np.float32), np.array(y, dtype=np.float32)
     return x, y
 
 
