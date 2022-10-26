@@ -4,7 +4,7 @@ from virtual_nematode.utils import sample_seed
 import torch
 
 
-def test_func(index, env, model, data_func, x_func, y_func):
+def test_func(env, model, data_func, x_func, y_func):
     seed = sample_seed()
     torch.manual_seed(seed)
     env.seed(seed)
