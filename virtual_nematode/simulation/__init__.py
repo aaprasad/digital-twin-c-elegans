@@ -1,20 +1,17 @@
-# from matplotlib import pyplot as plt
 import numpy as np
-# import seaborn as sns
+from tqdm import tqdm
 
 
-def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False):
+def simulate(env, model, action_func, x_func, seed=None, trials=1, render=False):
     """ forward sinusoidal movement
     action_func: called before every step, generate action
     step_func: called after every step, process observation and collect result of 1 simulation
     done_func: called after every simulation, process simulation result and collect results of all simulations
     **kwargs: configure mathematical model
     """
-    results = []  # results of all simulations
-    # angles, actions = [], []
-    # distributions = []
-    for i in range(trials):
-        result = []  # results of 1 simulation
+    x, y = [], []
+    for i in tqdm(range(trials)):
+        observations, actions = [], []
         env.seed(seed=seed + i if seed is not None else None)
         observation = env.reset()
         model.reset()
@@ -23,32 +20,15 @@ def simulate(env, model, action_func, step_func, done_func, seed=None, trials=1,
                 env.render()
             action = action_func(model=model, step=step, observation=observation)
             observation, reward, done, info = env.step(action)
-            # angles.append(observation[4:28])
-            # actions.append(action)
-            # distributions.append(observation[62:66])
-            result.append(step_func(observation=observation))
+            observations.append(x_func(observation=observation))
+            actions.append(action)
             if done:
-                results.append(done_func(index=i, result=result))
+                observations, actions = np.array(observations), np.array(actions)
+                x.append(observations)
+                y.append(actions)
                 break
-    # plt.subplot(1, 2, 1)
-    # angles = np.array(angles)
-    # angles_max = np.max(np.abs(angles))
-    # sns.heatmap(angles.T, cmap='coolwarm', vmin=-angles_max, vmax=angles_max)
-    # plt.subplot(1, 2, 2)
-    # actions = np.array(actions)
-    # sns.heatmap(actions.clip(0, 1).T, cmap='coolwarm')
-    # plt.show()
-
-    # distributions = np.array(distributions)
-    # plt.plot(distributions[:, 0], label='concentration')
-    # plt.plot(distributions[:, 1], label='gradient')
-    # plt.plot(distributions[:, 2], label='g_p')
-    # plt.plot(distributions[:, 3], label='g_w')
-    # plt.xlabel('t')
-    # plt.ylabel('value')
-    # plt.legend()
-    # plt.show()
-    return results
+    x, y = np.array(x), np.array(y)
+    return x, y
 
 
 def simulate_vector(env, model, action_func, step_func, done_func, seed=None, render=False):

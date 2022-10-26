@@ -3,7 +3,7 @@ import gym
 from matplotlib import pyplot as plt
 import os
 import seaborn as sns
-from sim import step_func as x_func
+from sim import x_func
 import sys
 import torch
 from virtual_nematode.connectomes.forward import get_kwargs

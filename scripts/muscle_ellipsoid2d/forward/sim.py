@@ -7,9 +7,9 @@ observation space: Box(-inf, inf, (62,), float64)
 """
 
 import numpy as np
+import os
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
-from virtual_nematode.models.muscle import ForwardMuscle, ForwardPIDMuscle
-from virtual_nematode.models.sinusoidal import SinusoidalMuscle
+from virtual_nematode.models.muscle import ForwardPIDMuscle
 from virtual_nematode.simulation import simulate
 
 
@@ -20,19 +20,9 @@ def action_func(model, step, observation, **kwargs):
     return action
 
 
-def step_func(observation, **kwargs):
-    com = observation[56:58]  # 2D center of mass
+def x_func(observation, **kwargs):
+    # com = observation[56:58]
     return observation
-
-
-def done_func(index, result, **kwargs):
-    """
-    result: list of com in 1 simulation
-    return: displacement in this simulation
-    """
-    displacement = np.linalg.norm(np.array(result[-1, 56:58]) - np.array(result[0, 56:58]), ord=2)
-    print('Trial {}: com displacement {:.2f}'.format(index + 1, displacement))
-    return displacement
 
 
 if __name__ == '__main__':
@@ -55,5 +45,10 @@ if __name__ == '__main__':
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )
-    results = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)
-    print('{} trials: com displacement mean {:.2f} / {} steps'.format(len(results), np.mean(results), max_episode_steps))
+    x, y = simulate(env, model, action_func, x_func, seed=None, trials=1, render=False)
+    os.makedirs('data', exist_ok=True)
+    np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
+    displacement_mean = np.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, axis=1).mean()
+    print('{} trial(s), com displacement mean {:.2f} / {} steps'.format(x.shape[0], displacement_mean, max_episode_steps))
+    distance_mean = np.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, axis=2).sum(axis=1).mean()
+    print('{} trial(s), com distance mean {:.2f} / {} steps'.format(x.shape[0], distance_mean, max_episode_steps))
