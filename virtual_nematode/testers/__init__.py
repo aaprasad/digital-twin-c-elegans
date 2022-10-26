@@ -1,3 +1,4 @@
 import virtual_nematode.testers.chemotaxis
 import virtual_nematode.testers.forward
+import virtual_nematode.testers.tester
 import virtual_nematode.testers.weathervane
