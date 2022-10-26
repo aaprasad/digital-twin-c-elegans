@@ -14,6 +14,7 @@ test/
 *.png
 *.csv
 *.backup
+*.npz
 # pip
 build/
 *.egg-info/
