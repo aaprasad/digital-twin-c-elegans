@@ -146,7 +146,7 @@ if __name__ == '__main__':
     os.makedirs(video_folder, exist_ok=True)
     assert os.path.exists(model_folder)
     print(model_folder, ckpt_name)
-    seed = 42
+    seed = 1024
     max_episode_steps = 2500
     env = make_swimmer(
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
