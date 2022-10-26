@@ -8,19 +8,19 @@ import sys
 import torch
 from virtual_nematode.connectomes.forward import get_kwargs
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer, make_swimmer_trapped
-from virtual_nematode.testers.forward import tester, single_tester, test_func2
+from virtual_nematode.testers.tester import tester, single_tester
 from virtual_nematode.trainers.ncp import prepare_model
 import worm_assets
 
 
-def y_func(action, **kwargs):
+def y_func(**kwargs):
     """ stats: action """
-    return action.tolist()
-
-
-def y_func1(state, activation, action, **kwargs):
-    """ stats: state, activation, action """
-    return state.squeeze(dim=0).tolist() + activation.squeeze(dim=0).tolist() + action.tolist()
+    state = kwargs.get('state')
+    activation = kwargs.get('activation')
+    action = kwargs.get('action')
+    # data = action.tolist()
+    data = state.squeeze(dim=0).tolist() + activation.squeeze(dim=0).tolist() + action.tolist()
+    return data
 
 
 def select_model(model_folder, model_name, ckpt_name):
@@ -43,18 +43,29 @@ def select_model(model_folder, model_name, ckpt_name):
     return model
 
 
-def test(model_folder, model_name, ckpt_name):
+def test(model_folder, model_name, ckpt_name, save_folder):
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
-    tester(env, model, data_func, x_func, y_func, seed, max_episode_steps, model_folder, model_name, data_size=100, test_func=test_func2)
+    x_func_size = env.observation_space.shape[0]
+    y_func_size = 469 + 469 + 95
+    x, y = tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
+    torch.save((x, y), os.path.join(save_folder, 'test.pt'))
+    displacement_mean = torch.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, dim=1).mean().item()
+    print('com displacement mean {:.2f} / {} steps'.format(displacement_mean, max_episode_steps))
 
 
 def single_test(env, model_folder, model_name, ckpt_name, save_folder):
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
-    x, y = single_tester(env, model, data_func, x_func, y_func1, seed, max_episode_steps, test_func=test_func2)
-    os.makedirs(save_folder, exist_ok=True)
-    torch.save((x, y), os.path.join(save_folder, ckpt_name))
+    x, y = single_tester(env, model, data_func, x_func, y_func, seed)
+    torch.save((x, y), os.path.join(save_folder, 'single_test.pt'))
+    displacement = torch.linalg.norm(x[-1, 56:58] - x[0, 56:58], ord=2).item()
+    print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
+
+
+def record(env, model_folder, model_name, ckpt_name, video_folder):
+    env = gym.wrappers.Monitor(env, directory=video_folder, force=True)
+    single_test(env, model_folder, model_name, ckpt_name, save_folder=video_folder)
 
 
 def plot_and_save_proprioception_mask(mask, path):
@@ -85,12 +96,6 @@ def single_test_with_masked_input(env, model_folder, model_name, ckpt_name, save
     x, y = single_tester(env, model, data_func, x_func, y_func1, seed, max_episode_steps, test_func=test_func2)
     os.makedirs(save_folder, exist_ok=True)
     torch.save((x, y), os.path.join(save_folder, ckpt_name))
-
-
-def record(env, model_folder, model_name, ckpt_name):
-    save_folder = os.path.join('video', runs_folder, ckpt_name)
-    env = gym.wrappers.Monitor(env, directory=save_folder, force=True)
-    single_test(env, model_folder, model_name, ckpt_name, save_folder)
 
 
 def record_trapped_experiment(model_folder, model_name, ckpt_name, body_index):
@@ -135,17 +140,22 @@ if __name__ == '__main__':
     runs_folder = sys.argv[1]
     ckpt_name = sys.argv[2]  # 'model.pt'
     model_folder = os.path.join('runs', runs_folder)
+    save_folder = os.path.join('data', runs_folder, ckpt_name)
+    video_folder = os.path.join('video', runs_folder, ckpt_name)
+    os.makedirs(save_folder, exist_ok=True)
+    os.makedirs(video_folder, exist_ok=True)
+    assert os.path.exists(model_folder)
     print(model_folder, ckpt_name)
-    if os.path.exists(model_folder) is False:
-        raise ValueError('Invalid runs folder {}'.format(runs_folder))
     seed = 42
     max_episode_steps = 2500
     env = make_swimmer(
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
         density=1.2, viscosity=0.1, condim=3, friction='1 1'
     )
-    test(model_folder, 'li_conductance', ckpt_name)
-    # single_test(env, model_folder, 'li_conductance', ckpt_name, save_folder=os.path.join('data', runs_folder))
-    # record(env, model_folder, 'li_conductance', ckpt_name)
-    # record_trapped_experiment(model_folder, 'li_conductance', ckpt_name, body_index=[10, 11, 12, 13, 14, 15, 16])
-    # record_trapped_experiment_with_masked_input(model_folder, 'li_conductance', ckpt_name, body_index=[10, 11, 12, 13, 14, 15, 16])
+    """ testing """
+    model_name = 'li_conductance'
+    test(model_folder, model_name, ckpt_name, save_folder)
+    # single_test(env, model_folder, model_name, ckpt_name, save_folder)
+    # record(env, model_folder, model_name, ckpt_name, video_folder)
+    # record_trapped_experiment(model_folder, model_name, ckpt_name, body_index=[10, 11, 12, 13, 14, 15, 16])
+    # record_trapped_experiment_with_masked_input(model_folder, model_name, ckpt_name, body_index=[10, 11, 12, 13, 14, 15, 16])
