@@ -52,6 +52,8 @@ def test(model_folder, model_name, ckpt_name, save_folder):
     torch.save((x, y), os.path.join(save_folder, 'test.pt'))
     displacement_mean = torch.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, dim=1).mean().item()
     print('com displacement mean {:.2f} / {} steps'.format(displacement_mean, max_episode_steps))
+    distance_mean = torch.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, dim=2).sum(dim=1).mean().item()
+    print('com distance mean {:.2f} / {} steps'.format(distance_mean, max_episode_steps))
 
 
 def single_test(env, model_folder, model_name, ckpt_name, save_folder):
@@ -61,6 +63,8 @@ def single_test(env, model_folder, model_name, ckpt_name, save_folder):
     torch.save((x, y), os.path.join(save_folder, 'single_test.pt'))
     displacement = torch.linalg.norm(x[-1, 56:58] - x[0, 56:58], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
+    distance = torch.linalg.norm(x[1:, 56:58] - x[0:-1, 56:58], ord=2, dim=2).sum(dim=1).mean().item()
+    print('com distance {:.2f} / {} steps'.format(distance, max_episode_steps))
 
 
 def record(env, model_folder, model_name, ckpt_name, video_folder):
