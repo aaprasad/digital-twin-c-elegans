@@ -49,7 +49,7 @@ def test(model_folder, model_name, ckpt_name, save_folder):
     x_func_size = env.observation_space.shape[0]
     y_func_size = 469 + 469 + 95
     x, y = tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
-    torch.save((x, y), os.path.join(save_folder, 'test.pt'))
+    # torch.save((x, y), os.path.join(save_folder, 'test.pt'))
     displacement_mean = torch.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, dim=1).mean().item()
     print('com displacement mean {:.2f} / {} steps'.format(displacement_mean, max_episode_steps))
     distance_mean = torch.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, dim=2).sum(dim=1).mean().item()
