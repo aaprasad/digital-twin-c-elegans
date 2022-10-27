@@ -17,7 +17,7 @@ def y_func(action, **kwargs):
 
 
 if __name__ == '__main__':
-    input_size = 24  # joint angles
+    input_size = 62  # x_func() size
     data_size = 7000  # 7000, 3500, 1750
     max_episode_steps = 640  # 640, 1280, 2560
     reset_noise_scale = 0.6  # reset_noise_scale: 0.7->0.6
