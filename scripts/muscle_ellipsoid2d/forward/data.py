@@ -8,7 +8,8 @@ from virtual_nematode.models.muscle import ForwardPIDMuscle
 
 
 def x_func(observation, **kwargs):
-    return observation[4:28]  # joint angles
+    # angles = observation[4:28]  # joint angles
+    return observation
 
 
 def y_func(action, **kwargs):
