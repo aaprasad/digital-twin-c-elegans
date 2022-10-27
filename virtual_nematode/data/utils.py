@@ -7,12 +7,12 @@ from virtual_nematode.data.split import SplitDataset
 from virtual_nematode.data.subset import random_split, Subset
 
 
-def preprocess_and_split_dataset(load_name, save_names, lengths, seq_len, seed):
+def preprocess_and_split_dataset(load_name, save_names, lengths, x_range, seq_len, seed):
     # load
     dataset = torch.load(os.path.join('data', load_name))
     print('load', dataset.tensors[0].shape, dataset.tensors[1].shape)
     # subset
-    dataset = Subset(dataset, sum(lengths))
+    dataset = Subset(dataset, sum(lengths), x_range)
     print('subset', dataset.tensors[0].shape, dataset.tensors[1].shape)
     # float
     dataset = FloatDataset(dataset)
