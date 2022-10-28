@@ -29,7 +29,7 @@ if __name__ == '__main__':
     max_episode_steps = 2500
     env = make_swimmer(
         n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
-        density=1.2, viscosity=0.1, condim=3, friction='1 1'
+        density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001'
     )  # reset_noise_scale: 0.7->0.6
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space)
