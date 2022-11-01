@@ -23,8 +23,9 @@ if __name__ == '__main__':
     reset_noise_scale = 0.6  # reset_noise_scale: 0.7->0.6
     seed = 7
     env = make_swimmer(
-        n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale,
-        density=1.2, viscosity=0.1, condim=3, friction='1 1'
+        n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
+        max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
+        density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
     action_size = env.action_space.shape[0]
     print(env.action_space)
