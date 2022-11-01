@@ -12,8 +12,8 @@ from gym_worm.wrappers.sensor_observation import SensorObservation
 from virtual_nematode.envs.swimmer import fick
 
 
-def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction):
-    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction)
+def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction, cone):
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction, cone)
     # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorpos')
     # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorvel')
     # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorfrc')
