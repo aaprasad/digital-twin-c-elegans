@@ -153,8 +153,9 @@ if __name__ == '__main__':
     seed = 1024
     max_episode_steps = 2500
     env = make_swimmer(
-        n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
-        density=1.2, viscosity=0.1, condim=3, friction='1 1'
+        n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
+        max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
+        density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
     """ testing """
     model_name = 'li_conductance'
