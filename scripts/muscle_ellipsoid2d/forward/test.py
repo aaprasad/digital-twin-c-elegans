@@ -18,11 +18,11 @@ def data_func(observation, **kwargs):
 
 def y_func(**kwargs):
     """ stats: action """
-    state = kwargs.get('state')
-    activation = kwargs.get('activation')
+    # state = kwargs.get('state')
+    # activation = kwargs.get('activation')
     action = kwargs.get('action')
-    # data = action.tolist()
-    data = state.squeeze(dim=0).tolist() + activation.squeeze(dim=0).tolist() + action.tolist()
+    data = action.tolist()
+    # data = state.squeeze(dim=0).tolist() + activation.squeeze(dim=0).tolist() + action.tolist()
     return data
 
 
@@ -50,7 +50,7 @@ def test(model_folder, model_name, ckpt_name, save_folder):
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
     x_func_size = env.observation_space.shape[0]
-    y_func_size = 469 + 469 + 95
+    y_func_size = 95  # 469 + 469 + 95
     x, y = tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
     # torch.save((x, y), os.path.join(save_folder, 'test.pt'))
     displacement_mean = torch.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, dim=1).mean().item()
