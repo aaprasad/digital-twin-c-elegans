@@ -1,4 +1,3 @@
-from data import x_func as data_func
 import gym
 from matplotlib import pyplot as plt
 import os
@@ -11,6 +10,10 @@ from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer, make_swimmer_
 from virtual_nematode.testers.tester import tester, single_tester
 from virtual_nematode.trainers.ncp import prepare_model
 import worm_assets
+
+
+def data_func(observation, **kwargs):
+    return observation[4:28]  # joint angles
 
 
 def y_func(**kwargs):
