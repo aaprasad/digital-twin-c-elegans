@@ -10,7 +10,7 @@ observation space: Box(-inf, inf, (62,), float64)
 import gym
 import numpy as np
 import os
-from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
+from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane, make_swimmer_weathervane_fixed
 from virtual_nematode.models.muscle import WeathervanePIDMuscle
 from virtual_nematode.simulation import simulate
 
@@ -45,6 +45,14 @@ if __name__ == '__main__':
         distance=15, source=(0, 0), position_func=position_func,  # distance = 3 * sigma
         density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
+    """
+    env = make_swimmer_weathervane_fixed(
+        n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
+        max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
+        position=(15, 0), source=(0, 0), position_func=position_func,  # distance = 3 * sigma
+        density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
+    )
+    """
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space, env.observation_space)
     print(env.source)
@@ -56,6 +64,7 @@ if __name__ == '__main__':
     x, y = simulate(env, model, action_func, x_func, seed=seed, trials=100, render=False)
     os.makedirs('data', exist_ok=True)
     np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
+    np.savez(os.path.join('data', 'simulate_fixed.npz'), x=x, y=y)
     displacement_mean = np.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, axis=1).mean()
     print('{} trial(s), com displacement mean {:.2f} / {} steps'.format(x.shape[0], displacement_mean, max_episode_steps))
     distance_mean = np.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, axis=2).sum(axis=1).mean()
