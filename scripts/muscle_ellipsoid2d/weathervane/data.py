@@ -43,3 +43,12 @@ if __name__ == '__main__':
     dataset = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed)
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data_7000_640.pt')
+    x, y = dataset.tensors
+    displacement_mean = torch.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, dim=1).mean().item()
+    print('{} trial(s), com displacement mean {:.2f} / {} steps'.format(x.shape[0], displacement_mean, max_episode_steps))
+    distance_mean = torch.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, dim=2).sum(dim=1).mean().item()
+    print('{} trial(s), com distance mean {:.2f} / {} steps'.format(x.shape[0], distance_mean, max_episode_steps))
+    chemotaxis_index_mean = x[:, :, 62].mean().item()
+    print('{} trials: chemotaxis index mean {:.2f}'.format(x.shape[0], chemotaxis_index_mean))
+    initial_concentration_mean = x[:, 0, 62].mean().item()
+    print('{} trials: initial concentration mean {:.2f}'.format(x.shape[0], initial_concentration_mean))
