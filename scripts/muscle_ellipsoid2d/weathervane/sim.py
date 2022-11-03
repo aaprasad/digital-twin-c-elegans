@@ -64,7 +64,7 @@ if __name__ == '__main__':
     x, y = simulate(env, model, action_func, x_func, seed=seed, trials=100, render=False)
     os.makedirs('data', exist_ok=True)
     np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
-    np.savez(os.path.join('data', 'simulate_fixed.npz'), x=x, y=y)
+    # np.savez(os.path.join('data', 'simulate_fixed.npz'), x=x, y=y)
     displacement_mean = np.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, axis=1).mean()
     print('{} trial(s), com displacement mean {:.2f} / {} steps'.format(x.shape[0], displacement_mean, max_episode_steps))
     distance_mean = np.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, axis=2).sum(axis=1).mean()
