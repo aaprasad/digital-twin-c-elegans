@@ -9,6 +9,7 @@ observation space: Box(-inf, inf, (62,), float64)
 
 import gym
 import numpy as np
+import os
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
 from virtual_nematode.models.muscle import WeathervanePIDMuscle
 from virtual_nematode.simulation import simulate
@@ -21,10 +22,6 @@ def position_func(observation, **kwargs):
 
 
 def action_func(model, step, observation, **kwargs):
-    """
-    model: mathematical model of controller
-    return: action
-    """
     q = observation[4:28]
     # q_vel = observation[32:56]
     # g_p = observation[64]
@@ -33,20 +30,10 @@ def action_func(model, step, observation, **kwargs):
     return action
 
 
-def step_func(observation, **kwargs):
-    """ record stats """
-    com, position = observation[56:58], observation[59:61]
-    gradient = observation[62:66]  # c, g, g_p, g_w
-    return np.concatenate((com, position, gradient))
-
-
-def done_func(result, index=None, **kwargs):
-    """ calculate chemotaxis index with concentrations along the path """
-    result = np.array(result)
-    chemotaxis_index = np.mean(result[:, 4])
-    start_concentration = result[0, 4]
-    print('Trial {}: chemotaxis index {:.2f}, start concentration {:.2f}'.format(index + 1, chemotaxis_index, start_concentration))
-    return result
+def x_func(observation, **kwargs):
+    # com, position = observation[56:58], observation[59:61]
+    # gradient = observation[62:66]  # c, g, g_p, g_w
+    return observation
 
 
 if __name__ == '__main__':
@@ -65,6 +52,14 @@ if __name__ == '__main__':
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )
-    result = simulate(env, model, action_func, step_func, done_func, seed=None, trials=1, render=False)  # (batch_size, max_episode_steps, 1)
-    result = np.array(result)
-    print('{} trials: chemotaxis index mean {:.2f}, start concentration mean {:.2f}'.format(result.shape[0], result[:, :, 4].mean(), result[:, 0, 4].mean()))
+    x, y = simulate(env, model, action_func, x_func, seed=None, trials=100, render=False)
+    os.makedirs('data', exist_ok=True)
+    np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
+    displacement_mean = np.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, axis=1).mean()
+    print('{} trial(s), com displacement mean {:.2f} / {} steps'.format(x.shape[0], displacement_mean, max_episode_steps))
+    distance_mean = np.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, axis=2).sum(axis=1).mean()
+    print('{} trial(s), com distance mean {:.2f} / {} steps'.format(x.shape[0], distance_mean, max_episode_steps))
+    chemotaxis_index_mean = x[:, :, 62].mean()
+    print('{} trials: chemotaxis index mean {:.2f}'.format(x.shape[0], chemotaxis_index_mean))
+    initial_concentration_mean = x[:, 0, 62].mean()
+    print('{} trials: initial concentration mean {:.2f}'.format(x.shape[0], initial_concentration_mean))
