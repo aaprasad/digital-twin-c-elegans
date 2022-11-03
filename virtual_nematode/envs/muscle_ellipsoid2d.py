@@ -84,7 +84,7 @@ def make_swimmer_weathervane(
 
 
 def make_swimmer_weathervane_fixed(
-    n_bodies, joint_range, max_episode_steps, reset_noise_scale, position, source, position_func, density,
+    n_bodies, joint_range, max_episode_steps, reset_noise_scale, pos, source, position_func, density,
     viscosity, condim, friction, cone
 ):
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction, cone)
@@ -95,7 +95,7 @@ def make_swimmer_weathervane_fixed(
     #     f.write(xml_str.decode('utf-8'))
     env = gym.make(
         'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
-        reset_noise_scale=reset_noise_scale, position=position
+        reset_noise_scale=reset_noise_scale, position=pos
     )
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
