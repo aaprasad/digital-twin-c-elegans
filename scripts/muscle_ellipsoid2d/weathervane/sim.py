@@ -49,7 +49,7 @@ if __name__ == '__main__':
     env = make_swimmer_weathervane_fixed(
         n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
         max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
-        position=(15, 0), source=(0, 0), position_func=position_func,  # distance = 3 * sigma
+        pos=(15, 0), source=(0, 0), position_func=position_func,  # distance = 3 * sigma
         density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
     """
