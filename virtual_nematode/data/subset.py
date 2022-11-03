@@ -20,9 +20,20 @@ class Subset(torch.utils.data.TensorDataset):
     def __init__(self, dataset, data_size, x_index):
         x, y = dataset.tensors
         data_size = min(data_size, len(dataset))
-        x = x[0:data_size, :, x_index[0]:x_index[1]]
+        if type(x_index) is list:
+            flag = self.get_index(length=x.shape[2], index=x_index)
+            x = x[0:data_size, :, flag]
+        else:
+            x = x[0:data_size, :, x_index[0]:x_index[1]]
         y = y[0:data_size]
         super(Subset, self).__init__(x, y)
+
+    @staticmethod
+    def get_index(length, index):
+        flag = torch.zeros(length, dtype=torch.bool)
+        for a, b in index:
+            flag[a:b] = True
+        return flag
 
 
 class RandomSubset(torch.utils.data.TensorDataset):
