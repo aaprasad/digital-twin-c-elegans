@@ -17,10 +17,10 @@ def random_split(dataset, lengths, seed):
 
 class Subset(torch.utils.data.TensorDataset):
     """ create a subset of a TensorDataset """
-    def __init__(self, dataset, data_size, x_range):
+    def __init__(self, dataset, data_size, x_index):
         x, y = dataset.tensors
         data_size = min(data_size, len(dataset))
-        x = x[0:data_size, :, x_range[0]:x_range[1]]
+        x = x[0:data_size, :, x_index[0]:x_index[1]]
         y = y[0:data_size]
         super(Subset, self).__init__(x, y)
 
