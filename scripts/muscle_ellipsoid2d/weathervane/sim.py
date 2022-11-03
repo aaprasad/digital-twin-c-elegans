@@ -38,6 +38,7 @@ def x_func(observation, **kwargs):
 
 if __name__ == '__main__':
     max_episode_steps = 2500
+    seed = 7  # None
     env = make_swimmer_weathervane(
         n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
         max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
@@ -52,7 +53,7 @@ if __name__ == '__main__':
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )
-    x, y = simulate(env, model, action_func, x_func, seed=None, trials=100, render=False)
+    x, y = simulate(env, model, action_func, x_func, seed=seed, trials=100, render=False)
     os.makedirs('data', exist_ok=True)
     np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
     displacement_mean = np.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, axis=1).mean()
