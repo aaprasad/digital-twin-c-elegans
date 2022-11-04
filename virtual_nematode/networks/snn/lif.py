@@ -152,6 +152,7 @@ class LeakyIntegratorConductanceBased(torch.nn.Module):
         self.state_func = torch.nn.Hardtanh(-1, 1)
         self.activation_func = torch.nn.Sigmoid()
         self.activation_scaling = torch.sigmoid(torch.tensor([-1, 1])).tolist()
+        self.alpha_m = torch.nn.Parameter(torch.zeros(m).uniform_(0, 1))  # (m, )
 
     @property
     def init_state(self):
@@ -193,6 +194,7 @@ class LeakyIntegratorConductanceBased(torch.nn.Module):
             activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         # muscle output
         action = activation[:, self.output_index]
+        action = action * self.alpha_m.clamp(0, 1)
         return state, activation, action
 
 
