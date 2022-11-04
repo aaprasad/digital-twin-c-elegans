@@ -278,7 +278,7 @@ class LeakyIntegratorConductanceBasedCalciumFluorescence(torch.nn.Module):
         action = activation[:, self.output_index]  # muscle activation
         dt_tau_m = self.dt / self.tau_m.clamp(0.01, 0.2)
         calcium = (1 - dt_tau_m) * calcium + dt_tau_m * action  # calcium concentration
-        f = self.alpha_m * calcium + self.beta_m  # calcium fluorescence
+        f = self.alpha_m.clamp(min=0) * calcium + self.beta_m.clamp(min=0)  # calcium fluorescence
         return state, activation, calcium, f
 
 
