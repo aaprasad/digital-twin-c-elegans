@@ -232,6 +232,9 @@ class LeakyIntegratorConductanceBasedCalciumFluorescence(torch.nn.Module):
         self.state_func = torch.nn.Hardtanh(-1, 1)
         self.activation_func = torch.nn.Sigmoid()
         self.activation_scaling = torch.sigmoid(torch.tensor([-1, 1])).tolist()
+        self.tau_m = torch.nn.Parameter(torch.zeros(m).uniform_(0.01, 0.2))  # (m, )
+        self.alpha_m = torch.nn.Parameter(torch.zeros(m).uniform_(0, 1))  # (m, )
+        self.beta_m = torch.nn.Parameter(torch.zeros(m).uniform_(0, 1))  # (m, )
 
     @property
     def init_state(self):
@@ -240,7 +243,8 @@ class LeakyIntegratorConductanceBasedCalciumFluorescence(torch.nn.Module):
         state = self.state_func(bias)
         activation = self.activation_func(state)
         activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
-        return state, activation  # (n, ), (n, )
+        calcium = torch.zeros(self.m)
+        return state, activation, calcium  # (n, ), (n, ), (m, )
 
     def _external_input(self, stimuli):
         """ proprioception input """
@@ -248,7 +252,7 @@ class LeakyIntegratorConductanceBasedCalciumFluorescence(torch.nn.Module):
         external_input = torch.mm(stimuli, w_p) / self.w_p_n
         return external_input
 
-    def forward(self, state, activation, stimuli):
+    def forward(self, state, activation, calcium, stimuli):
         # chemical synapse weight
         w_c = self.w_c.abs() * self.w_c_mask
         # gap junction weight
@@ -271,6 +275,45 @@ class LeakyIntegratorConductanceBasedCalciumFluorescence(torch.nn.Module):
             state = self.state_func(state)
             activation = self.activation_func(state)
             activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
-        # muscle output
-        action = activation[:, self.output_index]
-        return state, activation, action
+        action = activation[:, self.output_index]  # muscle activation
+        dt_tau_m = self.dt / self.tau_m.clamp(0.01, 0.2)
+        calcium = (1 - dt_tau_m) * calcium + dt_tau_m * action  # calcium concentration
+        f = self.alpha_m * calcium + self.beta_m  # calcium fluorescence
+        return state, activation, calcium, f
+
+
+class SNNCalciumFluorescence(torch.nn.Module):
+    def __init__(self, cell):
+        super(SNNCalciumFluorescence, self).__init__()
+        self.cell = cell
+
+    def init_state(self, batch_size, device):
+        """ initial state and activation """
+        state, activation, calcium = self.cell.init_state  # (n, ), (n, ), (m, )
+        state = state.unsqueeze(dim=0).repeat(batch_size, 1).to(device=device)
+        activation = activation.unsqueeze(dim=0).repeat(batch_size, 1).to(device=device)
+        calcium = calcium.unsqueeze(dim=0).repeat(batch_size, 1).to(device=device)
+        return state, activation, calcium
+
+    def forward(self, stimuli):
+        device = stimuli.device
+        batch_size = stimuli.size(0)
+        seq_len = stimuli.size(1)
+        # initial state and activation
+        state, activation, calcium = self.init_state(batch_size, device)
+        # simulate sequence
+        actions = []
+        for t in range(seq_len):
+            s = stimuli[:, t]
+            state, activation, calcium, action = self.cell.forward(state, activation, calcium, s)
+            actions.append(action)  # action, (batch_size, muscle_count)
+        actions = torch.stack(actions, dim=1)  # action sequence, (batch_size, seq_len, muscle_count)
+        return actions
+
+    def step(self, state, activation, calcium, stimuli):
+        if state is None or activation is None or calcium is None:
+            device = stimuli.device
+            batch_size = stimuli.size(0)
+            state, activation, calcium = self.init_state(batch_size, device)
+        state, activation, calcium, action = self.cell.forward(state, activation, calcium, stimuli)
+        return state, activation, calcium, action
