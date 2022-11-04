@@ -36,4 +36,5 @@ def train(model_name):
 if __name__ == '__main__':
     # train('snn_forward3')
     # train('li_current')
-    train('li_conductance')
+    # train('li_conductance')
+    train('li_conductance_cf')
