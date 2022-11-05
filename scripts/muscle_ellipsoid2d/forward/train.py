@@ -9,7 +9,7 @@ def train(model_name):
         # data_name = ['data_3500_2500_1280_64_train.pt', 'data_3500_500_1280_64_eval.pt', 'data_3500_500_1280_64_test.pt']
         device_ids, batch_size, lr, epochs = [0, 1, 2, 3], 128, 5e-2, 1000
         kwargs = {
-            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
+            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 33,  # seed = 11
             'device_ids': device_ids, 'lr': lr, 'weight_decay': 0, 'epochs': epochs, 'early_stop': epochs,
             # 'model_path': '/home/imc/disk1/virtual-nematode/scripts/muscle_ellipsoid2d/forward/runs/Sep06_10-08-29_h-10-176-50-34/model999.pt',
             # 'strict': True,
