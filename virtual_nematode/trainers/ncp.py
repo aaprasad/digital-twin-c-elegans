@@ -297,17 +297,19 @@ def train_eval_test(
     train_loader, eval_loader, test_loader = prepare_dataloader(data_path, batch_size)
     device = torch.device('cuda:{}'.format(device_ids[0]) if torch.cuda.is_available() else 'cpu')
     model = prepare_model(model_name, device, device_ids, model_path, strict, **kwargs)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-    """
-    selected_parameters, other_parameters = split_parameters(model.named_parameters(), suffix=['w_c', 'w_g', 'w_p'])
-    optimizer = torch.optim.Adam(
-        [
-            {'params': selected_parameters, 'weight_decay': weight_decay},
-            {'params': other_parameters}
-        ],
-        lr=lr, weight_decay=0
-    )
-    """
+    if weight_decay == 0:
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    else:
+        suffix = ['w_c', 'w_g', 'w_p']
+        print(suffix, 'weight decay', weight_decay)
+        selected_parameters, other_parameters = split_parameters(model.named_parameters(), suffix)
+        optimizer = torch.optim.Adam(
+            [
+                {'params': selected_parameters, 'weight_decay': weight_decay},
+                {'params': other_parameters}
+            ],
+            lr=lr, weight_decay=0
+        )
     if optimizer_path is not None:
         optimizer.load_state_dict(torch.load(optimizer_path, map_location=device))
     criterion = torch.nn.MSELoss(reduction='mean')
