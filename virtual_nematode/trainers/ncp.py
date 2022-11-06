@@ -267,15 +267,17 @@ def train_eval(model, device, writer, train_loader, eval_loader, optimizer, epoc
             break
 
 
-def split_parameters(named_parameters, suffix):
-    selected_named_parameters = list(filter(lambda p: any([p[0].endswith(s) for s in suffix]), named_parameters))
+def split_parameters(model, suffix):
+    all_names = [p[0] for p in model.named_parameters()]
+    print('all names', all_names)
+    selected_named_parameters = list(filter(lambda p: any([p[0].endswith(s) for s in suffix]), model.named_parameters()))
     selected_names = [p[0] for p in selected_named_parameters]
-    print('selected names', selected_names)
     selected_parameters = [p[1] for p in selected_named_parameters]
-    other_named_parameters = list(filter(lambda p: p[0] not in selected_names, named_parameters))
+    print('selected names', selected_names)
+    other_named_parameters = list(filter(lambda p: p[0] not in selected_names, model.named_parameters()))
     other_names = [p[0] for p in other_named_parameters]
-    print('other names', other_names)
     other_parameters = [p[1] for p in other_named_parameters]
+    print('other names', other_names)
     return selected_parameters, other_parameters
 
 
@@ -302,7 +304,7 @@ def train_eval_test(
     else:
         suffix = ['w_c', 'w_g', 'w_p', 'bias']
         print(suffix, 'weight decay', weight_decay)
-        selected_parameters, other_parameters = split_parameters(model.named_parameters(), suffix)
+        selected_parameters, other_parameters = split_parameters(model, suffix)
         optimizer = torch.optim.Adam(
             [
                 {'params': selected_parameters, 'weight_decay': weight_decay},
