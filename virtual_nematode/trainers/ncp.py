@@ -302,7 +302,7 @@ def train_eval_test(
     if weight_decay == 0:
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     else:
-        suffix = ['w_c', 'w_g', 'w_p', 'bias']
+        suffix = ['w_c', 'e_c', 'w_g', 'w_p', 'bias']
         print(suffix, 'weight decay', weight_decay)
         selected_parameters, other_parameters = split_parameters(model, suffix)
         optimizer = torch.optim.Adam(
