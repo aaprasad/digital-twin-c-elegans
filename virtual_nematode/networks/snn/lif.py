@@ -129,7 +129,9 @@ class LeakyIntegratorConductanceBased(torch.nn.Module):
         # bias = -1 + bias.abs()
         # self.bias = torch.nn.Parameter(bias)  # (n, )
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
-        self.w_c = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))  # (n, n)
+        w_c = torch.zeros((n, n)).uniform_(0, 1)
+        w_c *= w_c_mask.any(dim=0)
+        self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         e_c = torch.zeros((n, n)).normal_(mean=0, std=0.05)
         e_c = (0 + e_c) * w_c_mask[0] + (1 + e_c) * w_c_mask[1] + (-1 + e_c) * w_c_mask[2]
         # e_c = (0 + e_c) * w_c_mask[0] + (1 - e_c.abs()) * w_c_mask[1] + (-1 + e_c.abs()) * w_c_mask[2]
@@ -138,12 +140,16 @@ class LeakyIntegratorConductanceBased(torch.nn.Module):
         w_c_n = w_c_mask.sum(dim=[0, 1])
         w_c_n[w_c_n == 0] = 1
         self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
-        self.w_g = torch.nn.Parameter(torch.zeros((n, n)).uniform_(0, 1))  # (n, n)
+        w_g = torch.zeros((n, n)).uniform_(0, 1)
+        w_g *= w_g_mask
+        self.w_g = torch.nn.Parameter(w_g)  # (n, n)
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
         w_g_n = w_g_mask.sum(dim=0)
         w_g_n[w_g_n == 0] = 1
         self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
-        self.w_p = torch.nn.Parameter(torch.zeros((p, n)).uniform_(-1, 1))  # (p, n)
+        w_p = torch.zeros((p, n)).uniform_(-1, 1)
+        w_p *= w_p_mask.any(dim=0)
+        self.w_p = torch.nn.Parameter(w_p)  # (p, n)
         self.w_p_mask = torch.nn.Parameter(w_p_mask.any(dim=0), requires_grad=False)  # (p, n), bool
         w_p_n = w_p_mask.sum(dim=[0, 1])
         w_p_n[w_p_n == 0] = 1
