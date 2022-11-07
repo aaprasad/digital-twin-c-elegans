@@ -7,7 +7,7 @@ def train(model_name):
     if model_name.startswith('snn_forward') or model_name.startswith('li'):
         data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
         # data_name = ['data_3500_2500_1280_64_train.pt', 'data_3500_500_1280_64_eval.pt', 'data_3500_500_1280_64_test.pt']
-        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 1e-4, 1000
+        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 1e-6, 1000
         kwargs = {
             'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
             'device_ids': device_ids, 'lr': lr, 'weight_decay': weight_decay, 'epochs': epochs, 'early_stop': epochs,
