@@ -22,9 +22,10 @@ def get_kwargs(path, polarity_path):
     """ connectome masks and params """
     cells = cell_list(path)
     sensory_cells = ['ASEL', 'ASER']
-    print('sensory cells', sensory_cells)
+
     sensation = SensoryInput(cells=cells, sensory_cells=sensory_cells)
     w_s_mask = sensation.mask()
+    print('sensory cells', sensory_cells, w_s_mask)
     return {
         's': len(sensory_cells), 'w_s_mask': w_s_mask,
         **_get_kwargs(path=path, polarity_path=polarity_path)
