@@ -57,5 +57,5 @@ if __name__ == '__main__':
         distance=15, source=(0, 0), position_func=position_func,  # distance = 3 * sigma
         density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
-    test(model_folder, 'snn_weathervane3', ckpt_name)
-    # record(env, model_folder, 'snn_weathervane3', ckpt_name)
+    test(model_folder, 'li_conductance_gradient', ckpt_name)
+    # record(env, model_folder, 'li_conductance_gradient', ckpt_name)
