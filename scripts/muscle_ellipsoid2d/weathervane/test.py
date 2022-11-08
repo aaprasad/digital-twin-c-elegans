@@ -14,7 +14,7 @@ import worm_assets
 
 
 def select_model(model_folder, model_name, ckpt_name):
-    if model_name.startswith('snn_weathervane'):
+    if model_name.startswith('snn_weathervane') or model_name.startswith('li'):
         kwargs = {
             'dt': 0.04, 'steps': 5,
             **get_kwargs(
