@@ -20,6 +20,7 @@ def train(model_name):
         }
     else:
         raise AssertionError('{} not exist'.format(model_name))
+    print(kwargs)
     train_eval_test(**kwargs)
 
 
