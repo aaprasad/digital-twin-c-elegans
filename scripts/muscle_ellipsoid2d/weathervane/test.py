@@ -52,8 +52,10 @@ if __name__ == '__main__':
     data_path = os.path.join('data', runs_folder)
     os.makedirs(data_path, exist_ok=True)
     env = make_swimmer_weathervane(
-        n_bodies=25, joint_range='-90 90', max_episode_steps=max_episode_steps, reset_noise_scale=0.6, distance=15,
-        position_func=position_func, density=1.2, viscosity=0.1, condim=3, friction='1 1', source=(0, 0)
+        n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
+        max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
+        distance=15, source=(0, 0), position_func=position_func,  # distance = 3 * sigma
+        density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
     test(model_folder, 'snn_weathervane3', ckpt_name)
     # record(env, model_folder, 'snn_weathervane3', ckpt_name)
