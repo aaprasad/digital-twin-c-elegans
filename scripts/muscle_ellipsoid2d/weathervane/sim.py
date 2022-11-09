@@ -7,6 +7,7 @@ observation space: Box(-inf, inf, (62,), float64)
     [62:66]: distribution related observation
 """
 
+from analysis import get_results_numpy
 import gym
 import numpy as np
 import os
@@ -65,11 +66,4 @@ if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
     np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
     # np.savez(os.path.join('data', 'simulate_fixed.npz'), x=x, y=y)
-    displacement_mean = np.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, axis=1).mean()
-    print('{} trial(s), com displacement mean {:.2f} / {} steps'.format(x.shape[0], displacement_mean, max_episode_steps))
-    distance_mean = np.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, axis=2).sum(axis=1).mean()
-    print('{} trial(s), com distance mean {:.2f} / {} steps'.format(x.shape[0], distance_mean, max_episode_steps))
-    chemotaxis_index_mean = x[:, :, 62].mean()
-    print('{} trials: chemotaxis index mean {:.2f}'.format(x.shape[0], chemotaxis_index_mean))
-    initial_concentration_mean = x[:, 0, 62].mean()
-    print('{} trials: initial concentration mean {:.2f}'.format(x.shape[0], initial_concentration_mean))
+    get_results_numpy(x, y, max_episode_steps=max_episode_steps)
