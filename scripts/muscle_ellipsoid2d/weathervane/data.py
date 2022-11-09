@@ -8,11 +8,6 @@ from virtual_nematode.models.muscle import WeathervanePIDMuscle
 
 
 def x_func(observation, **kwargs):
-    # q = observation[4:28]
-    # c = observation[62:63]
-    # g = observation[63:64]
-    # g_p = observation[64:65]
-    # g_w = observation[65:66]
     return observation
 
 
