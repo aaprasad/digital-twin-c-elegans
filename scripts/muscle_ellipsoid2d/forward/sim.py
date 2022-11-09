@@ -6,6 +6,7 @@ observation space: Box(-inf, inf, (62,), float64)
     [59:62]: x-, y- and z-coordinates of the front tip (length, m)
 """
 
+from analysis import get_results_numpy
 import numpy as np
 import os
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
@@ -49,7 +50,4 @@ if __name__ == '__main__':
     x, y = simulate(env, model, action_func, x_func, seed=None, trials=100, render=False)
     os.makedirs('data', exist_ok=True)
     np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
-    displacement_mean = np.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, axis=1).mean()
-    print('{} trial(s), com displacement mean {:.2f} / {} steps'.format(x.shape[0], displacement_mean, max_episode_steps))
-    distance_mean = np.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, axis=2).sum(axis=1).mean()
-    print('{} trial(s), com distance mean {:.2f} / {} steps'.format(x.shape[0], distance_mean, max_episode_steps))
+    get_results_numpy(x, y, max_episode_steps=max_episode_steps)

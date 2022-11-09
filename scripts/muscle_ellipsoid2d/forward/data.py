@@ -1,3 +1,4 @@
+from analysis import get_results_torch
 import numpy as np
 import os
 from sim import action_func
@@ -43,7 +44,4 @@ if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data_7000_640.pt')  # 'data_7000_640.pt', 'data_3500_1280.pt', 'data_1750_2560.pt'
     x, y = dataset.tensors
-    displacement_mean = torch.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, dim=1).mean().item()
-    print('{} trial(s), com displacement mean {:.2f} / {} steps'.format(x.shape[0], displacement_mean, max_episode_steps))
-    distance_mean = torch.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, dim=2).sum(dim=1).mean().item()
-    print('{} trial(s), com distance mean {:.2f} / {} steps'.format(x.shape[0], distance_mean, max_episode_steps))
+    get_results_torch(x, y, max_episode_steps=max_episode_steps)

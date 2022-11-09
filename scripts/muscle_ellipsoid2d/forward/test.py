@@ -1,3 +1,4 @@
+from analysis import get_results_torch, get_result_torch
 import gym
 from matplotlib import pyplot as plt
 import os
@@ -53,10 +54,7 @@ def test(model_folder, model_name, ckpt_name, save_folder):
     y_func_size = 95  # 469 + 469 + 95
     x, y = tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
     torch.save((x, y), os.path.join(save_folder, 'test.pt'))
-    displacement_mean = torch.linalg.norm(x[:, -1, 56:58] - x[:, 0, 56:58], ord=2, dim=1).mean().item()
-    print('com displacement mean {:.2f} / {} steps'.format(displacement_mean, max_episode_steps))
-    distance_mean = torch.linalg.norm(x[:, 1:, 56:58] - x[:, 0:-1, 56:58], ord=2, dim=2).sum(dim=1).mean().item()
-    print('com distance mean {:.2f} / {} steps'.format(distance_mean, max_episode_steps))
+    get_results_torch(x, y, max_episode_steps=max_episode_steps)
 
 
 def single_test(env, model_folder, model_name, ckpt_name, save_folder):
@@ -64,10 +62,7 @@ def single_test(env, model_folder, model_name, ckpt_name, save_folder):
     model = select_model(model_folder, model_name, ckpt_name)
     x, y = single_tester(env, model, data_func, x_func, y_func, seed)
     torch.save((x, y), os.path.join(save_folder, 'single_test.pt'))
-    displacement = torch.linalg.norm(x[-1, 56:58] - x[0, 56:58], ord=2).item()
-    print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
-    distance = torch.linalg.norm(x[1:, 56:58] - x[0:-1, 56:58], ord=2, dim=2).sum(dim=1).mean().item()
-    print('com distance {:.2f} / {} steps'.format(distance, max_episode_steps))
+    get_result_torch(x, y, max_episode_steps=max_episode_steps)
 
 
 def record(env, model_folder, model_name, ckpt_name, video_folder):
