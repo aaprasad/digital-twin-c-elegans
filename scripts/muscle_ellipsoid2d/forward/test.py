@@ -144,9 +144,9 @@ if __name__ == '__main__':
     model_folder = os.path.join('runs', runs_folder)
     save_folder = os.path.join('data', runs_folder, ckpt_name)
     video_folder = os.path.join('video', runs_folder, ckpt_name)
+    assert os.path.exists(model_folder)
     os.makedirs(save_folder, exist_ok=True)
     os.makedirs(video_folder, exist_ok=True)
-    assert os.path.exists(model_folder)
     print(model_folder, ckpt_name)
     seed = 1024
     max_episode_steps = 2500
