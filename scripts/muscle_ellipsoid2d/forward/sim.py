@@ -7,6 +7,7 @@ observation space: Box(-inf, inf, (62,), float64)
 """
 
 from analysis import get_results_numpy
+import gym
 import numpy as np
 import os
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
