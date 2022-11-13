@@ -66,4 +66,4 @@ if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
     np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
     # np.savez(os.path.join('data', 'simulate_3sigma.npz'), x=x, y=y)
-    get_results_numpy(x, y, max_episode_steps=max_episode_steps)
+    get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)

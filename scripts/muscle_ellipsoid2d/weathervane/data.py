@@ -40,4 +40,4 @@ if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
     torch.save(dataset, 'data/data_7000_640.pt')
     x, y = dataset.tensors
-    get_results_torch(x, y, max_episode_steps=max_episode_steps)
+    get_results_torch(x, y, max_episode_steps=max_episode_steps, sigma=5)
