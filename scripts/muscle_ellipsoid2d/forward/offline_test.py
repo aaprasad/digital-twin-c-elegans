@@ -2,7 +2,7 @@ import os
 import sys
 import torch
 from virtual_nematode.connectomes.forward import get_kwargs
-from virtual_nematode.trainers.ncp import offline_test
+from virtual_nematode.trainers.ncp import offline_test, offline_test_per_sample
 import worm_assets
 
 
@@ -19,9 +19,10 @@ if __name__ == '__main__':
             polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
         )
     }
-    mse = offline_test(data_name, 'li_conductance', model_folder, ckpt_name, batch_size=128, device_ids=0, **kwargs)
+    # mse = offline_test(data_name, 'li_conductance', model_folder, ckpt_name, batch_size=128, device_ids=0, **kwargs)
+    mse = offline_test_per_sample(data_name, 'li_conductance', model_folder, ckpt_name, batch_size=128, device_ids=0, **kwargs)
     # print('{:.4e}'.format(mse))
-    print('{:.4e}'.format(mse.mean().item()))
+    print(mse.shape, '{:.4e}'.format(mse.mean().item()))
     save_path = os.path.join('data', runs_folder, ckpt_name)
     os.makedirs(save_path, exist_ok=True)
     torch.save(mse, os.path.join(save_path, 'eval_loss.pt'))
