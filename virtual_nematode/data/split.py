@@ -23,3 +23,24 @@ class SplitDataset(torch.utils.data.TensorDataset):
             tensor = tensor[:-1]
         tensor = torch.cat(tensor, dim=0)
         return tensor
+
+
+class SlidingWindowDataset(torch.utils.data.TensorDataset):
+    """ split sequence in dataset
+    x: torch.Tensor, (data_size, seq_len, 1)
+    y: torch.Tensor, (data_size, seq_len, action_size)
+    """
+    def __init__(self, dataset, seq_len, seq_amount, stride):
+        x, y = dataset.tensors
+        self.seq_len = seq_len
+        self.seq_amount = seq_amount
+        self.stride = stride
+        x = self.subsequence(x)
+        y = self.subsequence(y)
+        super(SlidingWindowDataset, self).__init__(x, y)
+
+    def subsequence(self, tensor):
+        """ split each sequence into subsequences """
+        tensor = [tensor[:, i*self.stride:i*self.stide+self.seq_len, :] for i in range(self.seq_amount)]
+        tensor = torch.cat(tensor, dim=0)
+        return tensor
