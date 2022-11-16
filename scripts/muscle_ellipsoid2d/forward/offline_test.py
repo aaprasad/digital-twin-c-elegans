@@ -12,7 +12,6 @@ if __name__ == '__main__':
     model_folder = os.path.join('runs', runs_folder)
     print(model_folder, ckpt_name)
     data_name = 'data_7000_1000_640_64_eval.pt'  # 'data_7000_1000_640_64_test.pt'
-    # data_name = 'data_3500_500_1280_64_eval.pt'  # 'data_3500_500_1280_64_test.pt'
     kwargs = {
         'dt': 0.04, 'steps': 5,
         **get_kwargs(
@@ -20,7 +19,7 @@ if __name__ == '__main__':
             polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
         )
     }
-    mse = offline_test(data_name, 'li_current', model_folder, ckpt_name, batch_size=128, device_ids=0, **kwargs)
+    mse = offline_test(data_name, 'li_conductance', model_folder, ckpt_name, batch_size=128, device_ids=0, **kwargs)
     # print('{:.4e}'.format(mse))
     print('{:.4e}'.format(mse.mean().item()))
     save_path = os.path.join('data', runs_folder, ckpt_name)
