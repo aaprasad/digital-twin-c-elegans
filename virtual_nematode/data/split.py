@@ -41,6 +41,6 @@ class SlidingWindowDataset(torch.utils.data.TensorDataset):
 
     def subsequence(self, tensor):
         """ split each sequence into subsequences """
-        tensor = [tensor[:, i*self.stride:i*self.stide+self.seq_len, :] for i in range(self.seq_amount)]
+        tensor = [tensor[:, i*self.stride:i*self.stride+self.seq_len, :] for i in range(self.seq_amount)]
         tensor = torch.cat(tensor, dim=0)
         return tensor
