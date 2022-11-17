@@ -11,7 +11,8 @@ if __name__ == '__main__':
     ckpt_name = sys.argv[2]  # 'model.pt'
     model_folder = os.path.join('runs', runs_folder)
     print(model_folder, ckpt_name)
-    data_name = 'data_7000_1000_640_64_eval.pt'  # 'data_7000_1000_640_64_test.pt'
+    # data_name = 'data_7000_1000_640_64_eval.pt'  # 'data_7000_1000_640_64_test.pt'
+    data_name = 'data_7000_1000_640_64_stride8_n10_eval.pt'
     kwargs = {
         'dt': 0.04, 'steps': 5,
         **get_kwargs(
