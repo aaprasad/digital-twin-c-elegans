@@ -40,12 +40,16 @@ class LeakyIntegratorConductanceBasedGradientInput1(LeakyIntegratorConductanceBa
         external_input = super(LeakyIntegratorConductanceBasedGradientInput1, self)._external_input(stimuli[:, 0:self.p])
         # sensory input
         gradient = stimuli[:, self.p:self.p+1]  # (batch_size, 1)
-        if gradient > 0:
-            asel_input = self.w_s_a[0].abs() * torch.log(self.w_s_b[0].abs() * gradient + 1)
-            aser_input = -self.w_s_a[1].abs() * torch.log(self.w_s_b[1].abs() * gradient + 1)
-        else:
-            asel_input = torch.zeros_like(gradient)
-            aser_input = self.w_s_a[2].abs() * torch.log(-self.w_s_b[2].abs() * gradient + 1)
+        up_step_index = gradient > 0
+        down_step_index = gradient <= 0
+        asel_up_step_input = self.w_s_a[0].abs() * torch.log(self.w_s_b[0].abs() * gradient[up_step_index] + 1)
+        aser_up_step_input = -self.w_s_a[1].abs() * torch.log(self.w_s_b[1].abs() * gradient[up_step_index] + 1)
+        aser_down_step_input = self.w_s_a[2].abs() * torch.log(-self.w_s_b[2].abs() * gradient[down_step_index] + 1)
+        asel_input = torch.zeros_like(gradient)
+        asel_input[up_step_index] = asel_up_step_input
+        aser_input = torch.zeros_like(gradient)
+        aser_input[up_step_index] = aser_up_step_input
+        aser_input[down_step_index] = aser_down_step_input
         sensory_input = torch.cat((asel_input, aser_input), dim=1)  # ASEL/ASER, (batch_size, 2)
         external_input[:, self.w_s_mask] += sensory_input
         return external_input
