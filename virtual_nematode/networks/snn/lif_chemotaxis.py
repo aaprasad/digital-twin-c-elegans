@@ -18,11 +18,6 @@ class LeakyIntegratorConductanceBasedGradientInput(LeakyIntegratorConductanceBas
         external_input = super(LeakyIntegratorConductanceBasedGradientInput, self)._external_input(stimuli[:, 0:self.p])
         # sensory input
         gradient = stimuli[:, self.p:self.p+1]  # (batch_size, 1)
-        sensory_input = torch.cat(
-            (
-                gradient.clamp(min=0),  # ASEL
-                -gradient  # ASER
-            ), dim=1
-        )  # (batch_size, s)
+        sensory_input = torch.cat((gradient.clamp(min=0), -gradient), dim=1)  # ASEL/ASER, (batch_size, s)
         external_input[:, self.w_s_mask] += sensory_input * self.w_s.abs()
         return external_input
