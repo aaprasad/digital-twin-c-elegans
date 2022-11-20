@@ -24,9 +24,9 @@ class LeakyIntegratorConductanceBasedGradientInput(LeakyIntegratorConductanceBas
 
 
 class LeakyIntegratorConductanceBasedGradientInput1(LeakyIntegratorConductanceBased):
-    def __init__(self, w_s_mask, **kwargs):
+    def __init__(self, s, w_s_mask, **kwargs):
         super(LeakyIntegratorConductanceBasedGradientInput1, self).__init__(**kwargs)
-        s = 3  # sensory size
+        self.s = s  # sensory size
         self.w_s_a = torch.nn.Parameter(torch.ones(s))  # (3, )
         self.w_s_b = torch.nn.Parameter(torch.ones(s))  # (3, )
         self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (2, ), long

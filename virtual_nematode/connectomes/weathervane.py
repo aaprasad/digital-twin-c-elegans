@@ -26,7 +26,9 @@ def get_kwargs(path, polarity_path):
     sensation = SensoryInput(cells=cells, sensory_cells=sensory_cells)
     w_s_mask = sensation.mask()
     print('sensory cells', sensory_cells, w_s_mask)
+    s = 3  # len(sensory_cells)
+    print('s', s)
     return {
-        's': len(sensory_cells), 'w_s_mask': w_s_mask,
+        's': s, 'w_s_mask': w_s_mask,
         **_get_kwargs(path=path, polarity_path=polarity_path)
     }
