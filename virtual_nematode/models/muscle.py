@@ -44,9 +44,6 @@ class ForwardPIDMuscle(object):
     def seed(self, **kwargs):
         pass
 
-    def stimuli(self, **kwargs):
-        pass
-
     def reset(self):
         self.last_error = 0.
         self.start_step = np.random.randint(0, np.ceil(1. / (self.freq * self.dt)))

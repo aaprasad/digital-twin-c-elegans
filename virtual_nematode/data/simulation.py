@@ -81,8 +81,7 @@ def generate_sample(env, model, action_func, x_func, y_func):
     y = []
     for i in range(10 ** 6):
         action = action_func(model=model, step=i, observation=observation)
-        stimuli = model.stimuli(step=i)
-        x.append(x_func(stimuli=stimuli, observation=observation))
+        x.append(x_func(observation=observation))
         y.append(y_func(action=action))
         observation, reward, done, info = env.step(action)
         if done:
