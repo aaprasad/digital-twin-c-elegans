@@ -71,7 +71,10 @@ def generate_sample(env, model, action_func, x_func, y_func):
     y_func: function, return y
     """
     seed = sample_seed()
-    model.seed(seed=seed)  # seed model
+    # seed and reset model
+    model.seed(seed=seed)
+    model.reset()
+    # seed and reset env
     env.seed(seed)
     observation = env.reset()
     x = []
