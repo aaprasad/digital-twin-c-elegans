@@ -90,7 +90,7 @@ class WeathervanePIDMuscle(ForwardPIDMuscle):
 
     def step(self, step, q, **kwargs):
         g_w = kwargs.get('g_w')
-        q_target = self.a * np.sin(self.omega * step * self.dt + self.phi) - self.k_w * g_w
+        q_target = self.a * np.sin(self.omega * (step + self.start_step) * self.dt + self.phi) - self.k_w * g_w
         action = self._action(q, q_target)
         return action
 
