@@ -89,7 +89,7 @@ if __name__ == '__main__':
         density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
     """ testing """
-    model_name = 'li_conductance_gradient'
+    model_name = 'li_conductance_gradient1'
     test(model_folder, model_name, ckpt_name, save_folder)
     # single_test(env, model_folder, model_name, ckpt_name, save_folder)
     # record(env, model_folder, model_name, ckpt_name, video_folder)
