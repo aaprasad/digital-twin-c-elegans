@@ -46,7 +46,8 @@ class ForwardPIDMuscle(object):
 
     def reset(self):
         self.last_error = 0.
-        self.start_step = np.random.randint(0, np.ceil(1. / (self.freq * self.dt)))
+        self.start_step = 0
+        # self.start_step = np.random.randint(0, np.ceil(1. / (self.freq * self.dt)))
         # self.direction_target = None
 
     def _action(self, q, q_target):
