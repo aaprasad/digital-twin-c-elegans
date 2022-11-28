@@ -38,7 +38,7 @@ class ForwardPIDMuscle(object):
         # self.kp_direction = kp_direction  # gradual turn coefficient
         # state
         self.last_error = None
-        self.start_step = None
+        # self.start_step = None
         # self.direction_target = None  # np.array([1, 0])
 
     def seed(self, **kwargs):
@@ -46,7 +46,7 @@ class ForwardPIDMuscle(object):
 
     def reset(self):
         self.last_error = 0.
-        self.start_step = 0
+        # self.start_step = 0
         # self.start_step = np.random.randint(0, np.ceil(1. / (self.freq * self.dt)))
         # self.direction_target = None
 
@@ -67,7 +67,9 @@ class ForwardPIDMuscle(object):
         #     self.direction_target[0] * direction[1] - self.direction_target[1] * direction[0],
         #     self.direction_target[0] * direction[0] + self.direction_target[1] * direction[1]
         # )  # direction turns theta clockwise to target direction (-pi~pi, rad)
-        q_target = self.a * np.sin(self.omega * (step + self.start_step) * self.dt + self.phi)  # + self.kp_direction * theta_error
+        # q_target = self.a * np.sin(self.omega * (step + self.start_step) * self.dt + self.phi) + self.kp_direction * theta_error
+        # q_target = self.a * np.sin(self.omega * (step + self.start_step) * self.dt + self.phi)
+        q_target = self.a * np.sin(self.omega * step * self.dt + self.phi)
         action = self._action(q, q_target)
         return action
 
