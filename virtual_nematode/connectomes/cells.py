@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 
@@ -167,3 +168,31 @@ def ventral_cord_motor_neurons(path):
     gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
     cells = list(gap_junction.iloc[258:329, :].index)
     return cells
+
+
+def cell_type_dict(path):
+    def combine_cell_type(cell_type_lists):
+        cell_type = []
+        for i in range(len(cell_type_lists[0])):
+            name = ''
+            for j in range(len(cell_type_lists)):
+                if cell_type_lists[j][i] is not np.nan:
+                    name += cell_type_lists[j][i] + '/'
+            name = name[0:-1]
+            cell_type.append(name)
+        return cell_type
+
+    sheet_names = ['pharynx', 'sex-shared', 'hermaphrodite specific']
+    cell_types = {}
+    # cell_type = pd.read_excel(worm_assets.cell_type_path(), sheet_name=sheet_names[0], header=2, index_col=2).iloc[:469, 2:471]
+    for sheet_name, n in zip(sheet_names, [1, 3, 3]):
+        data = pd.read_excel(path, sheet_name=sheet_name)
+        cell = list(data.iloc[:, 0])
+        cell_type = combine_cell_type([list(data.iloc[:, 1 + i]) for i in range(n)])
+        for c, t in zip(cell, cell_type):
+            c = c.strip().lower()
+            if c in cell_types:
+                print('duplicate cell', c)
+            else:
+                cell_types[c] = t
+    return cell_types
