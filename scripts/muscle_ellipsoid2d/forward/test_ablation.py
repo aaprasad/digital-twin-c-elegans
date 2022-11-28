@@ -1,6 +1,5 @@
 from analysis import get_result_torch
 import copy
-import gym
 from matplotlib import pyplot as plt
 import os
 import seaborn as sns
@@ -10,6 +9,112 @@ from test import data_func, y_func1, select_model
 import torch
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
 from virtual_nematode.testers.tester import single_tester
+
+
+def modify_all_mask(model, index):
+    print('modify all mask, index', index)
+    model.cell.w_c_mask[:, index] = False
+    model.cell.w_c_mask[index, :] = False
+    model.cell.w_g_mask[:, index] = False
+    model.cell.w_g_mask[index, :] = False
+    model.cell.w_p_mask[:, index] = False
+    return model
+
+
+def modify_chemical_mask(model, index):
+    print('modify chemical mask, index', index)
+    model.cell.w_c_mask[:, index] = False
+    model.cell.w_c_mask[index, :] = False
+    return model
+
+
+def modify_electrical_mask(model, index):
+    print('modify electrical mask, index', index)
+    model.cell.w_g_mask[:, index] = False
+    model.cell.w_g_mask[index, :] = False
+    return model
+
+
+def single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder):
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    save_folder_temp = os.path.join(save_folder, 'all')
+    # save_folder_temp = os.path.join(save_folder, 'chemical')
+    # save_folder_temp = os.path.join(save_folder, 'electrical')
+    os.makedirs(save_folder_temp, exist_ok=True)
+    for i in range(469):
+        path_temp = os.path.join(save_folder_temp, 'single_test.{}.pt'.format(i))
+        if os.path.exists(path_temp):
+            continue
+        model_temp = copy.deepcopy(model)
+        model_temp = modify_all_mask(model_temp, index=i)
+        # model_temp = modify_chemical_mask(model_temp, index=i)
+        # model_temp = modify_electrical_mask(model_temp, index=i)
+        x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
+        torch.save((x, y), path_temp)
+        get_result_torch(x, y, max_episode_steps=max_episode_steps)
+
+
+def single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder, amount):
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    # cell index sorted by chemical degrees
+    w_c_mask = model.cell.w_c_mask.clone().detach()
+    chemical_degrees = w_c_mask.sum(dim=0) + w_c_mask.sum(dim=1)
+    chemical_indexes = torch.argsort(chemical_degrees, descending=True)
+    # cell index sorted by electrical degrees
+    w_g_mask = model.cell.w_g_mask.clone().detach()
+    assert torch.all(w_g_mask == w_g_mask.T)
+    electrical_degrees = w_g_mask.sum(dim=0)
+    electrical_indexes = torch.argsort(electrical_degrees, descending=True)
+    # abaltion
+    save_folder_temp = os.path.join(save_folder, 'chemical_by_degrees')
+    # save_folder_temp = os.path.join(save_folder, 'electrical_by_degrees')
+    os.makedirs(save_folder_temp, exist_ok=True)
+    for i in range(amount):
+        model_temp = copy.deepcopy(model)
+        print('ablation by degrees first {}'.format(i + 1))
+        for j in range(i + 1):
+            model_temp = modify_chemical_mask(model_temp, index=chemical_indexes[j])
+            print(j, chemical_indexes[j], chemical_degrees[chemical_indexes[j]])
+            # model_temp = modify_electrical_mask(model_temp, index=electrical_indexes[j])
+            # print(j, electrical_indexes[j], electrical_degrees[electrical_indexes[j]])
+        x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
+        torch.save((x, y), os.path.join(save_folder_temp, 'single_test.pt'))
+        get_result_torch(x, y, max_episode_steps=max_episode_steps)
+
+
+def single_test_by_degrees_double_abalation(env, model_folder, model_name, ckpt_name, save_folder, amount):
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    # cell index sorted by chemical degrees
+    w_c_mask = model.cell.w_c_mask.clone().detach()
+    chemical_degrees = w_c_mask.sum(dim=0) + w_c_mask.sum(dim=1)
+    chemical_indexes = torch.argsort(chemical_degrees, descending=True)
+    # cell index sorted by electrical degrees
+    w_g_mask = model.cell.w_g_mask.clone().detach()
+    assert torch.all(w_g_mask == w_g_mask.T)
+    electrical_degrees = w_g_mask.sum(dim=0)
+    electrical_indexes = torch.argsort(electrical_degrees, descending=True)
+    # abaltion
+    save_folder_temp = os.path.join(save_folder, 'chemical_by_degrees_double_ablation')
+    # save_folder_temp = os.path.join(save_folder, 'electrical_by_degrees_double_ablation')
+    os.makedirs(save_folder_temp, exist_ok=True)
+    for i in range(amount):
+        for j in range(i + 1, amount):
+            print('ablation by degrees {}-{}'.format(i, j))
+            model_temp = copy.deepcopy(model)
+            model_temp = modify_chemical_mask(model_temp, index=chemical_indexes[i])
+            model_temp = modify_chemical_mask(model_temp, index=chemical_indexes[j])
+            print(i, chemical_indexes[i], chemical_degrees[chemical_indexes[i]])
+            print(j, chemical_indexes[j], chemical_degrees[chemical_indexes[j]])
+            # model_temp = modify_electrical_mask(model_temp, index=electrical_indexes[i])
+            # model_temp = modify_electrical_mask(model_temp, index=electrical_indexes[j])
+            # print(i, electrical_indexes[i], electrical_degrees[electrical_indexes[i]])
+            # print(j, electrical_indexes[j], electrical_degrees[electrical_indexes[j]])
+            x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
+            torch.save((x, y), os.path.join(save_folder_temp, 'single_test.{}-{}.pt'.format(i, j)))
+            get_result_torch(x, y, max_episode_steps=max_episode_steps)
 
 
 def plot_3_mask(index, path, w_c_mask, w_g_mask, w_p_mask):
@@ -34,135 +139,6 @@ def plot_3_mask(index, path, w_c_mask, w_g_mask, w_p_mask):
     plt.ylabel('Joint ID')
     plt.savefig(path)
     plt.close()
-
-
-def single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder):
-    def modify_mask(model, index):
-        print('modify mask, index', index)
-        model.cell.w_c_mask[:, index] = False
-        model.cell.w_c_mask[index, :] = False
-        model.cell.w_g_mask[:, index] = False
-        model.cell.w_g_mask[index, :] = False
-        model.cell.w_p_mask[:, index] = False
-        return model
-
-    def modify_chemical_mask(model, index):
-        print('modify chemical mask, index', index)
-        model.cell.w_c_mask[:, index] = False
-        model.cell.w_c_mask[index, :] = False
-        return model
-
-    def modify_electrical_mask(model, index):
-        print('modify electrical mask, index', index)
-        model.cell.w_g_mask[:, index] = False
-        model.cell.w_g_mask[index, :] = False
-        return model
-
-    print(ckpt_name)
-    model = select_model(model_folder, model_name, ckpt_name)
-    # save_folder_temp = os.path.join(save_folder, 'chemical')
-    save_folder_temp = os.path.join(save_folder, 'electrical')
-    os.makedirs(save_folder_temp, exist_ok=True)
-    for i in range(469):
-        path_temp = os.path.join(save_folder_temp, 'single_test.{}.pt'.format(i))
-        if os.path.exists(path_temp):
-            continue
-        model_temp = copy.deepcopy(model)
-        # model_temp = modify_mask(model_temp, index=i)
-        # model_temp = modify_chemical_mask(model_temp, index=i)
-        model_temp = modify_electrical_mask(model_temp, index=i)
-        x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
-        torch.save((x, y), path_temp)
-        get_result_torch(x, y, max_episode_steps=max_episode_steps)
-
-
-def single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder, amount):
-    def modify_chemical_mask(model, n):
-        print('modify chemical mask')
-        w_c_mask = model.cell.w_c_mask.clone().detach()
-        print(w_c_mask.shape)
-        chemical_degrees = w_c_mask.sum(dim=0) + w_c_mask.sum(dim=1)
-        print(chemical_degrees.shape)
-        chemical_indexes = torch.argsort(chemical_degrees, descending=True)
-        print(chemical_indexes.shape)
-        for i in range(n):
-            index = chemical_indexes[i]
-            print(index, chemical_degrees[index])
-            model.cell.w_c_mask[:, index] = False
-            model.cell.w_c_mask[index, :] = False
-        return model
-
-    def modify_electrical_mask(model, n):
-        print('modify electrical mask')
-        w_g_mask = model.cell.w_g_mask.clone().detach()
-        print(w_g_mask.shape)
-        assert torch.all(w_g_mask == w_g_mask.T)
-        electrical_degrees = w_g_mask.sum(dim=0)
-        print(electrical_degrees.shape)
-        electrical_indexes = torch.argsort(electrical_degrees, descending=True)
-        print(electrical_indexes.shape)
-        for i in range(n):
-            index = electrical_indexes[i]
-            print(index, electrical_degrees[index])
-            model.cell.w_g_mask[:, index] = False
-            model.cell.w_g_mask[index, :] = False
-        return model
-
-    print(ckpt_name)
-    model = select_model(model_folder, model_name, ckpt_name)
-    for i in range(1, amount + 1):
-        # save_folder = os.path.join(save_folder, 'chemical{}'.format(i))
-        save_folder_temp = os.path.join(save_folder, 'electrical{}'.format(i))
-        print(save_folder_temp)
-        env_temp = gym.wrappers.Monitor(env, directory=save_folder_temp, force=True)
-        model_temp = copy.deepcopy(model)
-        # model_temp = modify_chemical_mask(model_temp, n=i)
-        model_temp = modify_electrical_mask(model_temp, n=i)
-        x, y = single_tester(env_temp, model_temp, data_func, x_func, y_func1, seed)
-        torch.save((x, y), os.path.join(save_folder_temp, 'single_test.pt'))
-        get_result_torch(x, y, max_episode_steps=max_episode_steps)
-
-
-def modify_chemical_mask(model, index):
-    print('modify chemical mask, index', index)
-    model.cell.w_c_mask[:, index] = False
-    model.cell.w_c_mask[index, :] = False
-    return model
-
-def modify_electrical_mask(model, index):
-    print('modify electrical mask, index', index)
-    model.cell.w_g_mask[:, index] = False
-    model.cell.w_g_mask[index, :] = False
-    return model
-
-
-def single_test_by_degrees_double_abalation(env, model_folder, model_name, ckpt_name, save_folder, amount):
-    print(ckpt_name)
-    model = select_model(model_folder, model_name, ckpt_name)
-    # cell index sorted by chemical degrees
-    w_c_mask = model.cell.w_c_mask.clone().detach()
-    chemical_degrees = w_c_mask.sum(dim=0) + w_c_mask.sum(dim=1)
-    chemical_indexes = torch.argsort(chemical_degrees, descending=True)
-    # cell index sorted by electrical degrees
-    w_g_mask = model.cell.w_g_mask.clone().detach()
-    assert torch.all(w_g_mask == w_g_mask.T)
-    electrical_degrees = w_g_mask.sum(dim=0)
-    electrical_indexes = torch.argsort(electrical_degrees, descending=True)
-    # abaltion
-    save_folder_temp = os.path.join(save_folder, 'chemical_by_degrees_double_ablation')
-    # save_folder_temp = os.path.join(save_folder, 'electrical_by_degrees_double_ablation')
-    os.makedirs(save_folder_temp, exist_ok=True)
-    for i in range(amount):
-        for j in range(i + 1, amount):
-            print('ablation by degrees {}-{}'.format(i, j))
-            model_temp = copy.deepcopy(model)
-            model_temp = modify_chemical_mask(model_temp, index=i)
-            model_temp = modify_chemical_mask(model_temp, index=j)
-            # model_temp = modify_electrical_mask(model_temp, index=i)
-            # model_temp = modify_electrical_mask(model_temp, index=j)
-            x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
-            torch.save((x, y), os.path.join(save_folder_temp, 'single_test.{}-{}.pt'.format(i, j)))
-            get_result_torch(x, y, max_episode_steps=max_episode_steps)
 
 
 if __name__ == '__main__':
