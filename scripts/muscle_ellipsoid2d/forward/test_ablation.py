@@ -123,6 +123,48 @@ def single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder
         get_result_torch(x, y, max_episode_steps=max_episode_steps)
 
 
+def modify_chemical_mask(model, index):
+    print('modify chemical mask, index', index)
+    model.cell.w_c_mask[:, index] = False
+    model.cell.w_c_mask[index, :] = False
+    return model
+
+def modify_electrical_mask(model, index):
+    print('modify electrical mask, index', index)
+    model.cell.w_g_mask[:, index] = False
+    model.cell.w_g_mask[index, :] = False
+    return model
+
+
+def single_test_by_degrees_double_abalation(env, model_folder, model_name, ckpt_name, save_folder, amount):
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    # cell index sorted by chemical degrees
+    w_c_mask = model.cell.w_c_mask.clone().detach()
+    chemical_degrees = w_c_mask.sum(dim=0) + w_c_mask.sum(dim=1)
+    chemical_indexes = torch.argsort(chemical_degrees, descending=True)
+    # cell index sorted by electrical degrees
+    w_g_mask = model.cell.w_g_mask.clone().detach()
+    assert torch.all(w_g_mask == w_g_mask.T)
+    electrical_degrees = w_g_mask.sum(dim=0)
+    electrical_indexes = torch.argsort(electrical_degrees, descending=True)
+    # abaltion
+    save_folder_temp = os.path.join(save_folder, 'chemical_by_degrees_double_ablation')
+    # save_folder_temp = os.path.join(save_folder, 'electrical_by_degrees_double_ablation')
+    os.makedirs(save_folder_temp, exist_ok=True)
+    for i in range(amount):
+        for j in range(i + 1, amount):
+            print('ablation by degrees {}-{}'.format(i, j))
+            model_temp = copy.deepcopy(model)
+            model_temp = modify_chemical_mask(model_temp, index=i)
+            model_temp = modify_chemical_mask(model_temp, index=j)
+            # model_temp = modify_electrical_mask(model_temp, index=i)
+            # model_temp = modify_electrical_mask(model_temp, index=j)
+            x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
+            torch.save((x, y), os.path.join(save_folder_temp, 'single_test.{}-{}.pt'.format(i, j)))
+            get_result_torch(x, y, max_episode_steps=max_episode_steps)
+
+
 if __name__ == '__main__':
     runs_folder = sys.argv[1]
     ckpt_name = sys.argv[2]  # 'model.pt'
@@ -142,5 +184,6 @@ if __name__ == '__main__':
     )
     """ testing """
     model_name = 'li_conductance'
-    single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder)
+    # single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder)
     # single_test_by_degrees(env, model_folder, model_name, ckpt_name, video_folder, amount=10)
+    single_test_by_degrees_double_abalation(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
