@@ -71,16 +71,16 @@ def single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder
     save_folder_temp = os.path.join(save_folder, 'chemical_by_degrees')
     # save_folder_temp = os.path.join(save_folder, 'electrical_by_degrees')
     os.makedirs(save_folder_temp, exist_ok=True)
-    for i in range(amount):
+    for i in range(1, amount + 1):
         model_temp = copy.deepcopy(model)
-        print('ablation by degrees first {}'.format(i + 1))
-        for j in range(i + 1):
+        print('ablation by degrees first {}'.format(i))
+        for j in range(i):
             model_temp = modify_chemical_mask(model_temp, index=chemical_indexes[j])
             print(j, chemical_indexes[j], chemical_degrees[chemical_indexes[j]])
             # model_temp = modify_electrical_mask(model_temp, index=electrical_indexes[j])
             # print(j, electrical_indexes[j], electrical_degrees[electrical_indexes[j]])
         x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
-        torch.save((x, y), os.path.join(save_folder_temp, 'single_test.pt'))
+        torch.save((x, y), os.path.join(save_folder_temp, 'single_test.{}.pt'.format(i)))
         get_result_torch(x, y, max_episode_steps=max_episode_steps)
 
 
@@ -161,5 +161,5 @@ if __name__ == '__main__':
     """ testing """
     model_name = 'li_conductance'
     # single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder)
-    # single_test_by_degrees(env, model_folder, model_name, ckpt_name, video_folder, amount=10)
-    single_test_by_degrees_double_abalation(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
+    single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
+    # single_test_by_degrees_double_abalation(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
