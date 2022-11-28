@@ -1,0 +1,146 @@
+from analysis import get_result_torch
+import copy
+import gym
+from matplotlib import pyplot as plt
+import os
+import seaborn as sns
+from sim import x_func
+import sys
+from test import data_func, y_func1, select_model
+import torch
+from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
+from virtual_nematode.testers.tester import single_tester
+
+
+def plot_3_mask(index, path, w_c_mask, w_g_mask, w_p_mask):
+    plt.figure(figsize=(20, 5))
+    # chemical
+    plt.subplot(1, 3, 1)
+    plt.title('Ablation {} Chemical Synapse Mask {}'.format(index, w_c_mask.sum().item()))
+    sns.heatmap(w_c_mask, cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Cell ID')
+    # gap junction
+    plt.subplot(1, 3, 2)
+    plt.title('Ablation {} Gap Junction Mask {}'.format(index, w_g_mask.sum().item()))
+    sns.heatmap(w_g_mask, cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Cell ID')
+    # proprioception
+    plt.subplot(1, 3, 3)
+    plt.title('Ablation {} Proprioception Input Mask {}'.format(index, w_p_mask.sum().item()))
+    sns.heatmap(w_p_mask, cmap='coolwarm', vmin=-1, vmax=1)
+    plt.xlabel('Cell ID')
+    plt.ylabel('Joint ID')
+    plt.savefig(path)
+    plt.close()
+
+
+def single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder):
+    def modify_mask(model, index):
+        print('modify mask, index', index)
+        model.cell.w_c_mask[:, index] = False
+        model.cell.w_c_mask[index, :] = False
+        model.cell.w_g_mask[:, index] = False
+        model.cell.w_g_mask[index, :] = False
+        model.cell.w_p_mask[:, index] = False
+        return model
+
+    def modify_chemical_mask(model, index):
+        print('modify chemical mask, index', index)
+        model.cell.w_c_mask[:, index] = False
+        model.cell.w_c_mask[index, :] = False
+        return model
+
+    def modify_electrical_mask(model, index):
+        print('modify electrical mask, index', index)
+        model.cell.w_g_mask[:, index] = False
+        model.cell.w_g_mask[index, :] = False
+        return model
+
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    # save_folder_temp = os.path.join(save_folder, 'chemical')
+    save_folder_temp = os.path.join(save_folder, 'electrical')
+    os.makedirs(save_folder_temp, exist_ok=True)
+    for i in range(469):
+        path_temp = os.path.join(save_folder_temp, 'single_test.{}.pt'.format(i))
+        if os.path.exists(path_temp):
+            continue
+        model_temp = copy.deepcopy(model)
+        # model_temp = modify_mask(model_temp, index=i)
+        # model_temp = modify_chemical_mask(model_temp, index=i)
+        model_temp = modify_electrical_mask(model_temp, index=i)
+        x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
+        torch.save((x, y), path_temp)
+        get_result_torch(x, y, max_episode_steps=max_episode_steps)
+
+
+def single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder, amount):
+    def modify_chemical_mask(model, n):
+        print('modify chemical mask')
+        w_c_mask = model.cell.w_c_mask.clone().detach()
+        print(w_c_mask.shape)
+        chemical_degrees = w_c_mask.sum(dim=0) + w_c_mask.sum(dim=1)
+        print(chemical_degrees.shape)
+        chemical_indexes = torch.argsort(chemical_degrees, descending=True)
+        print(chemical_indexes.shape)
+        for i in range(n):
+            index = chemical_indexes[i]
+            print(index, chemical_degrees[index])
+            model.cell.w_c_mask[:, index] = False
+            model.cell.w_c_mask[index, :] = False
+        return model
+
+    def modify_electrical_mask(model, n):
+        print('modify electrical mask')
+        w_g_mask = model.cell.w_g_mask.clone().detach()
+        print(w_g_mask.shape)
+        assert torch.all(w_g_mask == w_g_mask.T)
+        electrical_degrees = w_g_mask.sum(dim=0)
+        print(electrical_degrees.shape)
+        electrical_indexes = torch.argsort(electrical_degrees, descending=True)
+        print(electrical_indexes.shape)
+        for i in range(n):
+            index = electrical_indexes[i]
+            print(index, electrical_degrees[index])
+            model.cell.w_g_mask[:, index] = False
+            model.cell.w_g_mask[index, :] = False
+        return model
+
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    for i in range(1, amount + 1):
+        # save_folder = os.path.join(save_folder, 'chemical{}'.format(i))
+        save_folder_temp = os.path.join(save_folder, 'electrical{}'.format(i))
+        print(save_folder_temp)
+        env_temp = gym.wrappers.Monitor(env, directory=save_folder_temp, force=True)
+        model_temp = copy.deepcopy(model)
+        # model_temp = modify_chemical_mask(model_temp, n=i)
+        model_temp = modify_electrical_mask(model_temp, n=i)
+        x, y = single_tester(env_temp, model_temp, data_func, x_func, y_func1, seed)
+        torch.save((x, y), os.path.join(save_folder_temp, 'single_test.pt'))
+        get_result_torch(x, y, max_episode_steps=max_episode_steps)
+
+
+if __name__ == '__main__':
+    runs_folder = sys.argv[1]
+    ckpt_name = sys.argv[2]  # 'model.pt'
+    model_folder = os.path.join('runs', runs_folder)
+    save_folder = os.path.join('data', runs_folder, ckpt_name)
+    video_folder = os.path.join('video', runs_folder, ckpt_name)
+    assert os.path.exists(model_folder)
+    os.makedirs(save_folder, exist_ok=True)
+    os.makedirs(video_folder, exist_ok=True)
+    print(model_folder, ckpt_name)
+    seed = 1024
+    max_episode_steps = 2500
+    env = make_swimmer(
+        n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
+        max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
+        density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
+    )
+    """ testing """
+    model_name = 'li_conductance'
+    single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder)
+    # single_test_by_degrees(env, model_folder, model_name, ckpt_name, video_folder, amount=10)
