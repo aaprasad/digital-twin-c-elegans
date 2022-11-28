@@ -71,10 +71,10 @@ def single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder
     save_folder_temp = os.path.join(save_folder, 'chemical_by_degrees')
     # save_folder_temp = os.path.join(save_folder, 'electrical_by_degrees')
     os.makedirs(save_folder_temp, exist_ok=True)
-    for i in range(1, amount + 1):
+    for i in range(amount):
         model_temp = copy.deepcopy(model)
-        print('ablation by degrees first {}'.format(i))
-        for j in range(i):
+        print('ablation by degrees first {}'.format(i + 1))
+        for j in range(i + 1):
             model_temp = modify_chemical_mask(model_temp, index=chemical_indexes[j])
             print(j, chemical_indexes[j], chemical_degrees[chemical_indexes[j]])
             # model_temp = modify_electrical_mask(model_temp, index=electrical_indexes[j])
