@@ -1,4 +1,5 @@
 import numpy as np
+import queue
 
 
 class ForwardMuscle(object):
@@ -92,6 +93,27 @@ class WeathervanePIDMuscle(ForwardPIDMuscle):
 
     def step(self, step, q, **kwargs):
         g_w = kwargs.get('g_w')
+        q_target = self.a * np.sin(self.omega * step * self.dt + self.phi) - self.k_w * g_w
+        action = self._action(q, q_target)
+        return action
+
+
+class WeathervanePIDMuscleDelay(ForwardPIDMuscle):
+    def __init__(self, k_w, **kwargs):
+        super(WeathervanePIDMuscleDelay, self).__init__(**kwargs)
+        self.k_w = k_w
+        self.delay_step = 5  # 0 means no delay
+        # state
+        self.queue = None
+
+    def reset(self):
+        super(WeathervanePIDMuscleDelay, self).reset()
+        self.queue = queue.SimpleQueue()
+
+    def step(self, step, q, **kwargs):
+        g_w = kwargs.get('g_w')
+        self.queue.put(g_w)
+        g_w = self.queue.get() if self.queue.qsize() > self.delay_step else 0
         q_target = self.a * np.sin(self.omega * step * self.dt + self.phi) - self.k_w * g_w
         action = self._action(q, q_target)
         return action
