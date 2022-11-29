@@ -10,7 +10,7 @@ def train(model_name):
         # data_name = ['data_7000_5000_640_64_stride4_n10_train.pt', 'data_7000_1000_640_64_stride4_n10_eval.pt', 'data_7000_1000_640_64_stride4_n10_test.pt']
         device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
         kwargs = {
-            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,  # 11, 33, 42
+            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 42,  # 11, 42
             'device_ids': device_ids, 'lr': lr, 'weight_decay': weight_decay, 'epochs': epochs, 'early_stop': epochs,
             # 'model_path': None, 'strict': True, 'optimizer_path': None,
             'dt': 0.04, 'steps': 5, **get_kwargs(
