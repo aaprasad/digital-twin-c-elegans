@@ -35,6 +35,14 @@ def modify_electrical_mask(model, index):
     return model
 
 
+def single_test(env, model_folder, model_name, ckpt_name, save_folder):
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    x, y = single_tester(env, model, data_func, x_func, y_func1, seed)
+    torch.save((x, y), os.path.join(save_folder, 'single_test.control.pt'))
+    get_result_torch(x, y, max_episode_steps=max_episode_steps)
+
+
 def single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder):
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
@@ -160,6 +168,7 @@ if __name__ == '__main__':
     )
     """ testing """
     model_name = 'li_conductance'
+    single_test(env, model_folder, model_name, ckpt_name, save_folder)
     # single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder)
-    single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
+    # single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
     # single_test_by_degrees_double_abalation(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
