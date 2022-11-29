@@ -28,6 +28,18 @@ def modify_chemical_mask(model, index):
     return model
 
 
+def modify_chemical_input_mask(model, index):
+    print('modify chemical input mask, index', index)
+    model.cell.w_c_mask[:, index] = False  # chemical input
+    return model
+
+
+def modify_chemical_output_mask(model, index):
+    print('modify chemical output mask, index', index)
+    model.cell.w_c_mask[index, :] = False  # chemical output
+    return model
+
+
 def modify_electrical_mask(model, index):
     print('modify electrical mask, index', index)
     model.cell.w_g_mask[:, index] = False
@@ -48,6 +60,8 @@ def single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_f
     model = select_model(model_folder, model_name, ckpt_name)
     save_folder_temp = os.path.join(save_folder, 'all')
     # save_folder_temp = os.path.join(save_folder, 'chemical')
+    # save_folder_temp = os.path.join(save_folder, 'chemical_input')
+    # save_folder_temp = os.path.join(save_folder, 'chemical_output')
     # save_folder_temp = os.path.join(save_folder, 'electrical')
     os.makedirs(save_folder_temp, exist_ok=True)
     for i in range(469):
@@ -57,6 +71,8 @@ def single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_f
         model_temp = copy.deepcopy(model)
         model_temp = modify_all_mask(model_temp, index=i)
         # model_temp = modify_chemical_mask(model_temp, index=i)
+        # model_temp = modify_chemical_input_mask(model_temp, index=i)
+        # model_temp = modify_chemical_output_mask(model_temp, index=i)
         # model_temp = modify_electrical_mask(model_temp, index=i)
         x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
         torch.save((x, y), path_temp)
@@ -168,7 +184,7 @@ if __name__ == '__main__':
     )
     """ testing """
     model_name = 'li_conductance'
-    single_test(env, model_folder, model_name, ckpt_name, save_folder)
-    # single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder)
+    # single_test(env, model_folder, model_name, ckpt_name, save_folder)
+    single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder)
     # single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
     # single_test_by_degrees_double_abalation(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
