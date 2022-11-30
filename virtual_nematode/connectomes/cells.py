@@ -194,9 +194,9 @@ def cell_type_dict(path):
                 print('duplicate cell', c)
             else:
                 cell_types[c] = t
-    cell_types['e2D'] = cell_types['e2DL']
-    cell_types['e2VL'] = cell_types['e2V']
-    cell_types['e2VR'] = cell_types['e2V']
-    cell_types['exc_cell'] = cell_types['exc_gl']
-    cell_types['mu_sph'] = cell_types['mu_sphincter']
+    for source, target in zip(
+        ['e2D', 'e2VL', 'e2VR', 'exc_cell', 'mu_sph'],
+        ['e2DL', 'e2V', 'e2V', 'exc_gl', 'mu_sphincter']
+    ):
+        cell_types[source.lower()] = cell_types[target.lower()]
     return cell_types
