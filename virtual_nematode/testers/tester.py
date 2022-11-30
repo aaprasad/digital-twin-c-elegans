@@ -21,9 +21,9 @@ def test_func(env, model, data_func, x_func, y_func):
             state, activation, action = model.step(state, activation, data)
             action = action.squeeze(dim=0)  # remove batch dimension
             action = action.numpy()
-            observation, reward, done, info = env.step(action)
             x.append(x_func(observation=observation))
             y.append(y_func(state=state, activation=activation, action=action))
+            observation, reward, done, info = env.step(action)
             if done:
                 break
     env.close()
