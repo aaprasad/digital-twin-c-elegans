@@ -184,7 +184,6 @@ def cell_type_dict(path):
 
     sheet_names = ['pharynx', 'sex-shared', 'hermaphrodite specific']
     cell_types = {}
-    # cell_type = pd.read_excel(worm_assets.cell_type_path(), sheet_name=sheet_names[0], header=2, index_col=2).iloc[:469, 2:471]
     for sheet_name, n in zip(sheet_names, [1, 3, 3]):
         data = pd.read_excel(path, sheet_name=sheet_name)
         cell = list(data.iloc[:, 0])
@@ -195,4 +194,9 @@ def cell_type_dict(path):
                 print('duplicate cell', c)
             else:
                 cell_types[c] = t
+    cell_types['e2D'] = cell_types['e2DL']
+    cell_types['e2VL'] = cell_types['e2V']
+    cell_types['e2VR'] = cell_types['e2V']
+    cell_types['exc_cell'] = cell_types['exc_gl']
+    cell_types['mu_sph'] = cell_types['mu_sphincter']
     return cell_types
