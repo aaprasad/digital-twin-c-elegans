@@ -1,0 +1,35 @@
+from analysis import get_results_torch
+from data import x_func, y_func
+import numpy as np
+import os
+from sim import action_func
+import torch
+from virtual_nematode.data.simulation import generate_dataset
+from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
+from virtual_nematode.models.muscle import ForwardPIDMuscle
+
+
+if __name__ == '__main__':
+    input_size = 62  # x_func() size
+    data_size = 100  # 7000, 3500, 1750
+    max_episode_steps = 2500  # 640, 1280, 2560
+    reset_noise_scale = 0.6  # reset_noise_scale: 0.7->0.6
+    seed = 42  # 7
+    env = make_swimmer(
+        n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
+        max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale,
+        density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
+    )
+    action_size = env.action_space.shape[0]
+    print(env.action_space)
+    print(env.observation_space)
+    model = ForwardPIDMuscle(
+        dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+        kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
+        kd=0.15
+    )
+    dataset = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed)
+    os.makedirs('data', exist_ok=True)
+    torch.save(dataset, 'data/data_100_2500.pt')  # 'data_7000_640.pt', 'data_3500_1280.pt', 'data_1750_2560.pt'
+    x, y = dataset.tensors
+    get_results_torch(x, y, max_episode_steps=max_episode_steps)
