@@ -77,6 +77,27 @@ def preprocess_and_split_slide_dataset(load_name, save_names, lengths, x_index, 
     torch.save(test_data, os.path.join('data', save_names[2]))
 
 
+def preprocess_single_dataset(load_name, save_name, data_size, x_index):
+    # load
+    dataset = torch.load(os.path.join('data', load_name))
+    print('load', dataset.tensors[0].shape, dataset.tensors[1].shape)
+    # subset
+    dataset = Subset(dataset, data_size, x_index)
+    print('subset', dataset.tensors[0].shape, dataset.tensors[1].shape)
+    # float
+    dataset = FloatDataset(dataset)
+    print('dtype', dataset.tensors[0].dtype, dataset.tensors[1].dtype)
+    # clamp
+    dataset = ClampDataset(dataset, x_range=None, y_range=[0, 1])
+    print(
+        'clamp',
+        'x range', dataset.tensors[0].min().item(), dataset.tensors[0].max().item(),
+        'y range', dataset.tensors[1].min().item(), dataset.tensors[1].max().item()
+    )
+    # save
+    torch.save(dataset, os.path.join('data', save_name))
+
+
 def prepare_dataloader(data_path, batch_size):
     """ load data and prepare data loaders """
     train_data = torch.load(data_path[0])
