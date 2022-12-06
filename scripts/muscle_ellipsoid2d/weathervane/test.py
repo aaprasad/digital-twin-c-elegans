@@ -51,7 +51,7 @@ def test(model_folder, model_name, ckpt_name, save_folder):
     x_func_size = env.observation_space.shape[0]
     y_func_size = 95
     x, y = tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
-    torch.save((x, y), os.path.join(save_folder, 'test.pt'))
+    torch.save((x, y), os.path.join(save_folder, 'test100.pt'))
     get_results_torch(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     os.makedirs(save_folder, exist_ok=True)
     os.makedirs(video_folder, exist_ok=True)
     print(model_folder, ckpt_name)
-    seed = 43
+    seed = 1024
     max_episode_steps = 2500
     data_path = os.path.join('data', runs_folder)
     os.makedirs(data_path, exist_ok=True)
