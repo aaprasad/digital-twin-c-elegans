@@ -67,7 +67,7 @@ if __name__ == '__main__':
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )
-    x, y = simulate(env, model, action_func, x_func, seed=seed, trials=1, render=True)
+    x, y = simulate(env, model, action_func, x_func, seed=seed, trials=100, render=False)
     os.makedirs('data', exist_ok=True)
     np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
     # np.savez(os.path.join('data', 'simulate_3sigma.npz'), x=x, y=y)
