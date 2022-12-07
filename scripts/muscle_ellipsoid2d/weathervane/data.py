@@ -5,7 +5,7 @@ from sim import action_func, position_func
 import torch
 from virtual_nematode.data.simulation import generate_dataset
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
-from virtual_nematode.models.muscle import WeathervanePIDMuscle
+from virtual_nematode.models.muscle import WeathervanePIDMuscle, WeathervanePIDMuscleDelay
 
 
 def x_func(observation, **kwargs):
@@ -31,13 +31,19 @@ if __name__ == '__main__':
     action_size = env.action_space.shape[0]
     print(env.action_space, env.observation_space)
     print(env.source)
-    model = WeathervanePIDMuscle(
-        k_w=1, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+    # model = WeathervanePIDMuscle(
+    #     k_w=1, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+    #     kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
+    #     kd=0.15
+    # )
+    model = WeathervanePIDMuscleDelay(
+        k_w=1, delay_step=100, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )
     dataset = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed)
     os.makedirs('data', exist_ok=True)
-    torch.save(dataset, 'data/data_7000_640.pt')
+    # torch.save(dataset, 'data/data_7000_640.pt')
+    torch.save(dataset, 'data/data_7000_640_delay100.pt')
     x, y = dataset.tensors
     get_results_torch(x, y, max_episode_steps=max_episode_steps, sigma=5)
