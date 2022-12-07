@@ -12,7 +12,7 @@ import gym
 import numpy as np
 import os
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane, make_swimmer_weathervane_fixed
-from virtual_nematode.models.muscle import WeathervanePIDMuscle
+from virtual_nematode.models.muscle import WeathervanePIDMuscle, WeathervanePIDMuscleDelay
 from virtual_nematode.simulation import simulate
 
 
@@ -57,12 +57,17 @@ if __name__ == '__main__':
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space, env.observation_space)
     print(env.source)
-    model = WeathervanePIDMuscle(
-        k_w=1, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+    # model = WeathervanePIDMuscle(
+    #     k_w=1, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+    #     kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
+    #     kd=0.15
+    # )
+    model = WeathervanePIDMuscleDelay(
+        k_w=1, delay_step=100, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )
-    x, y = simulate(env, model, action_func, x_func, seed=seed, trials=100, render=False)
+    x, y = simulate(env, model, action_func, x_func, seed=seed, trials=1, render=True)
     os.makedirs('data', exist_ok=True)
     np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
     # np.savez(os.path.join('data', 'simulate_3sigma.npz'), x=x, y=y)
