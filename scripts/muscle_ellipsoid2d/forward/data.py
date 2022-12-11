@@ -19,10 +19,12 @@ def y_func(action, **kwargs):
 
 if __name__ == '__main__':
     input_size = 62  # x_func() size
-    data_size = 7000  # 7000, 3500, 1750
-    max_episode_steps = 640  # 640, 1280, 2560
+    # data_size = 7000  # 7000, 3500, 1750
+    # max_episode_steps = 640  # 640, 1280, 2560
+    data_size, max_episode_steps = 35000, 320
     reset_noise_scale = 0.6  # reset_noise_scale: 0.7->0.6
-    seed = 7
+    # seed = 7
+    seed = 42
     env = make_swimmer(
         n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
         max_episode_steps=max_episode_steps, reset_noise_scale=reset_noise_scale,
@@ -42,6 +44,7 @@ if __name__ == '__main__':
     )
     dataset = generate_dataset(env, model, action_func, x_func, y_func, input_size, action_size, data_size, max_episode_steps, seed)
     os.makedirs('data', exist_ok=True)
-    torch.save(dataset, 'data/data_7000_640.pt')  # 'data_7000_640.pt', 'data_3500_1280.pt', 'data_1750_2560.pt'
+    # torch.save(dataset, 'data/data_7000_640.pt')  # 'data_7000_640.pt', 'data_3500_1280.pt', 'data_1750_2560.pt'
+    torch.save(dataset, 'data/data_35000_320.pt')
     x, y = dataset.tensors
     get_results_torch(x, y, max_episode_steps=max_episode_steps)
