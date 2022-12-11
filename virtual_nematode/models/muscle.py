@@ -99,10 +99,10 @@ class WeathervanePIDMuscle(ForwardPIDMuscle):
 
 
 class WeathervanePIDMuscleDelay(ForwardPIDMuscle):
-    def __init__(self, k_w, **kwargs):
+    def __init__(self, k_w, delay_step, **kwargs):
         super(WeathervanePIDMuscleDelay, self).__init__(**kwargs)
         self.k_w = k_w
-        self.delay_step = 5  # 0 means no delay
+        self.delay_step = delay_step  # 0 means no delay
         # state
         self.queue = None
 
