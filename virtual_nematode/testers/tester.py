@@ -32,18 +32,17 @@ def test_func(env, model, data_func, x_func, y_func):
     return x, y
 
 
-def tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed=42, max_episode_steps=2500, data_size=100):
+def tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed=42, max_episode_steps=2500, data_size=100, num_workders=None):
     """ online test for at least 100 trials with torch multiprocessing """
     np.random.seed(seed)
     torch.manual_seed(seed)
     result = SimulationDataset(
-        data_size, max_episode_steps, x_func_size, y_func_size, seed, test_func, disable=False,
+        data_size, max_episode_steps, x_func_size, y_func_size, seed, test_func, num_workders, disable=False,
         # func kwargs
         env=env, model=model, data_func=data_func, x_func=x_func, y_func=y_func
     )
     print('result', len(result), result[0][0].size(), result[0][1].size())
     x, y = result.tensors
-    x, y = x.detach(), y.detach()
     return x, y  # x_func, y_func content
 
 
