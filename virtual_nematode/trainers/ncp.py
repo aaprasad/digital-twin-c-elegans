@@ -16,7 +16,8 @@ from virtual_nematode.networks.snn.lif import (
 )
 from virtual_nematode.networks.snn.lif_chemotaxis import (
     LeakyIntegratorConductanceBasedGradientInput,
-    LeakyIntegratorConductanceBasedGradientInput1
+    LeakyIntegratorConductanceBasedGradientInput1,
+    LeakyIntegratorConductanceBasedGradientInput2
 )
 from virtual_nematode.networks.snn.weathervane import SNNCell as SNNCellW
 from virtual_nematode.networks.snn.weathervane import SNNCell1 as SNNCellW1
@@ -60,6 +61,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = li_conductance_gradient(**kwargs)
     elif model_name == 'li_conductance_gradient1':
         model = li_conductance_gradient1(**kwargs)
+    elif model_name == 'li_conductance_gradient2':
+        model = li_conductance_gradient2(**kwargs)
     elif model_name == 'snn_weathervane':
         model = snn_weathervane(**kwargs)
     elif model_name == 'snn_weathervane1':
@@ -193,6 +196,12 @@ def li_conductance_gradient(**kwargs):
 
 def li_conductance_gradient1(**kwargs):
     cell = LeakyIntegratorConductanceBasedGradientInput1(**kwargs)
+    model = SNN(cell)
+    return model
+
+
+def li_conductance_gradient2(**kwargs):
+    cell = LeakyIntegratorConductanceBasedGradientInput2(**kwargs)
     model = SNN(cell)
     return model
 
