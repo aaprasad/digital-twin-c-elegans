@@ -1,5 +1,6 @@
 from analysis import get_result_torch
 import copy
+import gym
 from matplotlib import pyplot as plt
 import os
 import seaborn as sns
@@ -77,6 +78,27 @@ def single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_f
         x, y = single_tester(env, model_temp, data_func, x_func, y_func1, seed)
         torch.save((x, y), path_temp)
         get_result_torch(x, y, max_episode_steps=max_episode_steps)
+
+
+def single_test_single_ablation_video(env, model_folder, model_name, ckpt_name, save_folder, index):
+    model = select_model(model_folder, model_name, ckpt_name)
+    # save_folder_temp = os.path.join(save_folder, 'control')
+    # save_folder_temp = os.path.join(save_folder, 'all_{}'.format(index))
+    # save_folder_temp = os.path.join(save_folder, 'chemical_{}'.format(index))
+    # save_folder_temp = os.path.join(save_folder, 'chemical_input_{}'.format(index))
+    # save_folder_temp = os.path.join(save_folder, 'chemical_output_{}'.format(index))
+    save_folder_temp = os.path.join(save_folder, 'electrical_{}'.format(index))
+    os.makedirs(save_folder_temp, exist_ok=True)
+    model_temp = copy.deepcopy(model)
+    # model_temp = modify_all_mask(model_temp, index=index)
+    # model_temp = modify_chemical_mask(model_temp, index=index)
+    # model_temp = modify_chemical_input_mask(model_temp, index=index)
+    # model_temp = modify_chemical_output_mask(model_temp, index=index)
+    model_temp = modify_electrical_mask(model_temp, index=index)
+    env_temp = gym.wrappers.Monitor(env, directory=save_folder_temp, force=True)
+    x, y = single_tester(env_temp, model_temp, data_func, x_func, y_func1, seed)
+    torch.save((x, y), os.path.join(save_folder_temp, 'single_test.pt'))
+    get_result_torch(x, y, max_episode_steps=max_episode_steps)
 
 
 def single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder, amount):
@@ -188,3 +210,4 @@ if __name__ == '__main__':
     single_test_single_ablation(env, model_folder, model_name, ckpt_name, save_folder)
     # single_test_by_degrees(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
     # single_test_by_degrees_double_abalation(env, model_folder, model_name, ckpt_name, save_folder, amount=10)
+    # single_test_single_ablation_video(env, model_folder, model_name, ckpt_name, save_folder=video_folder, index=216)
