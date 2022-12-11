@@ -66,3 +66,7 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
     ```
     tensorboard --logdir=runs
     ```
+
+## Server
+* shut down after `python train.py; shutdown`
+* shut down if the result is successful `python train.py && shutdown`
