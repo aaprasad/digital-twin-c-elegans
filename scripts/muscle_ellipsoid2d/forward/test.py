@@ -71,7 +71,7 @@ def single_test(env, model_folder, model_name, ckpt_name, save_folder):
     model = select_model(model_folder, model_name, ckpt_name)
     # model = modify_chemical_mask(model, n)
     x, y = single_tester(env, model, data_func, x_func, y_func1, seed)
-    torch.save((x, y), os.path.join(save_folder, 'test20221126', 'single_test.pt'))
+    torch.save((x, y), os.path.join(save_folder, 'single_test.pt'))
     get_result_torch(x, y, max_episode_steps=max_episode_steps)
 
 
