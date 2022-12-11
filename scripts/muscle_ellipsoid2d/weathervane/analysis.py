@@ -50,7 +50,7 @@ def get_result_torch(x, y, **kwargs):
     sigma = kwargs.get('sigma')
     displacement = torch.linalg.norm(x[-1, 56:58] - x[0, 56:58], ord=2).item()
     print('com displacement {:.2f} / {} steps'.format(displacement, max_episode_steps))
-    distance = torch.linalg.norm(x[1:, 56:58] - x[0:-1, 56:58], ord=2, dim=1).sum(dim=1).mean().item()
+    distance = torch.linalg.norm(x[1:, 56:58] - x[0:-1, 56:58], ord=2, dim=1).sum().item()
     print('com distance {:.2f} / {} steps'.format(distance, max_episode_steps))
     chemotaxis_index = x[:, 62].mean().item()
     print('chemotaxis index {:.2f}'.format(chemotaxis_index))
