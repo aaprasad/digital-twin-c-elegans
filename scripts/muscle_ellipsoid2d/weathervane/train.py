@@ -8,10 +8,12 @@ def train(model_name):
         # data_name = ['data_7000_5000_640_64_train.pt', 'data_7000_1000_640_64_eval.pt', 'data_7000_1000_640_64_test.pt']
         # data_name = ['data_7000_5000_640_64_stride4_n10_train.pt', 'data_7000_1000_640_64_stride4_n10_eval.pt', 'data_7000_1000_640_64_stride4_n10_test.pt']
         data_name = ['data_7000_5000_640_64_stride8_n10_train.pt', 'data_7000_1000_640_64_stride8_n10_eval.pt', 'data_7000_1000_640_64_stride8_n10_test.pt']
-        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
-        # device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
+        # data_name = ['data_7000_5000_640_64_stride8_50000_train.pt', 'data_7000_1000_640_64_stride8_10000_eval.pt', 'data_7000_1000_640_64_stride8_10000_test.pt']
+        # data_name = ['data_7000_5000_320_64_stride8_50000_train.pt', 'data_7000_1000_320_64_stride8_10000_eval.pt', 'data_7000_1000_320_64_stride8_10000_test.pt']
+        # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
+        device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
         kwargs = {
-            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 11,
+            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 42,  # 11, 42
             'device_ids': device_ids, 'lr': lr, 'weight_decay': weight_decay, 'epochs': epochs, 'early_stop': epochs,
             # model kwargs
             # 'model_path': None, 'strict': True, 'optimizer_path': None,
@@ -29,4 +31,5 @@ def train(model_name):
 
 if __name__ == '__main__':
     # train('snn_weathervane3')
-    train('li_conductance_gradient1')
+    # train('li_conductance_gradient1')
+    train('li_conductance_gradient2')
