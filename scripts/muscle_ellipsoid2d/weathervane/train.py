@@ -13,7 +13,7 @@ def train(model_name):
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
         device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
         kwargs = {
-            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 42,  # 11, 42
+            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 42,
             'device_ids': device_ids, 'lr': lr, 'weight_decay': weight_decay, 'epochs': epochs, 'early_stop': epochs,
             # model kwargs
             # 'model_path': None, 'strict': True, 'optimizer_path': None,
