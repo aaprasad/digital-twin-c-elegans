@@ -1,5 +1,6 @@
 import numpy as np
 from tqdm import tqdm
+from virtual_nematode.utils import sample_seed
 
 
 def simulate(env, model, action_func, x_func, seed=None, trials=1, render=False):
@@ -10,9 +11,10 @@ def simulate(env, model, action_func, x_func, seed=None, trials=1, render=False)
     **kwargs: configure mathematical model
     """
     x, y = [], []
-    for i in tqdm(range(trials)):
+    np.random.seed(seed)  # if seed is None, ignore
+    for _ in tqdm(range(trials)):
         observations, actions = [], []
-        env.seed(seed=seed + i if seed is not None else None)
+        env.seed(seed=sample_seed() if seed is not None else None)
         observation = env.reset()
         model.reset()
         for step in range(10 ** 6):
