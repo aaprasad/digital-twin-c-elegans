@@ -10,6 +10,8 @@ def train(model_name):
         data_name = ['data_7000_5000_640_64_stride8_n10_train.pt', 'data_7000_1000_640_64_stride8_n10_eval.pt', 'data_7000_1000_640_64_stride8_n10_test.pt']
         # data_name = ['data_7000_5000_640_64_stride8_50000_train.pt', 'data_7000_1000_640_64_stride8_10000_eval.pt', 'data_7000_1000_640_64_stride8_10000_test.pt']
         # data_name = ['data_7000_5000_320_64_stride8_50000_train.pt', 'data_7000_1000_320_64_stride8_10000_eval.pt', 'data_7000_1000_320_64_stride8_10000_test.pt']
+        # data_name = ['data_7000_640_256_stride8_n10_train.pt', 'data_7000_640_256_stride8_n10_eval.pt', 'data_7000_640_256_stride8_n10_test.pt']
+        # data_name = ['data_7000_640_512_stride8_n10_train.pt', 'data_7000_640_512_stride8_n10_eval.pt', 'data_7000_640_512_stride8_n10_test.pt']
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
         device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
         kwargs = {
