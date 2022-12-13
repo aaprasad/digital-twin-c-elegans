@@ -60,7 +60,7 @@ def make_swimmer_trapped(
 
 def make_swimmer_weathervane(
     n_bodies, joint_range, max_episode_steps, reset_noise_scale, distance, source, position_func, density,
-    viscosity, condim, friction, cone
+    viscosity, condim, friction, cone, distribution_func=fick
 ):
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction, cone)
     # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorpos')
@@ -78,7 +78,7 @@ def make_swimmer_weathervane(
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = SensorObservation(env)
-    env = DistributionObservation(env, dt=env.dt, f=fick, source=source, position_func=position_func)
+    env = DistributionObservation(env, dt=env.dt, f=distribution_func, source=source, position_func=position_func)
     env = Recorder(env, camera_name=None)
     return env
 
