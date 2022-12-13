@@ -30,6 +30,16 @@ def y_func(**kwargs):
     return data
 
 
+def y_func1(**kwargs):
+    """ stats: action """
+    state = kwargs.get('state')
+    activation = kwargs.get('activation')
+    action = kwargs.get('action')
+    # data = action.tolist()
+    data = state.squeeze(dim=0).tolist() + activation.squeeze(dim=0).tolist() + action.tolist()
+    return data
+
+
 def select_model(model_folder, model_name, ckpt_name):
     if model_name.startswith('snn_weathervane') or model_name.startswith('li'):
         kwargs = {
