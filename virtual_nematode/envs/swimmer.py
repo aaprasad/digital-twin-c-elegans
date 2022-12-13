@@ -39,6 +39,10 @@ def fick(target=None, source=None, sigma=5):
     return c
 
 
+def fick_uniform(target, source, concentration=0):
+    return concentration
+
+
 def make_chemotaxis_swimmer(return_func, angle, xml_str_base, distance, reset_noise_scale, max_episode_steps, position_func, camera_name):
     """ create chemotaxis swimmer env """
     def func():
