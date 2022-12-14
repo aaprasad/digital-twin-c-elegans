@@ -65,6 +65,16 @@ def test(model_folder, model_name, ckpt_name, save_folder):
     get_results_torch(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
+def test_full(model_folder, model_name, ckpt_name, save_folder):
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    x_func_size = env.observation_space.shape[0]
+    y_func_size = 1033
+    x, y = tester(env, model, data_func, x_func, y_func1, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
+    torch.save((x, y), os.path.join(save_folder, 'test100.full.pt'))
+    get_results_torch(x, y, max_episode_steps=max_episode_steps, sigma=5)
+
+
 def single_test(env, model_folder, model_name, ckpt_name, save_folder):
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
