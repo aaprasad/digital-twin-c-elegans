@@ -1,9 +1,22 @@
+from analysis import get_results_torch
 import os
-from sim import position_func
+from sim import x_func, position_func
 import sys
-from test import test
+from test import data_func, y_func, select_model
+import torch
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane
 from virtual_nematode.envs.swimmer import fick_uniform
+from virtual_nematode.testers.tester import tester
+
+
+def test(model_folder, model_name, ckpt_name, save_folder):
+    print(ckpt_name)
+    model = select_model(model_folder, model_name, ckpt_name)
+    x_func_size = env.observation_space.shape[0]
+    y_func_size = 95
+    x, y = tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
+    torch.save((x, y), os.path.join(save_folder, 'test100.forward.pt'))
+    get_results_torch(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
 if __name__ == '__main__':
