@@ -5,7 +5,7 @@ import torch
 from virtual_nematode.data.utils import prepare_test_dataloader
 from virtual_nematode.trainers.ncp import test_none_reduction
 from test import select_model
-from test_ablation import (
+from test_ablation_once import (
     modify_all_mask, modify_chemical_mask, modify_chemical_input_mask, modify_chemical_output_mask,
     modify_electrical_mask
 )
