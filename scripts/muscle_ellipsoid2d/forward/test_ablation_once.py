@@ -18,7 +18,6 @@ def modify_all_mask(model, index):
     model.cell.w_c_mask[index, :] = False
     model.cell.w_g_mask[:, index] = False
     model.cell.w_g_mask[index, :] = False
-    model.cell.w_p_mask[:, index] = False
     return model
 
 
