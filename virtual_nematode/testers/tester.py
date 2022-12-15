@@ -32,6 +32,29 @@ def test_func(env, model, data_func, x_func, y_func):
     return x, y
 
 
+def test_vector_env_func(env, model, data_func, x_func, y_func, device, seed=None):
+    env.seed(seed)
+    torch.manual_seed(seed)
+    observation = env.reset()
+    model.eval()
+    state, activation = None, None
+    x, y = [], []
+    with torch.no_grad():
+        for _ in range(10 ** 6):
+            data = data_func(observation=observation)
+            data = torch.from_numpy(data).float().to(device)
+            state, activation, action = model.step(state, activation, data)
+            action = action.cpu().numpy()
+            x.append(x_func(observation=observation))
+            y.append(y_func(state=state, activation=activation, action=action))
+            observation, reward, done, info = env.step(action)
+            if done.all():
+                break
+    x = np.stack(x, axis=1)  # environment observation, (max_episode_steps, num_envs, env_obs_size)
+    y = np.stack(y, axis=1)  # network observation, (max_episode_steps, num_envs, net_obs_size)
+    return x, y
+
+
 def tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed=42, max_episode_steps=2500, data_size=100, num_workders=None):
     """ online test for at least 100 trials with torch multiprocessing """
     np.random.seed(seed)
