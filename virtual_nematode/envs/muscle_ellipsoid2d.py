@@ -32,6 +32,27 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
     return env
 
 
+def make_swimmer_xml(n_bodies, joint_range, density, viscosity, condim, friction, cone):
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction, cone)
+    xml_str = position(xml_str)
+    xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
+    return xml_str
+
+
+def make_swimmer_fn(xml_str, max_episode_steps, reset_noise_scale):
+    def _fn():
+        env = gym.make(
+            'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+            reset_noise_scale=reset_noise_scale
+        )
+        env = gym.wrappers.TimeLimit(env, max_episode_steps)
+        env = gym.wrappers.ClipAction(env)
+        env = SensorObservation(env)
+        env = Recorder(env, camera_name=None)
+        return env
+    return _fn
+
+
 def make_swimmer_trapped(
     n_bodies, joint_range, max_episode_steps, reset_noise_scale, density, viscosity, condim, friction, body_index,
     muscle_index
