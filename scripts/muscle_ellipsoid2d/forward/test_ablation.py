@@ -20,6 +20,9 @@ def test(model_folder, model_name, ckpt_name, save_folder, ablation_type, device
     save_folder_temp = os.path.join(save_folder, ablation_type)
     os.makedirs(save_folder_temp)
     for i in range(469):
+        file_temp = os.path.join(save_folder_temp, 'test100.{}.npz'.format(i))
+        if os.path.exists(file_temp):
+            continue
         model_temp = copy.deepcopy(model)
         if ablation_type == 'all':
             model_temp = modify_all_mask(model_temp, index=i)
@@ -31,7 +34,7 @@ def test(model_folder, model_name, ckpt_name, save_folder, ablation_type, device
             raise AssertionError
         x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
         print(x.shape, y.shape)
-        np.savez(os.path.join(save_folder_temp, 'test100.{}.npz'.format(i)), x=x, y=y)
+        np.savez(file_temp, x=x, y=y)
         get_results_numpy(x, y, max_episode_steps=max_episode_steps)
 
 
