@@ -37,28 +37,18 @@ def x_func(observation, **kwargs):
     return observation
 
 
-if __name__ == '__main__':
-    max_episode_steps = 2500
-    seed = 7  # None
+def simulate_random(k_w=1):
     env = make_swimmer_weathervane(
         n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
         max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
         distance=15, source=(0, 0), position_func=position_func,  # distance = 3 * sigma
         density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
-    """
-    env = make_swimmer_weathervane_fixed(
-        n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
-        max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
-        pos=(15, 0), source=(0, 0), position_func=position_func,  # distance = 3 * sigma
-        density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
-    )
-    """
     # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
     print(env.action_space, env.observation_space)
     print(env.source)
     model = WeathervanePIDMuscle(
-        k_w=1, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+        k_w=k_w, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )
@@ -67,8 +57,44 @@ if __name__ == '__main__':
     #     kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
     #     kd=0.15
     # )
-    x, y = simulate(env, model, action_func, x_func, seed=seed, trials=100, render=False)
-    os.makedirs('data', exist_ok=True)
-    np.savez(os.path.join('data', 'simulate.npz'), x=x, y=y)
-    # np.savez(os.path.join('data', 'simulate_3sigma.npz'), x=x, y=y)
+    x, y = simulate(env, model, action_func, x_func, seed=seed, trials=trials, render=False)
+    np.savez(os.path.join('data', 'simulate_random_kw{}.npz'.format(k_w)), x=x, y=y)
     get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
+
+
+def simulate_fixed(pos=(15, 0), k_w=1):
+    env = make_swimmer_weathervane_fixed(
+        n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
+        max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
+        pos=pos, source=(0, 0), position_func=position_func,
+        density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
+    )
+    # env = gym.wrappers.Monitor(env, directory='video/swimmer', force=True)
+    print(env.action_space, env.observation_space)
+    print(env.source)
+    model = WeathervanePIDMuscle(
+        k_w=k_w, dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+        kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
+        kd=0.15
+    )
+    x, y = simulate(env, model, action_func, x_func, seed=seed, trials=trials, render=False)
+    distance = int(np.sqrt(pos[0] ** 2 + pos[1] ** 2))
+    np.savez('data/simulate_d{}_kw{}.npz'.format(distance, k_w), x=x, y=y)
+    get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
+
+
+if __name__ == '__main__':
+    trials = 100
+    max_episode_steps = 2500
+    seed = 7  # None
+    os.makedirs('data', exist_ok=True)
+    """ weathervane controller """
+    simulate_random(k_w=1)
+    # simulate_fixed(pos=(15, 0), k_w=1)
+    # simulate_fixed(pos=(10, 0), k_w=1)
+    # simulate_fixed(pos=(5, 0), k_w=1)
+    """ forward controller """
+    # simulate_random(k_w=0)
+    # simulate_fixed(pos=(15, 0), k_w=0)
+    # simulate_fixed(pos=(10, 0), k_w=0)
+    # simulate_fixed(pos=(5, 0), k_w=0)
