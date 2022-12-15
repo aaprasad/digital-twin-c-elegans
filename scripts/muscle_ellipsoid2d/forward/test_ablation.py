@@ -12,14 +12,14 @@ from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_xml, make_swim
 from virtual_nematode.testers.tester import test_vector_env_func
 
 
-def test(model_folder, model_name, ckpt_name, save_folder, ablation_type, device_id=None):
+def test(model_folder, model_name, ckpt_name, save_folder, ablation_type, device_id=None, id_list=None):
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
     device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     save_folder_temp = os.path.join(save_folder, ablation_type)
-    os.makedirs(save_folder_temp)
-    for i in range(469):
+    os.makedirs(save_folder_temp, exist_ok=True)
+    for i in id_list:
         file_temp = os.path.join(save_folder_temp, 'test100.{}.npz'.format(i))
         if os.path.exists(file_temp):
             continue
@@ -60,6 +60,9 @@ if __name__ == '__main__':
     print(env.action_space, env.observation_space)
     """ testing """
     model_name = 'li_conductance'
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=0)
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', device_id=0)
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', device_id=0)
+    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=0, id_list=list(range(0, 235)))
+    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=1, id_list=list(range(235, 469)))
+    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', device_id=2, id_list=list(range(0, 235)))
+    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', device_id=3, id_list=list(range(235, 469)))
+    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', device_id=4, id_list=list(range(0, 235)))
+    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', device_id=5, id_list=list(range(235, 469)))
