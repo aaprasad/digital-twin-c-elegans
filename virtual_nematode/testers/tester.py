@@ -50,8 +50,8 @@ def test_vector_env_func(env, model, data_func, x_func, y_func, device, seed=Non
             observation, reward, done, info = env.step(action)
             if done.all():
                 break
-    x = np.stack(x, axis=1)  # environment observation, (max_episode_steps, num_envs, env_obs_size)
-    y = np.stack(y, axis=1)  # network observation, (max_episode_steps, num_envs, net_obs_size)
+    x = np.stack(x, axis=1).astype(np.float32)  # environment observation, (max_episode_steps, num_envs, env_obs_size)
+    y = np.stack(y, axis=1).astype(np.float32)  # network observation, (max_episode_steps, num_envs, net_obs_size)
     return x, y
 
 
