@@ -83,6 +83,29 @@ def make_swimmer_weathervane(
     return env
 
 
+def make_swimmer_weathervane_xml(n_bodies, joint_range, source, density, viscosity, condim, friction, cone):
+    xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction, cone)
+    xml_str = position(xml_str)
+    xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
+    xml_str = chemotaxis(xml_str, x=source[0], y=source[1])
+    return xml_str
+
+
+def make_swimmer_weathervane_fn(xml_str, reset_noise_scale, distance, max_episode_steps, source, position_func, distribution_func=fick):
+    def _fn():
+        env = gym.make(
+            'Swimmer-v3-v2', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+            reset_noise_scale=reset_noise_scale, distance=distance
+        )
+        env = gym.wrappers.TimeLimit(env, max_episode_steps)
+        env = gym.wrappers.ClipAction(env)
+        env = SensorObservation(env)
+        env = DistributionObservation(env, dt=env.dt, f=distribution_func, source=source, position_func=position_func)
+        env = Recorder(env, camera_name=None)
+        return env
+    return _fn
+
+
 def make_swimmer_weathervane_fixed(
     n_bodies, joint_range, max_episode_steps, reset_noise_scale, pos, source, position_func, density,
     viscosity, condim, friction, cone
