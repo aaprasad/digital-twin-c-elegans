@@ -31,17 +31,24 @@ def y_func(**kwargs):
     return data
 
 
-def test(model_folder, model_name, ckpt_name, save_folder, device_id=None):
-    print(ckpt_name)
-    model = select_model(model_folder, model_name, ckpt_name)
-    device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
-    model = model.to(device)
-    for i in tqdm(range(1)):
-        model_temp = copy.deepcopy(model)
-        x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
-        print(x.shape, y.shape)
-        np.savez(os.path.join(save_folder, 'test100.{}.npz'.format(i)), x=x, y=y)
-        get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
+def test():
+    """ env """
+    env = gym.vector.AsyncVectorEnv(
+        env_fns=[
+            make_swimmer_weathervane_fn(
+                xml_str, reset_noise_scale=0.6, distance=15, max_episode_steps=max_episode_steps,
+                source=(0, 0), position_func=position_func
+            ) for _ in range(num_envs)
+        ]
+    )
+    print(env.action_space, env.observation_space)
+    """ model """
+    model_temp = copy.deepcopy(model)
+    """ test """
+    x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
+    print(x.shape, y.shape)
+    np.savez(os.path.join(save_folder, 'test100.npz'), x=x, y=y)
+    get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
 if __name__ == '__main__':
@@ -64,15 +71,11 @@ if __name__ == '__main__':
         n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
         source=(0, 0), density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
-    env = gym.vector.AsyncVectorEnv(
-        env_fns=[
-            make_swimmer_weathervane_fn(
-                xml_str, reset_noise_scale=0.6, distance=15, max_episode_steps=max_episode_steps,
-                source=(0, 0), position_func=position_func
-            ) for _ in range(num_envs)
-        ]
-    )
-    print(env.action_space, env.observation_space)
-    """ testing """
+    """ model """
     model_name = 'li_conductance_gradient2'
-    test(model_folder, model_name, ckpt_name, save_folder, device_id=0)
+    model = select_model(model_folder, model_name, ckpt_name)
+    device_id = 0
+    device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
+    model = model.to(device)
+    """ testing """
+    test()
