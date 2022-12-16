@@ -8,7 +8,10 @@ import sys
 from test import select_model
 import torch
 from tqdm import tqdm
-from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane_xml, make_swimmer_weathervane_fn
+from virtual_nematode.envs.muscle_ellipsoid2d import (
+    make_swimmer_weathervane_xml, make_swimmer_weathervane_fn, make_swimmer_weathervane_fixed_fn
+)
+from virtual_nematode.envs.swimmer import fick_uniform
 from virtual_nematode.testers.tester import test_vector_env_func
 
 
@@ -51,6 +54,68 @@ def test():
     get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
+def test_fixed(pos=(15, 0)):
+    """ env """
+    env = gym.vector.AsyncVectorEnv(
+        env_fns=[
+            make_swimmer_weathervane_fixed_fn(
+                xml_str, reset_noise_scale=0.6, pos=pos, max_episode_steps=max_episode_steps,
+                source=(0, 0), position_func=position_func
+            ) for _ in range(num_envs)
+        ]
+    )
+    print(env.action_space, env.observation_space)
+    """ model """
+    model_temp = copy.deepcopy(model)
+    """ test """
+    x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
+    print(x.shape, y.shape)
+    distance = int(np.sqrt(pos[0] ** 2 + pos[1] ** 2))
+    np.savez(os.path.join(save_folder, 'test100_d{}.npz'.format(distance)), x=x, y=y)
+    get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
+
+
+def test_uniform():
+    """ env """
+    env = gym.vector.AsyncVectorEnv(
+        env_fns=[
+            make_swimmer_weathervane_fn(
+                xml_str, reset_noise_scale=0.6, distance=15, max_episode_steps=max_episode_steps,
+                source=(0, 0), position_func=position_func, distribution_func=fick_uniform
+            ) for _ in range(num_envs)
+        ]
+    )
+    print(env.action_space, env.observation_space)
+    """ model """
+    model_temp = copy.deepcopy(model)
+    """ test """
+    x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
+    print(x.shape, y.shape)
+    np.savez(os.path.join(save_folder, 'test100.uniform.npz'), x=x, y=y)
+    get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
+
+
+def test_fixed_uniform(pos=(0, 0)):
+    """ env """
+    env = gym.vector.AsyncVectorEnv(
+        env_fns=[
+            make_swimmer_weathervane_fixed_fn(
+                xml_str, reset_noise_scale=0.6, pos=pos, max_episode_steps=max_episode_steps,
+                source=(0, 0), position_func=position_func, distribution_func=fick_uniform
+            ) for _ in range(num_envs)
+        ]
+    )
+    print(env.action_space, env.observation_space)
+    """ model """
+    model_temp = copy.deepcopy(model)
+    """ test """
+    x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
+    print(x.shape, y.shape)
+    distance = int(np.sqrt(pos[0] ** 2 + pos[1] ** 2))
+    np.savez(os.path.join(save_folder, 'test100_d{}.uniform.npz'.format(distance)), x=x, y=y)
+    get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
+
+
 if __name__ == '__main__':
     runs_folder = sys.argv[1]
     ckpt_name = sys.argv[2]  # 'model.pt'
@@ -74,8 +139,13 @@ if __name__ == '__main__':
     """ model """
     model_name = 'li_conductance_gradient2'
     model = select_model(model_folder, model_name, ckpt_name)
-    device_id = 0
+    device_id = 0  # None
     device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     """ testing """
     test()
+    test_fixed(pos=(15, 0))
+    test_fixed(pos=(10, 0))
+    test_fixed(pos=(5, 0))
+    test_uniform()
+    test_fixed_uniform(pos=(0, 0))
