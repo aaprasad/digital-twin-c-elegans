@@ -127,6 +127,21 @@ def make_swimmer_weathervane_fn(xml_str, reset_noise_scale, distance, max_episod
     return _fn
 
 
+def make_swimmer_weathervane_fixed_fn(xml_str, reset_noise_scale, pos, max_episode_steps, source, position_func, distribution_func=fick):
+    def _fn():
+        env = gym.make(
+            'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+            reset_noise_scale=reset_noise_scale, position=pos
+        )
+        env = gym.wrappers.TimeLimit(env, max_episode_steps)
+        env = gym.wrappers.ClipAction(env)
+        env = SensorObservation(env)
+        env = DistributionObservation(env, dt=env.dt, f=distribution_func, source=source, position_func=position_func)
+        env = Recorder(env, camera_name=None)
+        return env
+    return _fn
+
+
 def make_swimmer_weathervane_fixed(
     n_bodies, joint_range, max_episode_steps, reset_noise_scale, pos, source, position_func, density,
     viscosity, condim, friction, cone, distribution_func=fick
