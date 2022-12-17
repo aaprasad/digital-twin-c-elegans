@@ -33,12 +33,11 @@ def test(model_folder, model_name, ckpt_name, save_folder, device_id=None):
     model = select_model(model_folder, model_name, ckpt_name)
     device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
     model = model.to(device)
-    for i in tqdm(range(1)):
-        model_temp = copy.deepcopy(model)
-        x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
-        print(x.shape, y.shape)
-        np.savez(os.path.join(save_folder, 'test100.{}.npz'.format(i)), x=x, y=y)
-        get_results_numpy(x, y, max_episode_steps=max_episode_steps)
+    model_temp = copy.deepcopy(model)
+    x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
+    print(x.shape, y.shape)
+    np.savez(os.path.join(save_folder, 'test100.npz'), x=x, y=y)
+    get_results_numpy(x, y, max_episode_steps=max_episode_steps)
 
 
 if __name__ == '__main__':
@@ -63,4 +62,4 @@ if __name__ == '__main__':
     print(env.action_space, env.observation_space)
     """ testing """
     model_name = 'li_conductance'
-    test(model_folder, model_name, ckpt_name, save_folder)
+    test(model_folder, model_name, ckpt_name, save_folder, device_id=0)
