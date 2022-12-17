@@ -19,9 +19,9 @@ def y_func(action, **kwargs):
 
 if __name__ == '__main__':
     input_size = 62  # x_func() size
-    # data_size = 7000  # 7000, 3500, 1750
-    # max_episode_steps = 640  # 640, 1280, 2560
+    # data_size, max_episode_steps = 7000, 640  # 7000, 3500, 1750 / 640, 1280, 2560
     data_size, max_episode_steps = 35000, 320
+    # data_size, max_episode_steps = 1000, 2500
     reset_noise_scale = 0.6  # reset_noise_scale: 0.7->0.6
     # seed = 7
     seed = 42
@@ -46,5 +46,6 @@ if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
     # torch.save(dataset, 'data/data_7000_640.pt')  # 'data_7000_640.pt', 'data_3500_1280.pt', 'data_1750_2560.pt'
     torch.save(dataset, 'data/data_35000_320.pt')
+    # torch.save(dataset, 'data/data_1000_2500.pt')
     x, y = dataset.tensors
     get_results_torch(x, y, max_episode_steps=max_episode_steps)
