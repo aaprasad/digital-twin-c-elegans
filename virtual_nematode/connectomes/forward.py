@@ -55,9 +55,12 @@ class Connectome(object):
         return synapses
 
     @staticmethod
-    def _weight(adjacency):
+    def _weight(adjacency, return_mask=True):
         adjacency = adjacency.replace(np.nan, 0)
-        mask = torch.from_numpy(adjacency.to_numpy(dtype=np.bool))
+        if return_mask is True:
+            mask = torch.from_numpy(adjacency.to_numpy(dtype=np.bool))
+        else:
+            mask = torch.from_numpy(adjacency.to_numpy())
         return mask
 
     def _polarity_mask(self, synapses):
@@ -71,6 +74,11 @@ class Connectome(object):
             mask.loc[pre, post] = True
         mask = torch.from_numpy(mask.to_numpy(dtype=np.bool))
         return mask
+
+    def weight(self):
+        c = self._weight(self.chemical, return_mask=False)
+        g = self._weight(self.gap_junction, return_mask=False)
+        return c, g
 
     def mask(self):
         """ mask generatation
@@ -154,6 +162,17 @@ class ExternalInput(object):
         mask = mask ^ ex_mask ^ in_mask
         mask = torch.stack((mask, ex_mask, in_mask), dim=0)  # (3, dim, n)
         return mask
+
+
+def get_weights(path, polarity_path):
+    cells = cell_list(path)
+    muscles = body_wall_muscles()
+    print('{} cells, {} muscles'.format(len(cells), len(muscles)))
+    ex_synapses, in_synapses = chemical_polarities(polarity_path)
+    print('{} excitatory, {} inhibitory synapses'.format(len(ex_synapses), len(in_synapses)))
+    connectome = Connectome(path=path, cells=cells, muscles=muscles, ex_synapses=ex_synapses, in_synapses=in_synapses)
+    w_c, w_g = connectome.weight()
+    return {'w_c': w_c, 'w_g': w_g}
 
 
 def get_kwargs(path, polarity_path, trapped_dims=None):
