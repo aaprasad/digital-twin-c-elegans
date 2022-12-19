@@ -60,9 +60,12 @@ if __name__ == '__main__':
     print(env.action_space, env.observation_space)
     """ testing """
     model_name = 'li_conductance'
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=0, id_list=list(range(0, 235)))
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=1, id_list=list(range(235, 469)))
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', device_id=2, id_list=list(range(0, 235)))
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', device_id=3, id_list=list(range(235, 469)))
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', device_id=4, id_list=list(range(0, 235)))
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', device_id=5, id_list=list(range(235, 469)))
+    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=0, id_list=list(range(0, 156)))
+    # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=1, id_list=list(range(156, 312)))
+    # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=2, id_list=list(range(312, 469)))
+    # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', device_id=3, id_list=list(range(0, 156)))
+    # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', device_id=4, id_list=list(range(156, 312)))
+    # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', device_id=5, id_list=list(range(312, 469)))
+    # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', device_id=6, id_list=list(range(0, 156)))
+    # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', device_id=7, id_list=list(range(156, 312)))
+    # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', device_id=None, id_list=list(range(312, 469)))
