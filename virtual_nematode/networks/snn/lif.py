@@ -222,7 +222,9 @@ class LeakyIntegratorConductanceBasedPolarity(torch.nn.Module):
         w_c *= w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         self.w_c_mask = torch.nn.Parameter(w_c_mask.any(dim=0), requires_grad=False)  # (n, n), bool
-        self.e_c = torch.nn.Parameter(torch.zeros((n, n)))  # (n, n)
+        e_c = torch.zeros((n, n)).uniform_(-1, 1)
+        e_c *= w_c_mask[0]
+        self.e_c = torch.nn.Parameter(e_c)  # (n, n)
         self.e_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # (3, n, n), bool
         w_c_n = w_c_mask.sum(dim=[0, 1])
         w_c_n[w_c_n == 0] = 1
@@ -266,7 +268,7 @@ class LeakyIntegratorConductanceBasedPolarity(torch.nn.Module):
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
         w_c = self.w_c.abs() * self.w_c_mask
-        e_c = self.e_c * self.e_c_mask[0] + 1. * self.e_c_mask[1] - 1. * self.e_c_mask[2]
+        e_c = self.e_c * self.e_c_mask[0] + self.e_c_mask[1].float() - self.e_c_mask[2].float()
         e_c = e_c.clamp(-1, 1)
         # gap junction weight
         w_g = self.w_g.abs()
