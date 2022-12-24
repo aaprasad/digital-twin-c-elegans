@@ -225,7 +225,6 @@ class LeakyIntegratorConductanceBasedPolarity(torch.nn.Module):
         e_c = torch.zeros((n, n)).uniform_(-1, 1)
         e_c = e_c * w_c_mask[0] + 1 * w_c_mask[1] - 1 * w_c_mask[2]
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
-        self.e_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # (3, n, n), bool
         w_c_n = w_c_mask.sum(dim=[0, 1])
         w_c_n[w_c_n == 0] = 1
         self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
