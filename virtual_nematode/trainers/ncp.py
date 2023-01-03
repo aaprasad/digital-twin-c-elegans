@@ -334,7 +334,7 @@ def split_parameters(model, suffix):
 
 def train_eval_test(
     data_name, model_name, batch_size, seed, device_ids, lr, weight_decay, epochs, early_stop,
-    model_path=None, strict=True, optimizer_path=None, **kwargs
+    model_path=None, strict=True, optimizer_path=None, suffix=None, suffix_params=None, **kwargs
 ):
     """ offline train, eval and test
     data_name: ['train.pt', 'eval.pt', 'test.pt']
@@ -342,6 +342,8 @@ def train_eval_test(
     units: total amount of neurons (excluding input neurons)
     output_dim: amount of neurons that also act as output
     in_features: input channel amount
+    suffix: ['w_c', 'e_c', 'w_g', 'w_p', 'bias']
+    suffix_params: {'lr': 1e-4, 'weight_decay': 0}
     **kwargs: neural network model args
     """
     torch.manual_seed(seed)
@@ -350,18 +352,17 @@ def train_eval_test(
     train_loader, eval_loader, test_loader = prepare_dataloader(data_path, batch_size)
     device = torch.device('cuda:{}'.format(device_ids[0]) if torch.cuda.is_available() else 'cpu')
     model = prepare_model(model_name, device, device_ids, model_path, strict, **kwargs)
-    if weight_decay == 0:
+    if suffix is None:
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     else:
-        suffix = ['w_c', 'e_c', 'w_g', 'w_p', 'bias']
-        print(suffix, 'weight decay', weight_decay)
+        print('suffix', suffix, 'suffix_params', suffix_params)
         selected_parameters, other_parameters = split_parameters(model, suffix)
         optimizer = torch.optim.Adam(
             [
-                {'params': selected_parameters, 'weight_decay': weight_decay},
+                {'params': selected_parameters, **suffix_params},
                 {'params': other_parameters}
             ],
-            lr=lr, weight_decay=0
+            lr=lr, weight_decay=weight_decay
         )
     if optimizer_path is not None:
         optimizer.load_state_dict(torch.load(optimizer_path, map_location=device))
