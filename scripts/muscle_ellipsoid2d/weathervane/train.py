@@ -38,4 +38,5 @@ if __name__ == '__main__':
     # train('snn_weathervane3')
     # train('li_conductance_gradient1')
     # train('li_conductance_gradient2')
-    train('li_conductance_gradient3')
+    # train('li_conductance_gradient3')
+    train('li_current_gradient')
