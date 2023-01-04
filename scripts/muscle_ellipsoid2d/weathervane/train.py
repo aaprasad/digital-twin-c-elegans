@@ -40,3 +40,4 @@ if __name__ == '__main__':
     # train('li_conductance_gradient2')
     # train('li_conductance_gradient3')
     train('li_current_gradient')
+    # train('li_current_gradient1')
