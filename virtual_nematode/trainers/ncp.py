@@ -15,6 +15,7 @@ from virtual_nematode.networks.snn.lif import (
     LeakyIntegratorConductanceBasedCalciumFluorescence, SNNCalciumFluorescence
 )
 from virtual_nematode.networks.snn.lif_chemotaxis import (
+    LeakyIntegratorCurrentBasedGradientInput,
     LeakyIntegratorConductanceBasedGradientInput,
     LeakyIntegratorConductanceBasedGradientInput1,
     LeakyIntegratorConductanceBasedGradientInput2,
@@ -58,6 +59,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = li_conductance(**kwargs)
     elif model_name == 'li_conductance_cf':
         model = li_conductance_cf(**kwargs)
+    elif model_name == 'li_current_gradient':
+        model = li_current_gradient(**kwargs)
     elif model_name == 'li_conductance_gradient':
         model = li_conductance_gradient(**kwargs)
     elif model_name == 'li_conductance_gradient1':
@@ -188,6 +191,12 @@ def li_conductance(**kwargs):
 def li_conductance_cf(**kwargs):
     cell = LeakyIntegratorConductanceBasedCalciumFluorescence(**kwargs)
     model = SNNCalciumFluorescence(cell)
+    return model
+
+
+def li_current_gradient(**kwargs):
+    cell = LeakyIntegratorCurrentBasedGradientInput(**kwargs)
+    model = SNN(cell)
     return model
 
 
