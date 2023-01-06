@@ -7,17 +7,21 @@ from sim import position_func
 import sys
 from test import select_model
 import torch
-from tqdm import tqdm
 from virtual_nematode.envs.muscle_ellipsoid2d import (
     make_swimmer_weathervane_xml, make_swimmer_weathervane_fn, make_swimmer_weathervane_fixed_fn
 )
-from virtual_nematode.envs.swimmer import fick_uniform
 from virtual_nematode.testers.tester import test_vector_env_func
 
 
 def data_func(observation, **kwargs):
     q = observation[:, 4:28]
     g = observation[:, 63:64]
+    return np.concatenate((q, g), axis=1)
+
+
+def data_func_no_gradient(observation, **kwargs):
+    q = observation[:, 4:28]
+    g = np.zeros_like(observation[:, 63:64])
     return np.concatenate((q, g), axis=1)
 
 
@@ -75,13 +79,13 @@ def test_fixed(pos=(15, 0)):
     get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
-def test_uniform():
+def test_nograd():
     """ env """
     env = gym.vector.AsyncVectorEnv(
         env_fns=[
             make_swimmer_weathervane_fn(
                 xml_str, reset_noise_scale=0.6, distance=15, max_episode_steps=max_episode_steps,
-                source=(0, 0), position_func=position_func, distribution_func=fick_uniform
+                source=(0, 0), position_func=position_func
             ) for _ in range(num_envs)
         ]
     )
@@ -89,19 +93,19 @@ def test_uniform():
     """ model """
     model_temp = copy.deepcopy(model)
     """ test """
-    x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
+    x, y = test_vector_env_func(env, model_temp, data_func_no_gradient, x_func, y_func, device, seed)
     print(x.shape, y.shape)
-    np.savez(os.path.join(save_folder, 'test100.uniform.npz'), x=x, y=y)
+    np.savez(os.path.join(save_folder, 'test100.nograd.npz'), x=x, y=y)
     get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
-def test_fixed_uniform(pos=(0, 0)):
+def test_fixed_nograd(pos=(0, 0)):
     """ env """
     env = gym.vector.AsyncVectorEnv(
         env_fns=[
             make_swimmer_weathervane_fixed_fn(
                 xml_str, reset_noise_scale=0.6, pos=pos, max_episode_steps=max_episode_steps,
-                source=(0, 0), position_func=position_func, distribution_func=fick_uniform
+                source=(0, 0), position_func=position_func
             ) for _ in range(num_envs)
         ]
     )
@@ -109,10 +113,10 @@ def test_fixed_uniform(pos=(0, 0)):
     """ model """
     model_temp = copy.deepcopy(model)
     """ test """
-    x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
+    x, y = test_vector_env_func(env, model_temp, data_func_no_gradient, x_func, y_func, device, seed)
     print(x.shape, y.shape)
     distance = int(np.sqrt(pos[0] ** 2 + pos[1] ** 2))
-    np.savez(os.path.join(save_folder, 'test100_d{}.uniform.npz'.format(distance)), x=x, y=y)
+    np.savez(os.path.join(save_folder, 'test100_d{}.nograd.npz'.format(distance)), x=x, y=y)
     get_results_numpy(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
@@ -147,5 +151,5 @@ if __name__ == '__main__':
     test_fixed(pos=(15, 0))
     test_fixed(pos=(10, 0))
     test_fixed(pos=(5, 0))
-    test_uniform()
-    test_fixed_uniform(pos=(0, 0))
+    test_nograd()
+    test_fixed_nograd(pos=(0, 0))
