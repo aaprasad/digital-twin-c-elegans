@@ -283,7 +283,7 @@ class LeakyIntegratorConductanceBased(torch.nn.Module):
 
 
 class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type='uniform'):
         super(LeakyIntegratorConductanceBasedMixed, self).__init__()
         self.dt = dt
         self.steps = steps
@@ -292,7 +292,12 @@ class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
         self.p = p
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
-        w_c = torch.zeros((2, n, n)).uniform_(0, 1)
+        if init_type == 'uniform':
+            w_c = torch.zeros((2, n, n)).uniform_(0, 1)
+        elif init_type == 'normal':
+            w_c = torch.zeros((2, n, n)).normal_(0, 5)
+        else:
+            raise AssertionError
         w_c_mask_mixed = torch.stack((w_c_mask[0] | w_c_mask[1], w_c_mask[0] | w_c_mask[2]), dim=0)
         w_c *= w_c_mask_mixed
         self.w_c = torch.nn.Parameter(w_c)  # (2, n, n)
@@ -300,14 +305,24 @@ class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
         w_c_n = w_c_mask.sum(dim=[0, 1])
         w_c_n[w_c_n == 0] = 1
         self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
-        w_g = torch.zeros((n, n)).uniform_(0, 1)
+        if init_type == 'uniform':
+            w_g = torch.zeros((n, n)).uniform_(0, 1)
+        elif init_type == 'normal':
+            w_g = torch.zeros((n, n)).normal_(0, 5)
+        else:
+            raise AssertionError
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * w_g_mask
         self.w_g = torch.nn.Parameter(w_g)  # (n, n)
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
         w_g_n = w_g_mask.sum(dim=0)
         w_g_n[w_g_n == 0] = 1
         self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
-        w_p = torch.zeros((p, n)).uniform_(-1, 1)
+        if init_type == 'uniform':
+            w_p = torch.zeros((p, n)).uniform_(-1, 1)
+        elif init_type == 'normal':
+            w_p = torch.zeros((p, n)).normal_(0, 5)
+        else:
+            raise AssertionError
         w_p *= w_p_mask.any(dim=0)
         self.w_p = torch.nn.Parameter(w_p)  # (p, n)
         self.w_p_mask = torch.nn.Parameter(w_p_mask.any(dim=0), requires_grad=False)  # (p, n), bool

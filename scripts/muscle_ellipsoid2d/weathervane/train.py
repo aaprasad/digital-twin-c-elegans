@@ -22,7 +22,7 @@ def train(model_name):
             'suffix': suffix, 'suffix_params': suffix_params,
             # model kwargs
             # 'model_path': None, 'strict': True, 'optimizer_path': None,
-            'dt': 0.04, 'steps': 5,
+            'dt': 0.04, 'steps': 5, 'init_type': 'uniform',
             **get_kwargs(
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
