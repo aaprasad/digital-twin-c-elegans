@@ -296,6 +296,7 @@ class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
             w_c = torch.zeros((2, n, n)).uniform_(0, 1)
         elif init_type == 'normal':
             w_c = torch.zeros((2, n, n)).normal_(0, 5)
+            w_c = w_c.abs()
         else:
             raise AssertionError
         w_c_mask_mixed = torch.stack((w_c_mask[0] | w_c_mask[1], w_c_mask[0] | w_c_mask[2]), dim=0)
@@ -309,6 +310,7 @@ class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
             w_g = torch.zeros((n, n)).uniform_(0, 1)
         elif init_type == 'normal':
             w_g = torch.zeros((n, n)).normal_(0, 5)
+            w_g = w_g.abs()
         else:
             raise AssertionError
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * w_g_mask
