@@ -295,7 +295,7 @@ class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
         if init_type == 'uniform':
             w_c = torch.zeros((2, n, n)).uniform_(0, 1)
         elif init_type == 'normal':
-            w_c = torch.zeros((2, n, n)).normal_(0, 5)
+            w_c = torch.zeros((2, n, n)).normal_(0, 1)
             w_c = w_c.abs()
         else:
             raise AssertionError
@@ -309,7 +309,7 @@ class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
         if init_type == 'uniform':
             w_g = torch.zeros((n, n)).uniform_(0, 1)
         elif init_type == 'normal':
-            w_g = torch.zeros((n, n)).normal_(0, 5)
+            w_g = torch.zeros((n, n)).normal_(0, 1)
             w_g = w_g.abs()
         else:
             raise AssertionError
@@ -322,7 +322,7 @@ class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
         if init_type == 'uniform':
             w_p = torch.zeros((p, n)).uniform_(-1, 1)
         elif init_type == 'normal':
-            w_p = torch.zeros((p, n)).normal_(0, 5)
+            w_p = torch.zeros((p, n)).normal_(0, 1)
         else:
             raise AssertionError
         w_p *= w_p_mask.any(dim=0)
