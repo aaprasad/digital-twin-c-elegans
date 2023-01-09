@@ -301,7 +301,7 @@ class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
         w_c_n[w_c_n == 0] = 1
         self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
         w_g = torch.zeros((n, n)).uniform_(0, 1)
-        w_g *= w_g_mask
+        w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * w_g_mask
         self.w_g = torch.nn.Parameter(w_g)  # (n, n)
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
         w_g_n = w_g_mask.sum(dim=0)
