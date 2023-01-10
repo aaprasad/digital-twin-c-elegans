@@ -481,8 +481,33 @@ class LeakyIntegratorConductanceBasedMixed1(torch.nn.Module):
         return state, activation, action
 
 
+def kaiming_uniform(mask, gain=1.0):
+    """ U(-bound, bound) where bound = gain * sqrt(3 / fan_mode)
+    mask: shape (n, n) or (p, n)
+    gain: for sigmoid activation, gain = 1.0
+    fan_mode: 'fan_in' or 'fan_out'
+    https://pytorch.org/docs/stable/nn.init.html#torch.nn.init.kaiming_uniform_
+    """
+    bound = gain * torch.sqrt(3. / mask.sum(dim=0).repeat(mask.shape[0], 1))
+    m = torch.distributions.uniform.Uniform(-bound, bound)
+    w = m.sample()
+    return w
+
+
+def kaiming_normal(mask, gain=1.0):
+    """ N(0, std^2) where std = gain / sqrt(fan_mode)
+    mask: shape (n, n) or (p, n)
+    gain: for sigmoid activation, gain = 1.0
+    fan_mode: 'fan_in' or 'fan_out'
+    https://pytorch.org/docs/stable/nn.init.html#torch.nn.init.kaiming_normal_
+    """
+    std = gain / mask.sum(dim=0).sqrt().repeat(mask.shape[0], 1)
+    w = torch.normal(mean=0., std=std)
+    return w
+
+
 class LeakyIntegratorConductanceBasedMixed2(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type='uniform'):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type='kaiming_uniform'):
         super(LeakyIntegratorConductanceBasedMixed2, self).__init__()
         self.dt = dt
         self.steps = steps
@@ -491,36 +516,37 @@ class LeakyIntegratorConductanceBasedMixed2(torch.nn.Module):
         self.p = p
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
         self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
-        if init_type == 'uniform':
-            w_c = torch.zeros((2, n, n)).uniform_(0, 1)
-        elif init_type == 'normal':
-            w_c = torch.zeros((2, n, n)).normal_(0, 5)
-            w_c = w_c.abs()
+        w_c_mask_mixed = torch.stack((w_c_mask[0] | w_c_mask[1], w_c_mask[0] | w_c_mask[2]), dim=0)
+        if init_type == 'kaiming_uniform':
+            w_c = torch.stack((kaiming_uniform(mask=w_c_mask_mixed[0]), kaiming_uniform(mask=w_c_mask_mixed[1])), dim=0)
+        elif init_type == 'kaiming_normal':
+            w_c = torch.stack((kaiming_normal(mask=w_c_mask_mixed[0]), kaiming_normal(mask=w_c_mask_mixed[1])), dim=0)
         else:
             raise AssertionError
-        w_c_mask_mixed = torch.stack((w_c_mask[0] | w_c_mask[1], w_c_mask[0] | w_c_mask[2]), dim=0)
+        w_c = w_c.abs()
         w_c *= w_c_mask_mixed
         self.w_c = torch.nn.Parameter(w_c)  # (2, n, n)
         self.w_c_mask = torch.nn.Parameter(w_c_mask_mixed, requires_grad=False)  # (2, n, n), bool
-        if init_type == 'uniform':
-            w_g = torch.zeros((n, n)).uniform_(0, 1)
-        elif init_type == 'normal':
-            w_g = torch.zeros((n, n)).normal_(0, 5)
-            w_g = w_g.abs()
+        if init_type == 'kaiming_uniform':
+            w_g = kaiming_uniform(mask=w_g_mask)
+        elif init_type == 'kaiming_normal':
+            w_g = kaiming_normal(mask=w_g_mask)
         else:
             raise AssertionError
+        w_g = w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * w_g_mask
         self.w_g = torch.nn.Parameter(w_g)  # (n, n)
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
-        if init_type == 'uniform':
-            w_p = torch.zeros((p, n)).uniform_(-1, 1)
-        elif init_type == 'normal':
-            w_p = torch.zeros((p, n)).normal_(0, 5)
+        w_p_mask = w_p_mask.any(dim=0)
+        if init_type == 'kaiming_uniform':
+            w_p = kaiming_uniform(mask=w_p_mask)
+        elif init_type == 'kaiming_normal':
+            w_p = kaiming_normal(mask=w_p_mask)
         else:
             raise AssertionError
-        w_p *= w_p_mask.any(dim=0)
+        w_p *= w_p_mask
         self.w_p = torch.nn.Parameter(w_p)  # (p, n)
-        self.w_p_mask = torch.nn.Parameter(w_p_mask.any(dim=0), requires_grad=False)  # (p, n), bool
+        self.w_p_mask = torch.nn.Parameter(w_p_mask, requires_grad=False)  # (p, n), bool
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         self.state_func = torch.nn.Hardtanh(-1, 1)
         self.activation_func = torch.nn.Sigmoid()
