@@ -22,7 +22,7 @@ def train(model_name):
             'suffix': suffix, 'suffix_params': suffix_params,
             # model kwargs
             # 'model_path': None, 'strict': True, 'optimizer_path': None,
-            'dt': 0.04, 'steps': 5, 'init_type': 'uniform',
+            'dt': 0.04, 'steps': 5, 'init_type': 'kaiming_uniform',  # 'uniform', 'normal', 'kaiming_uniform', 'kaiming_normal'
             **get_kwargs(
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
@@ -42,4 +42,5 @@ if __name__ == '__main__':
     # train('li_current_gradient')
     # train('li_current_gradient1')
     # train('li_conductance_mixed_gradient')
-    train('li_conductance_mixed_gradient1')
+    # train('li_conductance_mixed_gradient1')
+    train('li_conductance_mixed_gradient2')
