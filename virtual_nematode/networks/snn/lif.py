@@ -401,9 +401,9 @@ class LeakyIntegratorConductanceBasedMixed1(torch.nn.Module):
         w_c *= w_c_mask_mixed
         self.w_c = torch.nn.Parameter(w_c)  # (2, n, n)
         self.w_c_mask = torch.nn.Parameter(w_c_mask_mixed, requires_grad=False)  # (2, n, n), bool
-        w_c_n = w_c_mask.sum(dim=[0, 1])
+        w_c_n = w_c_mask_mixed.sum(dim=1)
         w_c_n[w_c_n == 0] = 1
-        self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
+        self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (2, n)
         if init_type == 'uniform':
             w_g = torch.zeros((n, n)).uniform_(0, 1)
         elif init_type == 'normal':
@@ -461,7 +461,10 @@ class LeakyIntegratorConductanceBasedMixed1(torch.nn.Module):
         dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
         for i in range(self.steps):
             # chemical synapse input
-            synapse_input = (torch.mm(activation, w_c[0] - w_c[1]) - torch.mm(activation, w_c[0] + w_c[1]) * state) / self.w_c_n
+            synapse_input = (
+                (torch.mm(activation, w_c[0]) - torch.mm(activation, w_c[0]) * state) / self.w_c_n[0] +
+                (torch.mm(activation, -w_c[1]) - torch.mm(activation, w_c[1]) * state) / self.w_c_n[1]
+            )
             # gap junction input
             delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
             gap_input = torch.sum(delta_state * w_g, dim=1) / self.w_g_n
