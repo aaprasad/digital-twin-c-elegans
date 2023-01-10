@@ -488,9 +488,12 @@ def kaiming_uniform(mask, gain=1.0):
     fan_mode: 'fan_in' or 'fan_out'
     https://pytorch.org/docs/stable/nn.init.html#torch.nn.init.kaiming_uniform_
     """
-    bound = gain * torch.sqrt(3. / mask.sum(dim=0).repeat(mask.shape[0], 1))
+    fan_in = mask.sum(dim=0)
+    fan_in[fan_in == 0] = 1
+    bound = gain * torch.sqrt(3. / fan_in.repeat(mask.shape[0], 1))
     m = torch.distributions.uniform.Uniform(-bound, bound)
     w = m.sample()
+    w *= mask
     return w
 
 
@@ -501,8 +504,11 @@ def kaiming_normal(mask, gain=1.0):
     fan_mode: 'fan_in' or 'fan_out'
     https://pytorch.org/docs/stable/nn.init.html#torch.nn.init.kaiming_normal_
     """
-    std = gain / mask.sum(dim=0).sqrt().repeat(mask.shape[0], 1)
+    fan_in = mask.sum(dim=0)
+    fan_in[fan_in == 0] = 1
+    std = gain / fan_in.sqrt().repeat(mask.shape[0], 1)
     w = torch.normal(mean=0., std=std)
+    w *= mask
     return w
 
 
