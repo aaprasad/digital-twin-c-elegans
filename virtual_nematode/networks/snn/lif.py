@@ -380,9 +380,9 @@ class LeakyIntegratorConductanceBasedMixed(torch.nn.Module):
         return state, activation, action
 
 
-class LeakyIntegratorConductanceBasedMixed1(torch.nn.Module):
+class LeakyIntegratorConductanceBasedMixed2(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type='uniform'):
-        super(LeakyIntegratorConductanceBasedMixed1, self).__init__()
+        super(LeakyIntegratorConductanceBasedMixed2, self).__init__()
         self.dt = dt
         self.steps = steps
         self.n = n
