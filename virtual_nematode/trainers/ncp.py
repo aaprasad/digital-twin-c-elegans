@@ -24,7 +24,10 @@ from virtual_nematode.networks.snn.lif_chemotaxis import (
     LeakyIntegratorConductanceBasedGradientInput4,
     LeakyIntegratorConductanceBasedMixedGradientInput,
     LeakyIntegratorConductanceBasedMixedGradientInput1,
-    LeakyIntegratorConductanceBasedMixedGradientInput2
+    LeakyIntegratorConductanceBasedMixedGradientInput2,
+    LeakyIntegratorConductanceBasedUnrestrainedGradientInput,
+    LeakyIntegratorConductanceBasedUnrestrainedGradientInput1,
+    LeakyIntegratorConductanceBasedUnrestrainedGradientInput2
 )
 from virtual_nematode.networks.snn.weathervane import SNNCell as SNNCellW
 from virtual_nematode.networks.snn.weathervane import SNNCell1 as SNNCellW1
@@ -78,6 +81,12 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = li_conductance_gradient3(**kwargs)
     elif model_name == 'li_conductance_gradient4':
         model = li_conductance_gradient4(**kwargs)
+    elif model_name == 'li_conductance_unrestrained_gradient':
+        model = li_conductance_unrestrained_gradient(**kwargs)
+    elif model_name == 'li_conductance_unrestrained_gradient1':
+        model = li_conductance_unrestrained_gradient1(**kwargs)
+    elif model_name == 'li_conductance_unrestrained_gradient2':
+        model = li_conductance_unrestrained_gradient2(**kwargs)
     elif model_name == 'li_conductance_mixed_gradient':
         model = li_conductance_mixed_gradient(**kwargs)
     elif model_name == 'li_conductance_mixed_gradient1':
@@ -247,6 +256,24 @@ def li_conductance_gradient3(**kwargs):
 
 def li_conductance_gradient4(**kwargs):
     cell = LeakyIntegratorConductanceBasedGradientInput4(**kwargs)
+    model = SNN(cell)
+    return model
+
+
+def li_conductance_unrestrained_gradient(**kwargs):
+    cell = LeakyIntegratorConductanceBasedUnrestrainedGradientInput(**kwargs)
+    model = SNN(cell)
+    return model
+
+
+def li_conductance_unrestrained_gradient1(**kwargs):
+    cell = LeakyIntegratorConductanceBasedUnrestrainedGradientInput1(**kwargs)
+    model = SNN(cell)
+    return model
+
+
+def li_conductance_unrestrained_gradient2(**kwargs):
+    cell = LeakyIntegratorConductanceBasedUnrestrainedGradientInput2(**kwargs)
     model = SNN(cell)
     return model
 
