@@ -209,11 +209,9 @@ class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
         w_c = w_c.abs() * w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         self.w_c_mask = torch.nn.Parameter(w_c_mask.any(dim=0), requires_grad=False)  # (n, n), bool
-        e_c = torch.zeros((n, n))
-        torch.nn.init.trunc_normal_(e_c, mean=0, std=1, a=-3, b=3)
-        e_c = e_c * w_c_mask[0] + 3. * w_c_mask[1] - 3. * w_c_mask[2]
+        e_c = torch.zeros((n, n)).normal_(0, 1)
+        e_c = e_c * w_c_mask.any(dim=0)
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
-        self.e_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # (n, n), bool
         w_c_n = w_c_mask.sum(dim=[0, 1])
         w_c_n[w_c_n == 0] = 1
         self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
@@ -252,7 +250,6 @@ class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
         w_c = self.w_c.abs() * self.w_c_mask
-        e_c = self.e_c.clamp(-3, 3) * self.e_c_mask[0] + 3. * self.e_c_mask[1] - 3. * self.e_c_mask[2]
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
@@ -262,7 +259,7 @@ class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
         dt_tau = self.dt_steps / self.tau.clamp(self.dt_steps, 0.2)
         for i in range(self.steps):
             # chemical synapse input
-            synapse_input = (torch.mm(activation, w_c * e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
+            synapse_input = (torch.mm(activation, w_c * self.e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
             # gap junction input
             delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
             gap_input = torch.sum(delta_state * w_g, dim=1) / self.w_g_n
