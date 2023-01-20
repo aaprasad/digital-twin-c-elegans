@@ -193,9 +193,9 @@ class LeakyIntegratorCurrentBased1(torch.nn.Module):
         return state, activation, action
 
 
-class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
+class LeakyIntegratorConductanceBasedUnrestrained2(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index):
-        super(LeakyIntegratorConductanceBasedUnrestrained, self).__init__()
+        super(LeakyIntegratorConductanceBasedUnrestrained2, self).__init__()
         self.dt = dt  # 0.04
         self.steps = steps  # 5
         self.n = n
