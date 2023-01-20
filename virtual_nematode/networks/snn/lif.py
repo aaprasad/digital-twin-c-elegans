@@ -274,6 +274,87 @@ class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
         return state, activation, action
 
 
+class LeakyIntegratorConductanceBasedUnrestrained1(torch.nn.Module):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index):
+        super(LeakyIntegratorConductanceBasedUnrestrained1, self).__init__()
+        self.dt = dt  # 0.04
+        self.steps = steps  # 5
+        self.n = n
+        self.m = m
+        self.p = p
+        dt_steps = dt / steps
+        self.dt_steps = dt / steps  # 0.008
+        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(dt_steps, 0.2))  # (n, )
+        self.bias = torch.nn.Parameter(torch.zeros(n).normal_(0, 1))  # (n, )
+        w_c = torch.zeros((n, n)).normal_(0, 1)
+        w_c = w_c.abs() * w_c_mask.any(dim=0)
+        self.w_c = torch.nn.Parameter(w_c)  # (n, n)
+        self.w_c_mask = torch.nn.Parameter(w_c_mask.any(dim=0), requires_grad=False)  # (n, n), bool
+        e_c = torch.zeros((n, n)).normal_(0, 1)
+        e_c = e_c * w_c_mask.any(dim=0)
+        self.e_c = torch.nn.Parameter(e_c)  # (n, n)
+        w_c_n = w_c_mask.sum(dim=[0, 1])
+        w_c_n[w_c_n == 0] = 1
+        self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
+        w_g = torch.zeros((n, n)).normal_(0, 1)
+        w_g = w_g.abs()
+        w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * w_g_mask
+        self.w_g = torch.nn.Parameter(w_g)  # (n, n)
+        self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
+        w_g_n = w_g_mask.sum(dim=0)
+        w_g_n[w_g_n == 0] = 1
+        self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
+        w_p = torch.zeros((p, n)).normal_(0, 1)
+        w_p *= w_p_mask.any(dim=0)
+        self.w_p = torch.nn.Parameter(w_p)  # (p, n)
+        self.w_p_mask = torch.nn.Parameter(w_p_mask.any(dim=0), requires_grad=False)  # (p, n), bool
+        w_p_n = w_p_mask.sum(dim=[0, 1])
+        w_p_n[w_p_n == 0] = 1
+        self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
+        self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
+        self.activation_func = torch.nn.Sigmoid()
+
+    @property
+    def init_state(self):
+        """ initial state and activation """
+        bias = self.bias.clone().detach()
+        state = bias
+        activation = self.activation_func(state)
+        return state, activation  # (n, ), (n, )
+
+    def _external_input(self, stimuli):
+        """ proprioception input """
+        w_p = self.w_p * self.w_p_mask
+        external_input = torch.mm(stimuli, w_p) / self.w_p_n
+        return external_input
+
+    def forward(self, state, activation, stimuli):
+        # chemical synapse weight
+        w_c = self.w_c.abs() * self.w_c_mask
+        # gap junction weight
+        w_g = self.w_g.abs()
+        w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
+        # external input + bias
+        external_input = self._external_input(stimuli) + self.bias
+        # dt / tau
+        dt_tau = self.dt_steps / self.tau.clamp(self.dt_steps, 0.2)
+        for i in range(self.steps):
+            # chemical synapse input
+            synapse_input = (torch.mm(activation, w_c * self.e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
+            # gap junction input
+            delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
+            gap_input = torch.sum(delta_state * w_g, dim=1) / self.w_g_n
+            # total input
+            total_input = synapse_input + gap_input + external_input
+            # cell state and activation
+            state = (1 - dt_tau) * state + dt_tau * total_input
+            activation = self.activation_func(state)
+        # muscle output
+        action = activation[:, self.output_index]
+        # action = action * self.alpha_m.clamp(0, 1) + self.beta_m.clamp(0, 1)
+        return state, activation, action
+
+
 class LeakyIntegratorConductanceBasedUnrestrained2(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index):
         super(LeakyIntegratorConductanceBasedUnrestrained2, self).__init__()
