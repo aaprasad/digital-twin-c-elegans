@@ -44,4 +44,7 @@ if __name__ == '__main__':
     # train('li_conductance_mixed_gradient')
     # train('li_conductance_mixed_gradient1')
     # train('li_conductance_mixed_gradient2')
-    train('li_conductance_gradient4')
+    # train('li_conductance_gradient4')
+    train('li_conductance_unrestrained_gradient')
+    # train('li_conductance_unrestrained_gradient1')
+    # train('li_conductance_unrestrained_gradient2')
