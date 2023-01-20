@@ -232,19 +232,14 @@ class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
-        self.state_func = torch.nn.Hardtanh(-1, 1)
         self.activation_func = torch.nn.Sigmoid()
-        self.activation_scaling = torch.sigmoid(torch.tensor([-1, 1])).tolist()
-        # self.alpha_m = torch.nn.Parameter(torch.ones(m))  # (m, )
-        # self.beta_m = torch.nn.Parameter(torch.zeros(m))  # (m, )
 
     @property
     def init_state(self):
         """ initial state and activation """
         bias = self.bias.clone().detach()
-        state = self.state_func(bias)
+        state = bias
         activation = self.activation_func(state)
-        activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         return state, activation  # (n, ), (n, )
 
     def _external_input(self, stimuli):
@@ -273,9 +268,7 @@ class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
             total_input = synapse_input + gap_input + external_input
             # cell state and activation
             state = (1 - dt_tau) * state + dt_tau * total_input
-            state = self.state_func(state)
             activation = self.activation_func(state)
-            activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         # muscle output
         action = activation[:, self.output_index]
         # action = action * self.alpha_m.clamp(0, 1) + self.beta_m.clamp(0, 1)
