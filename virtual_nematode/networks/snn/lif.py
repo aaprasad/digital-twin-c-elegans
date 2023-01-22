@@ -201,10 +201,12 @@ class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
         self.n = n
         self.m = m
         self.p = p
-        dt_steps = dt / steps
-        self.dt_steps = dt / steps  # 0.008
-        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(dt_steps, 0.2))  # (n, )
-        self.bias = torch.nn.Parameter(torch.zeros(n).normal_(0, 1))  # (n, )
+        # dt_steps = dt / steps
+        # self.dt_steps = dt / steps  # 0.008
+        # self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(dt_steps, 0.2))  # (n, )
+        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
+        # self.bias = torch.nn.Parameter(torch.zeros(n).normal_(0, 1))  # (n, )
+        self.bias = -3.
         w_c = torch.zeros((n, n)).normal_(0, 1)
         w_c = w_c.abs() * w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
@@ -236,8 +238,9 @@ class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
     @property
     def init_state(self):
         """ initial state and activation """
-        bias = self.bias.clone().detach()
-        state = bias
+        #bias = self.bias.clone().detach()
+        #state = bias
+        state = torch.full((self.n, ), fill_value=self.bias)
         activation = self.activation_func(state)
         return state, activation  # (n, ), (n, )
 
@@ -256,7 +259,8 @@ class LeakyIntegratorConductanceBasedUnrestrained(torch.nn.Module):
         # external input + bias
         external_input = self._external_input(stimuli) + self.bias
         # dt / tau
-        dt_tau = self.dt_steps / self.tau.clamp(self.dt_steps, 0.2)
+        # dt_tau = self.dt_steps / self.tau.clamp(self.dt_steps, 0.2)
+        dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
         for i in range(self.steps):
             # chemical synapse input
             synapse_input = (torch.mm(activation, w_c * self.e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
@@ -282,10 +286,12 @@ class LeakyIntegratorConductanceBasedUnrestrained1(torch.nn.Module):
         self.n = n
         self.m = m
         self.p = p
-        dt_steps = dt / steps
-        self.dt_steps = dt / steps  # 0.008
-        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(dt_steps, 0.2))  # (n, )
-        self.bias = torch.nn.Parameter(torch.zeros(n).normal_(0, 1))  # (n, )
+        # dt_steps = dt / steps
+        # self.dt_steps = dt / steps  # 0.008
+        # self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(dt_steps, 0.2))  # (n, )
+        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
+        #self.bias = torch.nn.Parameter(torch.zeros(n).normal_(0, 1))  # (n, )
+        self.bias = -3.
         w_c = torch.zeros((n, n)).normal_(0, 1)
         w_c = w_c.abs() * w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
@@ -318,8 +324,9 @@ class LeakyIntegratorConductanceBasedUnrestrained1(torch.nn.Module):
     @property
     def init_state(self):
         """ initial state and activation """
-        bias = self.bias.clone().detach()
-        state = bias
+        #bias = self.bias.clone().detach()
+        #state = bias
+        state = torch.full((self.n, ), fill_value=self.bias)
         activation = self.activation_func(state)
         return state, activation  # (n, ), (n, )
 
@@ -339,7 +346,8 @@ class LeakyIntegratorConductanceBasedUnrestrained1(torch.nn.Module):
         # external input + bias
         external_input = self._external_input(stimuli) + self.bias
         # dt / tau
-        dt_tau = self.dt_steps / self.tau.clamp(self.dt_steps, 0.2)
+        # dt_tau = self.dt_steps / self.tau.clamp(self.dt_steps, 0.2)
+        dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
         for i in range(self.steps):
             # chemical synapse input
             synapse_input = (torch.mm(activation, w_c * e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
@@ -365,10 +373,12 @@ class LeakyIntegratorConductanceBasedUnrestrained2(torch.nn.Module):
         self.n = n
         self.m = m
         self.p = p
-        dt_steps = dt / steps
-        self.dt_steps = dt / steps  # 0.008
-        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(dt_steps, 0.2))  # (n, )
-        self.bias = torch.nn.Parameter(torch.zeros(n).normal_(0, 1))  # (n, )
+        # dt_steps = dt / steps
+        # self.dt_steps = dt / steps  # 0.008
+        # self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(dt_steps, 0.2))  # (n, )
+        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
+        # self.bias = torch.nn.Parameter(torch.zeros(n).normal_(0, 1))  # (n, )
+        self.bias = -3.
         w_c = torch.zeros((n, n)).normal_(0, 1)
         w_c = w_c.abs() * w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
@@ -402,8 +412,9 @@ class LeakyIntegratorConductanceBasedUnrestrained2(torch.nn.Module):
     @property
     def init_state(self):
         """ initial state and activation """
-        bias = self.bias.clone().detach()
-        state = bias
+        #bias = self.bias.clone().detach()
+        #state = bias
+        state = torch.full((self.n, ), fill_value=self.bias)
         activation = self.activation_func(state)
         return state, activation  # (n, ), (n, )
 
@@ -423,7 +434,8 @@ class LeakyIntegratorConductanceBasedUnrestrained2(torch.nn.Module):
         # external input + bias
         external_input = self._external_input(stimuli) + self.bias
         # dt / tau
-        dt_tau = self.dt_steps / self.tau.clamp(self.dt_steps, 0.2)
+        # dt_tau = self.dt_steps / self.tau.clamp(self.dt_steps, 0.2)
+        dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
         for i in range(self.steps):
             # chemical synapse input
             synapse_input = (torch.mm(activation, w_c * e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
