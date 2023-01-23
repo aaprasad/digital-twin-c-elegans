@@ -110,7 +110,8 @@ if __name__ == '__main__':
     )
     """ testing """
     # model_name = 'li_conductance_gradient1'
-    model_name = 'li_conductance_gradient2'
+    # model_name = 'li_conductance_gradient2'
+    model_name = 'li_conductance_restrained_gradient'
     test(model_folder, model_name, ckpt_name, save_folder)
     # single_test(env, model_folder, model_name, ckpt_name, save_folder)
     # record(env, model_folder, model_name, ckpt_name, video_folder)
