@@ -2,7 +2,7 @@ import torch
 
 
 class LI0(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, v_range):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, v_range, scaling):
         """ trainable reversal potential
         v_range: (v_min, v_max)
         """
@@ -44,7 +44,8 @@ class LI0(torch.nn.Module):
         self.state_func = torch.nn.Hardtanh(v_range[0], v_range[1])
         self.activation_func = torch.nn.Sigmoid()
         self.v_range = v_range
-        # self.activation_scaling = torch.sigmoid(torch.tensor(v_range)).tolist()
+        self.scaling = scaling
+        self.activation_scaling = torch.sigmoid(torch.tensor(v_range)).tolist()
 
     @property
     def init_state(self):
@@ -52,7 +53,8 @@ class LI0(torch.nn.Module):
         bias = self.bias.clone().detach()
         state = self.state_func(bias)
         activation = self.activation_func(state)
-        # activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
+        if self.scaling is True:
+            activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         return state, activation  # (n, ), (n, )
 
     def _external_input(self, stimuli):
@@ -84,14 +86,15 @@ class LI0(torch.nn.Module):
             state = (1 - dt_tau) * state + dt_tau * total_input
             state = self.state_func(state)
             activation = self.activation_func(state)
-            # activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
+            if self.scaling is True:
+                activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         # muscle output
         action = activation[:, self.output_index]
         return state, activation, action
 
 
 class LI1(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, v_range):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, v_range, scaling):
         """ partially fixed reversal potential
         v_range: (v_min, v_max)
         """
@@ -134,7 +137,8 @@ class LI1(torch.nn.Module):
         self.state_func = torch.nn.Hardtanh(v_range[0], v_range[1])
         self.activation_func = torch.nn.Sigmoid()
         self.v_range = v_range
-        # self.activation_scaling = torch.sigmoid(torch.tensor(v_range)).tolist()
+        self.scaling = scaling
+        self.activation_scaling = torch.sigmoid(torch.tensor(v_range)).tolist()
 
     @property
     def init_state(self):
@@ -142,7 +146,8 @@ class LI1(torch.nn.Module):
         bias = self.bias.clone().detach()
         state = self.state_func(bias)
         activation = self.activation_func(state)
-        # activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
+        if self.scaling is True:
+            activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         return state, activation  # (n, ), (n, )
 
     def _external_input(self, stimuli):
@@ -174,14 +179,15 @@ class LI1(torch.nn.Module):
             state = (1 - dt_tau) * state + dt_tau * total_input
             state = self.state_func(state)
             activation = self.activation_func(state)
-            # activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
+            if self.scaling is True:
+                activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         # muscle output
         action = activation[:, self.output_index]
         return state, activation, action
 
 
 class LI2(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, v_range):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, v_range, scaling):
         """ trainable reversal potential, init based on polarity
         v_range: (v_min, v_max)
         """
@@ -224,7 +230,8 @@ class LI2(torch.nn.Module):
         self.state_func = torch.nn.Hardtanh(v_range[0], v_range[1])
         self.activation_func = torch.nn.Sigmoid()
         self.v_range = v_range
-        # self.activation_scaling = torch.sigmoid(torch.tensor(v_range)).tolist()
+        self.scaling = scaling
+        self.activation_scaling = torch.sigmoid(torch.tensor(v_range)).tolist()
 
     @property
     def init_state(self):
@@ -232,7 +239,8 @@ class LI2(torch.nn.Module):
         bias = self.bias.clone().detach()
         state = self.state_func(bias)
         activation = self.activation_func(state)
-        # activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
+        if self.scaling is True:
+            activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         return state, activation  # (n, ), (n, )
 
     def _external_input(self, stimuli):
@@ -264,7 +272,8 @@ class LI2(torch.nn.Module):
             state = (1 - dt_tau) * state + dt_tau * total_input
             state = self.state_func(state)
             activation = self.activation_func(state)
-            # activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
+            if self.scaling is True:
+                activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         # muscle output
         action = activation[:, self.output_index]
         return state, activation, action
