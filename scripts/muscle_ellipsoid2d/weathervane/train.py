@@ -13,7 +13,8 @@ def train(model_name):
         # data_name = ['data_7000_640_256_stride8_n10_train.pt', 'data_7000_640_256_stride8_n10_eval.pt', 'data_7000_640_256_stride8_n10_test.pt']
         # data_name = ['data_7000_640_512_stride8_n10_train.pt', 'data_7000_640_512_stride8_n10_eval.pt', 'data_7000_640_512_stride8_n10_test.pt']
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
-        device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
+        # device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
+        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3, 4, 5, 6, 7], 512, 0.1, 0, 1000
         suffix, suffix_params = None, None
         # suffix, suffix_params = ['e_c'], {'lr': 5e-4}
         kwargs = {
@@ -22,7 +23,7 @@ def train(model_name):
             'suffix': suffix, 'suffix_params': suffix_params,
             # model kwargs
             # 'model_path': None, 'strict': True, 'optimizer_path': None,
-            'dt': 0.04, 'steps': 5,  # 'init_type': 'kaiming_uniform',  # 'uniform', 'normal', 'kaiming_uniform', 'kaiming_normal'
+            'dt': 0.04, 'steps': 5, 'v_range': (-40., 40.),
             **get_kwargs(
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
@@ -48,4 +49,5 @@ if __name__ == '__main__':
     # train('li_conductance_unrestrained_gradient')
     # train('li_conductance_unrestrained_gradient1')
     # train('li_conductance_unrestrained_gradient2')
-    train('li_conductance_restrained_gradient')  # + '', '1', '2'
+    # train('li_conductance_restrained_gradient')  # + '', '1', '2'
+    train('lig0')  # 'lig0', 'lig1'
