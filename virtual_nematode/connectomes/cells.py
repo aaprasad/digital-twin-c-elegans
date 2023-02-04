@@ -159,14 +159,19 @@ def cell_list1(path):
     all cells: 473 cells, gap_juntion.index + {'g2L', 'bm', 'g2R', 'g1p'}
         considering chemical.index, chemical, columns, gap_junction.index and gap_juntion.columns
         https://doi.org/10.1038/s41586-019-1352-7
-    excluding:
-        ?
+    excluding: 76 cells
+        pharynx / muscle (myoepithelium): pm1 ~ pm8, 20 cells
+        pharynx / marginal cell: mc1dl ~ mc3v, 9 cells
+        pharynx / epithelium: e1D ~ e3VR, 6 cells
+        pharynx / glial cell: g1AL ~ g1AR, g2L, g2R, g1p, bm, 2 + 4 cells
+        other end organs: CEPshDL ~ mu_sph except CANL and CANR, 21 - 2 cells
+        sex-specific muscles: um2AL ~ vm2PR, 16 cells
     """
     gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
     cells = list(gap_junction.index)  # 469 cells
     neurons = cells[0:20] + cells[57:329] + cells[434:436] + cells[445:453]
     muscles = body_wall_muscles()
-    cells = neurons + muscles
+    cells = neurons + muscles  # 302 neurons, 95 muscles
     return cells
 
 
