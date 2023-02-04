@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import torch
-from virtual_nematode.connectomes.cells import body_wall_muscles, cell_list
+from virtual_nematode.connectomes.cells import body_wall_muscles, cell_list, cell_list1
 from virtual_nematode.connectomes.connections import (
     chemical_polarities,
     proprioception_connections,
@@ -178,7 +178,8 @@ def get_weights(path, polarity_path):
 def get_kwargs(path, polarity_path, trapped_dims=None):
     """ connectome masks and params """
     # connectome
-    cells = cell_list(path)
+    # cells = cell_list(path)
+    cells = cell_list1(path)
     muscles = body_wall_muscles()
     print('{} cells, {} muscles'.format(len(cells), len(muscles)))
     ex_synapses, in_synapses = chemical_polarities(polarity_path)
