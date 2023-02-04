@@ -1,5 +1,5 @@
 import torch
-from virtual_nematode.connectomes.cells import cell_list
+from virtual_nematode.connectomes.cells import cell_list, cell_list1
 from virtual_nematode.connectomes.forward import get_kwargs as _get_kwargs
 
 
@@ -20,7 +20,8 @@ class SensoryInput(object):
 
 def get_kwargs(path, polarity_path):
     """ connectome masks and params """
-    cells = cell_list(path)
+    # cells = cell_list(path)
+    cells = cell_list1(path)
     sensory_cells = ['ASEL', 'ASER']
 
     sensation = SensoryInput(cells=cells, sensory_cells=sensory_cells)

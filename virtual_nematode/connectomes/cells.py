@@ -154,6 +154,22 @@ def cell_list(path):
     return cells
 
 
+def cell_list1(path):
+    """ all cells excluding unrelated ones
+    all cells: 473 cells, gap_juntion.index + {'g2L', 'bm', 'g2R', 'g1p'}
+        considering chemical.index, chemical, columns, gap_junction.index and gap_juntion.columns
+        https://doi.org/10.1038/s41586-019-1352-7
+    excluding:
+        ?
+    """
+    gap_junction = pd.read_excel(path, sheet_name='hermaphrodite gap jn symmetric', header=2, index_col=2).iloc[:469, 2:471]
+    cells = list(gap_junction.index)  # 469 cells
+    neurons = cells[0:20] + cells[57:329] + cells[434:436] + cells[445:453]
+    muscles = body_wall_muscles()
+    cells = neurons + muscles
+    return cells
+
+
 def motor_neurons(path):
     """ all motor neurons
     https://doi.org/10.1038/s41586-019-1352-7
