@@ -197,9 +197,10 @@ class LI1(torch.nn.Module):
 class LI2(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type, beta, v_range, e_range):
         """ trainable reversal potential
-        beta: the width of the sigmoid activation function
-        v_range: (v_min, v_max)
         init_type: 'random' or 'polarity'
+        beta: the width of the sigmoid activation function
+        v_range: range of membrane potential (v_min, v_max)
+        e_range: range of reversal potential (e_min, e_max)
         """
         super(LI2, self).__init__()
         self.dt = dt  # 0.04
@@ -208,7 +209,9 @@ class LI2(torch.nn.Module):
         self.m = m
         self.p = p
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
-        self.bias = torch.nn.Parameter(torch.zeros(n).normal_(0, 1))  # (n, )
+        bias = torch.zeros(n)
+        torch.nn.init.trunc_normal_(bias, mean=0, std=1, a=e_range[0], b=e_range[1])
+        self.bias = torch.nn.Parameter()  # (n, )
         w_c = torch.zeros((n, n)).normal_(0, 1)
         w_c = w_c.abs() * w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
