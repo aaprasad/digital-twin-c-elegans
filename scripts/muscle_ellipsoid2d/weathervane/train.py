@@ -53,5 +53,5 @@ if __name__ == '__main__':
     # train('li_conductance_unrestrained_gradient1')
     # train('li_conductance_unrestrained_gradient2')
     # train('li_conductance_restrained_gradient')  # + '', '1', '2'
-    train('lig0')  # 'lig0', 'lig1', 'lig2'
-    # train('lig2')
+    # train('lig0')  # 'lig0', 'lig1', 'lig2'
+    train('lig2')
