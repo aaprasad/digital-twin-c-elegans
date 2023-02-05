@@ -214,12 +214,12 @@ class LI2(torch.nn.Module):
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         self.w_c_mask = torch.nn.Parameter(w_c_mask.any(dim=0), requires_grad=False)  # (n, n), bool
         e_c = torch.zeros((n, n))
-        torch.nn.init.trunc_normal_(e_c, mean=0, std=1, a=v_range[0], b=v_range[1])
+        torch.nn.init.trunc_normal_(e_c, mean=0, std=1, a=e_range[0], b=e_range[1])
         if init_type == 'random':
             e_c *= w_c_mask.any(dim=0)
         elif init_type == 'polarity':
             error = torch.zeros((n, n)).normal_(0, 1)
-            e_c = e_c * w_c_mask[0] + (v_range[1] - error.abs()) * w_c_mask[1] + (v_range[0] + error.abs()) * w_c_mask[2]
+            e_c = e_c * w_c_mask[0] + (e_range[1] - error.abs()) * w_c_mask[1] + (e_range[0] + error.abs()) * w_c_mask[2]
         else:
             raise AssertionError
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
