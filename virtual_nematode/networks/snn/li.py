@@ -195,10 +195,10 @@ class LI1(torch.nn.Module):
 
 
 class LI2(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, v_range, scaling, init_type):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type, beta, v_range):
         """ trainable reversal potential
+        beta: the width of the sigmoid activation function
         v_range: (v_min, v_max)
-        scaling: True or False
         init_type: 'random' or 'polarity'
         """
         super(LI2, self).__init__()
@@ -244,18 +244,15 @@ class LI2(torch.nn.Module):
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         self.state_func = torch.nn.Hardtanh(v_range[0], v_range[1])
         self.activation_func = torch.nn.Sigmoid()
+        self.beta = beta
         self.v_range = v_range
-        self.scaling = scaling
-        self.activation_scaling = torch.sigmoid(torch.tensor(v_range)).tolist()
 
     @property
     def init_state(self):
         """ initial state and activation """
         bias = self.bias.clone().detach()
         state = self.state_func(bias)
-        activation = self.activation_func(state)
-        if self.scaling is True:
-            activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
+        activation = self.activation_func(self.beta * state)
         return state, activation  # (n, ), (n, )
 
     def _external_input(self, stimuli):
@@ -286,9 +283,7 @@ class LI2(torch.nn.Module):
             # cell state and activation
             state = (1 - dt_tau) * state + dt_tau * total_input
             state = self.state_func(state)
-            activation = self.activation_func(state)
-            if self.scaling is True:
-                activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
+            activation = self.activation_func(self.beta * state)
         # muscle output
         action = activation[:, self.output_index]
         return state, activation, action

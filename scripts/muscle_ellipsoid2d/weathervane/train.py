@@ -25,12 +25,13 @@ def train(model_name):
             # model kwargs
             # 'model_path': None, 'strict': True, 'optimizer_path': None,
             'dt': 0.04, 'steps': 5,
-            'v_range': (-1., 1.), 'scaling': True, 'init_type': 'random',  # 'random', 'polarity'
             **get_kwargs(
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
-            )
+            ),
+            'init_type': 'random', 'beta': 3., 'v_range': (-1., 1.)
         }
+        # init_type: 'random', 'polarity'
     else:
         raise AssertionError('{} not exist'.format(model_name))
     print(kwargs)
