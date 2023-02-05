@@ -102,12 +102,11 @@ class LI0(torch.nn.Module):
 
 
 class LI1(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type, beta, v_range, e_range):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type, beta, v_range):
         """ trainable reversal potential
         init_type: 'random' or 'polarity'
         beta: the width of the sigmoid activation function
         v_range: range of membrane potential (v_min, v_max)
-        e_range: range of reversal potential (e_min, e_max)
         """
         super(LI1, self).__init__()
         self.dt = dt  # 0.04
@@ -117,19 +116,19 @@ class LI1(torch.nn.Module):
         self.p = p
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
         bias = torch.zeros(n)
-        torch.nn.init.trunc_normal_(bias, mean=0, std=1, a=e_range[0], b=e_range[1])
+        torch.nn.init.trunc_normal_(bias, mean=0, std=1, a=v_range[0], b=v_range[1])
         self.bias = torch.nn.Parameter(bias)  # (n, )
         w_c = torch.zeros((n, n)).normal_(0, 1)
         w_c = w_c.abs() * w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         self.w_c_mask = torch.nn.Parameter(w_c_mask.any(dim=0), requires_grad=False)  # (n, n), bool
         e_c = torch.zeros((n, n))
-        torch.nn.init.trunc_normal_(e_c, mean=0, std=1, a=e_range[0], b=e_range[1])
+        torch.nn.init.trunc_normal_(e_c, mean=0, std=1, a=v_range[0], b=v_range[1])
         if init_type == 'random':
             e_c *= w_c_mask.any(dim=0)
         elif init_type == 'polarity':
             error = torch.zeros((n, n)).normal_(0, 1)
-            e_c = e_c * w_c_mask[0] + (e_range[1] - error.abs()) * w_c_mask[1] + (e_range[0] + error.abs()) * w_c_mask[2]
+            e_c = e_c * w_c_mask[0] + (v_range[1] + error) * w_c_mask[1] + (v_range[0] + error) * w_c_mask[2]
         else:
             raise AssertionError
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
@@ -155,7 +154,6 @@ class LI1(torch.nn.Module):
         self.state_func = torch.nn.Hardtanh(v_range[0], v_range[1])
         self.activation_func = torch.nn.Sigmoid()
         self.beta = beta
-        self.reversal_potential_func = torch.nn.Hardtanh(e_range[0], e_range[1])
 
     @property
     def init_state(self):
@@ -174,7 +172,6 @@ class LI1(torch.nn.Module):
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
         w_c = self.w_c.abs() * self.w_c_mask
-        e_c = self.reversal_potential_func(self.e_c)
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
@@ -184,7 +181,7 @@ class LI1(torch.nn.Module):
         dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
         for i in range(self.steps):
             # chemical synapse input
-            synapse_input = (torch.mm(activation, w_c * e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
+            synapse_input = (torch.mm(activation, w_c * self.e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
             # gap junction input
             delta_state = state.unsqueeze(dim=2).repeat(1, 1, self.n) - state.unsqueeze(dim=1).repeat(1, self.n, 1)
             gap_input = torch.sum(delta_state * w_g, dim=1) / self.w_g_n
