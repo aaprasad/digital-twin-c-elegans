@@ -29,7 +29,7 @@ def train(model_name):
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
             ),
-            'init_type': 'random', 'beta': 3., 'v_range': (-1., 1.)
+            'init_type': 'random', 'beta': 3., 'v_range': (-3., 3.), 'e_range': (-1., 1.)
         }
         # init_type: 'random', 'polarity'
     else:

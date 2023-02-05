@@ -195,7 +195,7 @@ class LI1(torch.nn.Module):
 
 
 class LI2(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type, beta, v_range):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, init_type, beta, v_range, e_range):
         """ trainable reversal potential
         beta: the width of the sigmoid activation function
         v_range: (v_min, v_max)
@@ -245,7 +245,7 @@ class LI2(torch.nn.Module):
         self.state_func = torch.nn.Hardtanh(v_range[0], v_range[1])
         self.activation_func = torch.nn.Sigmoid()
         self.beta = beta
-        self.v_range = v_range
+        self.reversal_potential_func = torch.nn.Hardtanh(e_range[0], e_range[1])
 
     @property
     def init_state(self):
@@ -264,7 +264,7 @@ class LI2(torch.nn.Module):
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
         w_c = self.w_c.abs() * self.w_c_mask
-        e_c = self.e_c.clamp(self.v_range[0], self.v_range[1])
+        e_c = self.reversal_potential_func(self.e_c)
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
