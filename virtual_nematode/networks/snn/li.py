@@ -211,7 +211,7 @@ class LI2(torch.nn.Module):
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
         bias = torch.zeros(n)
         torch.nn.init.trunc_normal_(bias, mean=0, std=1, a=e_range[0], b=e_range[1])
-        self.bias = torch.nn.Parameter()  # (n, )
+        self.bias = torch.nn.Parameter(bias)  # (n, )
         w_c = torch.zeros((n, n)).normal_(0, 1)
         w_c = w_c.abs() * w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
