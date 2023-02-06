@@ -29,7 +29,7 @@ def train(model_name):
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
             ),
-            'init_type': 'random', 'beta': 3., 'v_range': (-3., 3.), 'e_range': (-1., 1.)
+            'init_type': 'random', 'beta': 10., 'v_range': (-1., 1.), 'e_range': (-1., 1.)
         }
         # init_type: 'random', 'polarity'
     else:
@@ -54,4 +54,5 @@ if __name__ == '__main__':
     # train('li_conductance_unrestrained_gradient2')
     # train('li_conductance_restrained_gradient')  # + '', '1', '2'
     # train('lig0')  # 'lig0', 'lig1', 'lig2'
+    # train('lig1')
     train('lig2')
