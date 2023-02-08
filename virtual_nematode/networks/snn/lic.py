@@ -220,7 +220,7 @@ class LIC1(torch.nn.Module):
 
 
 class LIC2(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask, beta=3.):
         super(LIC2, self).__init__()
         self.dt = dt
         self.steps = steps
@@ -258,17 +258,18 @@ class LIC2(torch.nn.Module):
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         self.state_func = torch.nn.Hardtanh(-1, 1)
         self.activation_func = torch.nn.Sigmoid()
-        self.activation_scaling = torch.sigmoid(torch.tensor([-1, 1])).tolist()
+        self.activation_scaling = torch.sigmoid(torch.tensor([-1 * beta, 1 * beta])).tolist()
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
         self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (2, ), long
+        self.beta = beta
 
     @property
     def init_state(self):
         """ initial state and activation """
         bias = self.bias.clone().detach()
         state = self.state_func(bias)
-        activation = self.activation_func(state)
+        activation = self.activation_func(self.beta * state)
         activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         return state, activation  # (n, ), (n, )
 
@@ -320,7 +321,7 @@ class LIC2(torch.nn.Module):
             # cell state and activation
             state = (1 - dt_tau) * state + dt_tau * total_input
             state = self.state_func(state)
-            activation = self.activation_func(state)
+            activation = self.activation_func(self.beta * state)
             activation = (activation - self.activation_scaling[0]) / (self.activation_scaling[1] - self.activation_scaling[0])
         # muscle output
         action = activation[:, self.output_index]
