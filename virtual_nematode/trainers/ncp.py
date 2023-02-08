@@ -10,7 +10,7 @@ from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
 from virtual_nematode.networks.rnn.rnn import RNNCell
 from virtual_nematode.networks.snn.forward import SNNCell, SNN, SNNCell1, SNNCell2, SNNCell3, SNNCell4
-from virtual_nematode.networks.snn.lic import LIC
+from virtual_nematode.networks.snn.lic import *
 from virtual_nematode.networks.snn.lif import (
     LeakyIntegratorCurrentBased, LeakyIntegratorConductanceBased,
     LeakyIntegratorConductanceBasedCalciumFluorescence, SNNCalciumFluorescence
@@ -106,6 +106,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = lig2(**kwargs)
     elif model_name == 'lic':
         model = SNN(cell=LIC(**kwargs))
+    elif model_name == 'lic1':
+        model = SNN(cell=LIC1(**kwargs))
     elif model_name == 'li_conductance_mixed_gradient':
         model = li_conductance_mixed_gradient(**kwargs)
     elif model_name == 'li_conductance_mixed_gradient1':

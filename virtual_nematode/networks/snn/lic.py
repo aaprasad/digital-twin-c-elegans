@@ -120,10 +120,8 @@ class LIC1(torch.nn.Module):
         self.m = m
         self.p = p
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
-        # bias = torch.zeros(n).normal_(mean=0, std=0.5)
-        # bias = -1 + bias.abs()
-        # self.bias = torch.nn.Parameter(bias)  # (n, )
-        self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
+        # self.bias = torch.nn.Parameter(torch.zeros(n).uniform_(-1, 1))  # (n, )
+        self.bias = torch.nn.Parameter(torch.zeros(n).normal_(mean=0, std=0.05))  # (n, )
         w_c = torch.zeros((n, n)).uniform_(0, 1)
         w_c *= w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
