@@ -10,6 +10,7 @@ from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
 from virtual_nematode.networks.rnn.rnn import RNNCell
 from virtual_nematode.networks.snn.forward import SNNCell, SNN, SNNCell1, SNNCell2, SNNCell3, SNNCell4
+from virtual_nematode.networks.snn.lic import LIC
 from virtual_nematode.networks.snn.lif import (
     LeakyIntegratorCurrentBased, LeakyIntegratorConductanceBased,
     LeakyIntegratorConductanceBasedCalciumFluorescence, SNNCalciumFluorescence
