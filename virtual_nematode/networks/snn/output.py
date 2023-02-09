@@ -64,10 +64,10 @@ class MuscleArrangement(torch.nn.Module):
     def forward(self, action):  # (batch_size, m)
         action_split = [action[:, self.band_range[i]:self.band_range[i+1]] for i in range(len(self.band_lengths))]
         action_split = [
-            torch.mm(action_split[0], self.w0 * self.m0) + self.b0,
-            torch.mm(action_split[1], self.w1 * self.m1) + self.b1,
-            torch.mm(action_split[2], self.w2 * self.m2) + self.b2,
-            torch.mm(action_split[3], self.w3 * self.m3) + self.b3
+            torch.mm(action_split[0], self.w0 * self.m0), #+ self.b0,
+            torch.mm(action_split[1], self.w1 * self.m1), #+ self.b1,
+            torch.mm(action_split[2], self.w2 * self.m2), #+ self.b2,
+            torch.mm(action_split[3], self.w3 * self.m3), #+ self.b3
         ]
         action = torch.cat(action_split, dim=1)
         action = action.clamp(0, 1)
