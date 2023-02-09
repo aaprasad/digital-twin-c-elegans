@@ -19,7 +19,7 @@ def train(model_name):
         suffix, suffix_params = None, None
         # suffix, suffix_params = ['e_c'], {'lr': 5e-4}
         kwargs = {
-            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 42,
+            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 48,
             'device_ids': device_ids, 'lr': lr, 'weight_decay': weight_decay, 'epochs': epochs, 'early_stop': epochs,
             'suffix': suffix, 'suffix_params': suffix_params,
             # model kwargs
