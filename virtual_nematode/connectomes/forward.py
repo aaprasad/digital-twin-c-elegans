@@ -178,8 +178,8 @@ def get_weights(path, polarity_path):
 def get_kwargs(path, polarity_path, trapped_dims=None):
     """ connectome masks and params """
     # connectome
-    # cells = cell_list(path)
-    cells = cell_list1(path)
+    cells = cell_list(path)
+    # cells = cell_list1(path)
     muscles = body_wall_muscles()
     print('{} cells, {} muscles'.format(len(cells), len(muscles)))
     ex_synapses, in_synapses = chemical_polarities(polarity_path)

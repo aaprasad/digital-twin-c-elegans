@@ -20,8 +20,8 @@ class SensoryInput(object):
 
 def get_kwargs(path, polarity_path):
     """ connectome masks and params """
-    # cells = cell_list(path)
-    cells = cell_list1(path)
+    cells = cell_list(path)
+    # cells = cell_list1(path)
     sensory_cells = ['ASEL', 'ASER']
     print('{} cells, {} sensory neurons'.format(len(cells), len(sensory_cells)))
     sensation = SensoryInput(cells=cells, sensory_cells=sensory_cells)
