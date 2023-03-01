@@ -19,7 +19,7 @@ def train(model_name):
         suffix, suffix_params = None, None
         # suffix, suffix_params = ['e_c'], {'lr': 5e-4}
         kwargs = {
-            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 48,
+            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 42,
             'device_ids': device_ids, 'lr': lr, 'weight_decay': weight_decay, 'epochs': epochs, 'early_stop': epochs,
             'suffix': suffix, 'suffix_params': suffix_params,
             # model kwargs
@@ -28,10 +28,8 @@ def train(model_name):
             **get_kwargs(
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
-            ),
-            # 'init_type': 'random', 'beta': 10., 'v_range': (-1., 1.), 'e_range': (-1., 1.)
+            )
         }
-        # init_type: 'random', 'polarity'
     else:
         raise AssertionError('{} not exist'.format(model_name))
     print(kwargs)
