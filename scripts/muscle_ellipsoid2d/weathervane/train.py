@@ -56,4 +56,5 @@ if __name__ == '__main__':
     # train('lig0')  # 'lig0', 'lig1', 'lig2'
     # train('lig1')
     # train('lig2')
-    train('lic')
+    # train('lic')
+    train('lic21')
