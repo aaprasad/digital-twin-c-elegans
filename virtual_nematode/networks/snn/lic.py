@@ -790,7 +790,7 @@ class LIC21(torch.nn.Module):
         self.m = m
         self.p = p
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
-        self.bias = -0.35 + torch.nn.Parameter(torch.zeros(n).normal_(0, 0.01))  # (n, )
+        self.bias = torch.nn.Parameter(-0.35 + torch.zeros(n).normal_(0, 0.01))  # (n, )
         w_c = torch.zeros((n, n)).uniform_(0, 1) * scale_init
         w_c *= w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
