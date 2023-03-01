@@ -14,7 +14,7 @@ def train(model_name):
         # data_name = ['data_7000_640_512_stride8_n10_train.pt', 'data_7000_640_512_stride8_n10_eval.pt', 'data_7000_640_512_stride8_n10_test.pt']
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
-        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3, 4, 5, 6, 7], 640, 0.1, 0, 1000
+        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3, 4, 5, 6, 7], 640, 0.05, 0, 1000
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 288, 0.1, 0, 1000
         suffix, suffix_params = None, None
         # suffix, suffix_params = ['e_c'], {'lr': 5e-4}
