@@ -782,7 +782,7 @@ class Activation(torch.nn.Module):
 
 
 class LIC21(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask, scale_init=0.25):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask, scale_init=0.25, scale_max=1.):
         super(LIC21, self).__init__()
         self.dt = dt
         self.steps = steps
@@ -820,7 +820,7 @@ class LIC21(torch.nn.Module):
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s) * scale_init)  # (3, )
         self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (2, ), long
-        # self.scale_max = scale_max
+        self.scale_max = scale_max
 
     @property
     def init_state(self):
@@ -859,12 +859,12 @@ class LIC21(torch.nn.Module):
 
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
-        # w_c = self.w_c.clamp(0, self.scale_max) * self.w_c_mask
-        w_c = self.w_c.abs() * self.w_c_mask
+        w_c = self.w_c.clamp(0, self.scale_max) * self.w_c_mask
+        # w_c = self.w_c.abs() * self.w_c_mask
         e_c = self.e_c.clamp(-0.5, 0.05)
         # gap junction weight
-        # w_g = self.w_g.clamp(0, self.scale_max)
-        w_g = self.w_g.abs()
+        w_g = self.w_g.clamp(0, self.scale_max)
+        # w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # external input + bias
         external_input = self._external_input(stimuli) + self.bias
