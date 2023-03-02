@@ -921,8 +921,11 @@ class LIC22(torch.nn.Module):
         self.bias = torch.nn.Parameter(bias)  # (n, )
         self.bias_clip = bias_clip
         # w_c
+        w_c_clip = SigmoidClip(a=0., b=50.)
         w_c = torch.zeros((n, n)).uniform_(0, 1)
+        w_c = w_c_clip.inverse(w_c)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
+        self.w_c_clip = w_c_clip
         # e_c
         e_c_clip = SigmoidClip(a=-0.5, b=0.05)
         e_c = torch.zeros((n, n)).normal_(mean=0, std=0.01)
@@ -945,8 +948,11 @@ class LIC22(torch.nn.Module):
         w_g_n[w_g_n == 0] = 1
         self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
         # w_p
+        w_p_clip = SigmoidClip(a=-50., b=50.)
         w_p = torch.zeros((p, n)).uniform_(-1, 1)
+        w_p = w_p_clip.inverse(w_p)
         self.w_p = torch.nn.Parameter(w_p)  # (p, n)
+        self.w_p_clip = w_p_clip
         self.w_p_mask = torch.nn.Parameter(w_p_mask.any(dim=0), requires_grad=False)  # (p, n), bool
         w_p_n = w_p_mask.sum(dim=[0, 1])
         w_p_n[w_p_n == 0] = 1
@@ -955,7 +961,11 @@ class LIC22(torch.nn.Module):
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
         # w_s
-        self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
+        w_s_clip = SigmoidClip(a=0., b=50.)
+        w_s = torch.ones(s)
+        w_s = w_s_clip.inverse(w_s)
+        self.w_s = torch.nn.Parameter(w_s)  # (3, )
+        self.w_s_clip = w_s_clip
         self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (2, ), long
 
     @property
@@ -969,7 +979,7 @@ class LIC22(torch.nn.Module):
 
     def _external_input_proprioception(self, stimuli):
         """ proprioception input """
-        w_p = self.w_p * self.w_p_mask
+        w_p = self.w_p_clip(self.w_p) * self.w_p_mask
         external_input = torch.mm(stimuli, w_p) / self.w_p_n
         return external_input
 
@@ -984,7 +994,7 @@ class LIC22(torch.nn.Module):
         gradient = stimuli[:, self.p:self.p + 1]  # (batch_size, 1)
         up_step_index = gradient > 0
         down_step_index = gradient <= 0
-        w_s = self.w_s.abs()
+        w_s = self.w_s_clip(self.w_s)
         asel_input = torch.zeros_like(gradient)
         asel_input[up_step_index] = w_s[0] * gradient[up_step_index]
         aser_input = torch.zeros_like(gradient)
@@ -996,7 +1006,7 @@ class LIC22(torch.nn.Module):
 
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
-        w_c = self.w_c.abs() * self.w_c_mask
+        w_c = self.w_c_clip(self.w_c) * self.w_c_mask
         e_c = self.e_c_clip(self.e_c)
         # gap junction weight
         w_g = self.w_g_clip(self.w_g)
