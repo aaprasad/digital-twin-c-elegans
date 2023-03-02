@@ -832,7 +832,7 @@ class LIC21(torch.nn.Module):
 
     def _external_input_proprioception(self, stimuli):
         """ proprioception input """
-        w_p = self.w_p * self.w_p_mask
+        w_p = self.w_p.clamp(-50., 50.) * self.w_p_mask
         external_input = torch.mm(stimuli, w_p) / self.w_p_n
         return external_input
 
@@ -859,7 +859,7 @@ class LIC21(torch.nn.Module):
 
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
-        w_c = self.w_c.clamp(0., 40.) * self.w_c_mask
+        w_c = self.w_c.clamp(0., 50.) * self.w_c_mask
         e_c = self.e_c.clamp(-0.5, 0.05)
         # gap junction weight
         w_g = self.w_g.clamp(0., 1.)
