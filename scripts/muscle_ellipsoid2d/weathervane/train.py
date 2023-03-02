@@ -29,7 +29,8 @@ def train(model_name):
             **get_kwargs(
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
-            )
+            ),
+            'w_max': 1.
         }
     else:
         raise AssertionError('{} not exist'.format(model_name))
@@ -56,4 +57,4 @@ if __name__ == '__main__':
     # train('lig1')
     # train('lig2')
     # train('lic')
-    train('lic22')
+    train('lic21')
