@@ -782,7 +782,7 @@ class Activation(torch.nn.Module):
 
 
 class LIC21(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask, w_max=1.):
         super(LIC21, self).__init__()
         self.dt = dt
         self.steps = steps
@@ -820,6 +820,7 @@ class LIC21(torch.nn.Module):
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
         self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (2, ), long
+        self.w_max = w_max
 
     @property
     def init_state(self):
@@ -832,7 +833,7 @@ class LIC21(torch.nn.Module):
 
     def _external_input_proprioception(self, stimuli):
         """ proprioception input """
-        w_p = self.w_p.clamp(-50., 50.) * self.w_p_mask
+        w_p = self.w_p.clamp(-self.w_max, self.w_max) * self.w_p_mask
         external_input = torch.mm(stimuli, w_p) / self.w_p_n
         return external_input
 
@@ -847,7 +848,7 @@ class LIC21(torch.nn.Module):
         gradient = stimuli[:, self.p:self.p + 1]  # (batch_size, 1)
         up_step_index = gradient > 0
         down_step_index = gradient <= 0
-        w_s = self.w_s.clamp(0., 50.)
+        w_s = self.w_s.clamp(0., self.w_max)
         asel_input = torch.zeros_like(gradient)
         asel_input[up_step_index] = w_s[0] * gradient[up_step_index]
         aser_input = torch.zeros_like(gradient)
@@ -859,7 +860,7 @@ class LIC21(torch.nn.Module):
 
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
-        w_c = self.w_c.clamp(0., 50.) * self.w_c_mask
+        w_c = self.w_c.clamp(0., self.w_max) * self.w_c_mask
         e_c = self.e_c.clamp(-0.5, 0.05)
         # gap junction weight
         w_g = self.w_g.clamp(0., 1.)
