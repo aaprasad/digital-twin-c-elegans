@@ -886,6 +886,20 @@ class LIC21(torch.nn.Module):
         return state, activation, action
 
 
+class SigmoidClip(torch.nn.Module):
+    def __init__(self, a, b):
+        super(SigmoidClip, self).__init__()
+        self.a = a
+        self.b = b
+        self.k = b - a
+
+    def inverse(self, input):
+        return torch.logit((input - self.a) / self.k)
+
+    def forward(self, input):
+        return self.k * torch.sigmoid(input) + self.b
+
+
 class LIC22(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask):
         super(LIC22, self).__init__()
@@ -894,27 +908,44 @@ class LIC22(torch.nn.Module):
         self.n = n
         self.m = m
         self.p = p
-        self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
-        self.bias = torch.nn.Parameter(-0.35 + torch.zeros(n).normal_(0, 0.01))  # (n, )
+        # tau
+        tau_clip = SigmoidClip(a=0.01, b=0.2)
+        tau = torch.zeros(n).uniform_(0.01, 0.2)
+        tau = tau_clip.inverse(tau)
+        self.tau = torch.nn.Parameter(tau)  # (n, )
+        self.tau_clip = tau_clip
+        # bias
+        bias_clip = SigmoidClip(a=-0.45, b=0.)
+        bias = -0.35 + torch.zeros(n).normal_(0, 0.01)
+        bias = bias_clip.inverse(bias)
+        self.bias = torch.nn.Parameter(bias)  # (n, )
+        self.bias_clip = bias_clip
+        # w_c
         w_c = torch.zeros((n, n)).uniform_(0, 1)
-        w_c *= w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
+        # e_c
+        e_c_clip = SigmoidClip(a=-0.5, b=0.05)
         e_c = torch.zeros((n, n)).normal_(mean=0, std=0.01)
         e_c = (-0.24 + e_c) * w_c_mask[0] + (0. + e_c) * w_c_mask[1] + (-0.45 + e_c) * w_c_mask[2]
+        e_c = e_c_clip.inverse(e_c)
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
+        self.e_c_clip = e_c_clip
         self.w_c_mask = torch.nn.Parameter(w_c_mask.any(dim=0), requires_grad=False)  # (n, n), bool
         w_c_n = w_c_mask.sum(dim=[0, 1])
         w_c_n[w_c_n == 0] = 1
         self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
+        # w_g
+        w_g_clip = SigmoidClip(a=0., b=1.)
         w_g = torch.zeros((n, n)).uniform_(0, 1)
-        w_g *= w_g_mask
+        w_g = w_g_clip.inverse(w_g)
         self.w_g = torch.nn.Parameter(w_g)  # (n, n)
+        self.w_g_clip = w_g_clip
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
         w_g_n = w_g_mask.sum(dim=0)
         w_g_n[w_g_n == 0] = 1
         self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
+        # w_p
         w_p = torch.zeros((p, n)).uniform_(-1, 1)
-        w_p *= w_p_mask.any(dim=0)
         self.w_p = torch.nn.Parameter(w_p)  # (p, n)
         self.w_p_mask = torch.nn.Parameter(w_p_mask.any(dim=0), requires_grad=False)  # (p, n), bool
         w_p_n = w_p_mask.sum(dim=[0, 1])
@@ -923,6 +954,7 @@ class LIC22(torch.nn.Module):
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
+        # w_s
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
         self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (2, ), long
 
@@ -930,7 +962,7 @@ class LIC22(torch.nn.Module):
     def init_state(self):
         """ initial state and activation """
         bias = self.bias.clone().detach()
-        bias = bias.clamp(-0.45, 0.)
+        bias = self.bias_clip(bias)
         state = bias
         activation = self.activation_func(state)
         return state, activation  # (n, ), (n, )
@@ -965,16 +997,17 @@ class LIC22(torch.nn.Module):
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
         w_c = self.w_c.abs() * self.w_c_mask
-        e_c = self.e_c.clamp(-0.5, 0.05)
+        e_c = self.e_c_clip(self.e_c)
         # gap junction weight
-        w_g = self.w_g.clamp(0., 1.)
+        w_g = self.w_g_clip(self.w_g)
         # w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # external input + bias
-        bias = self.bias.clamp(-0.45, 0.)
+        bias = self.bias_clip(self.bias)
         external_input = self._external_input(stimuli) + bias
         # dt / tau
-        dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
+        tau = self.tau_clip(self.tau)
+        dt_tau = self.dt / self.steps / tau
         for i in range(self.steps):
             # chemical synapse input
             synapse_input = (torch.mm(activation, w_c * e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
