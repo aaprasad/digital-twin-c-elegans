@@ -782,7 +782,7 @@ class Activation(torch.nn.Module):
 
 
 class LIC21(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask, scale_init=0.25, scale_max=1.):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask):
         super(LIC21, self).__init__()
         self.dt = dt
         self.steps = steps
@@ -791,7 +791,7 @@ class LIC21(torch.nn.Module):
         self.p = p
         self.tau = torch.nn.Parameter(torch.zeros(n).uniform_(0.01, 0.2))  # (n, )
         self.bias = torch.nn.Parameter(-0.35 + torch.zeros(n).normal_(0, 0.01))  # (n, )
-        w_c = torch.zeros((n, n)).uniform_(0, 1) * scale_init
+        w_c = torch.zeros((n, n)).uniform_(0, 1)
         w_c *= w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         e_c = torch.zeros((n, n)).normal_(mean=0, std=0.01)
@@ -801,14 +801,14 @@ class LIC21(torch.nn.Module):
         w_c_n = w_c_mask.sum(dim=[0, 1])
         w_c_n[w_c_n == 0] = 1
         self.w_c_n = torch.nn.Parameter(w_c_n, requires_grad=False)  # (n, )
-        w_g = torch.zeros((n, n)).uniform_(0, 1) * scale_init
+        w_g = torch.zeros((n, n)).uniform_(0, 1)
         w_g *= w_g_mask
         self.w_g = torch.nn.Parameter(w_g)  # (n, n)
         self.w_g_mask = torch.nn.Parameter(w_g_mask, requires_grad=False)  # (n, n), bool
         w_g_n = w_g_mask.sum(dim=0)
         w_g_n[w_g_n == 0] = 1
         self.w_g_n = torch.nn.Parameter(w_g_n, requires_grad=False)  # (n, )
-        w_p = torch.zeros((p, n)).uniform_(-1, 1) * scale_init
+        w_p = torch.zeros((p, n)).uniform_(-1, 1)
         w_p *= w_p_mask.any(dim=0)
         self.w_p = torch.nn.Parameter(w_p)  # (p, n)
         self.w_p_mask = torch.nn.Parameter(w_p_mask.any(dim=0), requires_grad=False)  # (p, n), bool
@@ -818,9 +818,8 @@ class LIC21(torch.nn.Module):
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
-        self.w_s = torch.nn.Parameter(torch.ones(s) * scale_init)  # (3, )
+        self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
         self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (2, ), long
-        self.scale_max = scale_max
 
     @property
     def init_state(self):
@@ -859,11 +858,10 @@ class LIC21(torch.nn.Module):
 
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
-        w_c = self.w_c.clamp(0, self.scale_max) * self.w_c_mask
-        # w_c = self.w_c.abs() * self.w_c_mask
+        w_c = self.w_c.abs() * self.w_c_mask
         e_c = self.e_c.clamp(-0.5, 0.05)
         # gap junction weight
-        w_g = self.w_g.clamp(0, self.scale_max)
+        w_g = self.w_g.clamp(0., 1.)
         # w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # external input + bias
