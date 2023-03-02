@@ -847,7 +847,7 @@ class LIC21(torch.nn.Module):
         gradient = stimuli[:, self.p:self.p + 1]  # (batch_size, 1)
         up_step_index = gradient > 0
         down_step_index = gradient <= 0
-        w_s = self.w_s.abs()
+        w_s = self.w_s.clamp(0., 50.)
         asel_input = torch.zeros_like(gradient)
         asel_input[up_step_index] = w_s[0] * gradient[up_step_index]
         aser_input = torch.zeros_like(gradient)
