@@ -825,6 +825,7 @@ class LIC21(torch.nn.Module):
     def init_state(self):
         """ initial state and activation """
         bias = self.bias.clone().detach()
+        bias = bias.clamp(-0.45, 0.)
         state = bias
         activation = self.activation_func(state)
         return state, activation  # (n, ), (n, )
@@ -865,7 +866,8 @@ class LIC21(torch.nn.Module):
         # w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # external input + bias
-        external_input = self._external_input(stimuli) + self.bias
+        bias = self.bias.clamp(-0.45, 0.)
+        external_input = self._external_input(stimuli) + bias
         # dt / tau
         dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
         for i in range(self.steps):
