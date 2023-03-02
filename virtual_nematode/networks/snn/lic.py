@@ -859,7 +859,7 @@ class LIC21(torch.nn.Module):
 
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
-        w_c = self.w_c.abs() * self.w_c_mask
+        w_c = self.w_c.clamp(0., 40.) * self.w_c_mask
         e_c = self.e_c.clamp(-0.5, 0.05)
         # gap junction weight
         w_g = self.w_g.clamp(0., 1.)
