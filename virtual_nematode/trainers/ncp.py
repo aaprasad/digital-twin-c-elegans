@@ -118,6 +118,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = SNN(cell=LIC5(**kwargs))
     elif model_name == 'lic11':
         model = SNN(cell=LIC11(**kwargs))
+    elif model_name == 'lic20':
+        model = SNN(cell=LIC20(**kwargs))
     elif model_name == 'lic21':
         model = SNN(cell=LIC21(**kwargs))
     elif model_name == 'lic22':

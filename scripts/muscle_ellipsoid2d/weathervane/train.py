@@ -15,8 +15,10 @@ def train(model_name):
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3, 4, 5, 6, 7], 640, 0.05, 0, 1000
-        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 288, 0.05, 0, 1000
+        # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 288, 0.05, 0, 1000
         # device_ids, batch_size, lr, weight_decay, epochs = [4, 5, 6, 7], 288, 0.05, 0, 1000
+        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 288, 0.01, 0, 1000
+        # device_ids, batch_size, lr, weight_decay, epochs = [4, 5, 6, 7], 288, 0.01, 0, 1000
         suffix, suffix_params = None, None
         # suffix, suffix_params = ['e_c'], {'lr': 5e-4}
         kwargs = {
@@ -57,4 +59,4 @@ if __name__ == '__main__':
     # train('lig1')
     # train('lig2')
     # train('lic')
-    train('lic21')
+    train('lic20')
