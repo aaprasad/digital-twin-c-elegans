@@ -825,7 +825,7 @@ class LIC20(torch.nn.Module):
     @property
     def init_state(self):
         """ initial state and activation """
-        state = -0.35 + torch.zeros(self.n).fill_(-0.35)
+        state = torch.zeros(self.n).fill_(-0.35)
         activation = self.activation_func(state)
         return state, activation  # (n, ), (n, )
 
@@ -1077,7 +1077,7 @@ class LIC22(torch.nn.Module):
     @property
     def init_state(self):
         """ initial state and activation """
-        state = -0.35 + torch.zeros(self.n).fill_(-0.35)
+        state = torch.zeros(self.n).fill_(-0.35)
         activation = self.activation_func(state)
         return state, activation  # (n, ), (n, )
 
