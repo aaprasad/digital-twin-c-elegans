@@ -825,9 +825,7 @@ class LIC20(torch.nn.Module):
     @property
     def init_state(self):
         """ initial state and activation """
-        bias = self.bias.clone().detach()
-        bias = bias.clamp(-0.45, 0.)
-        state = bias
+        state = -0.35 + torch.zeros(self.n).fill_(-0.35)
         activation = self.activation_func(state)
         return state, activation  # (n, ), (n, )
 
