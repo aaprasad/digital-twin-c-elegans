@@ -3,7 +3,7 @@ import numpy as np
 import os
 from sim import x_func, position_func
 import sys
-from test import data_func, y_func, select_model
+from test import data_func, y_func, select_model, y_func1
 import torch
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer_weathervane, make_swimmer_weathervane_fixed
 from virtual_nematode.envs.swimmer import fick_uniform
@@ -39,7 +39,7 @@ def test_random_uniform():
     get_results_torch(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
-def test_fixed(pos=(15, 0)):
+def test_fixed(pos=(15, 0), y_function=y_func, y_func_size=95, suffix=''):
     env = make_swimmer_weathervane_fixed(
         n_bodies=25, joint_range=['-70 70'] + ['-100 100'] * 22 + ['-70 70'],
         max_episode_steps=max_episode_steps, reset_noise_scale=0.6,
@@ -47,10 +47,9 @@ def test_fixed(pos=(15, 0)):
         density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
     x_func_size = env.observation_space.shape[0]
-    y_func_size = 95
-    x, y = tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
+    x, y = tester(env, model, data_func, x_func, y_function, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
     distance = int(np.sqrt(pos[0] ** 2 + pos[1] ** 2))
-    torch.save((x, y), os.path.join(save_folder, 'test100_d{}.pt'.format(distance)))
+    torch.save((x, y), os.path.join(save_folder, 'test100_d{}{}.pt'.format(distance, suffix)))
     get_results_torch(x, y, max_episode_steps=max_episode_steps, sigma=5)
 
 
@@ -88,10 +87,13 @@ if __name__ == '__main__':
     model_name = 'li_conductance_gradient2'
     model = select_model(model_folder, model_name, ckpt_name)
     """ chemotaxis env """
-    test_random()
-    test_fixed(pos=(15, 0))
-    test_fixed(pos=(10, 0))
-    test_fixed(pos=(5, 0))
+    # test_random()
+    # test_fixed(pos=(15, 0))
+    # test_fixed(pos=(10, 0))
+    # test_fixed(pos=(5, 0))
     """ uniform env """
-    test_random_uniform()
-    test_fixed_uniform(pos=(0, 0))
+    # test_random_uniform()
+    # test_fixed_uniform(pos=(0, 0))
+    """ chemotaxis env: full state """
+    # test_fixed(pos=(10, 0), y_function=y_func1, y_func_size=1033, suffix='_full')
+    test_fixed(pos=(15, 0), y_function=y_func1, y_func_size=1033, suffix='_full')
