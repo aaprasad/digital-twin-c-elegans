@@ -55,14 +55,13 @@ def select_model(model_folder, model_name, ckpt_name):
     return model
 
 
-def test(model_folder, model_name, ckpt_name, save_folder):
+def test(model_folder, model_name, ckpt_name, save_folder, y_function=y_func, y_func_size=95, suffix=''):
     print(ckpt_name)
     model = select_model(model_folder, model_name, ckpt_name)
     # model.cell.modify()
     x_func_size = env.observation_space.shape[0]
-    y_func_size = 95  # 469 + 469 + 95
-    x, y = tester(env, model, data_func, x_func, y_func, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
-    torch.save((x, y), os.path.join(save_folder, 'test100.pt'))
+    x, y = tester(env, model, data_func, x_func, y_function, x_func_size, y_func_size, seed, max_episode_steps, data_size=100)
+    torch.save((x, y), os.path.join(save_folder, 'test100{}.pt'.format(suffix)))
     get_results_torch(x, y, max_episode_steps=max_episode_steps)
 
 
@@ -100,6 +99,7 @@ if __name__ == '__main__':
     )
     """ testing """
     model_name = 'li_conductance'
-    test(model_folder, model_name, ckpt_name, save_folder)
+    # test(model_folder, model_name, ckpt_name, save_folder)
     # single_test(env, model_folder, model_name, ckpt_name, save_folder)
     # record(env, model_folder, model_name, ckpt_name, video_folder)
+    test(model_folder, model_name, ckpt_name, save_folder, y_function=y_func1, y_func_size=469+469+95, suffix='_full')
