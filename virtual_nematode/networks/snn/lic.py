@@ -1222,7 +1222,7 @@ class LIC23(torch.nn.Module):
         # w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # external input + bias
-        bias = self.bias.clamp(-0.45, 0.)
+        bias = self.bias.clamp(-0.45, -0.24)
         external_input = self._external_input(stimuli) + bias
         # dt / tau
         dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
