@@ -1437,9 +1437,9 @@ class LIC31(torch.nn.Module):
             gap_input = torch.sum(delta_state * w_g, dim=1) / self.w_g_n
             # total input
             total_input = synapse_input + gap_input + external_input
+            total_input = total_input.clamp(-0.8, 0.35)
             # cell state and activation
             state = (1 - dt_tau) * state + dt_tau * total_input
-            state = state.clamp(-0.8, 0.35)
             activation = self.activation_func(state)
         # muscle output
         action = activation[:, self.output_index]
