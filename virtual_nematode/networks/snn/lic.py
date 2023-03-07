@@ -1324,8 +1324,7 @@ class LIC30(torch.nn.Module):
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # external input + bias
-        bias = self.bias.clamp(-0.45, -0.24)
-        external_input = self._external_input(stimuli) + bias
+        external_input = self._external_input(stimuli) + self.bias
         # dt / tau
         dt_tau = self.dt / self.steps / self.tau.clamp(0.01, 0.2)
         for i in range(self.steps):
@@ -1338,6 +1337,7 @@ class LIC30(torch.nn.Module):
             total_input = synapse_input + gap_input + external_input
             # cell state and activation
             state = (1 - dt_tau) * state + dt_tau * total_input
+            state = state.clamp(-0.8, 0.35)
             activation = self.activation_func(state)
         # muscle output
         action = activation[:, self.output_index]
