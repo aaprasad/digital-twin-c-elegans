@@ -32,7 +32,7 @@ def train(model_name):
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
             ),
-            'w_max': 1.
+            # 'w_max': 1.
         }
     else:
         raise AssertionError('{} not exist'.format(model_name))
