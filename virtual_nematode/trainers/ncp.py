@@ -128,6 +128,10 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = SNN(cell=LIC30(**kwargs))
     elif model_name == 'lic31':
         model = SNN(cell=LIC31(**kwargs))
+    elif model_name == 'lic40':
+        model = SNN(cell=LIC40(**kwargs))
+    elif model_name == 'lic41':
+        model = SNN(cell=LIC41(**kwargs))
     elif model_name == 'lic42':
         model = SNN(cell=LIC42(**kwargs))
     elif model_name == 'lic43':
