@@ -1457,9 +1457,9 @@ class SigmoidClamp(torch.nn.Module):
         return self.k * torch.sigmoid(input) + self.a
 
 
-class LIC32(torch.nn.Module):
+class LIC42(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask):
-        super(LIC32, self).__init__()
+        super(LIC42, self).__init__()
         self.dt = dt
         self.steps = steps
         self.n = n
