@@ -15,11 +15,11 @@ def train(model_name):
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3, 4, 5, 6, 7], 640, 0.05, 0, 1000
-        # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 288, 0.05, 0, 1000  # steps=5
+        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 288, 0.05, 0, 1000  # steps=5
         # device_ids, batch_size, lr, weight_decay, epochs = [4, 5, 6, 7], 288, 0.05, 0, 1000  # steps=5
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 160, 0.05, 0, 1000  # steps=10
         # device_ids, batch_size, lr, weight_decay, epochs = [4, 5, 6, 7], 160, 0.05, 0, 1000  # steps=10
-        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 72, 0.05, 0, 1000  # steps=20
+        # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 72, 0.05, 0, 1000  # steps=20
         # device_ids, batch_size, lr, weight_decay, epochs = [4, 5, 6, 7], 72, 0.05, 0, 1000  # steps=20
         suffix, suffix_params = None, None
         # suffix, suffix_params = ['e_c'], {'lr': 5e-4}
@@ -29,7 +29,7 @@ def train(model_name):
             'suffix': suffix, 'suffix_params': suffix_params,
             # model kwargs
             # 'model_path': None, 'strict': True, 'optimizer_path': None,
-            'dt': 0.04, 'steps': 20,
+            'dt': 0.04, 'steps': 5,
             **get_kwargs(
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')
@@ -61,4 +61,4 @@ if __name__ == '__main__':
     # train('lig1')
     # train('lig2')
     # train('lic')
-    train('lic30')
+    train('lic42')
