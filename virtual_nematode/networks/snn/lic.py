@@ -1002,7 +1002,7 @@ class SigmoidClip(torch.nn.Module):
         return torch.logit((input - self.a) / self.k)
 
     def forward(self, input):
-        return self.k * torch.sigmoid(input) + self.b
+        return self.k * torch.sigmoid(input) + self.a
 
 
 class LIC22(torch.nn.Module):
@@ -1446,6 +1446,17 @@ class LIC31(torch.nn.Module):
         return state, activation, action
 
 
+class SigmoidClamp(torch.nn.Module):
+    def __init__(self, a, b):
+        super(SigmoidClamp, self).__init__()
+        self.a = a
+        self.b = b
+        self.k = b - a
+
+    def forward(self, input):
+        return self.k * torch.sigmoid(input) + self.a
+
+
 class LIC32(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask):
         super(LIC32, self).__init__()
@@ -1481,6 +1492,7 @@ class LIC32(torch.nn.Module):
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
+        self.input_func = SigmoidClamp(a=-0.8, b=0.35)
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
@@ -1539,7 +1551,7 @@ class LIC32(torch.nn.Module):
             gap_input = torch.sum(delta_state * w_g, dim=1) / self.w_g_n
             # total input
             total_input = synapse_input + gap_input + external_input
-            total_input = total_input.clamp(-0.8, 0.35)
+            total_input = self.input_func(total_input)
             # cell state and activation
             state = (1 - dt_tau) * state + dt_tau * total_input
             activation = self.activation_func(state)
