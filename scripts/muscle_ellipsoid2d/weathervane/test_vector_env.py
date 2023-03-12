@@ -141,15 +141,16 @@ if __name__ == '__main__':
         source=(0, 0), density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
     """ model """
-    model_name = 'li_conductance_gradient2'
+    # model_name = 'li_conductance_gradient2'
+    model_name = 'lic43'
     model = select_model(model_folder, model_name, ckpt_name)
     device_id = 0  # None
     device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     """ testing """
     test()
-    test_fixed(pos=(15, 0))
-    test_fixed(pos=(10, 0))
-    test_fixed(pos=(5, 0))
-    test_nograd()
-    test_fixed_nograd(pos=(0, 0))
+    # test_fixed(pos=(15, 0))
+    # test_fixed(pos=(10, 0))
+    # test_fixed(pos=(5, 0))
+    # test_nograd()
+    # test_fixed_nograd(pos=(0, 0))
