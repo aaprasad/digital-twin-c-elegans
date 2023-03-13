@@ -1809,7 +1809,7 @@ class LIC43(torch.nn.Module):
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         # self.input_func = SigmoidClamp(a=-0.8, b=0.35)
-        self.input_func = SigmoidClamp(a=-1.5, b=1.5)  # membrane potential's rate of change, (-1.5, 1.5), unit 0.1 V
+        self.input_func = SigmoidClamp(a=-15, b=15)  # if tau=0.08, dt/tau*input~(-1.5,1.5), unit 0.1 V
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
