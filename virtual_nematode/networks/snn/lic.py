@@ -1877,6 +1877,24 @@ class LIC43(torch.nn.Module):
         return state, activation, action
 
 
+class Sigmoid(torch.nn.Module):
+    def __init__(self, a, b):
+        super(Sigmoid, self).__init__()
+        self.a = a
+        self.b = b
+        p = b - a
+        self.p = p
+        self.q = 4. / p
+
+    def inverse(self, input):
+        e = 1e-6
+        input = input.clamp(self.a + e, self.b - e)
+        return torch.logit((input - self.a) / self.p) / self.q
+
+    def forward(self, input):
+        return self.p * torch.sigmoid(self.q * input) + self.a
+
+
 class LIC50(torch.nn.Module):
     def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask):
         super(LIC50, self).__init__()
@@ -1886,7 +1904,7 @@ class LIC50(torch.nn.Module):
         self.m = m
         self.p = p
         tau = torch.zeros(n).uniform_(0.01, 0.2)
-        tau_func = SigmoidClamp(a=0.01, b=0.2)
+        tau_func = Sigmoid(a=0.01, b=0.2)
         tau = tau_func.inverse(tau)
         self.tau = torch.nn.Parameter(tau)  # (n, )
         self.tau_func = tau_func
@@ -1896,7 +1914,7 @@ class LIC50(torch.nn.Module):
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         e_c = torch.zeros((n, n)).normal_(mean=0, std=0.01)
         e_c = (-0.24 + e_c) * w_c_mask[0] + (0. + e_c) * w_c_mask[1] + (-0.45 + e_c) * w_c_mask[2]
-        e_c_func = SigmoidClamp(a=-0.5, b=0.05)
+        e_c_func = Sigmoid(a=-0.5, b=0.05)
         e_c = e_c_func.inverse(e_c)
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
         self.e_c_func = e_c_func
@@ -1919,7 +1937,7 @@ class LIC50(torch.nn.Module):
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
-        self.input_func = SigmoidClamp(a=-15, b=15)  # if tau=0.08, dt/tau*input~(-1.5,1.5), unit 0.1 V
+        self.input_func = Sigmoid(a=-15, b=15)  # if tau=0.08, dt/tau*input~(-1.5,1.5), unit 0.1 V
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
