@@ -21,6 +21,8 @@ def train(model_name):
         # device_ids, batch_size, lr, weight_decay, epochs = [4, 5, 6, 7], 160, 0.05, 0, 1000  # steps=10
         # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 72, 0.05, 0, 1000  # steps=20
         # device_ids, batch_size, lr, weight_decay, epochs = [4, 5, 6, 7], 72, 0.05, 0, 1000  # steps=20
+        # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 288, 0.01, 0, 1000  # steps=5
+        # device_ids, batch_size, lr, weight_decay, epochs = [4, 5, 6, 7], 288, 0.01, 0, 1000  # steps=5
         suffix, suffix_params = None, None
         # suffix, suffix_params = ['e_c'], {'lr': 5e-4}
         kwargs = {
