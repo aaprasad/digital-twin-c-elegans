@@ -148,9 +148,9 @@ if __name__ == '__main__':
     device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     """ testing """
-    test()
+    # test()
     # test_fixed(pos=(15, 0))
-    # test_fixed(pos=(10, 0))
+    test_fixed(pos=(10, 0))
     # test_fixed(pos=(5, 0))
     # test_nograd()
     # test_fixed_nograd(pos=(0, 0))
