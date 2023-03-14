@@ -1884,7 +1884,8 @@ class Sigmoid(torch.nn.Module):
         self.b = b
         p = b - a
         self.p = p
-        self.q = 4. / p
+        # self.q = 4. / p
+        self.q = 1. / p
 
     def inverse(self, input):
         e = 1e-6
