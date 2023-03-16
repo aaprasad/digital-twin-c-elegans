@@ -2049,7 +2049,7 @@ class LIC51(torch.nn.Module):
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
-        self.input_func = Sigmoid(a=-15, b=15)  # if tau=0.08, dt/tau*input~(-1.5,1.5), unit 0.1 V
+        self.delta_state_func = Sigmoid(a=-1.5, b=1.5)  # delta state ~(-1.5,1.5), unit 0.1 V
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
@@ -2109,9 +2109,10 @@ class LIC51(torch.nn.Module):
             gap_input = torch.sum(delta_state * w_g, dim=1) / self.w_g_n
             # total input
             total_input = synapse_input + gap_input + external_input
-            total_input = self.input_func(total_input)
             # cell state and activation
-            state = (1 - dt_tau) * state + dt_tau * total_input
+            delta_state = dt_tau * total_input
+            delta_state = self.delta_state_func(delta_state)
+            state = (1 - dt_tau) * state + delta_state
             activation = self.activation_func(state)
         # muscle output
         action = activation[:, self.output_index]
