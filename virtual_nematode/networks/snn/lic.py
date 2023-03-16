@@ -2016,7 +2016,7 @@ class LIC51(torch.nn.Module):
         self.m = m
         self.p = p
         tau = torch.zeros(n).uniform_(0.01, 0.2)
-        tau_func = SigmoidClamp(a=0.01, b=0.2)
+        tau_func = Sigmoid(a=0.01, b=0.2)
         tau = tau_func.inverse(tau)
         self.tau = torch.nn.Parameter(tau)  # (n, )
         self.tau_func = tau_func
@@ -2026,7 +2026,7 @@ class LIC51(torch.nn.Module):
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         e_c = torch.zeros((n, n)).normal_(mean=0, std=0.01)
         e_c = (-0.24 + e_c) * w_c_mask[0] + (0. + e_c) * w_c_mask[1] + (-0.45 + e_c) * w_c_mask[2]
-        e_c_func = SigmoidClamp(a=-0.5, b=0.05)
+        e_c_func = Sigmoid(a=-0.5, b=0.05)
         e_c = e_c_func.inverse(e_c)
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
         self.e_c_func = e_c_func
