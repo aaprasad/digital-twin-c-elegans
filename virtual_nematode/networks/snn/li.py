@@ -296,7 +296,7 @@ class LI2(torch.nn.Module):
 
 
 class LI41(torch.nn.Module):
-    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index, s, w_s_mask):
+    def __init__(self, dt, steps, n, m, p, w_c_mask, w_g_mask, w_p_mask, output_index):
         super(LI41, self).__init__()
         self.dt = dt
         self.steps = steps
@@ -339,9 +339,6 @@ class LI41(torch.nn.Module):
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
         self.state_func = SigmoidClamp(a=-0.8, b=0.35)
         self.activation_func = Activation(k=37.5, b=9.)
-        self.s = s  # sensory size
-        self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
-        self.w_s_mask = torch.nn.Parameter(w_s_mask, requires_grad=False)  # (2, ), long
 
     @property
     def init_state(self):
@@ -356,27 +353,6 @@ class LI41(torch.nn.Module):
         external_input = torch.mm(stimuli, w_p) / self.w_p_n
         return external_input
 
-    def _external_input(self, stimuli):
-        """ receive proprioception input and sensory input
-        https://doi.org/10.1038/nature06927
-        https://doi.org/10.1038/s41598-018-35157-1
-        """
-        # proprioception input
-        external_input = self._external_input_proprioception(stimuli[:, 0:self.p])
-        # sensory input
-        gradient = stimuli[:, self.p:self.p + 1]  # (batch_size, 1)
-        up_step_index = gradient > 0
-        down_step_index = gradient <= 0
-        w_s = self.w_s.abs()
-        asel_input = torch.zeros_like(gradient)
-        asel_input[up_step_index] = w_s[0] * gradient[up_step_index]
-        aser_input = torch.zeros_like(gradient)
-        aser_input[up_step_index] = -w_s[1] * gradient[up_step_index]
-        aser_input[down_step_index] = -w_s[2] * gradient[down_step_index]
-        sensory_input = torch.cat((asel_input, aser_input), dim=1)  # ASEL/ASER, (batch_size, 2)
-        external_input[:, self.w_s_mask] += sensory_input
-        return external_input
-
     def forward(self, state, activation, stimuli):
         # chemical synapse weight
         w_c = self.w_c.abs() * self.w_c_mask
@@ -385,7 +361,7 @@ class LI41(torch.nn.Module):
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
         # external input + bias
-        external_input = self._external_input(stimuli) + self.bias
+        external_input = self._external_input_proprioception(stimuli) + self.bias
         # dt / tau
         tau = self.tau_func(self.tau)
         dt_tau = self.dt / self.steps / tau
