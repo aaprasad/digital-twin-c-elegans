@@ -31,42 +31,20 @@ Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environme
 * All manually defined parameters need to be registered, so that they can be transferred along with the module to any devices.
 * torch.nn.ParameterDict can register dict of parameters, but it doesn't support DataParallel.
 * In torch.nn.Module, register parameters one by one with `self.register_parameter(name, param)`, and access `param` directly with `self.name`.
-* save DataParallel models by:
-    ```
-    torch.save(model.module.state_dict(), PATH)
-    ```
+* save DataParallel models by: `torch.save(model.module.state_dict(), PATH)`
+
 #### usage
-* run simulation
-    ```
-    python sim.py
-    ```
-* generate simulation data
-    ```
-    python data.py
-    ```
-* preprocess data
-    ```
-    python ncp_data.py
-    ```
-* train and test network
-    ```
-    python ncp.py
-    ```
-* online test the trained network
-    ```
-    python ncp_online.py
-    ```
+* run simulation: `python sim.py`
+* generate simulation data: `python data.py`
+* preprocess data: `python ncp_data.py`
+* train and test network: `python ncp.py`
+* online test the trained network: `python ncp_online.py`
 
 ## TensorBoard
-* check TensorBoard log
-    ```
-    tensorboard --logdir=runs --host=10.176.50.34 --port=6006
-    ```
-* local
-    ```
-    tensorboard --logdir=runs
-    ```
+* check TensorBoard log: `tensorboard --logdir=runs --host=10.176.50.34 --port=6006`
+* local: `tensorboard --logdir=runs`
 
 ## Server
 * shut down after `python train.py; shutdown`
 * shut down if the result is successful `python train.py && shutdown`
+* count files: `ls -l | grep "^-" | wc -l`
