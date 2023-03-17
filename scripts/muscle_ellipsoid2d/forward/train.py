@@ -9,13 +9,14 @@ def train(model_name):
         data_name = ['data_7000_5000_640_64_stride8_n10_train.pt', 'data_7000_1000_640_64_stride8_n10_eval.pt', 'data_7000_1000_640_64_stride8_n10_test.pt']
         # data_name = ['data_7000_5000_640_64_stride4_n10_train.pt', 'data_7000_1000_640_64_stride4_n10_eval.pt', 'data_7000_1000_640_64_stride4_n10_test.pt']
         # data_name = ['data_7000_320_64_stride8_n10_train.pt', 'data_7000_320_64_stride8_n10_eval.pt', 'data_7000_320_64_stride8_n10_test.pt']
-        # device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 128, 5e-2, 0, 1000
-        device_ids, batch_size, lr, weight_decay, epochs = [0, 1], 128, 5e-2, 0, 1000
+        device_ids, batch_size, lr, weight_decay, epochs = [0, 1, 2, 3], 288, 0.05, 0, 1000  # steps=5
+        # device_ids, batch_size, lr, weight_decay, epochs = [4, 5, 6, 7], 288, 0.05, 0, 1000  # steps=5
         kwargs = {
-            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 42,
-            'device_ids': device_ids, 'lr': lr, 'weight_decay': weight_decay, 'epochs': epochs, 'early_stop': 30,
+            'data_name': data_name, 'model_name': model_name, 'batch_size': batch_size, 'seed': 48,
+            'device_ids': device_ids, 'lr': lr, 'weight_decay': weight_decay, 'epochs': epochs, 'early_stop': epochs,
             # 'model_path': None, 'strict': True, 'optimizer_path': None,
-            'dt': 0.04, 'steps': 5, **get_kwargs(
+            'dt': 0.04, 'steps': 5,
+            **get_kwargs(
                 path=worm_assets.connectome_path(),
                 polarity_path=worm_assets.polarity_path('Cook et al connectome.xls')  # 'NT+R method prediction.xls'
             )
@@ -38,5 +39,6 @@ def train(model_name):
 if __name__ == '__main__':
     # train('snn_forward3')
     # train('li_current')
-    train('li_conductance')
+    # train('li_conductance')
     # train('li_conductance_cf')
+    train('li41')

@@ -1,5 +1,4 @@
 import os
-import torch
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from virtual_nematode.data.utils import prepare_dataloader, prepare_test_dataloader
@@ -10,6 +9,7 @@ from virtual_nematode.networks.ncp.wirings import FullyConnected, NCP
 from virtual_nematode.networks.rnn.ctrnn_cell import CTRNNCell
 from virtual_nematode.networks.rnn.rnn import RNNCell
 from virtual_nematode.networks.snn.forward import SNNCell, SNN, SNNCell1, SNNCell2, SNNCell3, SNNCell4
+from virtual_nematode.networks.snn.li import *
 from virtual_nematode.networks.snn.lic import *
 from virtual_nematode.networks.snn.lif import (
     LeakyIntegratorCurrentBased, LeakyIntegratorConductanceBased,
@@ -140,6 +140,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = SNN(cell=LIC50(**kwargs))
     elif model_name == 'lic51':
         model = SNN(cell=LIC51(**kwargs))
+    elif model_name == 'li41':
+        model = SNN(cell=LI41(**kwargs))
     elif model_name == 'li_conductance_mixed_gradient':
         model = li_conductance_mixed_gradient(**kwargs)
     elif model_name == 'li_conductance_mixed_gradient1':
