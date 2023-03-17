@@ -39,6 +39,7 @@ def modify_electrical_mask(model, index):
 
 def test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type, suffix='', device_id=None, id_list=None):
     print(ckpt_name)
+    print('ablation', ablation_type, device_id)
     model = select_model(model_folder, model_name, ckpt_name)
     device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
     model = model.to(device)
@@ -107,9 +108,8 @@ def main_random_all():
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=7, id_list=list(range(413, 469)))
 
 
-def main_fixed():
+def main_fixed(pos=(10, 0)):
     """ env """
-    pos = (10, 0)
     env = gym.vector.AsyncVectorEnv(
         env_fns=[
             make_swimmer_weathervane_fixed_fn(
@@ -122,7 +122,7 @@ def main_fixed():
     """ testing """
     distance = int(np.sqrt(pos[0] ** 2 + pos[1] ** 2))
     suffix = '_d{}'.format(distance)
-    test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=0, id_list=list(range(0, 160)))
+    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=0, id_list=list(range(0, 160)))
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=1, id_list=list(range(160, 320)))
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=2, id_list=list(range(320, 469)))
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', suffix=suffix, device_id=3, id_list=list(range(0, 160)))
@@ -130,6 +130,15 @@ def main_fixed():
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', suffix=suffix, device_id=5, id_list=list(range(320, 469)))
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', suffix=suffix, device_id=6, id_list=list(range(0, 235)))
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', suffix=suffix, device_id=7, id_list=list(range(235, 469)))
+
+    test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=0, id_list=list(range(0, 59)))
+    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=1, id_list=list(range(59, 118)))
+    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=2, id_list=list(range(118, 177)))
+    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=3, id_list=list(range(177, 236)))
+    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=4, id_list=list(range(236, 295)))
+    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=5, id_list=list(range(295, 354)))
+    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=6, id_list=list(range(354, 413)))
+    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=7, id_list=list(range(413, 469)))
 
 
 if __name__ == '__main__':
@@ -151,7 +160,8 @@ if __name__ == '__main__':
         source=(0, 0), density=1.2, viscosity=0.1, condim=3, friction='1 1 0.005 0.0001 0.0001', cone='elliptic'
     )
     """ test """
-    model_name = 'li_conductance_gradient2'
+    # model_name = 'li_conductance_gradient2'
+    model_name = 'lic41'
     # main_random()
-    # main_fixed()
-    main_random_all()
+    main_fixed(pos=(10, 0))
+    # main_random_all()
