@@ -108,7 +108,7 @@ def main_random_all():
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=7, id_list=list(range(413, 469)))
 
 
-def main_fixed(pos=(10, 0)):
+def main_fixed(pos=(10, 0), device_id=0):
     """ env """
     env = gym.vector.AsyncVectorEnv(
         env_fns=[
@@ -131,19 +131,31 @@ def main_fixed(pos=(10, 0)):
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', suffix=suffix, device_id=6, id_list=list(range(0, 235)))
     # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='electrical', suffix=suffix, device_id=7, id_list=list(range(235, 469)))
 
-    test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=0, id_list=list(range(0, 59)))
-    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=1, id_list=list(range(59, 118)))
-    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=2, id_list=list(range(118, 177)))
-    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=3, id_list=list(range(177, 236)))
-    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=4, id_list=list(range(236, 295)))
-    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=5, id_list=list(range(295, 354)))
-    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=6, id_list=list(range(354, 413)))
-    # test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=7, id_list=list(range(413, 469)))
+    if device_id == 0:
+        id_list = list(range(0, 59))
+    elif device_id == 1:
+        id_list = list(range(59, 118))
+    elif device_id == 2:
+        id_list = list(range(118, 177))
+    elif device_id == 3:
+        id_list = list(range(177, 236))
+    elif device_id == 4:
+        id_list = list(range(236, 295))
+    elif device_id == 5:
+        id_list = list(range(295, 354))
+    elif device_id == 6:
+        id_list = list(range(354, 413))
+    elif device_id == 7:
+        id_list = list(range(413, 469))
+    else:
+        raise AssertionError
+    test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=device_id, id_list=id_list)
 
 
 if __name__ == '__main__':
     runs_folder = sys.argv[1]
     ckpt_name = sys.argv[2]  # 'model.pt'
+    device_id = int(sys.argv[3])  # 0~7
     model_folder = os.path.join('runs', runs_folder)
     save_folder = os.path.join('data', runs_folder, ckpt_name)
     video_folder = os.path.join('video', runs_folder, ckpt_name)
@@ -163,5 +175,5 @@ if __name__ == '__main__':
     # model_name = 'li_conductance_gradient2'
     model_name = 'lic41'
     # main_random()
-    main_fixed(pos=(10, 0))
+    main_fixed(pos=(10, 0), device_id=device_id)
     # main_random_all()
