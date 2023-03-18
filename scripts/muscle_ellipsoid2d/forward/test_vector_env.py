@@ -61,5 +61,6 @@ if __name__ == '__main__':
     env = gym.vector.AsyncVectorEnv(env_fns=[make_swimmer_fn(xml_str, max_episode_steps, reset_noise_scale=0.6) for _ in range(num_envs)])
     print(env.action_space, env.observation_space)
     """ testing """
-    model_name = 'li_conductance'
+    # model_name = 'li_conductance'
+    model_name = 'li41'
     test(model_folder, model_name, ckpt_name, save_folder, device_id=0)
