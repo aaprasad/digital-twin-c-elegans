@@ -41,6 +41,7 @@ def test(model_folder, model_name, ckpt_name, save_folder, ablation_type, device
 if __name__ == '__main__':
     runs_folder = sys.argv[1]
     ckpt_name = sys.argv[2]  # 'model.pt'
+    device_id = int(sys.argv[3])  # 0~7
     model_folder = os.path.join('runs', runs_folder)
     save_folder = os.path.join('data', runs_folder, ckpt_name)
     video_folder = os.path.join('video', runs_folder, ckpt_name)
@@ -59,8 +60,27 @@ if __name__ == '__main__':
     env = gym.vector.AsyncVectorEnv(env_fns=[make_swimmer_fn(xml_str, max_episode_steps, reset_noise_scale=0.6) for _ in range(num_envs)])
     print(env.action_space, env.observation_space)
     """ testing """
-    model_name = 'li_conductance'
-    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=0, id_list=list(range(0, 156)))
+    model_name = 'li41'
+    if device_id == 0:
+        id_list = list(range(0, 59))
+    elif device_id == 1:
+        id_list = list(range(59, 118))
+    elif device_id == 2:
+        id_list = list(range(118, 177))
+    elif device_id == 3:
+        id_list = list(range(177, 236))
+    elif device_id == 4:
+        id_list = list(range(236, 295))
+    elif device_id == 5:
+        id_list = list(range(295, 354))
+    elif device_id == 6:
+        id_list = list(range(354, 413))
+    elif device_id == 7:
+        id_list = list(range(413, 469))
+    else:
+        raise AssertionError
+    test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=device_id, id_list=id_list)
+    # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=0, id_list=list(range(0, 156)))
     # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=1, id_list=list(range(156, 312)))
     # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='all', device_id=2, id_list=list(range(312, 469)))
     # test(model_folder, model_name, ckpt_name, save_folder, ablation_type='chemical', device_id=3, id_list=list(range(0, 156)))
