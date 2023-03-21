@@ -2128,7 +2128,7 @@ class LIC61(torch.nn.Module):
         self.m = m
         self.p = p
         tau = torch.zeros(n).uniform_(0.01, 0.2)
-        tau_func = SigmoidClamp(a=0.01, b=0.2)
+        tau_func = Sigmoid(a=0.01, b=0.2)
         tau = tau_func.inverse(tau)
         self.tau = torch.nn.Parameter(tau)  # (n, )
         self.tau_func = tau_func
@@ -2138,7 +2138,7 @@ class LIC61(torch.nn.Module):
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         e_c = torch.zeros((n, n)).normal_(mean=0, std=0.01)
         e_c = (-0.24 + e_c) * w_c_mask[0] + (0. + e_c) * w_c_mask[1] + (-0.45 + e_c) * w_c_mask[2]
-        e_c_func = SigmoidClamp(a=-0.5, b=0.05)
+        e_c_func = Sigmoid(a=-0.5, b=0.05)
         e_c = e_c_func.inverse(e_c)
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
         self.e_c_func = e_c_func
@@ -2161,7 +2161,7 @@ class LIC61(torch.nn.Module):
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
-        self.state_func = SigmoidClamp(a=-0.8, b=0.35)
+        self.state_func = Sigmoid(a=-0.8, b=0.35)
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
