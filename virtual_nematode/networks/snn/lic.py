@@ -2248,11 +2248,12 @@ class LIC62(torch.nn.Module):
         w_c *= w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         e_c = torch.zeros((n, n)).normal_(mean=0, std=0.01)
-        e_c = (-0.24 + e_c) * w_c_mask[0] + (0. + e_c) * w_c_mask[1] + (-0.45 + e_c) * w_c_mask[2]
+        e_c = (-0.24 + e_c) * w_c_mask[0]
         e_c_func = Sigmoid(a=-0.5, b=0.05)
         e_c = e_c_func.inverse(e_c)
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
         self.e_c_func = e_c_func
+        self.e_c_mask = torch.nn.Parameter(w_c_mask, requires_grad=False)  # (3, n, n), bool
         self.w_c_mask = torch.nn.Parameter(w_c_mask.any(dim=0), requires_grad=False)  # (n, n), bool
         w_c_n = w_c_mask.sum(dim=[0, 1])
         w_c_n[w_c_n == 0] = 1
@@ -2316,6 +2317,7 @@ class LIC62(torch.nn.Module):
         # chemical synapse weight
         w_c = self.w_c.abs() * self.w_c_mask
         e_c = self.e_c_func(self.e_c)
+        e_c = e_c * self.e_c_mask[0] + 0.05 * self.e_c_mask[1] - 0.5 * self.e_c_mask[2]
         # gap junction weight
         w_g = self.w_g.abs()
         w_g = (w_g.tril() + w_g.tril(diagonal=-1).T) * self.w_g_mask
