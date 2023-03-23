@@ -142,6 +142,8 @@ def prepare_model(model_name, device=None, device_ids=None, model_path=None, str
         model = SNN(cell=LIC51(**kwargs))
     elif model_name == 'lic61':
         model = SNN(cell=LIC61(**kwargs))
+    elif model_name == 'lic62':
+        model = SNN(cell=LIC62(**kwargs))
     elif model_name == 'li41':
         model = SNN(cell=LI41(**kwargs))
     elif model_name == 'li_conductance_mixed_gradient':
