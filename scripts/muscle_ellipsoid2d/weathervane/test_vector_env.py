@@ -143,15 +143,16 @@ if __name__ == '__main__':
     """ model """
     # model_name = 'li_conductance_gradient2'
     # model_name = 'lic41'
-    model_name = 'lic61'
+    # model_name = 'lic61'
+    model_name = 'lic62'
     model = select_model(model_folder, model_name, ckpt_name)
     device_id = 0  # 0, None
     device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     """ testing """
     test()
-    test_fixed(pos=(15, 0))
+    # test_fixed(pos=(15, 0))
     test_fixed(pos=(10, 0))
-    test_fixed(pos=(5, 0))
-    test_nograd()
-    test_fixed_nograd(pos=(0, 0))
+    # test_fixed(pos=(5, 0))
+    # test_nograd()
+    # test_fixed_nograd(pos=(0, 0))
