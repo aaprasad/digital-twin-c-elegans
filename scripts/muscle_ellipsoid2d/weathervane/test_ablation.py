@@ -42,7 +42,6 @@ def test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type, s
     print('ablation', ablation_type, device_id)
     model = select_model(model_folder, model_name, ckpt_name)
     device = torch.device('cuda:{}'.format(device_id) if device_id is not None and torch.cuda.is_available() else 'cpu')
-    model = model.to(device)
     save_folder_temp = os.path.join(save_folder, ablation_type + suffix)
     os.makedirs(save_folder_temp, exist_ok=True)
     for i in id_list:
@@ -58,6 +57,7 @@ def test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type, s
             model_temp = modify_electrical_mask(model_temp, index=i)
         else:
             raise AssertionError
+        model_temp = model_temp.to(device)
         x, y = test_vector_env_func(env, model_temp, data_func, x_func, y_func, device, seed)
         print(x.shape, y.shape)
         np.savez(file_temp, x=x, y=y)
@@ -152,6 +152,66 @@ def main_fixed(pos=(10, 0), device_id=0):
     test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=device_id, id_list=id_list)
 
 
+def main_fixed_4(pos=(10, 0), device_id=0):
+    """ env """
+    env = gym.vector.AsyncVectorEnv(
+        env_fns=[
+            make_swimmer_weathervane_fixed_fn(
+                xml_str, reset_noise_scale=0.6, pos=pos, max_episode_steps=max_episode_steps,
+                source=(0, 0), position_func=position_func
+            ) for _ in range(num_envs)
+        ]
+    )
+    print(env.action_space, env.observation_space)
+    """ testing """
+    distance = int(np.sqrt(pos[0] ** 2 + pos[1] ** 2))
+    suffix = '_d{}'.format(distance)
+
+    if device_id == 0 or device_id == 4:
+        id_list = list(range(0, 117))
+    elif device_id == 1 or device_id == 5:
+        id_list = list(range(117, 234))
+    elif device_id == 2 or device_id == 6:
+        id_list = list(range(234, 351))
+    elif device_id == 3 or device_id == 7:
+        id_list = list(range(351, 469))
+    else:
+        raise AssertionError
+    test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=device_id, id_list=id_list)
+
+
+def main_fixed_6(pos=(10, 0), device_id=0):
+    """ env """
+    env = gym.vector.AsyncVectorEnv(
+        env_fns=[
+            make_swimmer_weathervane_fixed_fn(
+                xml_str, reset_noise_scale=0.6, pos=pos, max_episode_steps=max_episode_steps,
+                source=(0, 0), position_func=position_func
+            ) for _ in range(num_envs)
+        ]
+    )
+    print(env.action_space, env.observation_space)
+    """ testing """
+    distance = int(np.sqrt(pos[0] ** 2 + pos[1] ** 2))
+    suffix = '_d{}'.format(distance)
+
+    if device_id == 2:
+        id_list = list(range(0, 78))
+    elif device_id == 3:
+        id_list = list(range(78, 156))
+    elif device_id == 4:
+        id_list = list(range(156, 234))
+    elif device_id == 5:
+        id_list = list(range(234, 312))
+    elif device_id == 6:
+        id_list = list(range(312, 390))
+    elif device_id == 7:
+        id_list = list(range(390, 469))
+    else:
+        raise AssertionError
+    test(env, model_folder, model_name, ckpt_name, save_folder, ablation_type='all', suffix=suffix, device_id=device_id, id_list=id_list)
+
+
 if __name__ == '__main__':
     runs_folder = sys.argv[1]
     ckpt_name = sys.argv[2]  # 'model.pt'
@@ -173,7 +233,10 @@ if __name__ == '__main__':
     )
     """ test """
     # model_name = 'li_conductance_gradient2'
-    model_name = 'lic41'
+    # model_name = 'lic41'
+    model_name = 'lic62'
     # main_random()
-    main_fixed(pos=(10, 0), device_id=device_id)
     # main_random_all()
+    # main_fixed(pos=(10, 0), device_id=device_id)
+    main_fixed_4(pos=(10, 0), device_id=device_id)
+    # main_fixed_6(pos=(10, 0), device_id=device_id)
