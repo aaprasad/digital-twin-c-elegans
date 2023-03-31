@@ -19,6 +19,7 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
     # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorfrc')
     xml_str = position(xml_str)
     xml_str = camera(xml_str, camera_pos='-1.25 0 2.5', camera_xyaxes='1 0 0 0 1 0')  # camera_pos='-1.25 0 5'
+    # xml_str = camera(xml_str, camera_pos='-1.25 -1.25 1.25', camera_xyaxes='1 0 0 0 1 1')
     # with open('swimmer.xml', 'w') as f:
     #     f.write(xml_str.decode('utf-8'))
     env = gym.make(
@@ -89,6 +90,7 @@ def make_swimmer_weathervane(
     # xml_str = actuator(xml_str, n_bodies, sensor_type='actuatorfrc')
     xml_str = position(xml_str)
     xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
+    # xml_str = camera(xml_str, camera_pos='-1.25 0 4', camera_xyaxes='1 0 0 0 1 0')
     xml_str = chemotaxis(xml_str, x=source[0], y=source[1])
     # with open('swimmer.xml', 'w') as f:
     #     f.write(xml_str.decode('utf-8'))
