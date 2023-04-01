@@ -2577,10 +2577,13 @@ class LIC72(torch.nn.Module):
         self.n = n
         self.m = m
         self.p = p
-        tau = torch.zeros(n).uniform_(0.01, 0.2)
+        tau_leak = torch.zeros(n).uniform_(0.01, 0.2)
+        tau_input = torch.zeros(n).uniform_(0.01, 0.2)
         tau_func = Sigmoid(a=0.01, b=0.2)
-        tau = tau_func.inverse(tau)
-        self.tau = torch.nn.Parameter(tau)  # (n, )
+        tau_leak = tau_func.inverse(tau_leak)
+        tau_input = tau_func.inverse(tau_input)
+        self.tau_leak = torch.nn.Parameter(tau_leak)  # (n, )
+        self.tau_input = torch.nn.Parameter(tau_input)  # (n, )
         self.tau_func = tau_func
         self.bias = torch.nn.Parameter(-0.35 + torch.zeros(n).normal_(0, 0.01))  # (n, )
         w_c = torch.zeros((n, n)).uniform_(0, 1)
@@ -2663,8 +2666,10 @@ class LIC72(torch.nn.Module):
         # external input + bias
         external_input = self._external_input(stimuli) + self.bias
         # dt / tau
-        tau = self.tau_func(self.tau)
-        dt_tau = self.dt / self.steps / tau
+        tau_leak = self.tau_func(self.tau_leak)
+        tau_input = self.tau_func(self.tau_input)
+        dt_tau_leak = self.dt / self.steps / tau_leak
+        dt_tau_input = self.dt / self.steps / tau_input
         for i in range(self.steps):
             # chemical synapse input
             synapse_input = (torch.mm(activation, w_c * e_c) - torch.mm(activation, w_c) * state) / self.w_c_n
@@ -2675,7 +2680,7 @@ class LIC72(torch.nn.Module):
             total_input = synapse_input + gap_input + external_input
             total_input = self.input_func(total_input)
             # cell state and activation
-            state = (1 - dt_tau) * state + dt_tau * total_input
+            state = (1 - dt_tau_leak) * state + dt_tau_input * total_input
             activation = self.activation_func(state)
         # muscle output
         action = activation[:, self.output_index]
