@@ -2464,8 +2464,8 @@ class LIC71(torch.nn.Module):
         self.n = n
         self.m = m
         self.p = p
-        tau = torch.zeros(n).uniform_(0.01, 0.2)
-        tau_func = Sigmoid(a=0.01, b=0.2)
+        tau = torch.zeros(n).uniform_(0.008, 0.2)
+        tau_func = Sigmoid(a=0.008, b=0.2)
         tau = tau_func.inverse(tau)
         self.tau = torch.nn.Parameter(tau)  # (n, )
         self.tau_func = tau_func
