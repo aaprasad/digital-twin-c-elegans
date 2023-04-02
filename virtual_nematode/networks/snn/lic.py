@@ -2949,19 +2949,21 @@ class LIC81(torch.nn.Module):
         self.p = p
         tau_leak = torch.zeros(n).uniform_(0.008, 0.2)
         tau_input = torch.zeros(n).uniform_(0.008, 0.2)
-        tau_func = Sigmoid(a=0.008, b=0.2)
-        tau_leak = tau_func.inverse(tau_leak)
-        tau_input = tau_func.inverse(tau_input)
+        tau_leak_func = Tanh(a=0.008, b=0.2)
+        tau_input_func = Tanh(a=0.008, b=0.2)
+        tau_leak = tau_leak_func.inverse(tau_leak)
+        tau_input = tau_input_func.inverse(tau_input)
         self.tau_leak = torch.nn.Parameter(tau_leak)  # (n, )
         self.tau_input = torch.nn.Parameter(tau_input)  # (n, )
-        self.tau_func = tau_func
+        self.tau_leak_func = tau_leak_func
+        self.tau_input_func = tau_input_func
         self.bias = torch.nn.Parameter(-0.35 + torch.zeros(n).normal_(0, 0.01))  # (n, )
         w_c = torch.zeros((n, n)).uniform_(0, 1)
         w_c *= w_c_mask.any(dim=0)
         self.w_c = torch.nn.Parameter(w_c)  # (n, n)
         e_c = torch.zeros((n, n)).normal_(mean=0, std=0.01)
         e_c = (-0.24 + e_c) * w_c_mask[0]
-        e_c_func = Sigmoid(a=-0.5, b=0.05)
+        e_c_func = Tanh(a=-0.5, b=0.05)
         e_c = e_c_func.inverse(e_c)
         self.e_c = torch.nn.Parameter(e_c)  # (n, n)
         self.e_c_func = e_c_func
@@ -2985,7 +2987,7 @@ class LIC81(torch.nn.Module):
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
-        self.input_func = Sigmoid(a=-37.5, b=37.5)
+        self.input_func = Tanh(a=-37.5, b=37.5)
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
@@ -3036,8 +3038,8 @@ class LIC81(torch.nn.Module):
         # external input + bias
         external_input = self._external_input(stimuli) + self.bias
         # dt / tau
-        tau_leak = self.tau_func(self.tau_leak)
-        tau_input = self.tau_func(self.tau_input)
+        tau_leak = self.tau_leak_func(self.tau_leak)
+        tau_input = self.tau_input_func(self.tau_input)
         dt_tau_leak = self.dt / self.steps / tau_leak
         dt_tau_input = self.dt / self.steps / tau_input
         for i in range(self.steps):
