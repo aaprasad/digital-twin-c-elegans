@@ -2805,3 +2805,22 @@ class LIC73(torch.nn.Module):
         # muscle output
         action = activation[:, self.output_index]
         return state, activation, action
+
+
+class Tanh(torch.nn.Module):
+    def __init__(self, a, b):
+        super(Tanh, self).__init__()
+        self.a = a
+        self.b = b
+        p = (b - a) / 2.
+        self.p = p
+        self.q = 1. / p
+        self.bias = (a + b) / 2.
+
+    def inverse(self, input):
+        e = 1e-6
+        input = input.clamp(self.a + e, self.b - e)
+        return torch.atanh((input - self.bias) / self.p) / self.q + self.bias
+
+    def forward(self, input):
+        return self.p * torch.tanh(self.q * (input - self.bias)) + self.bias
