@@ -66,4 +66,5 @@ if __name__ == '__main__':
     # train('lic41')
     # train('lic61')
     # train('lic62')
-    train('lic70')
+    # train('lic70')
+    train('lic80')
