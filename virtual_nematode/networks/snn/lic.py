@@ -3170,3 +3170,22 @@ class LIC82(torch.nn.Module):
         # muscle output
         action = activation[:, self.output_index]
         return state, activation, action
+
+
+class SigmoidFunc(torch.nn.Module):
+    def __init__(self, a, b):
+        super(SigmoidFunc, self).__init__()
+        self.a = a
+        self.b = b
+        p = b - a
+        self.p = p
+        self.q = 1. / p
+        self.bias = (a + b) / 2.
+
+    def inverse(self, input):
+        e = 1e-6
+        input = input.clamp(self.a + e, self.b - e)
+        return torch.logit((input - self.a) / self.p) / self.q + self.bias
+
+    def forward(self, input):
+        return self.p * torch.sigmoid(self.q * (input - self.bias)) + self.a
