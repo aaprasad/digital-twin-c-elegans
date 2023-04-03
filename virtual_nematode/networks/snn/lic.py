@@ -3175,6 +3175,7 @@ class LIC82(torch.nn.Module):
 class SigmoidFunc(torch.nn.Module):
     def __init__(self, a, b):
         super(SigmoidFunc, self).__init__()
+        print('SigmoidFunc(a={}, b={})'.format(a, b))
         self.a = a
         self.b = b
         p = b - a
