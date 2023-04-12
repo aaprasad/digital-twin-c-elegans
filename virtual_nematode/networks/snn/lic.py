@@ -3235,7 +3235,7 @@ class LIC90(torch.nn.Module):
         w_p_n[w_p_n == 0] = 1
         self.w_p_n = torch.nn.Parameter(w_p_n, requires_grad=False)  # (n, )
         self.output_index = torch.nn.Parameter(output_index, requires_grad=False)  # (n, ), bool
-        self.input_func = SigmoidFunc(a=-37.5, b=37.5)
+        self.input_func = SigmoidFunc(a=-1., b=1.)
         self.activation_func = Activation(k=37.5, b=9.)
         self.s = s  # sensory size
         self.w_s = torch.nn.Parameter(torch.ones(s))  # (3, )
