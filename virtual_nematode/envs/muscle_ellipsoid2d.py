@@ -129,11 +129,13 @@ def make_swimmer_weathervane_fn(xml_str, reset_noise_scale, distance, max_episod
     return _fn
 
 
-def make_swimmer_weathervane_fixed_fn(xml_str, reset_noise_scale, pos, max_episode_steps, source, position_func, distribution_func=fick):
+def make_swimmer_weathervane_fixed_fn(
+    xml_str, reset_noise_scale, pos, max_episode_steps, source, position_func, distribution_func=fick, angle=None
+):
     def _fn():
         env = gym.make(
             'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
-            reset_noise_scale=reset_noise_scale, position=pos
+            reset_noise_scale=reset_noise_scale, position=pos, angle=angle
         )
         env = gym.wrappers.TimeLimit(env, max_episode_steps)
         env = gym.wrappers.ClipAction(env)
@@ -146,21 +148,22 @@ def make_swimmer_weathervane_fixed_fn(xml_str, reset_noise_scale, pos, max_episo
 
 def make_swimmer_weathervane_fixed(
     n_bodies, joint_range, max_episode_steps, reset_noise_scale, pos, source, position_func, density,
-    viscosity, condim, friction, cone, distribution_func=fick
+    viscosity, condim, friction, cone, distribution_func=fick, angle=None, camera_pos='-1.25 0 5', camera_name=None,
+    camera_z=50, render_kwargs={}
 ):
     xml_str = swimmer('swimmer.xml', n_bodies, joint_range, density, viscosity, condim, friction, cone)
     xml_str = position(xml_str)
-    xml_str = camera(xml_str, camera_pos='-1.25 0 5', camera_xyaxes='1 0 0 0 1 0')
+    xml_str = camera(xml_str, camera_pos=camera_pos, camera_xyaxes='1 0 0 0 1 0', camera_z=camera_z)
     xml_str = chemotaxis(xml_str, x=source[0], y=source[1])
     # with open('swimmer.xml', 'w') as f:
     #     f.write(xml_str.decode('utf-8'))
     env = gym.make(
         'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
-        reset_noise_scale=reset_noise_scale, position=pos
+        reset_noise_scale=reset_noise_scale, position=pos, angle=angle
     )
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = SensorObservation(env)
     env = DistributionObservation(env, dt=env.dt, f=distribution_func, source=source, position_func=position_func)
-    env = Recorder(env, camera_name=None)
+    env = Recorder(env, camera_name=camera_name, **render_kwargs)
     return env
