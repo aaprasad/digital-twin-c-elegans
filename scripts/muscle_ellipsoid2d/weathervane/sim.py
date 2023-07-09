@@ -113,7 +113,7 @@ if __name__ == '__main__':
     seed = 7  # None
     os.makedirs('data', exist_ok=True)
     """ weathervane controller """
-    # simulate_random(k_w=1)
+    simulate_random(k_w=1)
     # simulate_fixed(pos=(15, 0), k_w=1)
     # simulate_fixed(pos=(10, 0), k_w=1)
     # simulate_fixed(pos=(5, 0), k_w=1)
@@ -124,4 +124,4 @@ if __name__ == '__main__':
     # simulate_fixed(pos=(5, 0), k_w=0)
     """ recording """
     # simulate_once_fixed(pos=(-10, 0), k_w=1, angle=np.pi/2.)
-    simulate_once_fixed(pos=(-10, 0), k_w=1, angle=np.pi / 2., camera_name='fixedcam', camera_z=32)
+    # simulate_once_fixed(pos=(-10, 0), k_w=1, angle=np.pi / 2., camera_name='fixedcam', camera_z=32)
