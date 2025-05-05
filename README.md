@@ -1,5 +1,21 @@
-# virtual-nematode
-Virtual C. elegans simulations with PyTorch neural networks and MuJoCo environments
+# digital-twin-c-elegans
+[Mathematics 2023] A Connectome-Based Digital Twin Caenorhabditis elegans Capable of Intelligent Sensorimotor Behavior
+
+https://doi.org/10.3390/math11112442
+
+## citation
+```
+@article{chen2023connectome,
+  title={A Connectome-Based Digital Twin Caenorhabditis elegans Capable of Intelligent Sensorimotor Behavior},
+  author={Chen, Zhongyu and Yu, Yuguo and Xue, Xiangyang},
+  journal={Mathematics},
+  volume={11},
+  number={11},
+  pages={2442},
+  year={2023},
+  publisher={MDPI}
+}
+```
 
 ## prerequisites
 * python==3.8
