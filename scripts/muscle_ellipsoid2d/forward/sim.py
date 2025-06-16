@@ -7,7 +7,7 @@ observation space: Box(-inf, inf, (62,), float64)
 """
 
 from analysis import get_results_numpy
-import gym
+import gymnasium as gym
 import numpy as np
 import os
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
@@ -16,6 +16,7 @@ from virtual_nematode.simulation import simulate
 
 
 def action_func(model, step, observation, **kwargs):
+    
     q = observation[4:28]
     # q_vel = observation[32:56]
     action = model.step(step, q=q)
@@ -44,7 +45,7 @@ if __name__ == '__main__':
     #     kp=1, kd=np.array([0.15 + i * 0.002 for i in range(24)])
     # )
     model = ForwardPIDMuscle(
-        dt=env.dt, n=25, a=0.6, freq=0.8, psi=0.07,
+        dt=env.unwrapped.dt, n=25, a=0.6, freq=0.8, psi=0.07,
         kp=np.concatenate(([1 + i * 0.2 for i in range(12)], [3.2 - i * 0.2 for i in range(12)])),
         kd=0.15
     )

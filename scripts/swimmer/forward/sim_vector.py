@@ -4,7 +4,7 @@ run multiple environments in parallel: https://github.com/openai/gym/blob/master
 run multiple environments serially: https://github.com/openai/gym/blob/master/gym/vector/sync_vector_env.py
 """
 
-import gym
+import gymnasium as gym
 import numpy as np
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.models.forward import Forward

@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 from gym_worm.envs.mujoco.chemotaxis import chemotaxis
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.forage import forage

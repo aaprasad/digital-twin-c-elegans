@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 from gym_worm.envs.mujoco.chemotaxis import chemotaxis
 from gym_worm.envs.mujoco.sensor import actuator
 from gym_worm.envs.mujoco.camera import camera
@@ -24,13 +24,15 @@ def make_swimmer(n_bodies, joint_range, max_episode_steps, reset_noise_scale, de
     # with open('swimmer.xml', 'w') as f:
     #     f.write(xml_str.decode('utf-8'))
     env = gym.make(
-        'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
-        reset_noise_scale=reset_noise_scale
+        'Swimmer-v4-v1', xml_file=r"C:\Users\aadi\projects\con3trol\src\con3trol\assets\celegans.xml", exclude_current_positions_from_observation=False,
+        reset_noise_scale=reset_noise_scale, render_mode="rgb_array"
     )
     env = gym.wrappers.TimeLimit(env, max_episode_steps)
     env = gym.wrappers.ClipAction(env)
     env = SensorObservation(env)
     env = Recorder(env, camera_name=None)
+    env = gym.wrappers.RecordVideo(env, video_folder="data", name_prefix="muscle_ellipsoid2d",
+                  episode_trigger=lambda x: x%50==0)
     return env
 
 
@@ -44,7 +46,7 @@ def make_swimmer_xml(n_bodies, joint_range, density, viscosity, condim, friction
 def make_swimmer_fn(xml_str, max_episode_steps, reset_noise_scale):
     def _fn():
         env = gym.make(
-            'Swimmer-v3-v1', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
+            'Swimmer-v4-v0', xml_str=xml_str.decode('utf-8'), exclude_current_positions_from_observation=False,
             reset_noise_scale=reset_noise_scale
         )
         env = gym.wrappers.TimeLimit(env, max_episode_steps)

@@ -1,5 +1,5 @@
 from data import x_func
-import gym
+import gymnasium as gym
 import os
 from virtual_nematode.envs.swimmer import make_swimmer
 from virtual_nematode.testers.forward import tester, single_tester

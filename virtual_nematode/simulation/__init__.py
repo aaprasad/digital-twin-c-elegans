@@ -14,17 +14,17 @@ def simulate(env, model, action_func, x_func, seed=None, trials=1, render=False)
     np.random.seed(seed)  # if seed is None, ignore
     for _ in tqdm(range(trials)):
         observations, actions = [], []
-        env.seed(seed=sample_seed() if seed is not None else None)
-        observation = env.reset()
+        # env.seed(seed=sample_seed() if seed is not None else None)
+        observation, info = env.reset(seed=sample_seed() if seed is not None else None)
         model.reset()
         for step in range(10 ** 6):
             if render is True:
                 env.render()
             action = action_func(model=model, step=step, observation=observation)
-            observation, reward, done, info = env.step(action)
+            observation, reward, terminated, truncated, info = env.step(action)
             observations.append(x_func(observation=observation))
             actions.append(action)
-            if done:
+            if terminated or truncated:
                 observations, actions = np.array(observations, dtype=np.float32), np.array(actions, dtype=np.float32)
                 x.append(observations)
                 y.append(actions)

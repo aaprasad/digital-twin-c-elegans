@@ -1,5 +1,5 @@
 from data import x_func as data_func
-import gym
+import gymnasium as gym
 from gym_worm.wrappers.muscle_action import MuscleAction
 import os
 from sim import step_func as x_func

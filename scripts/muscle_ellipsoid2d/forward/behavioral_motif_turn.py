@@ -1,5 +1,5 @@
 from analysis import get_results_numpy
-import gym
+import gymnasium as gym
 import numpy as np
 import os
 from sim import action_func, x_func

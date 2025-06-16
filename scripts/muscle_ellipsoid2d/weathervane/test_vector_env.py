@@ -1,6 +1,6 @@
 from analysis import get_results_numpy
 import copy
-import gym
+import gymnasium as gym
 import numpy as np
 import os
 from sim import position_func

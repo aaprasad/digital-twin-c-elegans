@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import numpy as np
 from sim import position_func, make_swimmer, step_func, done_func
 from virtual_nematode.models.computational_model import ComputationalModelChemotaxis

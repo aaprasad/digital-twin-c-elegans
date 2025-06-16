@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.ellipsoid2d_v0 import swimmer
 from gym_worm.envs.mujoco.position import position
