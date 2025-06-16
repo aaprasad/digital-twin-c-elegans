@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 from gym_worm.envs.mujoco.swimmer_v3_v1 import swimmer
 from gym_worm.envs.mujoco.position import position
 from gym_worm.envs.mujoco.position_actuator import position_actuator

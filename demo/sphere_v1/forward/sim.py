@@ -7,7 +7,7 @@ observation space
     [109:112]: 3D frame position of the first body (length, m)
 """
 
-import gym
+import gymnasium as gym
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.position import position
 from gym_worm.envs.mujoco.sphere_v1 import swimmer

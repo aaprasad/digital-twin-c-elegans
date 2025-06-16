@@ -1,6 +1,6 @@
 from analysis import get_result_torch
 import copy
-import gym
+import gymnasium as gym
 from matplotlib import pyplot as plt
 import os
 import seaborn as sns

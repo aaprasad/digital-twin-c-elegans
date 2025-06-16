@@ -4,7 +4,7 @@ python test_ablation_group.py Mar27_00-28-51_yulab-3090 model436.pt 0
 
 from analysis import get_results_numpy
 import copy
-import gym
+import gymnasium as gym
 import numpy as np
 import os
 from sim import position_func

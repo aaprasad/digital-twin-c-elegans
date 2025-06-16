@@ -71,6 +71,7 @@ class ForwardPIDMuscle(object):
         # q_target = self.a * np.sin(self.omega * (step + self.start_step) * self.dt + self.phi) + self.kp_direction * theta_error
         # q_target = self.a * np.sin(self.omega * (step + self.start_step) * self.dt + self.phi)
         q_target = self.a * np.sin(self.omega * step * self.dt + self.phi)
+        
         action = self._action(q, q_target)
         return action
 

@@ -1,6 +1,6 @@
 """ swimmer: chemotaxis based on weathervane mechanism """
 
-import gym
+import gymnasium as gym
 import numpy as np
 import os
 import torch

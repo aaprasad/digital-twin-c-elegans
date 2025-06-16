@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.frame_sensor import frame_sensor_for_muscle
 from gym_worm.envs.mujoco.gravity import gravity

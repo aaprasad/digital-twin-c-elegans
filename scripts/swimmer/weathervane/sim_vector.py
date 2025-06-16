@@ -11,7 +11,7 @@ observation[52:62]: additional
     [55:58]: 3D position of the front tip
     [58:62]: concentration, g, g_p, g_w
 """
-import gym
+import gymnasium as gym
 import numpy as np
 from virtual_nematode.envs.swimmer import make_chemotaxis_swimmers
 from virtual_nematode.models.computational_model import ComputationalModelChemotaxisVector

@@ -1,5 +1,5 @@
 import copy
-import gym
+import gymnasium as gym
 from gym_worm.envs.mujoco.chemotaxis import chemotaxis
 from gym_worm.envs.mujoco.swimmer_v3_v1 import swimmer
 from gym_worm.envs.mujoco.camera import camera

@@ -1,5 +1,5 @@
 from data import x_func as data_func_base
-import gym
+import gymnasium as gym
 import numpy as np
 import os
 from sim_vector import position_func

@@ -1,5 +1,5 @@
 from analysis import get_results_torch, get_result_torch
-import gym
+import gymnasium as gym
 import os
 from sim import x_func
 import sys

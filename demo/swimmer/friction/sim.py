@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import numpy as np
 from gym_worm.envs.mujoco.camera import camera
 from gym_worm.envs.mujoco.friction import friction

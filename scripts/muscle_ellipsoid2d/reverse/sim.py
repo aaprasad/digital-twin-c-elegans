@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import numpy as np
 from virtual_nematode.envs.muscle_ellipsoid2d import make_swimmer
 from virtual_nematode.models.muscle import ReversePIDMuscle

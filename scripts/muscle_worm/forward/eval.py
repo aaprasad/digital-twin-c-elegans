@@ -1,5 +1,5 @@
 from data import x_func as data_func
-import gym
+import gymnasium as gym
 import os
 from sim import step_func as x_func
 import sys
